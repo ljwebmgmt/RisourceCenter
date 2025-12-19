@@ -1,0 +1,25 @@
+﻿@model newrisourcecenter.Models.SPAViewModels
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int? userId = Convert.ToInt32(Session["userId"]);
+    int? companyId = Convert.ToInt32(Session["companyId"]);
+}
+ <div ng-app="risourcecenter">
+     <div style="float:right;margin:10px 10px 0px 0px;">
+         @if (Request.QueryString["isDetails"]=="yes" && Request.QueryString["isAdmin"]=="yes" || Request.QueryString["isDetails"] == "yes" && Request.QueryString["isAdmin"] == "no")
+         {
+            <a class="btn btn-info" href="/SPA/Details/@Request.QueryString["id"]?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&isAdmin=@Request.QueryString["isAdmin"]&submenu=yes">Back</a>
+         }
+         else if (Request.QueryString["isAdmin"] == "yes")
+         {
+            <a class="btn btn-info" href="/SPA/SPAadmin/@Request.QueryString["id"]?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&submenu=yes">Back</a>
+         }
+         else
+         {
+            <a class="btn btn-info" href="/SPA?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&submenu=yes">Back</a>
+         }
+     </div>
+     <div ng-view class="{{controllerClass}}" ></div>
+ </div> 

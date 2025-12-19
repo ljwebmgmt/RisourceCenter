@@ -1,0 +1,64 @@
+﻿@model newrisourcecenter.Models.SPANotesViewModels
+
+@{
+    Layout = "";
+}
+@using (Html.BeginForm())
+{
+    <div class="form-horizontal">
+        <hr />
+        <span ng-bind-html="formAction"><img src="/images/lightbox-ico-loading.gif" /></span>
+
+        <div id="internal_notes" ng-if="notetype=='true'">
+            <input type="radio" value="0" name="inter_external" id="inter_external" >
+             External
+            <input type="radio" value="1" name="inter_external" id="inter_external" >
+            Internal
+            <textarea rows="10" ng-model="SPANotesViewModels.Note" ></textarea>
+            <a href="" ng-click="SaveNotes(1)" class="btn-sm btn-primary">Save Note</a>
+            <br />
+            <br />
+            Filter by Type <select ng-change="toggleInternalExternal(filter,Spa_id)" class="form-control" name="filter" ng-model="filter" ><option value="Filter By" >Filter</option><option value="0">External</option><option value="1" >Internal</option></select>
+        </div> 
+
+        <div id="internal_notes"  ng-if="notetype=='false'" >
+            <textarea rows="10" ng-model="SPANotesViewModels.Note" ></textarea>
+            <a href="" ng-click="SaveNotes(0)" class="btn-sm btn-primary">Save Note</a>
+        </div>
+        <br />
+        <table class="table" >
+            <thead>
+                <tr>
+                    <th>Notes</th>
+                    <th>Action Time</th>
+                    <td></td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="note in getNotes" style="list-style:none;" id="item_{{note.ID}}">
+                    <td>
+                        {{note.Note}}
+                    </td>
+                    <td>
+                        {{note.Action_date}}
+                    </td>
+                    <td ng-if="note.Can_delete==true" >
+                        <a href="" ng-click="deleteSPANote(note.ID)" style="float:right;">Delete</a>
+                    </td>
+                    <td ng-if="note.Can_delete==false">
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <br />
+        {{cdata}}
+        <div style="float:left;">
+            <span class="btn btn-primary" ng-click="filesUploadsView('filesUpload/'+Spa_id)"><< Back</span>
+        </div>
+        <div style="float:right;">
+            <span class="btn btn-primary" ng-click="reviewsView(Spa_id)">Review</span>
+        </div>
+        <br />
+    </div>
+}
+

@@ -1,0 +1,1486 @@
+﻿@model newrisourcecenter.Models.RFQViewModelExt
+
+@{
+ViewBag.Title = "Edit";
+Layout = null;
+int comp_type = Convert.ToInt32(Session["companyType"]);
+}
+
+<table style="width:100%;">
+    @if (Model.IsCloned)
+    {
+        <tr>
+            <td colspan="20" style="float:right;color:red;">@ViewBag.ClonedData</td>
+        </tr>
+    }
+    <tr>
+        <td colspan="20" style="float:right;color:red;">RFQ ID is @Model.form_id</td>
+    </tr>
+    <tr>
+        <td colspan="20" style="float:right;color:red;">RFQ Additional Parts ID is @Model.id</td>
+    </tr>
+    @if (Model.RFQExt != null)
+    {
+        <tr>
+            <td colspan="20" >
+                <h4>&nbsp;<u>Additional Enclosures</u></h4>
+            </td>
+        </tr>
+        <tr style="width:100%;border: solid 1px #BBDDF7;height:auto;overflow:auto;">
+            <td colspan="8" style="width:19%;border: solid 1px #BBDDF7;padding:10px;margin: 0px 0px 5px 10px;display:inline-block;">
+                <strong style="color:red;">Initial RFQ Form</strong>
+                <br /><br />
+                <span><strong>Product Category :</strong> @ViewBag.product_category</span><br />
+                <span><strong>Total Quantity :</strong> @ViewBag.total_qty</span><br />
+                <br />
+                @Html.ActionLink("View PDF", "getPDF", new { id = @ViewBag.original_id, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], ext_form = "no", admin = Request.QueryString["admin"], view = Request.QueryString["view"] }, new { @class = "btn btn-info" })
+                <br />
+            </td>
+            @{
+                int i = 2;
+                foreach (var item in Model.RFQExt)
+                {
+                    if (item.rfqidExt == ViewBag.extId)
+                    {
+                        ViewBag.bg = "background:#a4f19e;";
+                    }
+                    else
+                    {
+                        ViewBag.bg = string.Empty;
+                    }
+                    <td colspan="8" style="width:19%;border: solid 1px #BBDDF7;padding:20px;margin: 0px 0px 5px 10px;display:inline-block;@ViewBag.bg;vertical-align:top;">
+                        <span><strong>Product Category :</strong> @item.product_categories</span><br />
+                        <span><strong>Total Quantity :</strong> @item.total_quantity</span><br />
+                        @Html.ActionLink("View PDF", "GetPDFExt", new { id = item.rfqidExt, form_id = item.rfqid, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], ext_form = "yes", admin = Request.QueryString["admin"], view = Request.QueryString["view"] }, new { @class = "btn btn-info" })
+                    </td>
+                    i += 1; 
+                }
+            }
+        </tr>
+    }
+
+    @if (@Model.product_category == "ts8-ie")
+    {
+        <tr>
+            <td colspan="40">
+                <table style="background: #E5E2AE;padding: 15px 10px 60px 30px;margin: 25px;width:100%;" >
+                    <tr>
+                        <td colspan="8" cellpadding="10" >
+                            <h3>TS8-Industrial</h3>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="8" cellpadding="10">
+                            @Html.LabelFor(model => model.part_num_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @Html.DisplayFor(model => model.part_num_ie, new { htmlAttributes = new { @class = "form-control" } })
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="8" cellpadding="10">
+                            @Html.LabelFor(model => model.size_hxwxd_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @Html.DisplayFor(model => model.size_hxwxd_ie, new { htmlAttributes = new { @class = "form-control" } })
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="8" cellpadding="10">
+                            @{ Dictionary<string, string> list_material_ie = new Dictionary<string, string>();
+                                list_material_ie.Add("carbon", "Carbon");
+                                list_material_ie.Add("304", "304 Stainless");
+                                list_material_ie.Add("316", "316 Stainless");
+                                list_material_ie.Add("aluzinc", "Aluzinc");
+                            }
+                            @Html.LabelFor(model => model.material_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @foreach (var item in list_material_ie)
+                            {
+                                if (Model.material_ie == @item.Key)
+                                {
+                                    <span>@item.Value</span>
+                                }
+                            }
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="8" cellpadding="10">
+                            @{ Dictionary<string, string> list_mpl_ie = new Dictionary<string, string>();
+                                list_mpl_ie.Add("with", "With MPL");
+                                list_mpl_ie.Add("without", "Without MPL");
+                                list_mpl_ie.Add("2 MPL", "With 2 MPL");
+                                list_mpl_ie.Add("back to back", "Back to Back MPL");
+                            }
+                            @Html.LabelFor(model => model.mpl_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @foreach (var item in list_mpl_ie)
+                            {
+                                if (Model.mpl_ie == @item.Key)
+                                {
+                                    <span>@item.Value</span>
+                                }
+                            }
+                        </td>
+                    </tr> 
+                    
+                    <tr>
+                        <td colspan="8" cellpadding="10">
+                            @{ Dictionary<string, string> list_sidewall_ie = new Dictionary<string, string>();
+                                list_sidewall_ie.Add("without", "Without Sidewall");
+                                list_sidewall_ie.Add("left", "Sidewall Left");
+                                list_sidewall_ie.Add("right", "Sidewall Right");
+                                list_sidewall_ie.Add("left and right", "Sidewall Left and Right");
+                            }
+                            @Html.LabelFor(model => model.sidewall_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @foreach (var item in list_sidewall_ie)
+                            {
+                                if (Model.sidewall_ie == @item.Key)
+                                {
+                                    <span>@item.Value</span>
+                                }
+                            }
+                        </td>
+                    </tr>  
+                    
+                    <tr>
+                        <td colspan="8" cellpadding="10">
+                            @{ Dictionary<string, string> list_front_ie = new Dictionary<string, string>();
+                                list_front_ie.Add("solid right 130", "Solid Hinged Right 130");
+                                list_front_ie.Add("solid left 130", "Solid Hinged Left 130");
+                                list_front_ie.Add("solid right 180", "Solid Hinged Right 180");
+                                list_front_ie.Add("solid left 180", "Solid Hinged Left 180");
+                                list_front_ie.Add("Safety glass Viewing door hinged Right 130", "Safety glass Viewing door hinged Right 130");
+                                list_front_ie.Add("Safety glass Viewing door hinged Left 130", "Safety glass Viewing door hinged Left 130");
+                                list_front_ie.Add("Rear Wall", "Rear Wall");
+                            }
+                            @Html.LabelFor(model => model.front_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @foreach (var item in list_front_ie)
+                            {
+                                if (Model.front_ie == @item.Key)
+                                {
+                                    <span>@item.Value</span>
+                                }
+                            }
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td colspan="8" cellpadding="10">
+                            @{ Dictionary<string, string> list_rear_ie = new Dictionary<string, string>();
+                                list_rear_ie.Add("Rear Wall", "Rear Wall");
+                                list_rear_ie.Add("solid right 130", "Solid Hinged Right 130");
+                                list_rear_ie.Add("solid left 130", "Solid Hinged Left 130");
+                                list_rear_ie.Add("solid right 180", "Solid Hinged Right 180");
+                                list_rear_ie.Add("solid left 180", "Solid Hinged Left 180");
+                                list_rear_ie.Add("Safety glass Viewing door hinged Right 130", "Safety glass Viewing door hinged Right 130");
+                                list_rear_ie.Add("Safety glass Viewing door hinged Left 130", "Safety glass Viewing door hinged Left 130");
+                            }
+                            @Html.LabelFor(model => model.rear_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @foreach (var item in list_rear_ie)
+                            {
+                                if (Model.rear_ie == @item.Key)
+                                {
+                                    <span>@item.Value</span>
+                                }
+                            }
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td colspan="8" cellpadding="10">
+                            @{ Dictionary<string, string> list_plinths_ie = new Dictionary<string, string>();
+                                list_plinths_ie.Add("without", "Without");
+                                list_plinths_ie.Add("100mm", "100mm");
+                                list_plinths_ie.Add("200mm", "200mm");
+                            }
+                            @Html.LabelFor(model => model.plinths_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @foreach (var item in list_plinths_ie)
+                            {
+                                if (Model.plinths_ie == @item.Key)
+                                {
+                                    <span>@item.Value</span>
+                                }
+                            }
+                        </td>
+                    </tr>
+
+                    @if (Model.plinths_ie != "without")
+                    {
+                        <tr>
+                            <td colspan="8" cellpadding="10">
+                                @Html.LabelFor(model => model.plinths_type_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                                @if (Model.plinths_type_ie == "1")
+                                {
+                                    <span>Flex Block</span>
+                                }
+                                else
+                                {
+                                    <span>Carbon Steel</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+
+                    <tr>
+                        <td colspan="8" cellpadding="10">
+                            @{ Dictionary<string, string> list_cable_ie = new Dictionary<string, string>();
+                                list_cable_ie.Add("w/base frame w/gland plate", "w/base frame w/gland plate");
+                                list_cable_ie.Add("w/base frame w/out glnd plt", "w/base frame w/out glnd plt");
+                                list_cable_ie.Add("w/o base frame w/o glnd plt", "w/o base frame w/o glnd plt");
+                                list_cable_ie.Add("with solid bottom", "with solid bottom");
+                            }
+                            @Html.LabelFor(model => model.cable_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @foreach (var item in list_cable_ie)
+                            {
+                                if (Model.cable_ie == @item.Key)
+                                {
+                                    <span>@item.Value</span>
+                                }
+                            }
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="8" cellpadding="10">
+                            @{ Dictionary<string, string> list_handles_ie = new Dictionary<string, string>();
+                                list_handles_ie.Add("Standard Lock Block", "Standard Lock Block");
+                                list_handles_ie.Add("Semi Cylinder", "Semi Cylinder");
+                                list_handles_ie.Add("Standard Lock Cover", "Standard Lock Cover");
+                                list_handles_ie.Add("Comfort Handle", "Comfort Handle");
+                                list_handles_ie.Add("Other define below", "Other define below");
+                            }
+                            @Html.LabelFor(model => model.handles_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @foreach (var item in list_handles_ie)
+                            {
+                                if (Model.handles_ie == @item.Key)
+                                {
+                                    <span>@item.Value</span>
+                                }
+                            }
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="8" cellpadding="10">
+                            @{ Dictionary<string, string> list_inserts_ie = new Dictionary<string, string>();
+                                list_inserts_ie.Add("Double Bit", "Double Bit");
+                                list_inserts_ie.Add("Pushbutton", "Pushbutton");
+                                list_inserts_ie.Add("Locking pushbutton", "Locking pushbutton");
+                                list_inserts_ie.Add("Locking", "Locking");
+                            }
+                            @Html.LabelFor(model => model.inserts_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @foreach (var item in list_inserts_ie)
+                            {
+                                if (Model.inserts_ie == @item.Key)
+                                {
+                                    <span>@item.Value</span>
+                                }
+                            }
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="8" cellpadding="10">
+                            @Html.LabelFor(model => model.Rails, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @if (Model.Rails == "1")
+                            {
+                                <span>YES</span>
+                            }
+                            else
+                            {
+                                <span>No</span>
+                            }
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="8" cellpadding="10">
+                            @Html.LabelFor(model => model.Suited, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @if (Model.Suited == "1")
+                            {
+                                <span>YES</span>
+                            }
+                            else
+                            {
+                               <span>No</span>
+                            }
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="8" cellpadding="10">
+                            @{ Dictionary<string, string> list_suited_bay_ie = new Dictionary<string, string>();
+                                list_suited_bay_ie.Add("1", "1");
+                                list_suited_bay_ie.Add("2", "2");
+                                list_suited_bay_ie.Add("3", "3");
+                                list_suited_bay_ie.Add("4", "4");
+                                list_suited_bay_ie.Add("5", "5");
+                                list_suited_bay_ie.Add("6", "6");
+                                list_suited_bay_ie.Add("7", "7");
+                            }
+                            @Html.LabelFor(model => model.suited_bay_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @foreach (var item in list_suited_bay_ie)
+                            {
+                                if (Model.suited_bay_ie == @item.Key)
+                                {
+                                    <span>@item.Value</span>
+                                }
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><B>Must use separate sheet for ea. bay</B></td>
+                    </tr>
+                    
+                    <tr>
+                        <td colspan="8" cellpadding="10">
+                            @Html.LabelFor(model => model.door_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @if (Model.door_ie == "1")
+                            {
+                                <span>YES</span>
+                            }
+                            else
+                            {
+                                <span>No</span>
+                            }
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="8" cellpadding="10">
+                            @Html.LabelFor(model => model.roof_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @if (Model.roof_ie == "1")
+                            {
+                                <span>YES</span>
+                            }
+                            else
+                            {
+                                <span>No</span>
+                            }
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="8" cellpadding="10">
+                            @Html.LabelFor(model => model.rear_wall_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @if (Model.rear_wall_ie == "1")
+                            {
+                                <span>YES</span>
+                            }
+                            else
+                            {
+                                <span>No</span>
+                            }
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="8" cellpadding="10">
+                            @Html.LabelFor(model => model.sidewall_mod_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @if (Model.sidewall_mod_ie == "1")
+                            {
+                                <span>YES</span>
+                            }
+                            else
+                            {
+                                <span>No</span>
+                            }
+                        </td>
+                    </tr>
+
+                    <tr class="form-group">
+                        <td colspan="8" cellpadding="10">
+                            @Html.LabelFor(model => model.mpl_mod_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @if (Model.mpl_mod_ie == "1")
+                            {
+                                <span>YES</span>
+                            }
+                            else
+                            {
+                                <span>No</span>
+                            }
+                        </td>
+                    </tr>
+
+                    <tr class="form-group">
+                        <td colspan="8" cellpadding="10">
+                            @Html.LabelFor(model => model.specialpaint_ie_1, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @if (Model.specialpaint_ie_1 == "1")
+                            {
+                                <span>YES</span>
+                            }
+                            else
+                            {
+                                <span>No</span>
+                            }
+                        </td>
+                    </tr>
+
+                    @if (Model.specialpaint_ie_1 == "1")
+                    {
+                    <tr>
+                        <td colspan="8" cellpadding="10">
+                            @{ Dictionary<string, string> list_special_paint_ie = new Dictionary<string, string>();
+                                list_special_paint_ie.Add("standard", "standard");
+                                list_special_paint_ie.Add("28 Color", "28 Color");
+                                list_special_paint_ie.Add("other", "Other");
+                            }
+                            @Html.LabelFor(model => model.special_paint_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @foreach (var item in list_special_paint_ie)
+                            {
+                                if (Model.special_paint_ie == @item.Key)
+                                {
+                                    <span>@item.Value</span>
+                                }
+                            }
+                        </td>
+                    </tr>
+
+                    <tr>
+                        @{ Dictionary<string, string> list_color_mod_ie = new Dictionary<string, string>();
+                            list_color_mod_ie.Add("ANSI 61", "ANSI 61");
+                            list_color_mod_ie.Add("RAL 1015", "RAL 1015");
+                            list_color_mod_ie.Add("RAL 1023", "RAL 1023");
+                            list_color_mod_ie.Add("RAL 1033", "RAL 1033");
+                            list_color_mod_ie.Add("RAL 2000", "RAL 2000");
+                            list_color_mod_ie.Add("RAL 2002", "RAL 2002");
+                            list_color_mod_ie.Add("RAL 2004", "RAL 2004");
+                            list_color_mod_ie.Add("RAL 3001", "RAL 3001");
+                            list_color_mod_ie.Add("RAL 3005", "RAL 3005");
+                            list_color_mod_ie.Add("RAL 3020", "RAL 3020");
+                            list_color_mod_ie.Add("RAL 5005", "RAL 5005");
+                            list_color_mod_ie.Add("RAL 5010", "RAL 5010");
+                            list_color_mod_ie.Add("RAL 5012", "RAL 5012");
+                            list_color_mod_ie.Add("RAL 5015", "RAL 5015");
+                            list_color_mod_ie.Add("RAL 5017", "RAL 5017");
+                            list_color_mod_ie.Add("RAL 5018", "RAL 5018");
+                            list_color_mod_ie.Add("RAL 6002", "RAL 6002");
+                            list_color_mod_ie.Add("RAL 6003", "RAL 6003");
+                            list_color_mod_ie.Add("RAL 6011", "RAL 6011");
+                            list_color_mod_ie.Add("RAL 7012", "RAL 7012");
+                            list_color_mod_ie.Add("RAL 7022", "RAL 7022");
+                            list_color_mod_ie.Add("RAL 7032", "RAL 7032");
+                            list_color_mod_ie.Add("RAL 7035", "RAL 7035");
+                            list_color_mod_ie.Add("RAL 9001", "RAL 9001");
+                            list_color_mod_ie.Add("RAL 9002", "RAL 9002");
+                            list_color_mod_ie.Add("RAL 9003", "RAL 9003");
+                            list_color_mod_ie.Add("RAL 9005", "RAL 9005");
+                            list_color_mod_ie.Add("RAL 9010", "RAL 9010");
+                        }
+                        @if (Model.special_paint_ie == "28 Color")
+                        {
+                            <td colspan="8" cellpadding="10">
+                                @Html.LabelFor(model => model.color_mod_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                                @foreach (var item in list_color_mod_ie)
+                                {
+                                    if (Model.color_mod_ie == @item.Key)
+                                    {
+                                        <span>@item.Value</span>
+                                    }
+                                }
+                            </td>
+                        }
+                        else
+                        {
+                            <td colspan="8" cellpadding="10">
+                                @Html.LabelFor(model => model.color_mod_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                                <span>please specify below</span>
+                            </td>
+                        }
+                    </tr>
+                    }
+
+                    <tr>
+                        <td colspan="8" cellpadding="10">
+                            @{ Dictionary<string, string> list_ul_nema_other_ie = new Dictionary<string, string>();
+                                list_ul_nema_other_ie.Add("Not Rated", "Not Rated");
+                                list_ul_nema_other_ie.Add("UL", "UL");
+                                list_ul_nema_other_ie.Add("NEMA", "NEMA");
+                            }
+                            @Html.LabelFor(model => model.ul_nema_other_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @foreach (var item in list_ul_nema_other_ie)
+                            {
+                                if (Model.ul_nema_other_ie == @item.Key)
+                                {
+                                    <span>@item.Value</span>
+                                }
+                            }
+                        </td>
+                    </tr>
+
+                    @if (Model.ul_nema_other_ie != "Not Rated")
+                    {
+                    <tr class="form-group ie_rating">
+                        <td colspan="8" cellpadding="10">
+                            @{ Dictionary<string, string> list_rating_ie = new Dictionary<string, string>();
+                                list_rating_ie.Add("Not Rated", "Not Rated");
+                                list_rating_ie.Add("1_12", "1, 12");
+                                list_rating_ie.Add("1_12_3R_4", "1, 12, 3R, 4");
+                                list_rating_ie.Add("1_12_3R_4x", "1, 12, 3R, 4x");
+                            }
+                            @Html.LabelFor(model => model.rating_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @foreach (var item in list_rating_ie)
+                            {
+                                if (Model.rating_ie == @item.Key)
+                                {
+                                    <span>@item.Value</span>
+                                }
+                            }
+                        </td>
+                    </tr>
+                    }                              
+                </table>
+            </td>
+        </tr>
+    }
+    else if (@Model.product_category == "ts8-it")
+    {
+        <tr>
+            <td colspan="40">
+                <table style="background: #DEF2E1;padding: 15px 10px 60px 30px;margin: 25px;width:100%;">
+                    <tr>
+                        <td colspan="8" cellpadding="10" >
+                            <h3>TS8-Data Center</h3>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="8" cellpadding="10">
+                            @{ Dictionary<string, string> list_enclosure_type_it = new Dictionary<string, string>();
+                                list_enclosure_type_it.Add("global", "Global");
+                                list_enclosure_type_it.Add("server_optimized", "Server Optimized");
+                            }
+                            @Html.LabelFor(model => model.enclosure_type_it, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @foreach (var item in list_enclosure_type_it)
+                            {
+                                if (Model.enclosure_type_it == @item.Key)
+                                {
+                                    <span>@item.Value</span>
+                                }
+                            }
+                        </td>
+                    </tr>
+
+                    <tr class="form-group">
+                        <td colspan="8" cellpadding="10">
+                            @Html.LabelFor(model => model.part_num_it, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @Html.DisplayFor(model => model.part_num_it, new { htmlAttributes = new { @class = "form-control" } })
+                        </td>
+                    </tr>
+
+                    <tr class="form-group">
+                        <td colspan="8" cellpadding="10">
+                            @Html.LabelFor(model => model.size_hxwxd_it, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @Html.DisplayFor(model => model.size_hxwxd_it, new { htmlAttributes = new { @class = "form-control" } })
+                        </td>
+                    </tr>
+
+                    <tr class="form-group">
+                        <td colspan="8" cellpadding="10">
+                            @{ Dictionary<string, string> list_color_it = new Dictionary<string, string>();
+                                list_color_it.Add("RAL9005TXT", "RAL9005TXT");
+                                list_color_it.Add("RAL7035TXT", "RAL7035TXT");
+                                list_color_it.Add("other", "Other");
+                            }
+                            @Html.LabelFor(model => model.color_it, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @foreach (var item in list_color_it)
+                            {
+                                if (Model.color_it == @item.Key)
+                                {
+                                    <span>@item.Value</span>
+                                }
+                            }
+                        </td>
+                    </tr>
+
+                    <tr class="form-group">
+                        <td colspan="8" cellpadding="10">
+                            @{ Dictionary<string, string> list_sidewall_style_it = new Dictionary<string, string>();
+                                list_sidewall_style_it.Add("Without sidewall", "Without sidewall");
+                                list_sidewall_style_it.Add("split", "Split");
+                                list_sidewall_style_it.Add("solid", "Solid");
+                            }
+                            @Html.LabelFor(model => model.sidewall_style_it, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @foreach (var item in list_sidewall_style_it)
+                            {
+                                if (Model.sidewall_style_it == @item.Key)
+                                {
+                                    <span>@item.Value</span>
+                                }
+                            }
+                        </td>
+                    </tr>
+
+                    <tr class="form-group">
+                        <td colspan="8" cellpadding="10">
+                            @{ Dictionary<string, string> list_sidewall_location_it = new Dictionary<string, string>();
+                                list_sidewall_location_it.Add("without_sidewall", "Without sidewall");
+                                list_sidewall_location_it.Add("sidewall_left", "Sidewall Left");
+                                list_sidewall_location_it.Add("sidewall_right", "Sidewall Right");
+                                list_sidewall_location_it.Add("sidewall_left_right", "Sidewall Left/Right");
+                            }
+                            @Html.LabelFor(model => model.sidewall_location_it, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @foreach (var item in list_sidewall_location_it)
+                            {
+                                if (Model.sidewall_location_it == @item.Key)
+                                {
+                                    <span>@item.Value</span>
+                                }
+                            }
+                        </td>
+                    </tr>
+
+                    <tr class="form-group">
+                        <td colspan="8" cellpadding="10">
+                            @{ Dictionary<string, string> list_castors_it = new Dictionary<string, string>();
+                                list_castors_it.Add("without", "Without");
+                                list_castors_it.Add("with", "With");
+                            }
+                            @Html.LabelFor(model => model.castors_it, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @foreach (var item in list_castors_it)
+                            {
+                                if (Model.castors_it == @item.Key)
+                                {
+                                    <span>@item.Value</span>
+                                }
+                            }
+                        </td>
+                    </tr>
+
+                    <tr class="form-group">
+                        <td colspan="8" cellpadding="10">
+                            @{ Dictionary<string, string> list_Leveling_feet_it = new Dictionary<string, string>();
+                                list_Leveling_feet_it.Add("shipped_with", "Shipped With");
+                                list_Leveling_feet_it.Add("Installed", "Installed");
+                            }
+                            @Html.LabelFor(model => model.Leveling_feet_it, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @foreach (var item in list_Leveling_feet_it)
+                            {
+                                if (Model.Leveling_feet_it == @item.Key)
+                                {
+                                    <span>@item.Value</span>
+                                }
+                            }
+                        </td>
+                    </tr>
+
+                    <tr class="form-group">
+                        <td colspan="8" cellpadding="10">
+                            @{ Dictionary<string, string> list_front_it = new Dictionary<string, string>();
+                                list_front_it.Add("Perf_Door", "Perf Door");
+                                list_front_it.Add("split_perf", "Split Perf Door");
+                                list_front_it.Add("without", "Without");
+                                list_front_it.Add("with_rear_wall", "With Rear Wall");
+                                list_front_it.Add("Solid Hinged Right", "With Rear Wall");
+                                list_front_it.Add("viewing_door", "Viewing Door");
+                                list_front_it.Add("Split Solid door", "Split Solid door");
+                            }
+                            @Html.LabelFor(model => model.front_it, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @foreach (var item in list_front_it)
+                            {
+                                if (Model.front_it == @item.Key)
+                                {
+                                    <span>@item.Value</span>
+                                }
+                            }
+                        </td>
+                    </tr>
+
+                    <tr class="form-group">
+                        <td colspan="8" cellpadding="10">
+                            @{ Dictionary<string, string> list_rear_it = new Dictionary<string, string>();
+                                list_rear_it.Add("split_perf", "Split Perf Door");
+                                list_rear_it.Add("Perf_Door", "Perf Door");
+                                list_rear_it.Add("without", "Without");
+                                list_rear_it.Add("with_rear_wall", "With Rear Wall");
+                                list_rear_it.Add("Solid Hinged Right", "With Rear Wall");
+                                list_rear_it.Add("viewing_door", "Viewing Door");
+                                list_rear_it.Add("Split Solid door", "Split Solid door");
+                            }
+                            @Html.LabelFor(model => model.rear_it, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @foreach (var item in list_rear_it)
+                            {
+                                if (Model.rear_it == @item.Key)
+                                {
+                                    <span>@item.Value</span>
+                                }
+                            }
+                        </td>
+                    </tr>
+
+                    <tr class="form-group">
+                        <td colspan="8" cellpadding="10">
+                            @{ Dictionary<string, string> list_cable_it = new Dictionary<string, string>();
+                                list_cable_it.Add("open", "Open");
+                                list_cable_it.Add("w_base frame w_gland plate", "w/base frame w/gland plate");
+                            }
+                            @Html.LabelFor(model => model.cable_it, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @foreach (var item in list_cable_it)
+                            {
+                                if (Model.cable_it == @item.Key)
+                                {
+                                    <span>@item.Value</span>
+                                }
+                            }
+                        </td>
+                    </tr>
+
+                    <tr class="form-group">
+                        <td colspan="8" cellpadding="10">
+                            @{ Dictionary<string, string> list_handles_it = new Dictionary<string, string>();
+                                list_handles_it.Add("Semi Cylinder", "Semi Cylinder");
+                                list_handles_it.Add("Combo_Security Handle", "Combo/Security Handle");
+                                list_handles_it.Add("Comfort Handle", "Comfort Handle");
+                            }
+                            @Html.LabelFor(model => model.handles_it, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @foreach (var item in list_handles_it)
+                            {
+                                if (Model.handles_it == @item.Key)
+                                {
+                                    <span>@item.Value</span>
+                                }
+                            }
+                        </td>
+                    </tr>
+
+                    <tr class="form-group">
+                        <td colspan="8" cellpadding="10">
+                            @{ Dictionary<string, string> list_inserts_it = new Dictionary<string, string>();
+                                list_inserts_it.Add("Pushbutton", "Pushbutton");
+                                list_inserts_it.Add("Locking pushbutton", "Locking pushbutton");
+                                list_inserts_it.Add("Locking", "Locking");
+                            }
+                            @Html.LabelFor(model => model.inserts_it, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @foreach (var item in list_inserts_it)
+                            {
+                                if (Model.inserts_it == item.Key)
+                                {
+                                    <span>@item.Value</span>
+                                }
+                            }
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="8">
+                            <b><u>Accessories</u></b><br />
+                            <b>Installed Accessories</b>
+                        </td>
+                    </tr>
+
+                    <tr class="form-group">
+                        <td colspan="8" cellpadding="10">
+                            @{ Dictionary<string, string> list_partition_wall_it = new Dictionary<string, string>();
+                                list_partition_wall_it.Add("without", "Without");
+                                list_partition_wall_it.Add("solid_right", "Solid Right");
+                                list_partition_wall_it.Add("solid_left", "Solid Left");
+                                list_partition_wall_it.Add("cable_entry_right", "Cable Entry Right");
+                            }
+                            @Html.LabelFor(model => model.partition_wall_it, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @foreach (var item in list_partition_wall_it)
+                            {
+                                if (Model.partition_wall_it == item.Key)
+                                {
+                                    <span>@item.Value</span>
+                                }
+                            }
+                        </td>
+                    </tr>
+
+                    <tr class="form-group">
+                        <td colspan="8" cellpadding="10">
+                            @{ Dictionary<string, string> list_baffles_it = new Dictionary<string, string>();
+                                list_baffles_it.Add("no baffles", "No Baffles");
+                                list_baffles_it.Add("Standard Brush", "Standard Brush");
+                                list_baffles_it.Add("Standard Metal", "Standard Metal");
+                                list_baffles_it.Add("other", "Other");
+                            }
+                            @Html.LabelFor(model => model.baffles_it, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @foreach (var item in list_baffles_it)
+                            {
+                                if (Model.baffles_it == item.Key)
+                                {
+                                    <span>@item.Value</span>
+                                }
+                            }
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="8" cellpadding="10"><b>Ship Loose Accessories</b></td>
+                    </tr>
+                    
+                    <tr class="form-group">
+                        <td colspan="8" cellpadding="10">
+                            @{ Dictionary<string, string> list_bsaying_brackets_it = new Dictionary<string, string>();
+                                list_bsaying_brackets_it.Add("no", "No");
+                                list_bsaying_brackets_it.Add("Yes-Define below", "Yes");
+                            }
+                            @Html.LabelFor(model => model.bsaying_brackets_it, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @foreach (var item in list_bsaying_brackets_it)
+                            {
+                                if (Model.bsaying_brackets_it == item.Key)
+                                {
+                                    <span>@item.Value</span>
+                                }
+                            }
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="8"><b>PDU A Quantity:</b></td>
+                    </tr>
+                  
+                    <tr>
+                        <td colspan="8" cellpadding="10">
+                            @Html.LabelFor(model => model.intell_data, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @Html.DisplayFor(model => model.intell_data, new { htmlAttributes = new { @class = "form-control" } })
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="8" cellpadding="10">
+                            @Html.LabelFor(model => model.voltage_data, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @Html.DisplayFor(model => model.voltage_data, new { htmlAttributes = new { @class = "form-control" } })
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="8" cellpadding="10">
+                            @Html.LabelFor(model => model.amp_data, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @Html.DisplayFor(model => model.amp_data, new { htmlAttributes = new { @class = "form-control" } })
+                        </td>
+                    </tr>
+
+                    <tr class="form-group">
+                        <td class="col-md-10">
+                            @Html.LabelFor(model => model.outlet_it, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @Html.DisplayFor(model => model.outlet_it, new { htmlAttributes = new { @class = "form-control" } })
+                        </td>
+                    </tr>
+
+                    <tr class="form-group">
+                        <td colspan="8" cellpadding="10">
+                            @Html.LabelFor(model => model.quantity_type_data, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @Html.DisplayFor(model => model.quantity_type_data, new { htmlAttributes = new { @class = "form-control" } })
+                        </td>
+                    </tr>
+
+                    <tr class="form-group">
+                        <td colspan="8" cellpadding="10">
+                            @Html.LabelFor(model => model.input_cord_it, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @Html.DisplayFor(model => model.input_cord_it, new { htmlAttributes = new { @class = "form-control" } })
+                        </td>
+                    </tr>
+
+                    <tr class="form-group">
+                        <td colspan="8" cellpadding="10">
+                            @Html.LabelFor(model => model.expansion_it, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @if (Model.expansion_it == "1")
+                            {
+                                <span>Yes</span>
+                            }
+                            else
+                            {
+                                <span>No</span>
+                            }
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    }
+    else if (@Model.product_category == "WM_AE_JB")
+    {
+        <tr>
+            <td colspan="40">
+                <table style="background: #BBDDF7;padding: 15px 10px 60px 30px;margin: 25px;width:100%;" >
+                    <tr>
+                        <td colspan="8" cellpadding="10" >
+                            <h3>WM/AE/JB</h3>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="8" cellpadding="10">
+                            @Html.LabelFor(model => model.part_num_WM_AE_JB, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @Html.DisplayFor(model => model.part_num_WM_AE_JB, new { htmlAttributes = new { @class = "form-control" } })
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="8" cellpadding="10">
+                            @Html.LabelFor(model => model.size_hxwxd_WM_AE_JB, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @Html.DisplayFor(model => model.size_hxwxd_WM_AE_JB, new { htmlAttributes = new { @class = "form-control" } })
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="8" cellpadding="10">
+                            @{ Dictionary<string, string> list_material_WM_AE_JB = new Dictionary<string, string>();
+                                list_material_WM_AE_JB.Add("carbon", "Carbon");
+                                list_material_WM_AE_JB.Add("304", "304 Stainless");
+                                list_material_WM_AE_JB.Add("316", "316 Stainless");
+                            }
+                            @Html.LabelFor(model => model.material_WM_AE_JB, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @foreach (var item in list_material_WM_AE_JB)
+                            {
+                                if (Model.material_WM_AE_JB == @item.Key)
+                                {
+                                    <span>@item.Value</span>
+                                }
+                            }
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="8" cellpadding="10">
+                            @{ Dictionary<string, string> list_mpl_WM_AE_JB = new Dictionary<string, string>();
+                                list_mpl_WM_AE_JB.Add("with", "With MPL");
+                                list_mpl_WM_AE_JB.Add("without", "Without MPL");
+                            }
+                            @Html.LabelFor(model => model.mpl_WM_AE_JB, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @foreach (var item in list_mpl_WM_AE_JB)
+                            {
+                                if (Model.mpl_WM_AE_JB == @item.Key)
+                                {
+                                    <span>@item.Value</span>
+                                }
+                            }
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="8" cellpadding="10">
+                            @{ Dictionary<string, string> list_latching_wm = new Dictionary<string, string>();
+                                list_latching_wm.Add("Slotted Quarterturn", "Slotted Quarterturn");
+                                list_latching_wm.Add("Double bit Quarterturn", "Double bit Quarterturn");
+                                list_latching_wm.Add("3 Point Latch L Handle", "3 Point Latch L Handle");
+                                list_latching_wm.Add("3 Point Latch Locking L handle", "3 Point Latch Locking L handle");
+                                list_latching_wm.Add("3 Point Latch Pad lockable", "3 Point Latch Locking L handlen");
+                                list_latching_wm.Add("other", "Other");
+                            }
+                            @Html.LabelFor(model => model.latching_wm, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @foreach (var item in list_latching_wm)
+                            {
+                                if (Model.latching_wm == @item.Key)
+                                {
+                                    <span>@item.Value</span>
+                                }
+                            }
+                        </td>
+                    </tr>
+
+                    <tr class="form-group">
+                        <td colspan="8" cellpadding="10">
+                            @Html.LabelFor(model => model.body_modified_wm, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @if (Model.body_modified_wm == "1")
+                            {
+                                <span>YES</span>
+                            }
+                            else
+                            {
+                               <span>NO</span>
+                            }
+                        </td>
+                    </tr>
+
+                    <tr class="form-group">
+                        <td colspan="8" cellpadding="10">
+                            @Html.LabelFor(model => model.door_modified_wm, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @if (Model.door_modified_wm == "1")
+                            {
+                                <span>YES</span>
+                            }
+                            else
+                            {
+                                <span>NO</span>
+                            }
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="8" cellpadding="10">
+                            @Html.LabelFor(model => model.mpl_modified_wm, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @if (Model.mpl_modified_wm == "1")
+                            {
+                                <span>YES</span>
+                            }
+                            else
+                            {
+                                <span>NO</span>
+                            }
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="8" cellpadding="10">
+                            @Html.LabelFor(model => model.specialpaint_wm_1, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @if (Model.specialpaint_wm_1 == "1")
+                            {
+                                <span>YES</span>
+                            }
+                            else
+                            {
+                                <span>NO</span>
+                            }
+                        </td>
+                    </tr>
+                    @if (Model.specialpaint_wm_1 == "1")
+                    {
+                    <tr>
+                        <td colspan="8" cellpadding="10">
+                            @{ Dictionary<string, string> list_special_paint_wm = new Dictionary<string, string>();
+                                list_special_paint_wm.Add("standard", "Standard");
+                                list_special_paint_wm.Add("28 Color", "28 Color");
+                                list_special_paint_wm.Add("other", "Other");
+                            }
+                            @Html.LabelFor(model => model.special_paint_wm, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @foreach (var item in list_special_paint_wm)
+                            {
+                                if (Model.special_paint_wm == @item.Key)
+                                {
+                                    <span>@item.Value</span>
+                                }
+                            }
+                        </td>
+                    </tr>
+
+                    <tr class="form-group color_mod_wm">
+                        @{ Dictionary<string, string> list_color_WM_AE_JB = new Dictionary<string, string>();
+                            list_color_WM_AE_JB.Add("ANSI 61", "ANSI 61");
+                            list_color_WM_AE_JB.Add("RAL 1015", "RAL 1015");
+                            list_color_WM_AE_JB.Add("RAL 1023", "RAL 1023");
+                            list_color_WM_AE_JB.Add("RAL 1033", "RAL 1033");
+                            list_color_WM_AE_JB.Add("RAL 2000", "RAL 2000");
+                            list_color_WM_AE_JB.Add("RAL 2002", "RAL 2002");
+                            list_color_WM_AE_JB.Add("RAL 2004", "RAL 2004");
+                            list_color_WM_AE_JB.Add("RAL 3001", "RAL 3001");
+                            list_color_WM_AE_JB.Add("RAL 3005", "RAL 3005");
+                            list_color_WM_AE_JB.Add("RAL 3020", "RAL 3020");
+                            list_color_WM_AE_JB.Add("RAL 5005", "RAL 5005");
+                            list_color_WM_AE_JB.Add("RAL 5010", "RAL 5010");
+                            list_color_WM_AE_JB.Add("RAL 5012", "RAL 5012");
+                            list_color_WM_AE_JB.Add("RAL 5015", "RAL 5015");
+                            list_color_WM_AE_JB.Add("RAL 5017", "RAL 5017");
+                            list_color_WM_AE_JB.Add("RAL 5018", "RAL 5018");
+                            list_color_WM_AE_JB.Add("RAL 6002", "RAL 6002");
+                            list_color_WM_AE_JB.Add("RAL 6003", "RAL 6003");
+                            list_color_WM_AE_JB.Add("RAL 6011", "RAL 6011");
+                            list_color_WM_AE_JB.Add("RAL 7012", "RAL 7012");
+                            list_color_WM_AE_JB.Add("RAL 7022", "RAL 7022");
+                            list_color_WM_AE_JB.Add("RAL 7032", "RAL 7032");
+                            list_color_WM_AE_JB.Add("RAL 7035", "RAL 7035");
+                            list_color_WM_AE_JB.Add("RAL 9001", "RAL 9001");
+                            list_color_WM_AE_JB.Add("RAL 9002", "RAL 9002");
+                            list_color_WM_AE_JB.Add("RAL 9003", "RAL 9003");
+                            list_color_WM_AE_JB.Add("RAL 9005", "RAL 9005");
+                            list_color_WM_AE_JB.Add("RAL 9010", "RAL 9010");
+                        }
+                        @if (Model.special_paint_wm == "28 Color")
+                        {
+                            <td colspan="8" cellpadding="10">
+                                @Html.LabelFor(model => model.color_WM_AE_JB, htmlAttributes: new { @class = "control-label col-md-2" })
+                                @foreach (var item in list_color_WM_AE_JB)
+                                {
+                                    if (Model.color_WM_AE_JB == @item.Key)
+                                    {
+                                        <span>@item.Value</span>
+                                    }
+                                }
+                            </td>
+                        }
+                        else
+                        {
+                            <td colspan="8" cellpadding="10">
+                                @Html.LabelFor(model => model.color_WM_AE_JB, htmlAttributes: new { @class = "control-label col-md-2" })
+                                <span>please specify below</span>
+                            </td>
+                        }
+                    </tr>
+                    }
+
+                    <tr>
+                        <td colspan="8" cellpadding="10">
+                            @{ Dictionary<string, string> list_ul_nema_WM_AE_JB = new Dictionary<string, string>();
+                                list_ul_nema_WM_AE_JB.Add("Not Rated", "Not Rated");
+                                list_ul_nema_WM_AE_JB.Add("UL", "UL");
+                                list_ul_nema_WM_AE_JB.Add("NEMA", "NEMA");
+                            }
+                            @Html.LabelFor(model => model.ul_nema_WM_AE_JB, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @foreach (var item in list_ul_nema_WM_AE_JB)
+                            {
+                                if (Model.ul_nema_WM_AE_JB == @item.Key)
+                                {
+                                    <span>@item.Value</span>
+                                }
+                            }
+                        </td>
+                    </tr>
+
+                    @if (Model.ul_nema_WM_AE_JB != "Not Rated")
+                    {
+                    <tr>
+                        <td colspan="8" cellpadding="10">
+                            @{ Dictionary<string, string> list_rating_WM_AE_JB = new Dictionary<string, string>();
+                                list_rating_WM_AE_JB.Add("Not Rated", "Not Rated");
+                                list_rating_WM_AE_JB.Add("1_12", "1, 12");
+                                list_rating_WM_AE_JB.Add("1_12_3R_4", "1, 12, 3R, 4");
+                                list_rating_WM_AE_JB.Add("1_12_3R_4x", "1, 12, 3R, 4x");
+                            }
+                            @Html.LabelFor(model => model.rating_WM_AE_JB, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @foreach (var item in list_rating_WM_AE_JB)
+                            {
+                                if (Model.rating_WM_AE_JB == @item.Key)
+                                {
+                                    <span>@item.Value</span>
+                                }
+                            }
+                        </td>
+                    </tr>
+                   }
+                </table>
+            </td>
+        </tr>
+    }
+    else
+    {
+        <tr>
+            <td colspan="40">
+                <table style="background: #D7D5DD;padding: 15px 10px 60px 30px;margin: 25px;width:100%;" >
+                    <tr>
+                        <td colspan="8" cellpadding="10" >
+                            <h3>Other or Spare Parts</h3>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="8" cellpadding="10">
+                            @Html.LabelFor(model => model.part_num_other_1, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @Html.DisplayFor(model => model.part_num_other_1, new { htmlAttributes = new { @class = "form-control" } })
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="8" cellpadding="10">
+                            @Html.LabelFor(model => model.size_hxwxd_other_1, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @Html.DisplayFor(model => model.size_hxwxd_other_1, new { htmlAttributes = new { @class = "form-control" } })
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="8" cellpadding="10">
+                            @{ Dictionary<string, string> list_material_other_1 = new Dictionary<string, string>();
+                                list_material_other_1.Add("carbon", "Carbon");
+                                list_material_other_1.Add("304", "304 Stainless");
+                                list_material_other_1.Add("316", "316 Stainless");
+                                list_material_other_1.Add("aluzinc", "Aluzinc");
+                            }
+                            @Html.LabelFor(model => model.material_other_1, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @foreach (var item in list_material_other_1)
+                            {
+                                if (Model.material_other_1 == @item.Key)
+                                {
+                                    <span>@item.Value</span>
+                                }
+                            }
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="8" cellpadding="10">
+                            @Html.LabelFor(model => model.body_modified_other_1, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @if (Model.body_modified_other_1 == "1")
+                            {
+                                <span>YES</span>
+                            }
+                            else
+                            {
+                                <span>NO</span>
+                            }
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="8" cellpadding="10">
+                            @Html.LabelFor(model => model.door_modified_other_1, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @if (Model.door_modified_other_1 == "1")
+                            {
+                                <span>YES</span>
+                            }
+                            else
+                            {
+                                <span>NO</span>
+                            }
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="8" cellpadding="10">
+                            @Html.LabelFor(model => model.mpl_modified_other_1, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @if (Model.mpl_modified_other_1 == "1")
+                            {
+                                <span>YES</span>
+                            }
+                            else
+                            {
+                                <span>NO</span>
+                            }
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="8" cellpadding="10">
+                            @Html.LabelFor(model => model.specialpaint_other_1, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @if (Model.specialpaint_other_1 == "1")
+                            {
+                                <span>YES</span>
+                            }
+                            else
+                            {
+                                <span>NO</span>
+                            }
+                        </td>
+                    </tr>
+
+                    @if (Model.specialpaint_other_1 == "1")
+                    {
+                    <tr>
+                        <td colspan="8" cellpadding="10">
+                            @{ Dictionary<string, string> list_special_paint_other = new Dictionary<string, string>();
+                                list_special_paint_other.Add("standard", "standard");
+                                list_special_paint_other.Add("28 Color", "28 Color");
+                                list_special_paint_other.Add("other", "Other");
+                            }
+                            @Html.LabelFor(model => model.special_paint_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @foreach (var item in list_special_paint_other)
+                            {
+                                if (Model.specialpaint_other == @item.Key)
+                                {
+                                    <span>@item.Value</span>
+                                }
+                            }
+                        </td>
+                    </tr>
+
+                    <tr>
+                        @{ Dictionary<string, string> list_color_mod_other = new Dictionary<string, string>();
+                            list_color_mod_other.Add("ANSI 61", "ANSI 61");
+                            list_color_mod_other.Add("RAL 1015", "RAL 1015");
+                            list_color_mod_other.Add("RAL 1023", "RAL 1023");
+                            list_color_mod_other.Add("RAL 1033", "RAL 1033");
+                            list_color_mod_other.Add("RAL 2000", "RAL 2000");
+                            list_color_mod_other.Add("RAL 2002", "RAL 2002");
+                            list_color_mod_other.Add("RAL 2004", "RAL 2004");
+                            list_color_mod_other.Add("RAL 3001", "RAL 3001");
+                            list_color_mod_other.Add("RAL 3005", "RAL 3005");
+                            list_color_mod_other.Add("RAL 3020", "RAL 3020");
+                            list_color_mod_other.Add("RAL 5005", "RAL 5005");
+                            list_color_mod_other.Add("RAL 5010", "RAL 5010");
+                            list_color_mod_other.Add("RAL 5012", "RAL 5012");
+                            list_color_mod_other.Add("RAL 5015", "RAL 5015");
+                            list_color_mod_other.Add("RAL 5017", "RAL 5017");
+                            list_color_mod_other.Add("RAL 5018", "RAL 5018");
+                            list_color_mod_other.Add("RAL 6002", "RAL 6002");
+                            list_color_mod_other.Add("RAL 6003", "RAL 6003");
+                            list_color_mod_other.Add("RAL 6011", "RAL 6011");
+                            list_color_mod_other.Add("RAL 7012", "RAL 7012");
+                            list_color_mod_other.Add("RAL 7022", "RAL 7022");
+                            list_color_mod_other.Add("RAL 7032", "RAL 7032");
+                            list_color_mod_other.Add("RAL 7035", "RAL 7035");
+                            list_color_mod_other.Add("RAL 9001", "RAL 9001");
+                            list_color_mod_other.Add("RAL 9002", "RAL 9002");
+                            list_color_mod_other.Add("RAL 9003", "RAL 9003");
+                            list_color_mod_other.Add("RAL 9005", "RAL 9005");
+                            list_color_mod_other.Add("RAL 9010", "RAL 9010");
+                        }
+                        @if (Model.specialpaint_other == "28 Color")
+                        {
+                            <td colspan="8" cellpadding="10">
+                                @Html.LabelFor(model => model.color_mod_other, htmlAttributes: new { @class = "control-label col-md-2" })
+                                @foreach (var item in list_color_mod_other)
+                                {
+                                    if (Model.color_mod_other == @item.Key)
+                                    {
+                                        <span>@item.Value</span>
+                                    }
+                                }
+                            </td>
+                        }
+                        else
+                        {
+                            <td colspan="8" cellpadding="10">
+                                @Html.LabelFor(model => model.color_mod_other, htmlAttributes: new { @class = "control-label col-md-2" })
+                                <span>please specify below</span>
+                            </td>
+                        }
+                    </tr>
+                    }
+                    <tr>
+                        <td colspan="8" cellpadding="10">
+                            @{ Dictionary<string, string> list_ul_nema_other_1 = new Dictionary<string, string>();
+                                list_ul_nema_other_1.Add("Not Rated", "Not Rated");
+                                list_ul_nema_other_1.Add("UL", "UL");
+                                list_ul_nema_other_1.Add("NEMA", "NEMA");
+                            }
+                            @Html.LabelFor(model => model.ul_nema_other_1, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @foreach (var item in list_ul_nema_other_1)
+                            {
+                                if (Model.ul_nema_other_1 == @item.Key)
+                                {
+                                    <span>@item.Value</span>
+                                }
+                            }
+                        </td>
+                    </tr>
+
+                    <tr class="form-group other_rating">
+                        <td colspan="8" cellpadding="10">
+                            @{ Dictionary<string, string> list_rating_other_1 = new Dictionary<string, string>();
+                                list_rating_other_1.Add("Not Rated", "Not Rated");
+                                list_rating_other_1.Add("1_12", "1, 12");
+                                list_rating_other_1.Add("1_12_3R_4", "1, 12, 3R, 4");
+                                list_rating_other_1.Add("1_12_3R_4x", "1, 12, 3R, 4x");
+                            }
+                            @Html.LabelFor(model => model.rating_other_1, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @foreach (var item in list_rating_other_1)
+                            {
+                                if (Model.rating_other_1 == @item.Key)
+                                {
+                                    <span>@item.Value</span>
+                                }
+                            }
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    }
+
+    @*Set colors*@
+    @if (@Model.product_category == "ts8-ie")
+    {
+        ViewBag.color = "background: #E5E2AE;padding: 0px 10px 60px 30px;margin-top:-30px;";
+    }
+    else if (@Model.product_category == "ts8-it")
+    {
+        ViewBag.color = "background: #DEF2E1;padding: 0px 10px 60px 30px;margin-top:-30px;";
+    }
+    else if (@Model.product_category == "WM_AE_JB")
+    {
+        ViewBag.color = "background: #DEF2E1;padding: 0px 10px 60px 30px;margin-top:-30px;";
+    }
+    else
+    {
+        ViewBag.color = "background: #D7D5DD;padding: 0px 10px 60px 30px;margin-top:-30px;";
+    }
+    <tr style="@ViewBag.color;">
+        <td colspan="40" cellpadding="10">
+            <h3>Additional information:</h3>
+            @Html.DisplayFor(model => model.additional_info_footer, new { htmlAttributes = new { @class = "form-control" } })
+        </td>
+    </tr>
+
+    <tr>
+        <td colspan="40" cellpadding="10" >
+            <h3>Installed Parts</h3>
+            <table style="border:solid #000;width:100%;" >
+                <tr>
+                    <td>Qty</td>
+                    <td>Part No.</td>
+                    <td>Description</td>
+                    <td></td>
+                </tr>
+                <tbody id="add_installed_parts">
+                    @if (Model.list_installed_parts != null && Model.list_installed_parts.Count() > 0)
+                    {
+                        int m = 0;
+                        foreach (var item in Model.list_installed_parts.FirstOrDefault().qty_installed.Split(','))
+                        {
+                            <tr id="@m" class="installed_parts_@m">
+                                <td>
+                                    <span class="field-validation-valid text-danger" data-valmsg-for="qty_installed" data-valmsg-replace="true">@Model.list_installed_parts.FirstOrDefault().qty_installed.Split(',')[m]</span>
+                                </td>
+                                <td>
+                                    <span class="field-validation-valid text-danger" data-valmsg-for="part_number_installed" data-valmsg-replace="true">@Model.list_installed_parts.FirstOrDefault().part_number_installed.Split(',')[m]</span>
+                                </td>
+                                <td>
+                                    <span class="field-validation-valid text-danger" data-valmsg-for="description_installed" data-valmsg-replace="true">@Model.list_installed_parts.FirstOrDefault().description_installed.Split(',')[m]</span>
+                                </td>
+                            </tr>
+                            m++;
+                        }
+                    }
+                </tbody>
+            </table>
+
+            <h3>Ship with Parts</h3>
+            <table style="border:solid #000;width:100%;" colspan="40">
+                <tr>
+                    <td>Qty</td>
+                    <td>Part No.</td>
+                    <td>Description</td>
+                    <td></td>
+                </tr>
+                <tbody id="add_shipped_parts">
+                    @if (Model.list_shipped_parts != null && Model.list_shipped_parts.Count() > 0)
+                    {
+                        int m = 0;
+                        foreach (var item in Model.list_shipped_parts.FirstOrDefault().qty_shipped.Split(','))
+                        {
+                            <tr id="@m" class="shipped_parts_@m">
+                                <td>
+                                    <span class="field-validation-valid text-danger" data-valmsg-for="qty_shipped" data-valmsg-replace="true">@Model.list_shipped_parts.FirstOrDefault().qty_shipped.Split(',')[m]</span>
+                                </td>
+                                <td>
+                                    <span class="field-validation-valid text-danger" data-valmsg-for="part_number_shipped" data-valmsg-replace="true">@Model.list_shipped_parts.FirstOrDefault().part_number_shipped.Split(',')[m]</span>
+                                </td>
+                                <td>
+                                    <span class="field-validation-valid text-danger" data-valmsg-for="description_shipped" data-valmsg-replace="true">@Model.list_shipped_parts.FirstOrDefault().description_shipped.Split(',')[m]</span>
+                                </td>
+                            </tr>
+                            m++;
+                        }
+                    }
+                </tbody>
+            </table>
+        </td>
+    </tr>
+
+    <tr>
+        <td colspan="40">
+            <br clear="all" />
+            @if (Model.list_RFQ_files != null)
+            {
+                <h3>Attached files</h3>
+                <ul style="background:#a4f19e;padding-bottom:20px;width:100%;">
+                    @{Dictionary<string, string> img_extensions = new Dictionary<string, string>();
+                        img_extensions.Add(".jpg", ".jpg");
+                        img_extensions.Add(".png", ".png");
+                        img_extensions.Add(".gif", ".gif");
+                        img_extensions.Add(".bmp", ".bmp");
+                    }
+                    @if (Model.list_RFQ_files.Count() > 0)
+                    {
+                        foreach (var item in Model.list_RFQ_files)
+                        {
+                            if (img_extensions.Values.ToList().Contains(item.file_type))
+                            {
+                                <li style="display:inline-block;margin:20px;">
+                                    <a href="~/attachments/rfq_tool/images/@item.file_name" target="_blank">Image</a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li style="display:inline-block;margin:20px;">
+                                    <a href="~/attachments/rfq_tool/images/@item.file_name" target="_blank">View File</a>
+                                </li>
+                            }
+                        }
+                    }
+                </ul>
+             }
+        </td>
+    </tr>
+
+</table>
+
+
+

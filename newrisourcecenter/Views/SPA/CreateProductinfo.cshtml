@@ -1,0 +1,150 @@
+﻿@model newrisourcecenter.Models.SPAItemViewModel
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "";
+    int? userId = Convert.ToInt32(Session["userId"]);
+    int? companyId = Convert.ToInt32(Session["companyId"]);
+}
+
+<script>
+    $("#Quantity").attr("ng-model", "productListings.Quantity");
+    $("#Product_line").attr("ng-model", "productListings.Product_line");
+    $("#Product_group").attr("ng-model", "productListings.Product_group");
+    $("#Item_Status").attr("ng-model", "productListings.Item_Status");   
+</script>
+@using (Html.BeginForm())
+{
+    <div class="form-horizontal" >
+        <hr />
+        <h4>{{formAction}}</h4>
+        <div style="display:inline-block;">
+            <a href="" ng-click="showProductsForm()" ng-hide="addlink" class="btn alert-info">Click here to add a product</a>
+        </div>
+        <div style="display:inline-block;vertical-align:top;">
+            <span ng-if="contractdata.Contract_type==1">
+                <a href="~/attachments/spa/templates/fixed_quantiy.csv" class="btn alert-warning">Download Fixed Quantity Template for buld upload</a>
+            </span>
+            <span ng-if="contractdata.Contract_type!=1">
+                <a href="~/attachments/spa/templates/open_end.csv" class="btn alert-success">Download Open Ended Template for bulk upload</a>
+            </span>
+        </div>
+        <div style="display:inline-block;vertical-align:top;background-color:aliceblue;padding:5px;">
+            Upload Updated file
+            <input type="file" name="myfiles" multiple files-Data="myfiles" />
+            <a href="" ng-click="saveFiless(contractdata.Spa_id)" class="btn btn-primary">Upload Now</a>
+        </div>
+        <br />
+        <div ng-show="addproduct" id="addproduct" >
+            <div class="form-group" ng-show="showselected" >
+                <div style="display:inline-block;" >
+                    <label>Search Sku</label><select id="Sku_id" name="Sku_id" class="form-control" ng-change="getSKUData()" ng-model="productListings.Sku_id">
+                        @foreach (var sku in Model.List_skus)
+                        {
+                            <option value="@sku.ID">@sku.material</option>
+                        }
+                    </select>
+                    @Html.ValidationMessageFor(model => model.Sku_id, "", new { @class = "text-danger" })
+                </div>
+
+                <div style="display:inline-block;" >
+                    <label>Search Sku</label><input type="text" ng-change="searchGetSKUData()" ng-model="search_Sku_id" class="form-control" >
+                    <div style="position:absolute;display:none;background:#fff;" id="searchbox">
+                        <div ng-repeat="skus in skudata">
+                            <a href="" ng-click="getSKUData(skus.ID)" style="margin:20px;" >{{skus.material}}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <table class="table" ng-show="selectedskus" >
+                <thead>
+                    <tr>
+                        <th>SKU</th>
+                        <th>Description</th>
+                        <th>List Price</th>
+                        <th ng-if="cdata=='yes'" >Cost</th>
+                        <th>Into Stock Price</th>
+                        <th>Into Stock Multiplier</th>
+                        <th ng-if="contractdata.Contract_type==1">Quantity</th>
+                        <th>Requested Multiplier</th>
+                        <th>Requested Price</th>
+                        <th>Target Price</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td ng-model="productListings.Sku_code" >{{productListings.Sku_code}}</td>
+                        <td ng-model="productListings.Product_name">{{productListings.Product_name}}</td>
+                        <td ng-model="productListings.ListPrice" >{{productListings.ListPrice}}</td>
+                        <td ng-model="productListings.Cost" ng-if="cdata=='yes'" >{{productListings.Cost}}</td>
+                        <td ng-model="productListings.IntoStockPrice">{{productListings.IntoStockPrice}}</td>
+                        <td ng-model="productListings.IntoStockMultiplier">{{productListings.IntoStockMultiplier}}</td>
+                        <td ng-if="contractdata.Contract_type==1"><input style="width:70px;" class="form-control" type="text" ng-model="productListings.Quantity" value="{{productListings}}" /></td>
+                        <td><input style="width:70px;" class="form-control" type="text" ng-model="productListings.Requested_multiplier" value="{{productListings.Requested_multiplier}}" ng-change="calculatePrice()" /></td>          
+                        <td><div><span style="display:inline-block;">$</span><input style="width:70px;display:inline-block;" class="form-control" type="text" ng-model="productListings.Requested_price" value="{{productListings.Requested_price}}" ng-change="calculateMultiplier()" /></div></td>
+                        <td><div><span style="display:inline-block;">$</span><input style="width:70px;display:inline-block;" class="form-control" type="text" ng-model="productListings.Target_price" value="{{productListings.Target_price}}" /></div></td>
+                       <td ng-if="save=='Yes'"><span href="" ng-click="addProducts()" class="btn btn-info">Save</span></td>
+                        <td ng-if="save=='No'"><span href="" ng-click="updateProducts(productListings.Item_id)" class="btn btn-info">Update Item ID {{productListings.Item_id}}</span></td>
+                    </tr>
+                </tbody>
+            </table>
+            <input class="form-control" type="hidden" ng-model="productListings.Date_Created" value="{{productListings.Date_Created}}" />
+        </div>
+        <br />
+        <div ng-if="duplicates.length>0" id="duplicates" style="display:inline-block;vertical-align:top;margin-right:10px;border:solid 1px dashed;background-color:aliceblue;padding:10px;font-size:12px;color:red;" >
+           <h4 style="color:#000;" >Rejected Duplicate SKUs</h4>
+            <ul>
+                <li ng-repeat="duplicate in duplicates">{{duplicate.SKU}}</li>
+            </ul>
+        </div>
+        <div ng-if="failedItems.length>0" id="failedItems" style="display:inline-block;vertical-align:top;border:solid 1px dashed;background-color:aliceblue;padding:10px;font-size:12px;color:red;" >
+            <h4 style="color:#000;" > Rejected unsupported SKUs</h4>
+            <ul>
+                <li ng-repeat="failedItem in failedItems">{{failedItem.SKU}}</li>
+            </ul>
+        </div>
+        <br />
+        <h4>Added Products</h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Item ID</th>
+                    <th>SKU</th>
+                    <th>Description</th>
+                    <th ng-if="contractdata.Contract_type==1">Quantity</th>
+                    <th>Requested Multiplier</th>
+                    <th>Requested Price</th>
+                    <th>Target Price</th>
+                    <td></td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr id="{{ product.Item_id }}" ng-repeat="product in products">
+                    <td>{{ product.Item_id }}</td>
+                    <td>{{ product.Sku }}</td>
+                    <td>{{ product.Product_name }}</td>
+                    <td ng-if="contractdata.Contract_type==1">{{ product.Quantity }}</td>
+                    <td>{{ product.Requested_multiplier }}</td>
+                    <td>${{ product.Requested_price }}</td>
+                    <td>${{ product.Target_price }}</td>
+                    <td><a href="" ng-click="getProducts(product.Item_id)"  >Edit</a> | <a href="" ng-click="deleteProducts(product.Item_id)">Delete</a></td>
+                </tr>
+            </tbody>
+        </table>
+        <br />
+        {{cdata}}
+        <div style="float:left;">
+            <span class="btn btn-primary" ng-click="customerView('main/'+contractdata.Spa_id+'/'+cdata)" ><< Back</span>
+        </div>
+        <div style="float:right;">
+            <span class="btn btn-primary" ng-click="participantsView('participants/'+contractdata.Spa_id)">Next >></span>
+        </div>
+        <br />
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>

@@ -1,0 +1,35 @@
+﻿@model newrisourcecenter.Models.partnerStockCheckViewModel
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>partnerStockCheckViewModel</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.ps_account)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ps_account)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.usr_user)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.usr_user)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.ps_ID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

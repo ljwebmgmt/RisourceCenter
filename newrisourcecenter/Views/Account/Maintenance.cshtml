@@ -1,0 +1,56 @@
+﻿@using newrisourcecenter.Models
+@model LoginViewModel
+
+<article align="center">
+    <div valign="top" id="loginForm">
+        @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+        {
+            @Html.AntiForgeryToken()
+            <h4>@ViewBag.Title</h4>
+            <hr />
+            <h3> @Html.ValidationSummary(true, "", new { @class = "text-danger" })</h3>
+            <div class="form-group">
+                @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @placeholder = "Enter your email" })
+                    @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.PasswordFor(m => m.Password, new { @class = "form-control", @placeholder = "Enter your password" })
+                    @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-10">
+                    @Html.CheckBoxFor(m => m.RememberMe)
+                    @Html.LabelFor(m => m.RememberMe)
+                    <input type="submit" value="Log in" class="btn btn-primary" id="submit" />
+                </div>
+            </div>
+            <p>
+                @*Enable this once you have account confirmation enabled for password reset functionality*@
+                &raquo; @Html.ActionLink("Forgot your password?", "ForgotPassword") &raquo;
+            </p>
+            <br clear="all" />
+            <br clear="all" />
+            <div style="min-height: 10px;background:black;"></div>
+            <br clear="all" />
+            <br clear="all" />
+            <div align="left" style="color: #fff;padding:20px;letter-spacing: none;background:#000;height:80px;font-weight:bolder;">
+                Interested in having access to the RiSource Center?
+                @Html.ActionLink("Click here", "RegisterTemp",null,htmlAttributes: new { @id="access_id"})
+                to request access.
+            </div>
+        }
+    </div>
+    @{ Html.RenderPartial("_Slider"); }
+    <br clear="all" />
+</article>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+

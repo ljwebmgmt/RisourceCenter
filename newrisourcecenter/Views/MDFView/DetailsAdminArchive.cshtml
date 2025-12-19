@@ -1,0 +1,333 @@
+﻿@model newrisourcecenter.Models.MDFViewModel
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    dt {
+        background: #CCC;
+        padding: 8px;
+        border-top: 1px solid #ddd;
+    }
+</style>
+@using (Html.BeginForm("ApEdit", "MDFView", FormMethod.Post, new { enctype = "multipart/form-data", @id = "returnsforms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.mdf_ID)
+    <div class="form-horizontal">
+        <a href="/MDFView/ManageAdmin?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]" style="float:right;">back</a>
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.mdf_SAP)
+            </dt>
+
+            <dd>
+                <select name="mdf_sap" id="mdf_sap" message="SAP is required before proceeding." class="form-control">
+                    <option value="">SELECT SAP Account</option>
+                    @if (@Model.partner_loc.Count() > 0)
+                    {
+                        foreach (var item in Model.partner_loc)
+                        {
+                            if (item.loc_SAP_account == Model.mdf_SAP)
+                            {
+                                if (!string.IsNullOrEmpty(item.loc_name))
+                                {
+                                    <option value="@item.loc_SAP_account" selected>@item.loc_name - @item.loc_SAP_account</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.loc_SAP_account" selected>@Model.company - @item.loc_city - @item.loc_SAP_account</option>
+                                }
+                            }
+                            else
+                            {
+                                if (!string.IsNullOrEmpty(item.loc_name))
+                                {
+                                    <option value="@item.loc_SAP_account">@item.loc_name - @item.loc_SAP_account</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.loc_SAP_account">@Model.company - @item.loc_city - @item.loc_SAP_account</option>
+                                }
+                            }
+                        }
+                        <option value="0">none</option>
+                    }
+                    else
+                    {
+                        <option value="0">none</option>
+                    }
+                </select>
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.mdf_ID)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.mdf_ID)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.mdf_type)
+            </dt>
+
+            <dd>
+                <select name="mdf_type" class="form-control">
+                    @foreach (var type in ViewBag.type)
+                {
+                    if (Model.mdf_type == type.mdf_type_ID)
+                    {
+                            <option value="@type.mdf_type_ID" selected>@type.mdf_subType_name</option>
+                        }
+                        else
+                        {
+                            <option value="@type.mdf_type_ID">@type.mdf_subType_name</option>
+                        }
+                    }
+                </select>
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.mdf_user)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.requester)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.mdf_title)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.mdf_title)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.mdf_desc)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.mdf_desc)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.mdf_totalCost)
+            </dt>
+
+            <dd>
+                @String.Format("{0:C}", @Model.mdf_totalCost)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.mdf_mdfCost)
+            </dt>
+
+            <dd>
+                @String.Format("{0:C}", @Model.mdf_mdfCost)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.mdf_requestDate)
+            </dt>
+
+            <dd>
+                @String.Format("{0:d}", @Model.mdf_requestDate)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.mdf_date)
+            </dt>
+
+            <dd>
+                @String.Format("{0:d}", @Model.mdf_date)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.mdf_reviewDate)
+            </dt>
+
+            <dd>
+                @String.Format("{0:d}", @Model.mdf_reviewDate)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.mdf_validationDate)
+            </dt>
+
+            <dd>
+                @String.Format("{0:d}", @Model.mdf_validationDate)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.mdf_creditIssueDate)
+            </dt>
+
+            <dd>
+                @String.Format("{0:d}", @Model.mdf_creditIssueDate)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.mdf_comments3)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.mdf_comments3)
+            </dd>
+
+            <dt>
+                Supporting documents
+            </dt>
+
+            <dd>
+                @foreach (var item in Model.list_mdf_files)
+                {
+                    <span><a href="~/attachments/mdf/images/@item.mdf_file_name" target="_blank">@item.mdf_file_name</a> || </span>
+                }
+            </dd>
+        </dl>
+
+        <br />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.mdf_status)
+            </dt>
+
+            <dd>
+                @{ Dictionary<string, string> list_mdf_status = new Dictionary<string, string>();
+                list_mdf_status.Add("1", "Pending");
+                list_mdf_status.Add("2", "Denied");
+                list_mdf_status.Add("3", "Approved");
+                list_mdf_status.Add("4", "Completed");
+                list_mdf_status.Add("5", "Credit Issued");
+                list_mdf_status.Add("6", "Cancelled");
+                }
+                @foreach (var item in list_mdf_status)
+                {
+                    if (Model.mdf_status == Convert.ToInt32(@item.Key))
+                    {
+                        <input type="radio" value="@item.Key" name="mdf_status" checked /> @item.Value
+                    }
+                    else
+                    {
+                        <input type="radio" value="@item.Key" name="mdf_status" /> @item.Value
+                    }
+                }
+                @*<select name="mdf_status" class="form-control">
+                        @foreach (var item in list_mdf_status)
+                        {
+                            if (Model.mdf_status == Convert.ToInt32(@item.Key))
+                            {
+                                <option value="@item.Key" selected>@item.Value</option>
+                            }
+                            else
+                            {
+                                <option value="@item.Key">@item.Value</option>
+                            }
+                        }
+                    </select>*@
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.mdf_approvedAmt)
+            </dt>
+
+            <dd>
+                @Html.EditorFor(model => model.mdf_approvedAmt, new { htmlAttributes = new { @class = "form-control" } })
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.mdf_comments)
+            </dt>
+
+            <dd>
+                @Html.TextAreaFor(model => model.mdf_comments, new { htmlAttributes = new { @class = "form-control" } })
+            </dd>
+            <input name="userApproved" type="hidden" value="yes" />
+
+            @if (Model.mdf_approvedAmt != 0)
+            {
+                <dt>
+                    @Html.DisplayNameFor(model => model.mdf_validatedAmt)
+                </dt>
+
+                <dd>
+                    @Html.EditorFor(model => model.mdf_validatedAmt, new { htmlAttributes = new { @class = "form-control" } })
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.mdf_comments2)
+                </dt>
+
+                <dd>
+                    @Html.TextAreaFor(model => model.mdf_comments2, new { htmlAttributes = new { @class = "form-control" } })
+                </dd>
+                <input name="userCompleted" type="hidden" value="yes" />
+            }
+
+            @if (Model.mdf_validatedAmt != 0)
+            {
+                <dt>
+                    @Html.DisplayNameFor(model => model.mdf_creditMemoNum)
+                </dt>
+
+                <dd>
+                    @Html.EditorFor(model => model.mdf_creditMemoNum, new { htmlAttributes = new { @class = "form-control" } })
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.mdf_accountingInstruct)
+                </dt>
+
+                <dd>
+                    @Html.TextAreaFor(model => model.mdf_accountingInstruct, new { htmlAttributes = new { @class = "form-control" } })
+                </dd>
+                <input name="userCreditIssued" type="hidden" value="yes" />
+            }
+
+            <dt>Send out emails?</dt>
+            <dd align="left"><input type="checkbox" name="emails" value="1" checked></dd>
+
+        </dl>
+        @* Set values from the database *@
+        @Html.HiddenFor(model => model.mdf_ID)
+        @Html.HiddenFor(model => model.mdf_type)
+        @Html.HiddenFor(model => model.mdf_user)
+        @Html.HiddenFor(model => model.mdf_title)
+        @Html.HiddenFor(model => model.mdf_desc)
+        @Html.HiddenFor(model => model.mdf_totalCost)
+        @Html.HiddenFor(model => model.mdf_mdfCost)
+        @Html.HiddenFor(model => model.mdf_requestDate)
+        @Html.HiddenFor(model => model.mdf_date)
+        @Html.HiddenFor(model => model.mdf_reviewDate)
+        @Html.HiddenFor(model => model.mdf_creditIssueDate)
+        @Html.HiddenFor(model => model.mdf_validatedAmt)
+        @Html.HiddenFor(model => model.mdf_comments3)
+        @Html.HiddenFor(model => model.mdf_loc)
+        @Html.HiddenFor(model => model.mdf_creditMemoNum)
+        @Html.HiddenFor(model => model.mdf_accountingInstruct)
+        @Html.HiddenFor(model => model.archive_year)
+        @Html.HiddenFor(model => model.mdf_comp)
+        @Html.HiddenFor(model => model.mdf_SAP)
+        @Html.HiddenFor(model => model.mdf_validationDate)
+        @Html.HiddenFor(model => model.mdf_comments2)
+
+        <input type="hidden" value="@Request.QueryString["n1_name"]" name="n1_name" />
+        <input type="hidden" value="@Request.QueryString["n2_name"]" name="n2_name" />
+        <input type="hidden" value="@Model.company" name="company" />
+        @foreach (var type in ViewBag.type)
+        {
+            if (Model.mdf_type == type.mdf_type_ID)
+            {
+                <input type="hidden" value="@type.mdf_subType_name" name="subtype" />
+            }
+        }
+
+        <div data-role="controlgroup" data-type="horizontal" align="center">
+            <a href="/MDFView/ManageAdmin?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]" class="btn btn-primary">&nbsp;&nbsp;Back&nbsp;&nbsp;&nbsp;</a>
+            <input name="submit" type="submit" value="Submit" id="submit" class="btn btn-success" data-icon="arrow-r" data-iconpos="right">
+        </div>
+    </div>
+                    }

@@ -1,0 +1,740 @@
+﻿@model newrisourcecenter.Models.RFQViewModel
+
+@{
+Layout = null;
+ViewBag.Title = "Edit";
+int comp_type = Convert.ToInt32(Session["companyType"]);
+}
+
+<table style="width:100%;">
+    <tr>
+        <td colspan="8" style="float:right;color:red;">RFQ ID is @Model.ID</td>
+    </tr>
+    @if (Model.RFQExt != null)
+    {
+        <tr>
+            <td colspan="8">
+                <h4>&nbsp;<u>Additional Enclosures</u></h4>
+            </td>
+        </tr>
+        <tr style="width:100%;border: solid 1px #BBDDF7;height:auto;overflow:auto;">
+            <td style="width:19%;border: solid 1px #BBDDF7;padding:10px;margin: 0px 0px 5px 10px;display:inline-block;background:#a4f19e;">
+                <strong style="color:red;">Initial RFQ Form</strong>
+                <br /><br />
+                <span><strong>Product Category :</strong> @ViewBag.product_category</span><br />
+                <span><strong>Total Quantity :</strong> @ViewBag.total_qty</span><br />
+                <br />
+                @Html.ActionLink("View PDF", "getPDF", new { id = @ViewBag.original_id, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], ext_form = "no", admin = Request.QueryString["admin"], view = Request.QueryString["view"] }, new { @class = "btn btn-info" })
+                <br />
+            </td>
+            @{
+                int i = 2;
+                foreach (var item in Model.RFQExt)
+                {
+                    <td style="width:19%;border: solid 1px #BBDDF7;padding:20px;margin: 0px 0px 5px 10px;display:inline-block;vertical-align:top;">
+                        <span><strong>Product Category :</strong> @item.product_categories</span><br />
+                        <span><strong>Total Quantity :</strong> @item.total_quantity</span><br />
+                        @Html.ActionLink("View PDF", "GetPDFExt", new { id = item.rfqidExt, form_id = item.rfqid, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], ext_form = "yes", admin = Request.QueryString["admin"], view = Request.QueryString["view"] }, new { @class = "btn btn-info" })
+                    </td>
+                    i += 1;
+                }
+            }
+        </tr>
+    }
+
+    @if (@ViewBag.comp_type == 1)
+    {
+        @*User data goes here if users company type is 1*@
+        <tr><td colspan="8" cellpadding="10"><h3>Contact Information</h3></td></tr>
+        <tr>
+            <td colspan="8" cellpadding="10">
+                @Html.LabelFor(model => model.distro_name, htmlAttributes: new { @class = "control-label col-md-3" })
+                @Html.DisplayFor(model => model.distro_name, new { htmlAttributes = new { @class = "form-control" } })
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="8" cellpadding="10">
+                @Html.LabelFor(model => model.distro_company, htmlAttributes: new { @class = "control-label col-md-3" })
+                @Html.DisplayFor(model => model.distro_company, new { htmlAttributes = new { @class = "form-control" } })
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="8" cellpadding="10">
+                <label class="control-label col-md-1" for="sales_engineer">Requested By: *</label>
+                @Html.DisplayFor(model => model.sales_engineer, new { htmlAttributes = new { @class = "form-control" } })
+            </td>
+        </tr>
+    }
+    else
+    {
+        @*RFQ Information goes here if users company type is not 1*@
+        <tr><td colspan="8" cellpadding="10"><h3>Rittal Sales Information</h3></td></tr>
+        <tr>
+            <td colspan="8" cellpadding="10">
+                <label class="control-label col-md-2" for="sales_engineer">Requested By: *</label>
+                @Html.DisplayFor(model => model.sales_engineer, new { htmlAttributes = new { @class = "form-control" } })
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="8" cellpadding="10">
+                @Html.LabelFor(model => model.account_manager, htmlAttributes: new { @class = "control-label col-md-2" })
+                @Html.DisplayFor(model => model.account_manager, new { htmlAttributes = new { @class = "form-control" } })
+            </td>
+        </tr>
+    }
+    <tr>
+        <td colspan="8" cellpadding="10">
+            @Html.LabelFor(model => model.cell_phone, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.DisplayFor(model => model.cell_phone, new { htmlAttributes = new { @class = "form-control" } })
+        </td>
+    </tr>
+
+    <tr>
+        <td colspan="8" cellpadding="10">
+            @Html.LabelFor(model => model.email, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.DisplayFor(model => model.email, new { htmlAttributes = new { @class = "form-control" } })
+        </td>
+    </tr>
+
+    <tr>
+        <td colspan="8" cellpadding="10">
+            @Html.LabelFor(model => model.submission_date, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.DisplayFor(model => model.submission_date, new { htmlAttributes = new { @class = "form-control" } })
+        </td>
+    </tr>
+    <tr>
+        <td colspan="8" cellpadding="10">
+            <h3>RFQ Information</h3>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="8" cellpadding="10">
+            @Html.LabelFor(model => model.updated_quote, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.DisplayFor(model => model.updated_quote, new { htmlAttributes = new { @class = "form-control" } })
+        </td>
+    </tr>
+    @if (!string.IsNullOrEmpty(Model.updated_quote) && Model.updated_quote.ToLower() != "new quote")
+    {
+
+        <tr>
+            <td colspan="8" cellpadding="10">
+                @Html.LabelFor(model => model.qte_num, htmlAttributes: new { @class = "control-label col-md-2" })
+                @Html.DisplayFor(model => model.qte_num, new { htmlAttributes = new { @class = "form-control" } })
+            </td>
+        </tr>
+    }
+
+    @if (comp_type != 1)
+    {
+        <tr class="form-group">
+            <td colspan="8" cellpadding="10">
+                @Html.LabelFor(model => model.sold_to_party, htmlAttributes: new { @class = "control-label col-md-2" })
+                @Html.DisplayFor(model => model.sold_to_party, new { htmlAttributes = new { @class = "form-control" } })
+            </td>
+        </tr>
+        <tr>
+            <td colspan="8" cellpadding="10">
+                <label class="control-label col-md-2" for="sap_account_num">SAP Account Number: *</label>
+                @Html.DisplayFor(model => model.sap_account_num, new { htmlAttributes = new { @class = "form-control" } })
+            </td>
+        </tr>
+    }
+    else
+    {
+        <tr>
+            <td colspan="8" cellpadding="10">
+                <label class="control-label col-md-2" for="sap_account_num">Rittal Account Number: *</label>
+                @Html.EditorFor(model => model.sap_account_num, new { htmlAttributes = new { @class = "form-control" } })
+            </td>
+        </tr>
+    }
+
+    <tr>
+        <td colspan="8" cellpadding="10">
+            @Html.LabelFor(model => model.location, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.DisplayFor(model => model.location, new { htmlAttributes = new { @class = "form-control" } })
+        </td>
+    </tr>
+
+    <tr>
+        <td colspan="8" cellpadding="10">
+            @Html.LabelFor(model => model.end_contact, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.DisplayFor(model => model.end_contact, new { htmlAttributes = new { @class = "form-control" } })
+        </td>
+    </tr>
+
+    @if (comp_type != 1)
+    {
+        <tr>
+            <td colspan="8" cellpadding="10">
+                @Html.LabelFor(model => model.opportunity_num, htmlAttributes: new { @class = "control-label col-md-2" })
+                @Html.DisplayFor(model => model.opportunity_num, new { htmlAttributes = new { @class = "form-control" } })
+            </td>
+        </tr>
+    }
+
+    <tr>
+        <td colspan="8" cellpadding="10">
+            @Html.LabelFor(model => model.end_user_name, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.DisplayFor(model => model.end_user_name, new { htmlAttributes = new { @class = "form-control" } })
+        </td>
+    </tr>
+
+    <tr>
+        <td colspan="8" cellpadding="10">
+            @Html.LabelFor(model => model.end_user_location, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.DisplayFor(model => model.end_user_location, new { htmlAttributes = new { @class = "form-control" } })
+        </td>
+    </tr>
+
+    <tr>
+        <td colspan="8" cellpadding="10">
+            @Html.LabelFor(model => model.qte_ref, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.DisplayFor(model => model.qte_ref, new { htmlAttributes = new { @class = "form-control" } })
+        </td>
+    </tr>
+
+    <tr>
+        <td colspan="8" cellpadding="10">
+            @Html.LabelFor(model => model.competition, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.DisplayFor(model => model.competition, new { htmlAttributes = new { @class = "form-control" } })
+        </td>
+    </tr>
+
+    <tr>
+        <td colspan="8" cellpadding="10">
+            @Html.LabelFor(model => model.drawing_approval, htmlAttributes: new { @class = "control-label col-md-2" })
+            @if (Model.drawing_approval == 1)
+            {
+                <span>Yes</span>
+            }
+            else
+            {
+                <span>No</span>
+            }
+        </td>
+    </tr>
+    @if (Model.updated_quote != "Re-validate existing quote, no configuration changes")
+    {
+        <tr>
+            <td colspan="8" cellpadding="10">
+                <h3>Product Information</h3>
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="8" cellpadding="10">
+                @Html.LabelFor(model => model.total_qty, htmlAttributes: new { @class = "control-label col-md-2" })
+                @Html.DisplayFor(model => model.total_qty, new { htmlAttributes = new { @class = "form-control" } })
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="8" cellpadding="10">
+                @Html.LabelFor(model => model.release_qty, htmlAttributes: new { @class = "control-label col-md-2" })
+                @Html.DisplayFor(model => model.release_qty, new { htmlAttributes = new { @class = "form-control" } })
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="8" cellpadding="10">
+                @Html.LabelFor(model => model.product_category, htmlAttributes: new { @class = "control-label col-md-2" })
+                <span>@ViewBag.productCategoryName</span>
+            </td>
+        </tr>
+
+        if (Model.product_category == "ts8-ie" || Model.product_category == "vx-ie")
+        {
+            <tr>
+                <td colspan="12">
+                    <table style="background: #E5E2AE;padding: 15px 10px 60px 30px;margin: 25px;width:100%;">
+                        <tr>
+                            <td colspan="8" cellpadding="10">
+                                <h3>@ViewBag.productCategoryName</h3>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="8" cellpadding="10">
+                                @Html.LabelFor(model => model.part_type_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                                @Html.DisplayFor(model => model.part_type_ie, new { htmlAttributes = new { @class = "form-control" } })
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="8" cellpadding="10">
+                                @Html.LabelFor(model => model.part_num_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                                @Html.DisplayFor(model => model.part_num_ie, new { htmlAttributes = new { @class = "form-control" } })
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="8" cellpadding="10">
+                                @Html.LabelFor(model => model.size_hxwxd_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                                @Html.DisplayFor(model => model.size_hxwxd_ie, new { htmlAttributes = new { @class = "form-control" } })
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="8" cellpadding="10">
+                                @Html.LabelFor(model => model.special_dimension_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                                <span>@(Model.special_dimension_ie == 1 ? "Yes" : "No")</span>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="8" cellpadding="10">
+                                @Html.LabelFor(model => model.mods_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                                @Html.DisplayFor(model => model.mods_ie, new { htmlAttributes = new { @class = "form-control" } })
+                            </td>
+                        </tr>
+
+                        @if (!string.IsNullOrEmpty(Model.mods_ie))
+                        {
+                            if (Model.mods_ie.ToLower().Contains("special paint"))
+                            {
+                                <tr>
+                                    <td colspan="8" cellpadding="10">
+                                        @Html.LabelFor(model => model.color_mod_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                                        @Html.DisplayFor(model => model.color_mod_ie, new { htmlAttributes = new { @class = "form-control" } })
+                                    </td>
+                                </tr>
+                            }
+                            else if (Model.mods_ie.ToLower().Contains("suited"))
+                            {
+                                <tr>
+                                    <td colspan="8" cellpadding="10">
+                                        @Html.LabelFor(model => model.suited_enclosures_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                                        @Html.DisplayFor(model => model.suited_enclosures_ie, new { htmlAttributes = new { @class = "form-control" } })
+                                    </td>
+                                </tr>
+                                if (Model.suited_enclosures_ie.HasValue && Model.suited_enclosures_ie.Value > 0)
+                                {
+                                    for (int i = 1; i <= Model.suited_enclosures_ie; i++)
+                                    {
+                                        object objIE = Model.GetType().GetProperty("enclosure_" + i + "_ie").GetValue(Model);
+                                        string value = objIE != null ? objIE.ToString() : "";
+                                        string name = "enclosure_" + i + "_ie";
+                                        <tr>
+                                            <td colspan="8" cellpadding="10">
+                                                <label class="control-label col-md-2" for="@name">Enclosure @i (Part number HxWxD):</label>
+                                                <span>@value</span>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            }
+                        }
+
+                        <tr>
+                            <td colspan="8" cellpadding="10">
+                                @Html.LabelFor(model => model.ul_nema_other_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                                @Html.DisplayFor(model => model.ul_nema_other_ie, new { htmlAttributes = new { @class = "form-control" } })
+                            </td>
+                        </tr>
+
+                        @if (Model.ul_nema_other_ie != "Not Rated")
+                        {
+                            <tr class="form-group ie_rating">
+                                <td colspan="8" cellpadding="10">
+                                    @{ Dictionary<string, string> list_rating_ie = new Dictionary<string, string>();
+                                        list_rating_ie.Add("Not Rated", "Not Rated");
+                                        list_rating_ie.Add("1_12", "1, 12");
+                                        list_rating_ie.Add("1_12_3R_4", "1, 12, 3R, 4");
+                                        list_rating_ie.Add("1_12_3R_4x", "1, 12, 3R, 4x");
+                                    }
+                                    @Html.LabelFor(model => model.rating_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                                    @foreach (var item in list_rating_ie)
+                                    {
+                                        if (Model.rating_ie == @item.Key)
+                                        {
+                                            <span>@item.Value</span>
+                                        }
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </table>
+                </td>
+            </tr>
+        }
+        else if (Model.product_category == "ts8-it" || Model.product_category == "vx-it")
+        {
+            <tr>
+                <td colspan="12">
+                    <table style="background: #DEF2E1;padding: 15px 10px 60px 30px;margin: 25px;width:100%;">
+                        <tr>
+                            <td colspan="8" cellpadding="10">
+                                <h3>@ViewBag.productCategoryName</h3>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="8" cellpadding="10">
+                                @Html.LabelFor(model => model.part_type_it, htmlAttributes: new { @class = "control-label col-md-2" })
+                                @Html.DisplayFor(model => model.part_type_it, new { htmlAttributes = new { @class = "form-control" } })
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="8" cellpadding="10">
+                                @Html.LabelFor(model => model.part_num_it, htmlAttributes: new { @class = "control-label col-md-2" })
+                                @Html.DisplayFor(model => model.part_num_it, new { htmlAttributes = new { @class = "form-control" } })
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="8" cellpadding="10">
+                                @Html.LabelFor(model => model.size_hxwxd_it, htmlAttributes: new { @class = "control-label col-md-2" })
+                                @Html.DisplayFor(model => model.size_hxwxd_it, new { htmlAttributes = new { @class = "form-control" } })
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="8" cellpadding="10">
+                                @Html.LabelFor(model => model.special_dimension_it, htmlAttributes: new { @class = "control-label col-md-2" })
+                                <span>@(Model.special_dimension_ie == 1 ? "Yes" : "No")</span>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="8" cellpadding="10">
+                                @Html.LabelFor(model => model.mods_it, htmlAttributes: new { @class = "control-label col-md-2" })
+                                @Html.DisplayFor(model => model.mods_it, new { htmlAttributes = new { @class = "form-control" } })
+                            </td>
+                        </tr>
+
+                        @if (!string.IsNullOrEmpty(Model.mods_it))
+                        {
+                            if (Model.mods_it.ToLower().Contains("special paint"))
+                            {
+                                <tr>
+                                    <td colspan="8" cellpadding="10">
+                                        @Html.LabelFor(model => model.color_it, htmlAttributes: new { @class = "control-label col-md-2" })
+                                        @Html.DisplayFor(model => model.color_it, new { htmlAttributes = new { @class = "form-control" } })
+                                    </td>
+                                </tr>
+                            }
+                            else if (Model.mods_it.ToLower().Contains("suited"))
+                            {
+                                <tr>
+                                    <td colspan="8" cellpadding="10">
+                                        @Html.LabelFor(model => model.suited_enclosures_it, htmlAttributes: new { @class = "control-label col-md-2" })
+                                        @Html.DisplayFor(model => model.suited_enclosures_it, new { htmlAttributes = new { @class = "form-control" } })
+                                    </td>
+                                </tr>
+                                if (Model.suited_enclosures_it.HasValue && Model.suited_enclosures_it.Value > 0)
+                                {
+                                    for (int i = 1; i <= Model.suited_enclosures_it; i++)
+                                    {
+                                        object objIE = Model.GetType().GetProperty("enclosure_" + i + "_it").GetValue(Model);
+                                        string value = objIE != null ? objIE.ToString() : "";
+                                        string name = "enclosure_" + i + "_it";
+                                        <tr>
+                                            <td colspan="8" cellpadding="10">
+                                                <label class="control-label col-md-2" for="@name">Enclosure @i (Part number HxWxD):</label>
+                                                <span>@value</span>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            }
+                        }
+                    </table>
+                </td>
+            </tr>
+        }
+        else if (@Model.product_category == "WM_AE_JB")
+        {
+            <tr>
+                <td colspan="12">
+                    <table style="background: #BBDDF7;padding: 15px 10px 60px 30px;margin: 25px;width:100%;">
+                        <tr>
+                            <td colspan="8" cellpadding="10">
+                                <h3>WM/AE/AX/JB/KX</h3>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="8" cellpadding="10">
+                                @Html.LabelFor(model => model.part_num_WM_AE_JB, htmlAttributes: new { @class = "control-label col-md-2" })
+                                @Html.DisplayFor(model => model.part_num_WM_AE_JB, new { htmlAttributes = new { @class = "form-control" } })
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="8" cellpadding="10">
+                                @Html.LabelFor(model => model.size_hxwxd_WM_AE_JB, htmlAttributes: new { @class = "control-label col-md-2" })
+                                @Html.DisplayFor(model => model.size_hxwxd_WM_AE_JB, new { htmlAttributes = new { @class = "form-control" } })
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="8" cellpadding="10">
+                                @Html.LabelFor(model => model.special_dimension_WM_AE_JB, htmlAttributes: new { @class = "control-label col-md-2" })
+                                <span>@(Model.special_dimension_WM_AE_JB == 1 ? "Yes" : "No")</span>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="8" cellpadding="10">
+                                @Html.LabelFor(model => model.mods_WM_AE_JB, htmlAttributes: new { @class = "control-label col-md-2" })
+                                @Html.DisplayFor(model => model.mods_WM_AE_JB, new { htmlAttributes = new { @class = "form-control" } })
+                            </td>
+                        </tr>
+
+                        @if (!string.IsNullOrEmpty(Model.mods_WM_AE_JB) && Model.mods_WM_AE_JB.ToLower().Contains("special paint"))
+                        {
+                            <tr>
+                                <td colspan="8" cellpadding="10">
+                                    @Html.LabelFor(model => model.color_WM_AE_JB, htmlAttributes: new { @class = "control-label col-md-2" })
+                                    @Html.DisplayFor(model => model.color_WM_AE_JB, new { htmlAttributes = new { @class = "form-control" } })
+                                </td>
+                            </tr>
+                        }
+
+                        <tr>
+                            <td colspan="8" cellpadding="10">
+                                @Html.LabelFor(model => model.ul_nema_WM_AE_JB, htmlAttributes: new { @class = "control-label col-md-2" })
+                                @Html.DisplayFor(model => model.ul_nema_WM_AE_JB, new { htmlAttributes = new { @class = "form-control" } })
+                            </td>
+                        </tr>
+
+                        @if (Model.ul_nema_WM_AE_JB != "Not Rated")
+                        {
+                            <tr>
+                                <td colspan="8" cellpadding="10">
+                                    @{ Dictionary<string, string> list_rating_WM_AE_JB = new Dictionary<string, string>();
+                                        list_rating_WM_AE_JB.Add("Not Rated", "Not Rated");
+                                        list_rating_WM_AE_JB.Add("1_12", "1, 12");
+                                        list_rating_WM_AE_JB.Add("1_12_3R_4", "1, 12, 3R, 4");
+                                        list_rating_WM_AE_JB.Add("1_12_3R_4x", "1, 12, 3R, 4x");
+                                    }
+                                    @Html.LabelFor(model => model.rating_WM_AE_JB, htmlAttributes: new { @class = "control-label col-md-2" })
+                                    @foreach (var item in list_rating_WM_AE_JB)
+                                    {
+                                        if (Model.rating_WM_AE_JB == @item.Key)
+                                        {
+                                            <span>@item.Value</span>
+                                        }
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </table>
+                </td>
+            </tr>
+        }
+        else if (Model.product_category == "other")
+        {
+            <tr>
+                <td colspan="12">
+                    <table style="background: #D7D5DD;padding: 15px 10px 60px 30px;margin: 25px;width:100%;">
+                        <tr>
+                            <td colspan="8" cellpadding="10">
+                                <h3>OTHER</h3>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="8" cellpadding="10">
+                                @Html.LabelFor(model => model.part_num_other_1, htmlAttributes: new { @class = "control-label col-md-2" })
+                                @Html.DisplayFor(model => model.part_num_other_1, new { htmlAttributes = new { @class = "form-control" } })
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="8" cellpadding="10">
+                                @Html.LabelFor(model => model.size_hxwxd_other_1, htmlAttributes: new { @class = "control-label col-md-2" })
+                                @Html.DisplayFor(model => model.size_hxwxd_other_1, new { htmlAttributes = new { @class = "form-control" } })
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="8" cellpadding="10">
+                                @Html.LabelFor(model => model.special_dimension_other, htmlAttributes: new { @class = "control-label col-md-2" })
+                                <span>@(Model.special_dimension_other == 1 ? "Yes" : "No")</span>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="8" cellpadding="10">
+                                @Html.LabelFor(model => model.mods_other, htmlAttributes: new { @class = "control-label col-md-2" })
+                                @Html.DisplayFor(model => model.mods_other, new { htmlAttributes = new { @class = "form-control" } })
+                            </td>
+                        </tr>
+
+                        @if (!string.IsNullOrEmpty(Model.mods_other) && Model.mods_other.ToLower().Contains("special paint"))
+                        {
+                            <tr>
+                                <td colspan="8" cellpadding="10">
+                                    @Html.LabelFor(model => model.color_mod_other, htmlAttributes: new { @class = "control-label col-md-2" })
+                                    @Html.DisplayFor(model => model.color_mod_other, new { htmlAttributes = new { @class = "form-control" } })
+                                </td>
+                            </tr>
+                        }
+
+                        <tr>
+                            <td colspan="8" cellpadding="10">
+                                @Html.LabelFor(model => model.ul_nema_other_1, htmlAttributes: new { @class = "control-label col-md-2" })
+                                @Html.DisplayFor(model => model.ul_nema_other_1, new { htmlAttributes = new { @class = "form-control" } })
+                            </td>
+                        </tr>
+
+                        <tr class="form-group other_rating">
+                            <td colspan="8" cellpadding="10">
+                                @{ Dictionary<string, string> list_rating_other_1 = new Dictionary<string, string>();
+                                    list_rating_other_1.Add("Not Rated", "Not Rated");
+                                    list_rating_other_1.Add("1_12", "1, 12");
+                                    list_rating_other_1.Add("1_12_3R_4", "1, 12, 3R, 4");
+                                    list_rating_other_1.Add("1_12_3R_4x", "1, 12, 3R, 4x");
+                                }
+                                @Html.LabelFor(model => model.rating_other_1, htmlAttributes: new { @class = "control-label col-md-2" })
+                                @foreach (var item in list_rating_other_1)
+                                {
+                                    if (Model.rating_other_1 == @item.Key)
+                                    {
+                                        <span>@item.Value</span>
+                                    }
+                                }
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        }
+
+        @*Set colors*@
+        if (@Model.product_category == "ts8-ie" || Model.product_category == "vx-ie")
+        {
+            ViewBag.color = "background: #E5E2AE;padding: 0px 10px 60px 30px;margin-top:-30px;";
+        }
+        else if (@Model.product_category == "ts8-it" || Model.product_category == "vx-it")
+        {
+            ViewBag.color = "background: #DEF2E1;padding: 0px 10px 60px 30px;margin-top:-30px;";
+        }
+        else if (@Model.product_category == "WM_AE_JB")
+        {
+            ViewBag.color = "background: #BBDDF7;padding: 0px 10px 60px 30px;margin-top:-30px;";
+        }
+        else if (Model.product_category == "other")
+        {
+            ViewBag.color = "background: #D7D5DD;padding: 0px 10px 60px 30px;margin-top:-30px;";
+        }
+        <tr style="@ViewBag.color;">
+            <td colspan="8" cellpadding="10">
+                <h3>Additional information:</h3>
+                @Html.DisplayFor(model => model.additional_info_footer, new { htmlAttributes = new { @class = "form-control" } })
+            </td>
+        </tr>
+        <tr>
+            <td colspan="12" cellpadding="10">
+                @if (Model.list_installed_parts != null && Model.list_installed_parts.Count() > 0 && !string.IsNullOrEmpty(Model.list_installed_parts.FirstOrDefault().qty_installed.Trim()))
+                {
+                    <h3>Installed Parts</h3>
+                    <table style="border:solid #000;width:100%;">
+                        <tr>
+                            <td>Qty</td>
+                            <td>Part No.</td>
+                            <td>Description</td>
+                            <td></td>
+                        </tr>
+                        <tbody id="add_installed_parts">
+                            @if (Model.list_installed_parts != null && Model.list_installed_parts.Count() > 0)
+                            {
+                                int m = 0;
+                                foreach (var item in Model.list_installed_parts.FirstOrDefault().qty_installed.Split(','))
+                                {
+                                    <tr id="@m" class="installed_parts_@m">
+                                        <td>
+                                            <span class="field-validation-valid text-danger" data-valmsg-for="qty_installed" data-valmsg-replace="true">@Model.list_installed_parts.FirstOrDefault().qty_installed.Split(',')[m]</span>
+                                        </td>
+                                        <td>
+                                            <span class="field-validation-valid text-danger" data-valmsg-for="part_number_installed" data-valmsg-replace="true">@Model.list_installed_parts.FirstOrDefault().part_number_installed.Split(',')[m]</span>
+                                        </td>
+                                        <td>
+                                            <span class="field-validation-valid text-danger" data-valmsg-for="description_installed" data-valmsg-replace="true">@Model.list_installed_parts.FirstOrDefault().description_installed.Split(',')[m]</span>
+                                        </td>
+                                    </tr>
+                                    m++;
+                                }
+                            }
+                        </tbody>
+                    </table>
+                }
+                @if (Model.list_shipped_parts != null && Model.list_shipped_parts.Count() > 0 && !string.IsNullOrEmpty(Model.list_shipped_parts.FirstOrDefault().qty_shipped.Trim()))
+                {
+                    <h3>Ship with Parts</h3>
+                    <table style="border:solid #000;width:100%;">
+                        <tr>
+                            <td>Qty</td>
+                            <td>Part No.</td>
+                            <td>Description</td>
+                            <td></td>
+                        </tr>
+                        <tbody id="add_shipped_parts">
+                            @if (Model.list_shipped_parts != null && Model.list_shipped_parts.Count() > 0)
+                            {
+                                int m = 0;
+                                foreach (var item in Model.list_shipped_parts.FirstOrDefault().qty_shipped.Split(','))
+                                {
+                                    <tr id="@m" class="shipped_parts_@m">
+                                        <td>
+                                            <span class="field-validation-valid text-danger" data-valmsg-for="qty_shipped" data-valmsg-replace="true">@Model.list_shipped_parts.FirstOrDefault().qty_shipped.Split(',')[m]</span>
+                                        </td>
+                                        <td>
+                                            <span class="field-validation-valid text-danger" data-valmsg-for="part_number_shipped" data-valmsg-replace="true">@Model.list_shipped_parts.FirstOrDefault().part_number_shipped.Split(',')[m]</span>
+                                        </td>
+                                        <td>
+                                            <span class="field-validation-valid text-danger" data-valmsg-for="description_shipped" data-valmsg-replace="true">@Model.list_shipped_parts.FirstOrDefault().description_shipped.Split(',')[m]</span>
+                                        </td>
+                                    </tr>
+                                    m++;
+                                }
+                            }
+                        </tbody>
+                    </table>
+                }
+            </td>
+        </tr>
+
+    }
+
+    <tr class="form-group" id="images">
+        <td colspan="12" cellpadding="10">
+            <br clear="all" />
+            @if (Model.list_RFQ_files != null)
+            {
+                <h3>Attached files</h3>
+                <ul style="background:#a4f19e;padding-bottom:20px;width:100%;">
+                    @{Dictionary<string, string> img_extensions = new Dictionary<string, string>();
+                        img_extensions.Add(".jpg", ".jpg");
+                        img_extensions.Add(".png", ".png");
+                        img_extensions.Add(".gif", ".gif");
+                        img_extensions.Add(".bmp", ".bmp");
+                    }
+                    @if (Model.list_RFQ_files.Count() > 0)
+                    {
+                        foreach (var item in Model.list_RFQ_files)
+                        {
+                            if (img_extensions.Values.ToList().Contains(item.file_type))
+                            {
+                                <li style="display:inline-block;margin:20px;">
+                                    <a href="~/attachments/rfq_tool/images/@item.file_name" target="_blank">Image</a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li style="display:inline-block;margin:20px;">
+                                    <a href="~/attachments/rfq_tool/images/@item.file_name" target="_blank">View File</a>
+                                </li>
+                            }
+                        }
+                    }
+                </ul>
+            }
+        </td>
+    </tr>
+</table>
+
+
+

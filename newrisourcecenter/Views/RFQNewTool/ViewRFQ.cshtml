@@ -1,0 +1,496 @@
+@model newrisourcecenter.Models.RFQNewViewModel
+
+@{
+    ViewBag.Title = "View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int comp_type = Convert.ToInt32(Session["companyType"]);
+    bool isRittalUser = comp_type == 3 || comp_type == 5;
+}
+@if (!string.IsNullOrEmpty(@ViewBag.error))
+{
+    <h2 style="color:red;">@ViewBag.error</h2>
+}
+
+@if (!string.IsNullOrEmpty(Request.QueryString["success"]))
+{
+    <h2 style="color:green;">@Request.QueryString["success"]</h2>
+}
+<style type="text/css">
+    .text-capitalize {
+        text-transform: capitalize;
+    }
+
+    .control-label {
+        padding-top: 0 !important;
+    }
+
+    .me-2 {
+        margin-right: 10px;
+    }
+
+    .h3 {
+        font-size: 20px;
+        border-bottom: 1px solid;
+    }
+</style>
+<script type="text/javascript">
+    var enclosureString = '@Model.enclosures'.replaceAll('&quot;', '"');
+    var enclosures = enclosureString != '' ? JSON.parse(enclosureString) : [];
+    var category = '@Model.product_category';
+    var industry = '@Model.product_industry';
+    var type = category == "Wallmounted" ? "_wallmount" : (industry == "IT" ? "_it" : "");
+    var fields = [
+        'part_number','special_dimensions','width','height','depth','special_paint','front_door' + type,'rear_door' + type,'mounting_panel' + (category == "Wallmounted" ? "_wallmount" : ""),'roof' + (industry == "IT" ? "_it" : ""),
+        'base' + (industry == "IT" ? "_it" : ""),'sidewalls','climate_type','partition_walls','plinths','seismic','accessories','modifications'
+    ];
+    var conditional_fields = {
+        'special_paint': ['paint_color'],
+        'front_door': ['front_door_hinge','front_door_handle','front_door_insert','front_door_print_pocket','front_door_stop'],
+        'front_door_it': ['front_door_hinge','front_door_handle_it','front_door_insert_it','front_door_print_pocket','front_door_stop'],
+        'front_door_wallmount': ['front_door_wallmount_hinge','front_door_wallmount_handle'],
+        'rear_door': ['rear_door_hinge','rear_door_handle','rear_door_insert','rear_door_print_pocket','rear_door_stop'],
+        'rear_door_it': ['rear_doorhinge','rear_door_handle_it','rear_door_insert_it','rear_door_print_pocket','rear_door_stop'],
+        'rear_door_wallmount': ['rear_door_wallmount_hinge','rear_door_wallmount_handle'],
+        'sidewalls': ['sidewall_installed'],
+        'climate_type': ['ac_part_number','ac_surface','ac_location','ac_quantity','heat_part_number','heat_surface','heat_location','heat_quantity','fan_part_number','fan_installed','fan_surface','fan_location','fan_quantity','fan_filter_part_number','fan_filter_installed','fan_filter_surface','fan_filter_location','fan_filter_quantity'],
+        'plinths': ['plinth_height','plinth_side_mounting_panel'],
+        'seismic': ['seismic_with_plinth','seismic_with_mpl'],
+        'accessories': ['guided_accessories'],
+        'modifications': ['variants','modification_front_door','modification_rear_door','modification_left_sidewall','modification_right_sidewall','modification_mounting_panel','modification_roof','modification_plinth','modification_gland_plates','modification_wallmount_body','modification_wallmount_door','modification_wallmount_mounting_panel','modification_wallmount_gland_plates']
+    };
+    $(document).ready(function() {
+        $.each(enclosures,function(i,encl) {
+            var tab = $('.tab-pane[data-index="' + i + '"]');
+            var html = '';
+            $.each(fields,function(j,field) {
+                var fieldHtml = getFieldHtml(encl,field);
+                if(fieldHtml != '')
+                    html += fieldHtml;
+                if(conditional_fields.hasOwnProperty(field)) {
+                    $.each(conditional_fields[field],function(k,childField) {
+                        var fieldHtml = getFieldHtml(encl,childField);
+                        if(fieldHtml != '')
+                            html += fieldHtml;
+                    });
+                }
+                if(field == 'accessories') {
+                    var key = (encl['guided_accessories'] == 0 ? 'manual_' : '') + 'accessory';
+                    for(var l = 0;l < 100;l++) {
+                        var accessoryKey = key + '[' + l + ']';
+                        if(!encl.hasOwnProperty(accessoryKey + '[part_number]'))
+                            break;
+                        $.each(['part_number', 'quantity', 'install_location'], function (m, accessoryField) {
+                            var fieldHtml = getFieldHtml(encl, accessoryKey + '[' + accessoryField + ']', 'Accessory # ' + (l + 1) + ' ' + accessoryField.replace('_',' '));
+                            if(fieldHtml != '')
+                                html += fieldHtml;
+                        });
+                    }
+                }
+            });
+            tab.html(html);
+        });
+    });
+
+    function getFieldHtml(encl, field, label) {
+        var label = label || '';
+        var val = encl.hasOwnProperty(field) ? encl[field] : '';
+        if (val == null || val == '')
+            return '';
+        if (val == '1')
+            val = "Yes";
+        else if (val == "0")
+            val = "No";
+        else if (val.toLowerCase() == "other" && encl.hasOwnProperty(field + '[other]'))
+            val = encl[field + '[other]'];
+        return '<div class="form-group"><label class="control-label col-md-2 text-capitalize">' + (label == '' ? field.replaceAll('_', ' ') : label) + '</label><div class="col-md-10">' + val + '</div></div>';
+    }
+
+</script>
+
+<div class="col-sm-3 pull-right no-padding mt-2 me-2">
+    <div class="text-right">
+        @Html.ActionLink("Print", "ViewPDF", new { id = @ViewBag.original_id, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], ext_form = "no", admin = Request.QueryString["admin"], view = Request.QueryString["view"] }, new { @class = "btn btn-primary", @target = "_blank" })
+    </div>
+</div>
+@using (Html.BeginForm("ViewRFQ", "RFQNewTool", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+<div class="form-horizontal" style="background:#fff;padding:10px 40px 40px 40px;">
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <h3>RFQ Type</h3>
+    <div class="form-group">
+        @Html.LabelFor(model => model.updated_quote, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DisplayFor(model => model.updated_quote, new { htmlAttributes = new { @class = "form-control form-control-static" } })
+        </div>
+    </div>
+    @if (Model.updated_quote != "New quote")
+    {
+        <div class="form-group">
+            @Html.LabelFor(model => model.qte_num, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.qte_num, new { htmlAttributes = new { @class = "form-control form-control-static" } })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2">Notes: </label>
+            <div class="col-md-10">@Model.notes</div>
+        </div>
+    }
+
+    <h3>Rittal Sales Information</h3>
+    <div class="form-group">
+        <label class="control-label col-md-2" for="sales_engineer">Requested By:</label>
+        <div class="col-md-10">
+            @Html.DisplayFor(model => model.sales_engineer, new { htmlAttributes = new { @class = "form-control form-control-static" } })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.account_manager, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DisplayFor(model => model.account_manager, new { htmlAttributes = new { @class = "form-control form-control-static" } })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.cell_phone, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DisplayFor(model => model.cell_phone, new { htmlAttributes = new { @class = "form-control form-control-static" } })
+            @Html.HiddenFor(model => model.cell_phone, new { htmlAttributes = new { @class = "form-control form-control-static" } })
+            @Html.ValidationMessageFor(model => model.cell_phone, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.email, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DisplayFor(model => model.email, new { htmlAttributes = new { @class = "form-control form-control-static" } })
+            @Html.HiddenFor(model => model.email, new { htmlAttributes = new { @class = "form-control form-control-static" } })
+            @Html.ValidationMessageFor(model => model.email, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.submission_date, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.HiddenFor(model => model.submission_date, new { htmlAttributes = new { @class = "form-control form-control-static" } })
+            @Html.DisplayFor(model => model.submission_date, new { htmlAttributes = new { @class = "form-control form-control-static" } })
+            @Html.ValidationMessageFor(model => model.submission_date, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <h3>RFQ Information</h3>
+    <div class="form-group">
+        @Html.LabelFor(model => model.sold_to_party, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DisplayFor(model => model.sold_to_party, new { htmlAttributes = new { @class = "form-control form-control-static" } })
+            @Html.ValidationMessageFor(model => model.sold_to_party, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.location, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DisplayFor(model => model.location, new { htmlAttributes = new { @class = "form-control form-control-static" } })
+            @Html.ValidationMessageFor(model => model.location, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-2" for="sap_account_num">SAP Account Number:</label>
+        <div class="col-md-10">
+            @Html.DisplayFor(model => model.sap_account_num, new { htmlAttributes = new { @class = "form-control form-control-static" } })
+            @Html.ValidationMessageFor(model => model.sap_account_num, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    @if (isRittalUser)
+    {
+        <div class="form-group">
+            @Html.LabelFor(model => model.end_contact, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.end_contact, new { htmlAttributes = new { @class = "form-control form-control-static" } })
+            </div>
+        </div>
+    }
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.end_user_name, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DisplayFor(model => model.end_user_name, new { htmlAttributes = new { @class = "form-control form-control-static" } })
+            @Html.ValidationMessageFor(model => model.end_user_name, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.end_user_location, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DisplayFor(model => model.end_user_location, new { htmlAttributes = new { @class = "form-control form-control-static" } })
+            @Html.ValidationMessageFor(model => model.end_user_location, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.qte_ref, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DisplayFor(model => model.qte_ref, new { htmlAttributes = new { @class = "form-control form-control-static" } })
+            @Html.ValidationMessageFor(model => model.qte_ref, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    @if (Model.updated_quote == "New quote")
+    {
+        <h3>Product Information</h3>
+        <div class="form-group">
+            @Html.LabelFor(model => model.product_category, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">@Model.product_category</div>
+        </div>
+        if (Model.product_category != "Wallmounted")
+        {
+            <div class="form-group required-radio">
+                <label class="col-md-2 control-label">Industry:</label>
+                <div class="col-md-10">@Model.product_industry</div>
+            </div>
+            <div class="form-group required-radio">
+                <label class="col-md-2 control-label">Type:</label>
+                <div class="col-md-10">@Model.part_type_ie</div>
+            </div>
+            if (Model.part_type_ie == "Bayed Enclosure")
+            {
+                <div class="form-group">
+                    <label class="col-md-2 control-label" for="suited_enclosures_ie">No. of Enclosures:</label>
+                    <div class="col-md-10">@Model.suited_enclosures_ie</div>
+                    <div class="help-text">Suited Enclosures are Left to Right</div>
+                </div>
+                <div class="form-group required-radio">
+                    <label class="col-md-2 control-label">Default Baying Hardware?:</label>
+                    <div class="col-md-10">@(Model.default_baying_accessories == 1 ? "Yes" : "No")</div>
+                </div>
+                if (Model.default_baying_accessories == 0)
+                {
+                    <div class="form-group baying_hardware_wrapper hide">
+                        <label class="col-md-2 control-label">Baying Hardrware:</label>
+                        <div class="col-md-10">@Model.baying_accessories</div>
+                    </div>
+                }
+            }
+        }
+
+        <div class="enclosure-tab">
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active"><a href="#enclosure_1" role="tab" data-toggle="tab">Enclosure No. 1</a></li>
+                @for (int i = 2; i <= Model.suited_enclosures_ie; i++)
+                {
+                    <li role="presentation"><a href="#enclosure_@i" role="tab" data-toggle="tab">Enclosure No. @i</a></li>
+                }
+            </ul>
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="enclosure_1" data-index="0"></div>
+                @for (int i = 2; i <= Model.suited_enclosures_ie; i++)
+                {
+                    <div role="tabpanel" class="tab-pane" id="enclosure_@i" data-index="@(i - 1)"></div>
+                }
+            </div>
+        </div>
+    }
+
+
+    <h3>Quantity Information</h3>
+    @if (comp_type != 1)
+    {
+        <div class="form-group">
+            @Html.LabelFor(model => model.opportunity_num, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.opportunity_num, new { htmlAttributes = new { @class = "form-control form-control-static" } })
+                @Html.ValidationMessageFor(model => model.opportunity_num, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    }
+    <div class="form-group">
+        @Html.LabelFor(model => model.total_qty, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DisplayFor(model => model.total_qty, new { htmlAttributes = new { @class = "form-control form-control-static" } })
+            @Html.ValidationMessageFor(model => model.total_qty, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.release_qty, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DisplayFor(model => model.release_qty, new { htmlAttributes = new { @class = "form-control form-control-static" } })
+            @Html.ValidationMessageFor(model => model.release_qty, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <h3>RFQ Submission</h3>
+    <div class="form-group">
+        @Html.LabelFor(model => model.qte_description, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DisplayFor(model => model.qte_description, new { htmlAttributes = new { @class = "form-control form-control-static" } })
+        </div>
+    </div>
+    <div class="form-group" id="images">
+        @if (!string.IsNullOrEmpty(Request.QueryString["imagesuccess"]))
+        {
+            <h2 style="color:green;">@Request.QueryString["imagesuccess"]</h2>
+        }
+        <div class="col-md-10">
+            <br />
+            @if (Model.list_RFQ_files != null)
+            {
+                <ul style="background:#a4f19e;padding-bottom:20px;width:62%;">
+                    @{Dictionary<string, string> img_extensions = new Dictionary<string, string>();
+                        img_extensions.Add(".jpg", ".jpg");
+                        img_extensions.Add(".png", ".png");
+                        img_extensions.Add(".gif", ".gif");
+                        img_extensions.Add(".bmp", ".bmp");
+                    }
+                    @if (Model.list_RFQ_files.Count() > 0)
+                    {
+                        foreach (var item in Model.list_RFQ_files)
+                        {
+                            if (img_extensions.Values.ToList().Contains(item.file_type))
+                            {
+                                <li style="display:inline-block;margin:20px;">
+                                    <a href="~/attachments/rfq_tool/images/@item.file_name" target="_blank"><img src="~/attachments/rfq_tool/images/@item.file_name" style="width:60px;height:70px;" /></a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li style="display:inline-block;margin:20px;">
+                                    <a href="~/attachments/rfq_tool/images/@item.file_name" target="_blank">View File</a>
+                                </li>
+                            }
+                        }
+                    }
+                </ul>
+            }
+        </div>
+    </div>
+    @if (!string.IsNullOrEmpty(Request.QueryString["admin"]))
+    {
+        <h3>Admin Notes Section</h3>
+        <p>All notes will be recorded and can be viewed by both parties</p>
+        if (Model.list_RFQ_logs != null)
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <td colspan="4" style="color:#fff;font-weight:bolder;text-align:center;">Previous Admin Notes</td>
+                    </tr>
+                    <tr style="background:#E5E2AE;">
+                        <td>Name</td>
+                        <td>Action</td>
+                        <td>Time of Action</td>
+                        <td>Admin Note</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.list_RFQ_logs)
+                    {
+                        <tr>
+                            <td>@item.fullName</td>
+                            <td>@item.Action</td>
+                            <td>@item.Action_Time</td>
+                            <td>@item.Notes</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        if (Model.completion_date == null)
+        {
+            <fieldset>
+                <h3>Admin Notes:</h3>
+                <textarea name="admin_notes" rows="10" cols="50"></textarea>
+            </fieldset>
+            <br />
+        }
+        <div class="form-group">
+            @Html.LabelFor(model => model.Quote_Num, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Quote_Num, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Quote_Num, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <br />
+        if (Model.completion_date == null)
+        {
+            <div class="form-group">
+                <label class="control-label col-md-2">On Wait Status</label>
+                <div class="col-md-10">
+                    <select class="form-control form-control-static" name="wait_status">
+                        <option value=""></option>
+                        @{
+                            foreach (var status in ViewBag.waitStatus)
+                            {
+                                if (Model.list_RFQ_logs.LastOrDefault().Action == status)
+                                {
+                                    <option selected value="@status">@status</option>
+                                }
+                                else
+                                {
+                                    <option value="@status">@status</option>
+                                }
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-3">
+                    <input type="submit" value="Save Notes and Close" name="saveadmin" class="btn btn-default" />
+                </div>
+
+                <div class="col-sm-3">
+                    <input type="submit" value="Mark as Complete" name="complete" class="btn btn-default" />
+                </div>
+
+                <div class="col-sm-3">
+                    <input type="submit" value="Return with Notes" name="return" class="btn btn-default" />
+                </div>
+            </div>
+        }
+        else
+        {
+            <h4>This RFQ was completed on @Model.completion_date</h4>
+        }
+    }
+    @if (string.IsNullOrEmpty(ViewBag.form_id))
+    {
+        <input name="form_id" type="hidden" id="form_id" value="@Model.ID" />
+    }
+    else
+    {
+        <input name="form_id" type="hidden" id="form_id" value="@ViewBag.form_id" />
+    }
+
+    @if (string.IsNullOrEmpty(ViewBag.n2_name))
+    {
+        <input name="n2_name" type="hidden" id="n2_name" value="@Request.QueryString["n2_name"]" />
+    }
+    else
+    {
+        <input name="n2_name" type="hidden" id="n2_name" value="@ViewBag.n2_name" />
+    }
+
+    @if (string.IsNullOrEmpty(ViewBag.n1_name))
+    {
+        <input name="n1_name" type="hidden" id="n1_name" value="@Request.QueryString["n1_name"]" />
+    }
+    else
+    {
+        <input name="n1_name" type="hidden" id="n1_name" value="@ViewBag.n1_name" />
+    }
+
+    @if (string.IsNullOrEmpty(ViewBag.msg))
+    {
+        <input name="msg" type="hidden" id="msg" value="@Request.QueryString["msg"]" />
+    }
+    else
+    {
+        <input name="msg" type="hidden" id="msg" value="@ViewBag.msg" />
+    }
+    <input name="user_id" id="user_id" type="hidden" value=@Session["userId"] />
+</div>
+}
+    <div>
+        @Html.ActionLink("Back to List", "Index")
+    </div>

@@ -1,0 +1,32 @@
+﻿@model IQueryable<newrisourcecenter.Models.nav3>
+
+@{
+    ViewBag.Title = "Rittal University";
+}
+
+<article class="main_content">
+    <section>
+        <div id="page_text">
+            <h4>@Request.QueryString["n2_name"]</h4>
+            <p> @Html.Raw(@ViewBag.page_desc)</p>
+        </div>
+        <div id="tiles_list">
+        @foreach (var item in Model)
+        {
+
+            <div class="col-md-4">
+                <a href="~/RittalUniversity/test?dir_name=@item.file_name">
+                    <div class="thumbnail tile rittal-pink">
+                        <h2 style="font-size:12px;line-height:30px;">
+                            <strong>@item.n3_nameLong</strong>
+                            <br />
+                            @Html.Raw(item.n3_descLong)
+                        </h2>
+                    </div>
+                </a>
+            </div>
+        }
+        </div>
+        <br clear="all" />
+    </section>
+</article>

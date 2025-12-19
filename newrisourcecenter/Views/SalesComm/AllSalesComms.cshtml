@@ -1,0 +1,119 @@
+﻿@model IEnumerable<newrisourcecenter.Models.SalesCommViewModel>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    var searchCommunications = {
+        init: function () {
+
+        },
+        searchComm: function () {
+            var form_value = $("#form_value").val();
+            $.post("/SalesComm/searchComm/", { form_value: form_value }, function (result) {
+                var jsonObj = JSON.parse(result);
+                $("#tbody").empty();
+
+                if (jsonObj.status == "OK") {
+                    if (jsonObj.commData != "") {
+                        $.each(jsonObj.commData, function (i, data) {
+                            if (data.endDate == "1/1/1900") {
+                                endDate = "";
+                            } else {
+                                endDate = data.endDate;
+                            }
+                            $("#tbody").append('<tr><td>' + data.sc_headline + '</td><td>' + data.startDate + '</td><td>' + endDate + '</td><td><a class="btn btn-info" href="/SalesComm/Edit/' + data.scID + '?n3id=' + data.n3ID + '&amp;n1_name=@Request.QueryString["n1_name"]&amp;n2_name=@Request.QueryString["n2_name"]">Edit</a>&nbsp;<a class="btn btn-info" href="/SalesComm/Delete/' + data.scID + '?n3id=' + data.n3ID + '&amp;n1_name=@Request.QueryString["n1_name"]&amp;n2_name=@Request.QueryString["n2_name"]" id="delete" onclick="deletef(this.href);return false">Delete</a></td></tr>');
+                        });
+                    } else {
+                        $("#tbody").append('<tr><td colspan="3" ><h1>No results</h1></td></tr>');
+                    }
+                }
+            });
+        },
+    }
+    jQuery(document).ready(searchCommunications.init);
+</script>
+    <table>
+        <tr>
+            <td>
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                        Filter Communications By
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        @foreach (var item in @ViewBag.nav_Menu)
+                        {
+                            <li><a href="?n2id=@item.id&img=@item.img&n3id=@item.n3id&n1_name=@Request.QueryString["n1_name"]&n2_name=@item.name&n3_name=@item.n3name">@item.name - @item.n3name</a></li>
+                        }
+                    </ul>
+                </div>
+            </td>
+            <td>
+                <div class="dropdown">
+                    <span class="input-group stylish-input-group">
+                        <input type="text" id="form_value" value="" placeholder="search by doc name" class="form-control" />
+                        <span class="input-group-addon" id="submit_search">
+                            <button type="submit">
+                                <span class="glyphicon glyphicon-search" onclick="searchCommunications.searchComm();"></span>
+                            </button>
+                        </span>
+                    </span>
+                </div>
+            </td>
+            <td>
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                        Add Sales Communication
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        @foreach (var item in @ViewBag.nav_Menu)
+                        {
+                            <li><a href="Create?n2id=@item.id&img=@item.img&n3id=@item.n3id&n1_name=@Request.QueryString["n1_name"]&n2_name=@item.name&n3_name=@item.n3name">@item.name - @item.n3name</a></li>
+                        }
+                    </ul>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <br/>
+<div id="resultsList" >
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.sc_headline)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.sc_startDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.sc_endDate)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="tbody">
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.sc_headline)
+                    </td>
+                    <td>
+                        @string.Format("{0:d}", @item.sc_startDate)
+                    </td>
+                    <td>
+                        @string.Format("{0:d}", @item.sc_endDate)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { id = item.scID, n3id = item.n3ID, n2id = Request.QueryString["n2id"], n1_name = Request.QueryString["n1_name"], n2_name = Request.QueryString["n2_name"], n3_name = Request.QueryString["n3_name"] }, new { @class = "btn btn-info" })
+                        @Html.ActionLink("Delete", "Delete", new { id = item.scID, n3id = item.n3ID, n2id = Request.QueryString["n2id"], n1_name = Request.QueryString["n1_name"], n2_name = Request.QueryString["n2_name"], n3_name = Request.QueryString["n3_name"] }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false", @class = "btn btn-info" })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

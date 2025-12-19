@@ -1,0 +1,251 @@
+@model newrisourcecenter.Models.RisourcesReportViewModel
+@{
+    ViewBag.Title = "Risources Activity Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var typeList = new Dictionary<long, string>();
+    var jsTypeList = new Dictionary<string, string>();
+    foreach (var item in ViewBag.list_n2ID)
+    {
+        typeList.Add(item.Key, item.Value.name);
+        jsTypeList.Add(item.Key.ToString(), item.Value.name);
+    }
+}
+<style>
+    /* style the modal */
+    #modal {
+        background: #CCC;
+        width: 60%;
+        height: 50%;
+        min-height: 50%;
+        position: fixed;
+        top: 10%;
+        left: 20%;
+        right: 20%;
+        display: none;
+        z-index: 100;
+    }
+
+        #modal span {
+            float: right;
+        }
+
+        #modal > div:first-child {
+            margin-top: 20px;
+            padding: 20px;
+            background: white;
+            width: 90%;
+            height: 70%;
+            position: relative;
+            top: 10px;
+            margin-left: auto;
+            margin-right: auto;
+            color: black;
+            overflow: auto;
+        }
+
+    #close {
+        top: 30px;
+        position: relative;
+    }
+
+    .captial-text {
+        text-transform: capitalize;
+    }
+
+    .mr-2 {
+        margin-right: 10px;
+    }
+</style>
+<script>
+    const typeList = @Html.Raw(Json.Encode(jsTypeList));
+    var searchRiSources = {
+        init: function () {
+            var filter_form = $("#submit_search");
+            filter_form.on('click', function (e) {
+                e.preventDefault();
+                searchRiSources.searchRiS();
+            });
+            $('.btn-reset').on('click', searchRiSources.reset);
+        },
+        reset: function (e) {
+            e.preventDefault();
+            $('.filter-form')[0].reset();
+            $('.filter-form input').val('');
+            searchRiSources.searchRiS();
+        },
+        searchRiS: function () {
+            const data = $('.filter-form').serializeArray();
+            $.post("/RiSources/SearchRiSourcesWithActivity/", data, function (result) {
+                var jsonObj = JSON.parse(result);
+                $("#tbody").empty();
+
+                if (jsonObj.status == "OK") {
+                    if (jsonObj.RiSourcesData.length > 0) {
+                        $.each(jsonObj.RiSourcesData, function (i, data) {
+                            $("#tbody").append('<tr><td><a target="_blank" class="track-download-link" data-id="' + data.ris_ID + '" href = "' + (isValidHttpOrHttpsUri(data.link) ? data.link : "~/attachments/risources / " + data.link) + '" > ' + data.name + '</a></td><td>' + (typeList.hasOwnProperty(data.type) ? typeList[data.type] : '') + '</td><td class="text-center"> ' + (data.number_downloads > 0 ? data.number_downloads : '') + '</td><td class="text-center">' + (data.number_selects > 0 ? data.number_selects : '') + '</td><td class="text-center"><a href="#" class="view-file-activity" data-id="' + data.ris_ID + '">View Activity</a></td></tr>');
+                        });
+                    } else {
+                        $("#tbody").append('<tr><td colspan="5" class="text-center">No results</td></tr>');
+                    }
+                }
+            });
+        }
+    }
+
+    function isValidHttpOrHttpsUri(urlString) {
+        let uriResult;
+        try {
+            uriResult = new URL(urlString);
+        } catch (e) {
+            return false;
+        }
+        const scheme = uriResult.protocol.toLowerCase();
+        return (scheme === 'http:' || scheme === 'https:');
+    }
+    jQuery(document).ready(searchRiSources.init);
+
+    $(document).on('click', '.view-file-activity', function (e) {
+        e.preventDefault();
+        const obj = $(this);
+        obj.text('Loading....');
+        $.post("/RiSources/GetActivity/", { id: obj.attr('data-id') }, function (result) {
+            var jsonObj = JSON.parse(result);
+            $(".details-table tbody").empty();
+            if (jsonObj.status == "OK") {
+                if (jsonObj.details.length > 0) {
+                    $.each(jsonObj.details, function (i, data) {
+                        const date = new Date(data.action_time);
+                        $(".details-table tbody").append('<tr><td>' + data.username + '</td><td class="text-center capital-text">' + data.action + '</td><td class="text-center">' + date.toLocaleDateString() + ' ' + date.toLocaleTimeString() + '</td></tr>');
+                    });
+                } else {
+                    $(".details-table tbody").append('<tr><td colspan="4" class="text-center">No results</td></tr>');
+                }
+                $('#modal').show();
+            }
+            obj.text('View Activity');
+        });
+    });
+
+    $(document).on('click', '.track-download-link', function (e) {
+        e.preventDefault();
+        const obj = $(this);
+        $.post('/RiSources/TrackDownload/', { id: obj.attr('data-id'), action: 'download' }, function (result) {
+            window.open(obj.attr('href'), '_blank');
+        });
+    });
+
+    $(document).on('click', '#close', function (e) {
+        e.preventDefault();
+        $('#modal').hide();
+    });
+
+    $(document).on('click', '.btn-export', function (e) {
+        e.preventDefault();
+        var href = $(this).attr('href');
+        const params = new URLSearchParams(new FormData($('.filter-form')[0]));
+        window.location.href = href + (href.includes('?n2Id') ? '&' : '?') + params.toString();
+        return false;
+    });
+
+    $(document).on('click', '.select-type', function (e) {
+        e.preventDefault();
+        $('form.filter-form input[name="n2ID"]').val($(this).attr('data-id'));
+        searchRiSources.searchRiS();
+        return false;
+    });
+</script>
+@Html.ActionLink("Download Detailed Activity Report", "ExportRisourcesActivityReport", new { n2Id = @Request.QueryString["n2Id"] }, new { @class = "btn btn-primary pull-right btn-export" })
+@Html.ActionLink("Download Summary Report", "ExportRisourcesReport", new { n2Id = @Request.QueryString["n2Id"] }, new { @class = "btn btn-primary pull-right mr-2 btn-export" })
+
+<form class="filter-form">
+    <table>
+        <tr>
+            <td>
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                        Filter ReSources By
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a href="#" data-id="0" class="select-type">All Types</a></li>
+                        @foreach (var item in @ViewBag.list_n2ID)
+                        {
+                            <li><a href="#" data-id="@item.Key" class="select-type">@item.Value.name</a></li>
+                        }
+                    </ul>
+                </div>
+            </td>
+            <td>
+                <input type="text" id="form_value" name="form_value" value="" placeholder="Document Name..." class="form-control" />
+                <input type="hidden" name="n2ID" value="0" />
+            </td>
+            <td>&nbsp;</td>
+            <td>
+                <input name="start_date" type="text" class="form-control date-picker" placeholder="Start Date">
+            </td>
+            <td>
+                <input name="end_date" type="text" class="form-control date-picker" placeholder="End Date">
+            </td>
+            <td>
+                <button type="submit" id="submit_search" class="btn btn-primary"><span class="glyphicon glyphicon-search"></span> Search</button>
+            </td>
+            <td>
+                <button type="button" class="btn btn-reset">Reset Filters</button>
+            </td>
+        </tr>
+    </table>
+</form>
+<br />
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Document Type</th>
+            <th class="text-center">No. of Downloads</th>
+            <th class="text-center">No. of Selects</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody id="tbody">
+        @{
+            foreach (var item in Model.resources)
+            {
+                if (!Model.resourceActivities.ContainsKey(item.ris_ID))
+                {
+                    continue;
+                }
+                newrisourcecenter.Models.RisourceActivity obj = Model.resourceActivities[item.ris_ID];
+                Uri uriResult;
+                bool result = Uri.TryCreate(item.ris_link, UriKind.Absolute, out uriResult) && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+                string documentType = typeList.ContainsKey(item.n2ID) ? typeList[item.n2ID] : "";
+                <tr>
+                    <td>
+                        <a target="_blank" class="track-download-link" data-id="@item.ris_ID" href="@(result ? item.ris_link : "~/attachments/risources/" + item.ris_link)">@Html.DisplayFor(modelItem => item.ris_headline)</a>
+                    </td>
+                    <td>@documentType</td>
+                    <td class="text-center">@(obj.number_downloads > 0 ? obj.number_downloads.ToString() : "")</td>
+                    <td class="text-center">@(obj.number_selects > 0 ? obj.number_selects.ToString() : "")</td>
+                    <td class="text-center"><a href="#" class="view-file-activity" data-id="@item.ris_ID">View Activity</a></td>
+                </tr>
+            }
+        }
+
+    </tbody>
+</table>
+<div id="modal">
+    <div>
+        <table class="table details-table">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th class="text-center">Action Type</th>
+                    <th class="text-center">Action Time</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <div align="center">
+        <button id="close">Close</button>
+    </div>
+</div>

@@ -1,0 +1,69 @@
+﻿@model IEnumerable<newrisourcecenter.Models.AnnouncementsViewModel>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<p>
+    @Html.ActionLink("Post An Announcement", "Create", new { n1_name = @Request.QueryString["n1_name"], msg = "Post An Announcement" }, htmlAttributes: new { @class = "btn btn-primary" })
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.message)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.pages)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.adminID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.status)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.startDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.endDate)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{ int i = 0; }
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.Raw(item.message)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.pages)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.adminID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.status)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.startDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.endDate)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.ID, parentid = Request.QueryString["parentid"], n1_name = Request.QueryString["n1_name"] }, new { @class = "btn btn-info" })
+                    @Html.ActionLink("Delete", "Delete", new { id = item.ID, parentid = Request.QueryString["parentid"], n1_name = Request.QueryString["n1_name"] }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false", @class = "btn btn-info" })
+                    @if (i == 0)
+                    {
+                        @Html.ActionLink("Preview", "Details", new { id = item.ID, parentid = Request.QueryString["parentid"], n1_name = Request.QueryString["n1_name"] }, htmlAttributes: new { onclick = "announ.init();return false;", @class = "btn btn-info" })
+                    }
+                </td>
+            </tr>
+            i++;
+        }
+    </tbody>
+</table>

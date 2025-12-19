@@ -1,0 +1,115 @@
+﻿@model newrisourcecenter.Models.SRPViewModel
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>SRPViewModel</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.SalesRepID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SalesRepID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.paymentMethod)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.paymentMethod)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.department)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.department)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.requestType)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.requestType)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.title)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.title)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.description)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.description)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.estimatedTotalCost)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.estimatedTotalCost)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.attachment)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.attachment)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.status)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.status)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.activityDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.activityDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.dateCreated)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.dateCreated)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.dateUpdated)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.dateUpdated)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.formID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

@@ -1,0 +1,266 @@
+﻿@model IEnumerable<newrisourcecenter.Models.RiSourcesModel>
+
+@{
+    ViewBag.Title = "RiSources";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string userProducts = Convert.ToString(Session["userProducts"]);
+    string userIndustry = Convert.ToString(Session["userIndustry"]);
+
+}
+<style>
+ .ng-enter  { animation: scaleUp 0.5s both ease-in; z-index: 8888; }
+ .ng-leave  { animation: scaleUp 0.5s both ease-in; z-index: 9999; }
+</style>
+<script>
+    $(document).ready(function () {
+        $("a").click(function (event) {
+            $("#sc_body_" + event.target.id).toggleClass("show_sales_comm");
+            $("#sc_teaser_" + event.target.id).toggleClass("show_sales_comm");
+
+            if ($("#sc_teaser_" + event.target.id).hasClass("show_sales_comm")) {
+                $("#" + event.target.id).css("color", "#fff");
+                $("#sc_body_" + event.target.id).css("border", "solid 1px #fff", "padding", "10px");
+                $("#sc_body_" + event.target.id).css("padding", "10px");
+
+            } else {
+                $("#" + event.target.id).css("color", "#e21785");
+            }
+        });
+
+    });
+</script>
+<div class="main_content" ng-app="resourcesApp" >
+    <div ng-controller="SearchReSources">
+        <div style="float:left;margin:12px 0px 0px 20px;">
+            <div class="dropdown">
+                <span class="input-group stylish-input-group">
+                    <input type="text" id="form_value" value="" placeholder="search by doc name" class="form-control" ng-model="searchbox" ng-keyup="searchRiSource();" />
+                    <span class="input-group-addon" id="submit_search">
+                        <button type="submit">
+                            <span class="glyphicon glyphicon-search" ng-click="searchRiSource();"></span>
+                        </button>
+                    </span>
+                </span>
+            </div>
+        </div>
+        @{
+            Html.RenderPartial("_risourceMenu");
+        }
+
+        <div align="center">
+            @{
+                if (Request.QueryString["n1_name"] != "" && Request.QueryString["childid"] != "")
+                {
+                    <span class="btn btn-info btn-sm">
+                        @Request.QueryString["n2_name"]
+                        <a href="~/RiSources/List?childid=&n1_name=@Request.QueryString["n1_name"]&ind_id=@Request.QueryString["ind_id"]&ind_name=@Request.QueryString["ind_name"]&cat_id=@Request.QueryString["cat_id"]&cat_name=@Request.QueryString["cat_name"]&prod_id=@Request.QueryString["prod_id"]&prod_name=@Request.QueryString["prod_name"]&app_id=@Request.QueryString["app_id"]&app_name=@Request.QueryString["app_name"]&grid=@Request.QueryString["grid"]"> X </a>
+                    </span>
+                }
+
+                if (Request.QueryString["cat_name"] != "")
+                {
+                    <span class="btn btn-info btn-sm">
+                        @Request.QueryString["cat_name"]
+                        <a href="~/RiSources/List?childid=@Request.QueryString["childid"]&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&ind_id=@Request.QueryString["ind_id"]&ind_name=@Request.QueryString["ind_name"]&cat_id=&cat_name=&prod_id=@Request.QueryString["prod_id"]&prod_name=@Request.QueryString["prod_name"]&app_id=@Request.QueryString["app_id"]&app_name=@Request.QueryString["app_name"]&grid=@Request.QueryString["grid"]"> X </a>
+                    </span>
+                }
+
+                if (Request.QueryString["prod_name"] != "")
+                {
+                    <span class="btn btn-info btn-sm">
+                        @Request.QueryString["prod_name"]
+                        <a href="~/RiSources/List?childid=@Request.QueryString["childid"]&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&ind_id=@Request.QueryString["ind_id"]&ind_name=@Request.QueryString["ind_name"]&cat_id=@Request.QueryString["cat_id"]&cat_name=@Request.QueryString["cat_name"]&prod_id=&prod_name=&app_id=@Request.QueryString["app_id"]&app_name=@Request.QueryString["app_name"]&grid=@Request.QueryString["grid"]"> X </a>
+                    </span>
+                }
+
+                if (Request.QueryString["ind_name"] != "")
+                {
+                    <span class="btn btn-info btn-sm">
+                        @Request.QueryString["ind_name"]
+                        <a href="~/RiSources/List?childid=@Request.QueryString["childid"]&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&ind_id=&ind_name=&cat_id=@Request.QueryString["cat_id"]&cat_name=@Request.QueryString["cat_name"]&prod_id=@Request.QueryString["prod_id"]&prod_name=@Request.QueryString["prod_name"]&app_id=@Request.QueryString["app_id"]&app_name=@Request.QueryString["app_name"]&grid=@Request.QueryString["grid"]"> X </a>
+                    </span>
+                }
+
+                if (Request.QueryString["app_name"] != "")
+                {
+                    <span class="btn btn-info btn-sm">
+                        @Request.QueryString["app_name"]
+                        <a href="~/RiSources/List?childid=@Request.QueryString["childid"]&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&app_id=&app_name=&cat_id=@Request.QueryString["cat_id"]&cat_name=@Request.QueryString["cat_name"]&prod_id=@Request.QueryString["prod_id"]&prod_name=@Request.QueryString["prod_name"]&ind_id=@Request.QueryString["ind_id"]&ind_name=@Request.QueryString["ind_name"]&grid=@Request.QueryString["grid"]"> X </a>
+                    </span>
+                }
+
+            }
+            @if (Request.QueryString["childid"] != null)
+            {
+                <a class="btn btn-info btn-sm" id="reset" href="~/RiSources/?n1_name=@Request.QueryString["n1_name"]">Reset</a>
+            }
+        </div>
+        <!--Angularjs view-->
+        <div ng-view class="page"></div>
+    </div>
+
+    @{
+        if (@Request.QueryString["grid"] == "1")
+        {
+            ViewBag.file_size = "grid_file_size";
+            ViewBag.comms = "comms_grid";
+            ViewBag.viewType = "grid_text";
+        }
+        else
+        {
+            ViewBag.file_size = "list_file_size";
+            ViewBag.comms = "comms_list";
+            ViewBag.viewType = "list_text";
+        }
+    }
+
+    <section class="@ViewBag.comms" id="comms_list" >
+    @foreach (var risource in Model.OrderByDescending(a=>a.ris_ID))
+    {
+        if (userProducts != null)
+        {
+            foreach (var product in userProducts.ToArray())
+            {
+                if (!string.IsNullOrEmpty(risource.ris_products))
+                {
+                    if (risource.ris_products.Contains(product))
+                    {
+                        <div id="listings">
+                        @{
+                            Uri uriResult;
+                            bool result = Uri.TryCreate(@risource.ris_link, UriKind.Absolute, out uriResult)
+                            && (uriResult.Scheme == Uri.UriSchemeHttp
+                            || uriResult.Scheme == Uri.UriSchemeHttps);
+
+                            if (result)
+                            {
+                                <a id="grid_title" target="_blank" href="@risource.ris_link">
+                                    @if (@risource.ris_headline.Length <= 20 || @Request.QueryString["grid"] == null || @Request.QueryString["grid"] == "")
+                                    {
+                                        @risource.ris_headline
+                                    }
+                                    else
+                                    {
+                                        @risource.ris_headline.Substring(0, 20) <span>...</span>
+                                    }
+                                </a>
+
+                                if (@risource.displayimage != "default")
+                                {
+                                    <img src="~/attachments/risources/displayImage/@risource.displayimage" id="header_img" alt="@risource.nav2_longName" title="@risource.nav2_longName" />
+                                }
+                                else
+                                {
+                                    <img src="~/attachments/risources/displayImage/@risource.n2_headerImg" id="header_img" alt="@risource.nav2_longName" title="@risource.nav2_longName" />
+                                }
+
+                                <div id="@ViewBag.viewType" style="margin-top:-5px;">
+                                    <span> @String.Format("{0:d}", @risource.dateCreated)</span>
+                                    <a id="@ViewBag.file_size" target="_blank" href="@risource.ris_link" class="btn btn-primary btn-sm glyphicon glyphicon-new-window"> Link</a>
+                                </div>
+                            }
+                            else
+                            {
+                                <a id="grid_title" target="_blank" href="~/attachments/risources/@risource.ris_link">
+                                    @if (@risource.ris_headline.Length <= 20 || @Request.QueryString["grid"] == null || @Request.QueryString["grid"] == "")
+                                    {
+                                        @risource.ris_headline
+                                    }
+                                    else
+                                    {
+                                        @risource.ris_headline.Substring(0, 20) <span>...</span>
+                                    }
+                                </a>
+                                if (@risource.displayimage != "default")
+                                {
+                                    <img src="~/attachments/risources/displayImage/@risource.displayimage" id="header_img" alt="@risource.nav2_longName" title="@risource.nav2_longName" />
+                                }
+                                else
+                                {
+                                    <img src="~/attachments/risources/displayImage/@risource.n2_headerImg" id="header_img" alt="@risource.nav2_longName" title="@risource.nav2_longName" />
+                                }
+                                <div id="@ViewBag.viewType">
+                                    <span> @risource.file_type</span>
+                                    <span> @risource.file_size KB</span>
+                                    <span> @String.Format("{0:d}", @risource.dateCreated)</span>
+                                    <a id="@ViewBag.file_size" target="_blank" href="~/attachments/risources/@risource.ris_link" class="btn btn-primary btn-sm glyphicon glyphicon-download-alt"> Download</a>
+                                </div>
+                            }
+                        }
+                        </div>
+                        break;
+                    }
+                }
+            }
+        }
+        else
+        {       
+                <div>
+                    @{
+                        Uri uriResult;
+                        bool result = Uri.TryCreate(@risource.ris_link, UriKind.Absolute, out uriResult)
+                        && (uriResult.Scheme == Uri.UriSchemeHttp
+                        || uriResult.Scheme == Uri.UriSchemeHttps);
+
+                        if (result)
+                        {
+                            <a id="grid_title" target="_blank" href="@risource.ris_link">
+                                @if (@risource.ris_headline.Length <= 20 || @Request.QueryString["grid"] == null || @Request.QueryString["grid"] == "")
+                                {
+                                    @risource.ris_headline
+                                }
+                                else
+                                {
+                                    @risource.ris_headline.Substring(0, 20) <span>...</span>
+                                }                            
+                            </a>
+
+                            if (@risource.displayimage != "default")
+                            {
+                                <img src="~/attachments/risources/displayImage/@risource.displayimage" id="header_img" alt="@risource.nav2_longName" title="@risource.nav2_longName" />
+                            }
+                            else
+                            {
+                                <img src="~/attachments/risources/displayImage/@risource.n2_headerImg" id="header_img" alt="@risource.nav2_longName" title="@risource.nav2_longName" />
+                            }
+
+                            <div id="@ViewBag.viewType" style="margin-top:-5px;">
+                                <span> @String.Format("{0:d}", @risource.dateCreated)</span>
+                                <a id="@ViewBag.file_size" target="_blank" href="@risource.ris_link" class="btn btn-primary btn-sm glyphicon glyphicon-new-window"> Link</a>
+                            </div>
+                        }
+                        else
+                        {
+                            <a id="grid_title" target="_blank" href="~/attachments/risources/@risource.ris_link">
+                                @if (@risource.ris_headline.Length <= 20 || @Request.QueryString["grid"] == null || @Request.QueryString["grid"] == "")
+                                {
+                                    @risource.ris_headline
+                                }
+                                else
+                                {
+                                    @risource.ris_headline.Substring(0, 20) <span>...</span>
+                                }
+                            </a>
+                            if (@risource.displayimage != "default")
+                            {
+                                <img src="~/attachments/risources/displayImage/@risource.displayimage" id="header_img" alt="@risource.nav2_longName" title="@risource.nav2_longName" />
+                            }
+                            else
+                            {
+                                <img src="~/attachments/risources/displayImage/@risource.n2_headerImg" id="header_img" alt="@risource.nav2_longName" title="@risource.nav2_longName" />
+                            }
+                            <div id="@ViewBag.viewType">
+                                <span> @risource.file_type</span>
+                                <span> @risource.file_size KB</span>
+                                <span> @String.Format("{0:d}", @risource.dateCreated)</span>
+                                <a id="@ViewBag.file_size" target="_blank" href="~/attachments/risources/@risource.ris_link" class="btn btn-primary btn-sm glyphicon glyphicon-download-alt"> Download</a>
+                            </div>
+                        }
+                    } 
+                   <br />
+                </div>
+            }
+        }
+    </section>
+    <br />
+</div>

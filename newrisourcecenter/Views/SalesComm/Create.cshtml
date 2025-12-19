@@ -1,0 +1,344 @@
+﻿@model newrisourcecenter.Models.SalesCommViewModel
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/scripts/tinymce/tinymce.min.js"></script>
+
+<script>
+    // Initialize your tinyMCE Editor with your preferred options
+    tinymce.init({
+        selector: 'textarea',
+        theme: 'modern',
+        plugins: [
+          'advlist autolink lists link image charmap print preview hr anchor pagebreak',
+          'searchreplace wordcount visualblocks visualchars code fullscreen',
+          'insertdatetime media nonbreaking save table contextmenu directionality',
+          'emoticons template paste textcolor colorpicker textpattern imagetools'
+        ],
+        toolbar1: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
+        toolbar2: 'print preview media | forecolor backcolor emoticons',
+        image_advtab: true,
+        templates: [
+          { title: 'Test template 1', content: 'Test 1' },
+          { title: 'Test template 2', content: 'Test 2' }
+        ],
+        content_css: [
+          '~/scripts/tinymce/skins/lightgray/content.min.css'
+        ]
+    });
+
+    $(document).ready(function () {
+
+        risourceSelection = function (selectedObject) {
+            var selectedval = selectedObject.options[selectedObject.selectedIndex].value;
+            var selectedid = selectedObject.options[selectedObject.selectedIndex].id;
+            var link = "../SalesComm/GetRiSources/?risource_id=" + selectedval + "&scID=" + selectedid;
+
+            $.post(link, function (data) {
+                console.log(data);
+                $('div#risources_list').html("" + data + "<br /><br />");
+            });
+        }
+
+        @*Borrowed from https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_filter_list*@
+        myFunction = function ()
+        {
+            var input, filter, ul, li, a, i;
+            input = document.getElementById("risource_search_box");
+            filter = input.value.toUpperCase();
+            ul = document.getElementById("resultsList");
+            li = ul.getElementsByTagName("li");
+            for (i = 0; i < li.length; i++) {
+                a = li[i].getElementsByTagName("a")[0];
+                if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                    li[i].style.display = "";
+                } else {
+                    li[i].style.display = "none";
+
+                }
+            }
+        }
+
+        $("#form").submit(function (e) {
+            e.preventDefault;
+
+            if ($("#default_lang").val() == "Select") {
+                alert("Select a default language");
+                return false;
+            }
+
+            if (!$(".languages").is(':checked')) {
+                alert("Choose a language");
+                return false;
+            }
+
+            if (!$(".products").is(':checked')) {
+                alert("Choose a product");
+                return false;
+            }
+
+            if (!$(".industry").is(':checked')) {
+                alert("Choose an industry");
+                return false;
+            }
+
+            if (!$(".audience").is(':checked')) {
+                alert("Choose an audience");
+                return false;
+            }
+
+            if ($("#sc_status").val() == "0") {
+                alert("Select communication status");
+                return false;
+            }
+
+            if ($("#sc_startDate").val()=="") {
+                alert("Enter a start date");
+                return false;
+            }
+
+            if ( $("#sc_endDate").val()!="" && $("#sc_startDate").val() > $("#sc_endDate").val()) {
+                alert("The start date can not be greater than the end date");
+                return false;
+            }
+            return true;
+        });
+    });
+</script>
+
+@using (Html.BeginForm("Create", "SalesComm", FormMethod.Post, new { enctype = "multipart/form-data", @id = "form" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        @Html.TextBoxFor(model => model.n2ID, new { @Value = Request.QueryString["n2id"], @Type = "hidden" })
+        @Html.TextBoxFor(model => model.n3ID, new { @Value = Request.QueryString["n3id"], @Type = "hidden" })
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.countries, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @{
+                    foreach (var item in ViewBag.countries)
+                    {
+                        <input type="checkbox" value="@item.id" name="countries">@item.name
+
+                    }
+                }
+
+                @Html.ValidationMessageFor(model => model.countries, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.default_lang, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <select id="default_lang" name="default_lang" class="form-control">
+                    <option value="Select">Select a Default Language</option>
+                    @foreach (var item in ViewBag.language)
+                    {
+                        <option value="@item.id">@item.n2name</option>
+                    }
+                </select>
+                @Html.ValidationMessageFor(model => model.default_lang, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.languages, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @{
+                    foreach (var item in ViewBag.language)
+                    {
+                        <input type="checkbox" value="@item.id" name="languages" class="languages">@item.n2name
+                    }
+                }
+                @Html.ValidationMessageFor(model => model.languages, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.sc_status, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <select name="sc_status" id="sc_status" class="form-control" >
+                    <option value="0" selected>Select a Status</option>
+                    @foreach (var item in Model.list_status)
+                    {
+                        <option value="@item.id">@item.name</option>
+                    }
+                </select>
+                @Html.ValidationMessageFor(model => model.sc_status, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="sc_teaser">Section Approver - IT:</label>
+            <div class="col-md-10">
+                <input class="form-control text-box single-line" id="it_approver" name="it_approver" type="button" value="@ViewBag.it_name">
+                <span class="field-validation-valid text-danger" data-valmsg-for="it_approver" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="sc_teaser">Section Approver - IE:</label>
+            <div class="col-md-10">
+                <input class="form-control text-box single-line" id="ie_approver" name="ie_approver" type="button" value="@ViewBag.ie_name">
+                <span class="field-validation-valid text-danger" data-valmsg-for="ie_approver" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.sc_headline, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.sc_headline, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.sc_headline, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.sc_teaser, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.sc_teaser, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.sc_teaser, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.sc_body, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextAreaFor(model => model.sc_body)
+                @Html.ValidationMessageFor(model => model.sc_body, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.sc_keywords, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.sc_keywords, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.sc_keywords, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.sc_products, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @foreach (var items in Model.list_products)
+                {
+                    <input type="checkbox" name="sc_products" id="sc_products" value="@items.pp_ID" class="products" />@items.pp_product<br />
+                }
+                @Html.ValidationMessageFor(model => model.sc_products, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.sc_usrTypes, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @foreach (var items in Model.list_Type)
+                {
+                    <input type="checkbox" name="sc_usrTypes" id="sc_usrTypes" value="@items.pt_ID" class="audience" />@items.pt_type<br />
+                }
+                @Html.ValidationMessageFor(model => model.sc_usrTypes, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.sc_industry, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @foreach (var items in Model.list_industry)
+                {
+                    if (@items.pi_industry != "IT and Industrial")
+                    {
+                    <input type="checkbox" name="sc_industry" id="sc_industry" value="@items.pi_ID" class="industry" />@items.pi_industry<br />
+                    }
+                }
+                @Html.ValidationMessageFor(model => model.sc_industry, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.sc_startDate, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">              
+                @Html.EditorFor(model => model.sc_startDate, new { htmlAttributes = new { @class = "form-control date-picker" } })
+                @Html.ValidationMessageFor(model => model.sc_startDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.sc_endDate, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.sc_endDate, new { htmlAttributes = new { @class = "form-control date-picker" } })
+                @Html.ValidationMessageFor(model => model.sc_endDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-10">
+                @Html.HiddenFor(model => model.old_scid, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.old_scid, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="risource_menu"></label>
+            <div class="col-md-10">
+                <div id="risourceSelected">
+                @foreach (var items in Model.list_attachments)
+                {
+                    Uri uriResult;
+                    bool result = Uri.TryCreate(items.img, UriKind.Absolute, out uriResult)
+                    && (uriResult.Scheme == Uri.UriSchemeHttp
+                    || uriResult.Scheme == Uri.UriSchemeHttps);
+
+                    if (result)
+                    {
+                        <div id="@items.id">
+                            <input type="checkbox" name="attach_risource" id="@items.id" value="@items.id" checked />@items.name
+                            <a id="@ViewBag.file_size" target="_blank" href="@items.img" class="btn btn-primary btn-sm glyphicon glyphicon-new-window"> Link</a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div id="@items.id">                   
+                            <input type="checkbox" name="attach_risource" id="@items.id" value="@items.id" checked />@items.name
+                            <a id="@ViewBag.file_size" href="~/attachments/risources/@items.img" class="btn btn-primary btn-sm glyphicon glyphicon-download-alt"> Download</a>
+                        </div>
+                    }
+                }
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.risource_menu, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <select name="n2ID" onchange="risourceSelection(this);" class="form-control text-box single-line">
+                    @foreach (var items in Model.risource_menu)
+                    {
+                        <option value="@items.id">@items.name</option>
+                    }
+                </select>
+
+                <div id="risources_list"></div>
+
+            </div>
+        </div>
+
+        <input name="sc_owner" id="sc_owner" type="hidden" value=@Session["userId"] />
+        <input name="n1_name" type="hidden" value="@Request.QueryString["n1_name"]" />
+        <input name="n2_name" type="hidden" value="@Request.QueryString["n2_name"]" />
+        <input name="n3_name" type="hidden" value="@Request.QueryString[" n3_name"]" />
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "AllSalesComms", new { n3id = Request.QueryString["n3id"], n2id = Request.QueryString["n2id"], n1_name = Request.QueryString["n1_name"], n2_name = Request.QueryString["n2_name"], n3_name = Request.QueryString["n3_name"] }) 
+</div>

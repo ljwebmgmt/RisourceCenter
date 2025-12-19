@@ -1,0 +1,101 @@
+﻿@model IEnumerable<newrisourcecenter.Models.partnerStockCheckViewModel>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string UserLink = "";
+    if (Request.Url.Port != 443)
+    {
+        UserLink = "http://" + Request.Url.Host + ":" + Request.Url.Port;
+    }
+    else
+    {
+        UserLink = "https://" + Request.Url.Host;
+    }
+}
+<div class="main_content">
+<script>
+    $(document).ready(function () {
+        getSAPSelection = function (selectedObject) {
+            var selectedval = selectedObject.options[selectedObject.selectedIndex].value;
+            var selectedid = $("#usr_user").val();
+            var UserLink = $("#usr_link").val();
+            var link = "" + UserLink + "/partnerStockCheck/SAPLocations?compId=" + selectedval + "&userId=" + selectedid + "&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=@Request.QueryString["msg"]&dcompid=@Request.QueryString["compid"]";
+            console.log(link);
+            $.post(link, function (data) {
+               $('div#sap_accounts').html(data);
+            });
+        }
+
+        addASAP = function (savelink) {
+            //console.log(savelink);
+            $.post(savelink, function (data) {
+                $('#table tr:first').after(data);
+            });
+        }
+    });
+</script>
+
+<div class="form-horizontal">
+    <div class="form-group">
+        <label class="control-label col-md-2" for="ps_account">Select Company</label>
+        <div class="col-md-4">
+            <select class="form-control selectpicker" data-live-search="true" onchange="getSAPSelection(this);">
+                <option>Select  a Company</option>
+                @foreach (var item in @ViewBag.compData)
+                {
+                    <option value="@item.id">@item.name (@item.n2id)</option>
+                }
+            </select>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <input id="usr_link" value="@UserLink"  type="hidden" />
+    <input data-val="true" data-val-number="The field User Name must be a number." id="usr_user" name="usr_user" type="hidden" value="@Request.QueryString["user_ID"]">
+    <div class="row mt-2">
+        <div class="col-md-offset-2 col-md-10">
+            @if (!string.IsNullOrEmpty(Request.QueryString["back"]) && Request.QueryString["back"] == "home")
+            {
+                @Html.ActionLink("Back", actionName: "Index", controllerName: "Home", routeValues: new { compid = @Request.QueryString["compid"], n1_name = "Home" }, htmlAttributes: new { @class = "btn-sm btn-primary" })
+            }
+            else
+            {
+                @Html.ActionLink("Back", actionName: "Index", controllerName: "UserViewModels", routeValues: new { compid = @Request.QueryString["compid"], n1_name = @Request.QueryString["n1_name"] }, htmlAttributes: new { @class = "btn-sm btn-primary" })
+            }
+        </div>
+    </div>
+  
+    <br />
+    <br />
+    <div>
+        <div id="sapData"><div class="col-md-12" id="sap_accounts"></div></div>
+    </div>
+</div>
+<br />
+<h4>@Request.QueryString["n2_name"] for @Request.QueryString["msg"]</h4>
+<table class="table" id="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.ps_account)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.company_name)
+        </th>
+        <th></th>
+    </tr>
+    @foreach (var item in Model.OrderByDescending(a=>a.ps_ID)) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ps_account)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.company_name)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id=item.ps_ID, n1_name=@Request.QueryString["n1_name"], n2_name=@Request.QueryString["n2_name"],msg=@Request.QueryString["msg"],user_ID=@Request.QueryString["user_ID"], compid = Request.QueryString["compid"], back=Request.QueryString["back"] }, new { @class = "btn btn-info" })          
+                 @Html.ActionLink("Delete", "Delete", new { id = item.ps_ID, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], msg = @Request.QueryString["msg"], user_ID = @Request.QueryString["user_ID"], compid = Request.QueryString["compid"], back = Request.QueryString["back"] }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false", @class = "btn btn-info" })
+            </td>
+        </tr>
+    }
+</table>
+</div>

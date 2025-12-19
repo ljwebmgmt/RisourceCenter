@@ -1,0 +1,238 @@
+﻿@model IEnumerable<newrisourcecenter.Models.UserViewModel>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    long siteRole = Convert.ToInt64(Session["siteRole"]);
+    long adminRole = Convert.ToInt64(Session["userRole"]);
+    long companyId = Convert.ToInt64(Session["companyId"]);
+    long selectedCompany = 0;
+    if (!string.IsNullOrEmpty(Request.QueryString["compid"]))
+    {
+        selectedCompany = Convert.ToInt64(Request.QueryString["compid"]);
+    }
+}
+<script>
+    function getLink(href) {
+        window.location = href + "&querystring=" + $("#form_value").val();
+    }
+
+    $(document).on('change', '.selectpicker', function (e) {
+        if ($(this).val() == '')
+            return;
+        getLink($(this).val());
+    });
+</script>
+@if (!string.IsNullOrEmpty(@Request.QueryString["compid"]) && string.IsNullOrEmpty(@Request.QueryString["locid"]))
+{
+    <script>
+    var adminpanel = {
+        init: function () {
+            var filter_form = $("#submit_search");
+            filter_form.on('click', adminpanel.submit_filter_form);
+        },
+        submit_filter_form:function(e){
+            e.preventDefault();
+
+            $.post("/RegisteredUser/searchUsers/?form_value=" + $("#form_value").val()+"&n1_name=Admin Users"+"&selected_comp_id="+@Request.QueryString["compid"], function (result) {
+                $("#tabledata").empty();
+                $("#tabledata").html(result);
+            });
+        },
+    }
+    jQuery(document).ready(adminpanel.init);
+    </script>
+}
+else if (!string.IsNullOrEmpty(@Request.QueryString["compid"]) && !string.IsNullOrEmpty(@Request.QueryString["locid"]))
+{
+    <script>
+    var adminpanel = {
+        init: function () {
+            var filter_form = $("#submit_search");
+            filter_form.on('click', adminpanel.submit_filter_form);
+        },
+        submit_filter_form:function(e){
+            e.preventDefault();
+
+            $.post("/RegisteredUser/searchUsers/?form_value=" + $("#form_value").val()+"&n1_name=Admin Users"+"&selected_comp_id="+@Request.QueryString["compid"]+"&selected_loc_id="+@Request.QueryString["locid"], function (result) {
+                $("#tabledata").empty();
+                $("#tabledata").html(result);
+            });
+        },
+    }
+    jQuery(document).ready(adminpanel.init);
+    </script>
+}
+else
+{
+    <script>
+        var adminpanel = {
+            init: function () {
+                var filter_form = $("#submit_search");
+                filter_form.on('click', adminpanel.submit_filter_form);
+            },
+            submit_filter_form: function (e) {
+                e.preventDefault();
+                var querystring = $('#form_value').val();
+                if (querystring.trim() == '') {
+                    window.location.href = $('.btn-reset').attr('href');
+                    return false;
+                }
+                else {
+                    $.post("/RegisteredUser/searchUsers/?form_value=" + $("#form_value").val() + "&n1_name=Admin Users", function (result) {
+                        $("#tabledata").empty();
+                        $("#tabledata").html(result);
+                    });
+                }
+            },
+        }
+        jQuery(document).ready(adminpanel.init);
+
+    </script>
+}
+<script type="text/javascript">
+    $(document).on('click', '.approve-user,.deny-user', function (e) {
+        e.preventDefault();
+        var obj = $(this);
+        $.ajax({
+            url: obj.attr('href'),
+            type: 'POST',
+            dataType: 'json',
+            beforeSend: function () {
+                obj.text('Loading...');
+            },
+            success: function (result) {
+                if (result == "OK") {
+                    window.alert("The user account has been " + (obj.hasClass('approve-user') ? "activated" : "denied"));
+                    window.location.reload();
+                }
+                else {
+                    window.alert('An error occurred while processing your request.');
+                }
+            },
+            complete: function () {
+                obj.text((obj.hasClass('approve-user') ? 'Approve' : 'Deny'));
+            }
+        });
+        return false;
+    });
+</script>
+
+@if (User.IsInRole("Super Admin") || User.IsInRole("Local Admin") || User.IsInRole("Global Admin"))
+{
+    <table>
+        <tr>
+            @if (User.IsInRole("Super Admin") || User.IsInRole("Local Admin") && User.IsInRole("Rittal User") || User.IsInRole("Global Admin"))
+            {
+                <td>
+                    <select class="selectpicker select-dropdown" data-live-search="true" title="Filter By Companies">
+
+                        @foreach (var item in @ViewBag.compData)
+                        {
+                            if(string.IsNullOrEmpty(item.name))
+                            {
+                                continue;
+                            }
+                            <option value="?n1_name=@Request.QueryString["n1_name"]&compid=@item.id&msg=@item.name&comp_name=@item.name" @(item.id == selectedCompany ? "selected" : "")>@item.name</option>
+                        }
+                    </select>
+                </td>
+                if (!string.IsNullOrEmpty(Request.QueryString["compid"]))
+                {
+                    <td>
+                        <select class="selectpicker select-dropdown" data-live-search="true" title="Filter By Locations">
+                            @foreach (var item in @ViewBag.locationsDatas)
+                            {
+                                string name = !string.IsNullOrEmpty(item.loc_name) ? item.loc_name : Request.QueryString["comp_name"] + "-" + item.loc_city;
+                                if (string.IsNullOrEmpty(name))
+                                {
+                                    continue;
+                                }
+                                <option value="?n1_name=@Request.QueryString["n1_name"]&compid=@Request.QueryString["compid"]&locid=@item.loc_ID&msg=@name&comp_name=@Request.QueryString["comp_name"]">@name</option>
+                            }
+                        </select>
+                    </td>
+                }
+                <td>
+                    @Html.ActionLink("Add Users", "AddUser", "Account", new { n1_name = "Add Users" }, htmlAttributes: new { @class = "btn btn-primary" })
+                </td>
+            }
+            <td>
+                <form>
+                    <span class="input-group stylish-input-group" style="width:300px;">
+                        <input type="text" id="form_value" value="@Request.QueryString["querystring"]" placeholder="first or last names or email" class="form-control" />
+                        <span class="input-group-addon" id="submit_search">
+                            <button type="submit">
+                                <span class="glyphicon glyphicon-search"></span>
+                            </button>
+                        </span>
+                    </span>
+                </form>
+            </td>
+            <td>
+                <a href="/RegisteredUser?parentId=0&childId=30166&n1_name=User Registration Admin&submenu=yes" class="btn btn-primary btn-reset">Reset</a>
+            </td>
+        </tr>
+    </table>
+}
+<p class="glyphicon glyphicon-star" style="color:#E50043;font-size:14px;"> - Administrator</p>
+
+<div id="tabledata">
+    <table class="table">
+        <thead>
+            <tr>
+                <td></td>
+                <th>User ID</th>
+                <th>
+                    @Html.DisplayNameFor(model => model.usr_fName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.usr_lName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.usr_email)
+                </th>
+                <td></td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @if (item.user_role == "Admin")
+                        {
+                            <span class="glyphicon glyphicon-star" style="color:red;"></span>
+                        }
+                    </td>
+                    <td> @item.usr_ID</td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.usr_fName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.usr_lName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.usr_email)
+                    </td>
+                    <td>
+                        @if (User.IsInRole("Super Admin") || User.IsInRole("Global Admin"))
+                        {
+                            @Html.ActionLink("Approve", "UserStatus", new { status = "approve", id = item.usr_ID, n1_name = Request.QueryString["n1_name"] }, htmlAttributes: new { id = "approve", @class = "btn btn-success approve-user", @style = "color:#fff;" })
+                            <span>&nbsp;</span>
+                            @Html.ActionLink("Deny", "UserStatus", new { status = "deny", id = item.usr_ID, n1_name = Request.QueryString["n1_name"] }, htmlAttributes: new { id = "deny", @class = "btn btn-danger deny-user", @style = "color:#fff;" })
+                            <span>&nbsp;</span>
+                            @Html.ActionLink("Delete", "Delete", new { id = item.usr_ID, n1_name = Request.QueryString["n1_name"] }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false", @class = "btn btn-info delete-user", @style = "color:red;" })
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @if (ViewBag.LastID > 0)
+    {
+        <div>
+            @Html.ActionLink("Next >>", "Index", new { n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], next = @ViewBag.LastID, compid = @Request.QueryString["compid"], locid = @Request.QueryString["locid"], msg = @Request.QueryString["msg"], comp_name = @Request.QueryString["comp_name"] }, new { @class = "btn btn-info", onclick = "getLink(this.href); return false;" })
+        </div>
+    }
+</div>

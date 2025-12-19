@@ -1,0 +1,19 @@
+﻿@model newrisourcecenter.Models.RiSourcesViewModel
+
+@{
+    ViewBag.Title = "Level3Menu";
+    Layout = null;
+}
+
+@ViewBag.n3IDList
+
+<div class="form-group">
+    
+    <div class="col-md-10">
+        @Html.DropDownListFor(m => m.n3ID, Model.list_n3ID)
+        @Html.ValidationMessageFor(model => model.n3ID, "", new { @class = "text-danger" })
+    </div>
+</div>
+
+
+

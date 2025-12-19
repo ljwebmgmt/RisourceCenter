@@ -1,0 +1,179 @@
+﻿@model newrisourcecenter.Models.ChangeCommission
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>ChangeCommission</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.number)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.number)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.full_request)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.full_request)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.credit_sale)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.credit_sale)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.to_representive)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.to_representive)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.from_representive)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.from_representive)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.account_number)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.account_number)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.account_name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.account_name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.sales_doc_number)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.sales_doc_number)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.po_number)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.po_number)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.invoice_date)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.invoice_date)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.amount)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.amount)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.reason)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.reason)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.request_representive)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.request_representive)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.status)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.status)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.created_on)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.created_on)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.created_by)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.created_by)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.updated_on)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.updated_on)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.updated_by)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.updated_by)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.approved_on)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.approved_on)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.approved_by)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.approved_by)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.ID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

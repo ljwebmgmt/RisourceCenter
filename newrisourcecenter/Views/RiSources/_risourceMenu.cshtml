@@ -1,0 +1,138 @@
+﻿@{
+    string userProducts = Convert.ToString(Session["userProducts"]);
+    string userIndustry = Convert.ToString(Session["userIndustry"]);
+    string link = Request.Url.LocalPath;
+    string urlis =@Request.QueryString["childid"] +
+        "&n1_name=" + @Request.QueryString["n1_name"] +
+        "&n2_name=" + @Request.QueryString["n2_name"] +
+        "&ind_id=" + @Request.QueryString["ind_id"] +
+        "&ind_name=" + @Request.QueryString["ind_name"] +
+        "&prod_id=" + @Request.QueryString["prod_id"] +
+        "&prod_name=" + @Request.QueryString["prod_name"] +
+        "&cat_id=" + @Request.QueryString["cat_id"] +
+        "&cat_name=" + @Request.QueryString["cat_name"]+
+        "&app_id=" + @Request.QueryString["app_id"] +
+        "&app_name=" + @Request.QueryString["app_name"];
+    string childid_num = Request.QueryString["childid"] + "&n1_name=" + Request.QueryString["n1_name"]+ "&n2_name="+@Request.QueryString["n2_name"] ;
+}
+<div>
+
+    @if (Request.QueryString["ind_id"] == null)
+    {
+        <a href="~/RiSources/?childid=@childid_num&grid=1#!/grid=1" style="float:right;margin:10px;" id="list_toggle"><img src="~/images/png/glyphicons-157-show-thumbnails.png" /></a>
+        <a href="~/RiSources/?childid=@childid_num" style="float:right;margin:10px;" id="list_toggle"><img src="~/images/png/glyphicons-158-show-thumbnails-with-lines.png" /></a>
+    }
+    else
+    {
+        <a href="~/RiSources/List?childid=@urlis&grid=1#!/grid=1" style="float:right;margin:10px;" id="list_toggle"><img src="~/images/glyphicons/png/glyphicons-157-show-thumbnails.png" /></a>
+        <a href="~/RiSources/List?childid=@urlis" style="float:right;margin:10px;" id="list_toggle"><img src="~/images/glyphicons/png/glyphicons-158-show-thumbnails-with-lines.png" /></a>
+    }
+
+    <b>&nbsp;Filter By: </b>
+    <div id="dropdown">
+        <div class="dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                Document Type
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                @foreach (var item in @ViewBag.list_n2ID)
+                {
+                    if (Request.QueryString["childid"] == null)
+                    {
+                        if (string.IsNullOrEmpty(Request.QueryString["n2_name"]))
+                        {
+                            <li><a href="~/RiSources/?childid=@item.id&n1_name=@Request.QueryString["n1_name"]&n2_name=@item.name&grid=@Request.QueryString["grid"]">@item.name</a></li>
+                        }
+                        else
+                        {
+                            <li><a href="~/RiSources/?childid=@item.id&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&grid=@Request.QueryString["grid"]">@item.name</a></li>
+                        }
+                    }
+                    else
+                    {
+                        <li><a href="~/RiSources/List?childid=@item.id&n1_name=@Request.QueryString["n1_name"]&n2_name=@item.name&cat_id=@Request.QueryString["cat_id"]&cat_name=@Request.QueryString["cat_name"]&ind_id=@Request.QueryString["ind_id"]&ind_name=@Request.QueryString["ind_name"]&prod_id=@Request.QueryString["prod_id"]&prod_name=@Request.QueryString["prod_name"]&app_id=@Request.QueryString["app_id"]&app_name=@Request.QueryString["app_name"]&grid=@Request.QueryString["grid"]#!/grid=@Request.QueryString["grid"]">@item.name</a></li>
+                    }
+                }
+                <li><a href="~/RiSources/?n1_name=RiSources&grid=@Request.QueryString["grid"]">All</a></li>
+            </ul>
+        </div>
+    </div>
+
+
+    @if (@userIndustry == "3")
+    {
+        <div id="dropdown">
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                    Category
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    @foreach (var item in @ViewBag.list_Industry)
+                    {
+                        <li><a href="~/RiSources/List?childid=@Request.QueryString["childid"]&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&ind_id=@item.pi_ID&ind_name=@item.pi_industry&cat_id=@Request.QueryString["cat_id"]&cat_name=@Request.QueryString["cat_name"]&prod_id=@Request.QueryString["prod_id"]&prod_name=@Request.QueryString["prod_name"]&app_id=@Request.QueryString["app_id"]&app_name=@Request.QueryString["app_name"]&grid=@Request.QueryString["grid"]#!/grid=@Request.QueryString["grid"]">@item.pi_industry</a></li>
+                    }
+                    <li><a href="~/RiSources/?n1_name=RiSources&grid=@Request.QueryString["grid"]">All</a></li>
+                </ul>
+            </div>
+        </div>
+    }
+
+    <div id="dropdown">
+        <div class="dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                Industry
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                @foreach (var item in @ViewBag.list_cat)
+                {
+                    <li><a href="~/RiSources/List?childid=@Request.QueryString["childid"]&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&cat_id=@item.cat_id&cat_name=@item.ris_categories&ind_id=@Request.QueryString["ind_id"]&app_id=@Request.QueryString["app_id"]&app_name=@Request.QueryString["app_name"]&ind_name=@Request.QueryString["ind_name"]&prod_id=@Request.QueryString["prod_id"]&prod_name=@Request.QueryString["prod_name"]&grid=@Request.QueryString["grid"]#!/grid=@Request.QueryString["grid"]#!/grid=@Request.QueryString["grid"]">@item.ris_categories</a></li>
+                }
+                <li><a href="~/RiSources/?n1_name=RiSources&grid=@Request.QueryString["grid"]">All</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="dropdown">
+        <div class="dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                Product
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                @foreach (var item in @ViewBag.list_products)
+            {
+                    <li><a href="~/RiSources/List?childid=@Request.QueryString["childid"]&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&ind_id=@Request.QueryString["ind_id"]&ind_name=@Request.QueryString["ind_name"]&app_id=@Request.QueryString["app_id"]&app_name=@Request.QueryString["app_name"]&cat_id=@Request.QueryString["cat_id"]&cat_name=@Request.QueryString["cat_name"]&prod_id=@item.pp_ID&prod_name=@item.pp_product&grid=@Request.QueryString["grid"]#!/grid=@Request.QueryString["grid"]">@item.pp_product</a></li>
+                }
+                <li><a href="~/RiSources/?n1_name=RiSources&grid=@Request.QueryString["grid"]">All</a></li>
+            </ul>
+        </div>
+    </div>
+
+
+    @*<div id="dropdown">
+        <div class="dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                Application
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                @foreach (var item in @ViewBag.list_partnerApp)
+                {
+                    <li><a href="~/RiSources/List?childid=@Request.QueryString["childid"]&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&ind_id=@Request.QueryString["ind_id"]&ind_name=@Request.QueryString["ind_name"]&prod_id=@Request.QueryString["prod_id"]&prod_name=@Request.QueryString["prod_name"]&cat_id=@Request.QueryString["cat_id"]&cat_name=@Request.QueryString["cat_name"]&app_id=@item.appli_id&app_name=@item.appli_name&grid=@Request.QueryString["grid"]#!/grid=@Request.QueryString["grid"]">@item.appli_name</a></li>
+                }
+                <li><a href="~/RiSources/?n1_name=RiSources&grid=@Request.QueryString["grid"]">All</a></li>
+            </ul>
+        </div>
+    </div>*@
+
+    <div id="dropdown">
+        <div class="dropdown">
+            <a class="btn btn-primary" href="~/RiSources/List?childid=77&n1_name=@Request.QueryString["n1_name"]&n2_name=Partner Docs&cat_id=@Request.QueryString["cat_id"]&cat_name=@Request.QueryString["cat_name"]&ind_id=@Request.QueryString["ind_id"]&ind_name=@Request.QueryString["ind_name"]&app_id=@Request.QueryString["app_id"]&app_name=@Request.QueryString["app_name"]&prod_id=@Request.QueryString["prod_id"]&prod_name=@Request.QueryString["prod_name"]&grid=@Request.QueryString["grid"]#!/grid=@Request.QueryString["grid"]">
+                View Partner Docs
+            </a>
+        </div>
+    </div>
+</div>

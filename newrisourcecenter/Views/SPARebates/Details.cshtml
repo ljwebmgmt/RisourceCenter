@@ -1,0 +1,67 @@
+﻿@model newrisourcecenter.Models.SPARebatesViewModel
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>SPARebatesViewModel</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.contract_ID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.contract_ID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.rebate_total_amount)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.rebate_total_amount)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.credit_mome)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.credit_mome)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.status)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.status)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.submit_date)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.submit_date)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.memo_date)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.memo_date)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.rebate_ID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

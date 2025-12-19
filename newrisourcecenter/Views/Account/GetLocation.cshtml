@@ -1,0 +1,13 @@
+﻿@model List<newrisourcecenter.Models.partnerLocation>
+
+@{
+    ViewBag.Title = "Stockcheck";
+    Layout = null;
+}
+<select id="comp_loc_ID" name="comp_loc_ID" class="form-control">
+    <option>Select a location</option>
+    @foreach (var items in @Model)
+    {
+        <option value="@items.loc_ID">@items.loc_name-@items.loc_city</option>
+    }
+</select>

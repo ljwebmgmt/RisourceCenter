@@ -1,0 +1,186 @@
+﻿@model newrisourcecenter.Models.ListWebshops
+
+@{
+    ViewBag.Title = "Stockcheck";
+    Layout = null;
+}
+<style>
+    body {
+        font-family: "Helvetica Neue",Arial,sans-serif;
+        background: #efefef;
+        padding: 5px;
+        font-family: "Source Sans Pro","Helvetica Neue",Helvetica,Arial,sans-serif;
+        overflow: hidden;
+    }
+
+    table {
+        border-spacing: 0;
+        margin: 0;
+        max-width: 100%;
+        background-color: transparent;
+        display: table;
+        width: 100%;
+        font-size: 12px;
+    }
+
+    .table thead > tr > th {
+        vertical-align: bottom;
+    }
+
+    .table thead > tr > th, .table tbody > tr > th, .table tfoot > tr > th, .table thead > tr > td, .table tbody > tr > td, .table tfoot > tr > td {
+        padding: 8px;
+        line-height: 1.428571429;
+        vertical-align: top;
+        border: none;
+    }
+
+    .login-link {
+        font-size: 12px;
+        color: #fff;
+        padding: 5px;
+    }
+
+    .btn-primary {
+        background: #E50043;
+        border-color: #E50043;
+        font-size: 16px;
+    }
+
+        .btn-primary:hover {
+            background: #000;
+            border-color: #E50043;
+        }
+
+    .btn-sm {
+        padding: 5px;
+        line-height: 1.5;
+        color: #ffffff;
+        text-decoration: none;
+    }
+
+    a {
+        color: #ffffff;
+        text-decoration: none;
+    }
+
+    .scroll-wrapper {
+        max-height: 200px;
+        overflow-y: auto;
+        margin: 15px 0;
+    }
+
+    .search {
+        float: right;
+        width: 300px;
+    }
+
+    .clearfix {
+        clear: both;
+    }
+
+    .pointer {
+        cursor: pointer;
+    }
+
+    .header-row.pointer .header.clickable {
+        background-image: url(/images/png/glyphicons-191-plus-sign.png);
+        padding-left: 25px;
+        background-size: 17px;
+        background-repeat: no-repeat;
+        background-position: 5px center;
+    }
+
+    .header-row.pointer.collapsed .header.clickable {
+        background-image: url(/images/png/glyphicons-192-minus-sign.png);
+    }
+</style>
+<script src="~/Scripts/jquery-3.1.0.min.js"></script>
+<script type="text/javascript">
+    $(document).on('click', 'tr.header-row.pointer th.clickable', function (e) {
+        e.preventDefault();
+        var row = $(this).parent('tr');
+        var bCollapse = row.hasClass('collapsed');
+        var table = row.parents('table.table');
+        if (bCollapse)
+            $('tbody', table).slideUp();
+        else {
+            $('tbody', table).slideDown();
+        }
+        row.toggleClass('collapsed');
+        return false;
+    });
+
+    $(document).on('keyup', 'input.search', function (e) {
+        var val = $(this).val();
+        if (val == '')
+            $('table.table').show();
+        if (val.length < 3)
+            return;
+        val = val.toLowerCase().trim();
+        $('table.table').hide();
+        $('table.table').each(function () {
+            if ($(this).attr('data-company').indexOf(val) > -1 || $(this).attr('data-account').indexOf(val) > -1)
+                $(this).show();
+        });
+    })
+</script>
+
+<strong>
+    My Online Shop Accounts (<a style="color:inherit;text-decoration:underline;" href="https://risourcecenter.com/attachments/risources/Distributor-Online-Shop-Instruction-Manual.pdf" target="_blank">Instructions</a>)
+    @{
+        if (User.IsInRole("Super Admin") || User.IsInRole("Local Admin") || User.IsInRole("Global Admin"))
+        {
+            @*@Html.ActionLink("Manage SAP Account", "Index", "partnerStockCheck", routeValues: new { n1_name = "User Admin", n2_name = "SAP Accounts", msg = Model.usr_full_name, compid = companyId, user_ID = userId, back = "home" }, htmlAttributes: new { @class = "btn-sm btn-primary" })*@
+            <a target="_parent" class="btn-sm btn-primary" href="/Webshop?n1_name=User%20Admin&amp;n2_name=Online%20Shop%20Accounts&amp;msg=@ViewBag.fullname&amp;compid=@ViewBag.companyId&amp;user_ID=@ViewBag.userId&amp;back=home">Manage</a>
+        }
+    }
+    <input type="text" placeholder="Search Company name or account....." class="search" />
+</strong>
+<div class="clearfix"></div>
+<div class="scroll-wrapper">
+    @if (@Model != null)
+    {
+        foreach (var item in @Model.Distinct_stockPrice.GroupBy(ac => new { ac.ws_account, ac.ws_password, ac.comp_name, ac.ws_user, ac.sap_account, ac.comp_industry, ac.comp_audience }).OrderBy(a => a.Key.comp_name))
+        {
+            <table class="table" data-company="@item.Key.comp_name.ToLower()" data-account="@item.Key.sap_account" style="margin-bottom:10px;">
+                <thead>
+                    <tr style="background:#999;" class="header-row pointer">
+                        <th class="header clickable" align="left" style="vertical-align: middle;">@item.Key.comp_name | @item.Key.comp_industry | @item.Key.comp_audience</th>
+                        <th align="right" class="clickable" width="30%" style="vertical-align: middle;">Account Number: @item.Key.sap_account</th>
+                        <th align="right" width="10%" style="vertical-align: middle;">
+                            @{
+                                //var login = String.Format("https://www.rittal.com/us-en/content/en/wishlist/wishlist.jsp?userid={0}&passwd={1}", @item.Key.ws_account, @item.Key.ws_password);
+                                var login = String.Format("https://www.rittal.com/us-en/shop/login?login={0}&password={1}", @item.Key.ws_user, @item.Key.ws_password);
+                                <a href="@login" target="_blank" class="btn-primary login-link">Login</a>
+                            }
+                        </th>
+                    </tr>
+                </thead>
+                <tbody style="display:none;">
+                    <tr style="background:#CCC;">
+                        <th class="header" align="left" colspan="3">Location(s)</th>
+                    </tr>
+                    <tr>
+                        <td colspan="3">
+                            @{
+                                foreach (var stockPrice in @Model.stockPrice.GroupBy(a => new { a.sap_account, a.ws_account, a.ws_password, a.loc_city, a.loc_state }).OrderBy(a => a.Key.loc_city))
+                                {
+                                    if (stockPrice.Key.ws_password == item.Key.ws_password && stockPrice.Key.ws_account == item.Key.ws_account && stockPrice.Key.ws_password != null && stockPrice.Key.sap_account == item.Key.sap_account)
+                                    {
+                                        <span style="border-bottom:#000 1px solid;">@stockPrice.Key.loc_city, @stockPrice.Key.loc_state</span>
+                                        <br />
+                                    }
+                                }
+                            }
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+    }
+    else
+    {
+        <br /><br />
+        <div>You do not have any Online Shop Accounts assigned to you</div>
+    }
+</div>

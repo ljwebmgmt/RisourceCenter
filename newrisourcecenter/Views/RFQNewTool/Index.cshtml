@@ -1,0 +1,200 @@
+﻿@model IEnumerable<newrisourcecenter.Models.RFQNewViewModel>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string pages = Convert.ToString(Session["userPages"]);
+    string[] userpages = { };
+    if (pages != null)
+    {
+        userpages = pages.Split(',');
+    }
+}
+<script>
+    var processRFQs = {
+        init: {
+
+        },
+        toggleNotes:function(id){
+            $("#notes_" + id).toggle();
+            if($("#hide_status_"+id).is(":visible")){
+                $("#hide_status_"+id).hide();
+                $("#show_status_"+id).show();
+            }else{
+                $("#show_status_"+id).hide();
+                $("#hide_status_"+id).show();
+            }
+        }
+    }
+    jQuery(document).ready(processRFQs.init);
+</script>
+<div class="main_content">
+    @if (!string.IsNullOrEmpty(Request.QueryString["success"]))
+    {
+        <div class="alert alert-success">@Request.QueryString["success"]</div>
+    }
+    <div style="display:inline-block;float:left;">
+        @Html.ActionLink("Create RFQ >>", "Create", new { n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], msg = "Create RFQ" }, htmlAttributes: new { @class = "btn btn-primary" })
+    </div>
+    @*<div style="display:inline-block;width:70%;margin: 0px 0px 5px 20px;">
+        <div style="display:inline-block;color:red;margin-right:100px;vertical-align:top;">New Features:  </div>
+        <marquee behavior="scroll" loop="infinite" style="color:red;display:inline-block;width:60%;" scrolldelay="190">Click on the <font color="blue" size="2">Clone With Changes</font> button to modify old requests.<strong><font color="red" size="2"> RFQs older than December 2016 cannot be cloned.</font></strong></marquee>
+    </div>*@
+    <div style="display:inline-block;float:right;">
+        @if (userpages.Contains("20121") || userpages.Contains("10122"))
+        {
+            @Html.ActionLink("RFQ Admin >>", "RfqAdmin", new { n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], msg = "RFQ Admin" }, htmlAttributes: new { @class = "btn btn-primary" })
+        }
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.ID)
+                </th>
+                <th>
+                    Quote Number
+                </th>
+                <th>End User</th>
+                <th>
+                    Project Name
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.sold_to_party)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.submission_date)
+                </th>
+                <th>
+                    Status
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.completion_date)
+                </th>
+                <th>New quote / revision</th>
+                <th>Notes</th>
+                <td style="width:200px;">
+                </td>
+            </tr>
+        </thead>
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>@item.ID</td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Quote_Num)
+            </td>
+            <td>@Html.DisplayFor(modelItem => item.end_user_name)<br />@Html.DisplayFor(modelItem => item.end_user_location)</td>
+            <td>
+                @Html.DisplayFor(modelItem => item.qte_ref)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.sold_to_party)
+            </td>
+            <td>
+                @String.Format("{0:d}", @item.submission_date)
+            </td>
+            @if (item.list_RFQ_logs != null && item.list_RFQ_logs.Count() > 0)
+            {
+                if (@item.list_RFQ_logs.LastOrDefault().Action == "Save Progress")
+                {
+                    if (!string.IsNullOrEmpty(@item.list_RFQ_logs.LastOrDefault().AdminfullName))
+                    {
+                        <td id="status_@item.ID" style="color:red;">@item.list_RFQ_logs.LastOrDefault().AdminfullName - @item.list_RFQ_logs.LastOrDefault().Action/Not Submitted </td>
+                    }
+                    else
+                    {
+                        <td id="status_@item.ID" style="color:red;">@item.list_RFQ_logs.LastOrDefault().Action/Not Submitted </td>
+                    }
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(@item.list_RFQ_logs.LastOrDefault().AdminfullName))
+                    {
+                        <td id="status_@item.ID">@item.list_RFQ_logs.LastOrDefault().AdminfullName - @item.list_RFQ_logs.LastOrDefault().Action</td>
+                    }
+                    else
+                    {
+                        <td id="status_@item.ID">@item.list_RFQ_logs.LastOrDefault().Action</td>
+                    }
+                }
+            }
+            else
+            {
+                <td></td>
+            }
+            <td>
+                @String.Format("{0:d}", @item.completion_date)
+            </td> 
+            <td>@item.updated_quote @(!string.IsNullOrEmpty(item.qte_num) ? "(" + item.qte_num + ")" : "")</td>
+            @*<td style="text-align: center;">
+            @if (@item.check_project == 1)
+            {
+                <span>Yes</span>
+            }
+            else
+            {
+                <span>No</span>
+            }
+        </td>*@
+            <td>
+                <a href="#" onclick="processRFQs.toggleNotes(@item.ID);return false;" id="show_status_@item.ID">show notes</a>
+                <a href="#" onclick="processRFQs.toggleNotes(@item.ID);return false;" id="hide_status_@item.ID" style="display:none;">hide notes</a>
+                <div id="notes_@item.ID" style="overflow-y:auto;max-height:250px;display:none;">
+                    @if (item.list_RFQ_logs != null && item.list_RFQ_logs.Count() > 0)
+                    {
+                        <table class="table">
+                            <thead>
+                                <tr style="background:#E5E2AE;">
+                                    <td><b>Name</b></td>
+                                    <td><b>Action</b></td>
+                                    <td><b>Time of Action</b></td>
+                                    <td><b>Admin Note</b></td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var logs in item.list_RFQ_logs)
+                                {
+                                    <tr>
+                                        <td>@logs.fullName</td>
+                                        <td>@logs.Action</td>
+                                        <td>@logs.Action_Time</td>
+                                        <td>@logs.Notes</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </td>
+            <td>
+                @if (item.list_RFQ_logs != null && item.list_RFQ_logs.Count() > 0 && !item.list_RFQ_logs.LastOrDefault().IsCloned && item.list_RFQ_logs != null && item.list_RFQ_logs.Count() > 0 && item.list_RFQ_logs.LastOrDefault().Action == "Completed" || item.list_RFQ_logs != null && item.list_RFQ_logs.Count() > 0 && item.list_RFQ_logs.LastOrDefault().Action == "Admin Saved with Notes")
+                {
+                    @Html.ActionLink("View", "Edit", new { id = item.ID, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], ext_form = "no", view = "yes" }, new { })<span> | </span>
+                    if (item.list_RFQ_logs.LastOrDefault().Action == "Completed")
+                    {
+                        @*@Html.ActionLink("Clone Submit", "CloneRFQ", new { id = item.ID, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], ext_form = "no", view = "yes" }, new { })<span> | </span>*@
+                        @*@Html.ActionLink("Clone With Changes", "CloneRFQandSubmit", new { id = item.ID, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], ext_form = "no", view = "yes" }, new { })<span> | </span>*@
+                    }
+                }
+                else if (item.list_RFQ_logs != null && item.list_RFQ_logs.Count() > 0 && item.list_RFQ_logs.LastOrDefault().IsCloned)
+                {
+                    @Html.ActionLink("View", "Edit", new { id = item.ID, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], ext_form = "no", view = "yes" }, new { })<span> | </span>
+                    if (item.list_RFQ_logs.LastOrDefault().Action != "Cloned/Not Submitted" && item.list_RFQ_logs.LastOrDefault().Action != "Completed")
+                    {
+                        @Html.ActionLink("Edit", "Edit", new { id = item.ID, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], ext_form = "no" }, new { })<span> | </span>
+                    }
+                }
+                else
+                {
+                    @Html.ActionLink("Edit", "Edit", new { id = item.ID, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], ext_form = "no" }, new { })<span> | </span>
+                    if (item.list_RFQ_logs != null && item.list_RFQ_logs.Count() > 0 && @item.list_RFQ_logs.LastOrDefault().Action != "Assigned")
+                    {
+                        @Html.ActionLink("Delete", "Delete", new { id = item.ID, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"] }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false" })<span> | </span>
+                    }
+                }
+            </td>
+        </tr>
+        }
+    </table>
+</div>

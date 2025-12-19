@@ -1,0 +1,86 @@
+﻿@model IEnumerable<newrisourcecenter.Models.ReturnTools>
+
+@{
+    ViewBag.Title = Request.QueryString["n1_name"];
+    string userProducts = Convert.ToString(Session["userProducts"]);
+    string pages = Convert.ToString(Session["userPages"]);
+    string[] userpages = { };
+    if (pages != null)
+    {
+        userpages = pages.Split(',');
+    }
+}
+<div class="main_content" >
+    <table style="width:100%;text-align:center !important;margin-bottom:10px;" align="center">
+        <tr>
+            <td>
+                @Html.ActionLink("Submit a Return Request >>", "Create", new { n1_name = @Request.QueryString["n1_name"], msg = "Submit a Return Request" }, htmlAttributes: new { @style = "float:left;",@class = "btn btn-primary" })
+            </td>
+            <td>
+                @if (userpages.Contains("74") || userpages.Contains("76"))
+                {
+                    @Html.ActionLink("Admin Panel >>", "AdminPanel", new { n1_name = @Request.QueryString["n1_name"], msg = "Admin Panel" }, htmlAttributes: new { @style = "float:right;", @class = "btn btn-primary" })
+                }
+            </td>
+        </tr>
+    </table>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.form_id)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.submission_date)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.completion_date)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.status)
+                </th>
+                <td></td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.form_id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.submission_date)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.completion_date)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.status)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { id = item.form_id, n1_name = @Request.QueryString["n1_name"] }, new { @class = "btn btn-info" })
+                        @Html.ActionLink("Delete", "Delete", new { id = item.form_id, n1_name = @Request.QueryString["n1_name"] }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false", @class = "btn btn-info" })
+                    </td>
+                </tr>
+                ViewBag.form_id = item.form_id;
+            }
+        </tbody>
+    </table>
+    @*@if (Model.Count() >= 10)
+    {
+        if (Request.QueryString["next"] == null)
+        {
+            @Html.ActionLink("Next >>", "Index", new { n1_name = @Request.QueryString["n1_name"], msg = "Admin Panel", prev=@ViewBag.form_id - 1, next = @ViewBag.form_id - 10 }, new { @class = "btn btn-info" })
+        }
+        else
+        {
+            @Html.ActionLink("Next >>", "Index", new { n1_name = @Request.QueryString["n1_name"], msg = "Admin Panel", prev = @ViewBag.form_id - 1, next = @ViewBag.form_id - 10 }, new { @class = "btn btn-info" })
+            @Html.ActionLink("<< Previous", "Index", new { n1_name = @Request.QueryString["n1_name"], msg = "Admin Panel", prev = Convert.ToInt32(Request.QueryString["next"]) + 19, next = Convert.ToInt32(Request.QueryString["next"]) + 10 }, new { @class = "btn btn-info", @style = "float:right;" })
+        }
+    }
+    else
+    {
+        @Html.ActionLink("<< Back", "Index", new { n1_name = @Request.QueryString["n1_name"], msg = "" }, htmlAttributes: new { @class = "btn btn-primary", @style = "float:right;", @onclick = "javascript:history.back()" })
+    }*@
+</div>

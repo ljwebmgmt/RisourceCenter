@@ -1,0 +1,97 @@
+﻿@model IEnumerable<newrisourcecenter.Models.PMQuoteViewModel>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string fileUrl = "";
+    if (ViewBag.fileUrl != null && ViewBag.fileUrl != "")
+    {
+        fileUrl = ViewBag.fileUrl;
+    }
+    string pages = Convert.ToString(Session["userPages"]);
+    string[] userpages = { };
+    if (pages != null)
+    {
+        userpages = pages.Split(',');
+    }
+}
+@if (!string.IsNullOrEmpty(fileUrl))
+{
+    <script>
+        $(document).ready(function () {
+            window.open('@fileUrl', "_blank");
+        });
+    </script>
+}
+
+<div class="main_content">
+    @if (!string.IsNullOrEmpty(Request.QueryString["success"]))
+    {
+        <div class="alert alert-success">@Request.QueryString["success"]</div>
+    }
+    <div style="display:inline-block;float:left;">
+        @Html.ActionLink("Create Quote >>", "Create", new { n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], msg = "Create Quote" }, htmlAttributes: new { @class = "btn btn-primary" })
+    </div>
+    <div style="display:inline-block;float:right;">
+        @if (userpages.Contains("30167"))
+        {
+            @Html.ActionLink("PM Quote Admin >>", "Admin", new { n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], msg = "PM Quote Admin" }, htmlAttributes: new { @class = "btn btn-primary" })
+        }
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Company
+                </th>
+                <th>
+                    Contact Name
+                </th>
+                <th>
+                    Manager Name
+                </th>
+                <th>
+                    Email
+                </th>
+                <th>
+                    Service Type
+                </th>
+                <th>
+                    Created On
+                </th>
+                <th style="width:200px;">Actions</th>
+            </tr>
+        </thead>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.company_name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.contact_name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.manager_name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.service_type)
+                </td>
+                <td>
+                    @String.Format("{0:g}", @item.submitted_on)
+                </td>
+                <td>
+                    @if (!string.IsNullOrEmpty(item.file_url))
+                    {
+                        <a href="@item.file_url" download target="_blank">Download Quote</a>
+                    }
+                    |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.ID, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"] }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false", style = "color:red;" })
+                </td>
+            </tr>
+        }
+    </table>
+</div>

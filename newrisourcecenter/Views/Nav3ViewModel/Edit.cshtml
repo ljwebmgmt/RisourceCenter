@@ -1,0 +1,250 @@
+﻿@model newrisourcecenter.Models.Nav3ViewModel
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    $(document).ready(function () {
+        $("form").submit(function (e) {
+            e.preventDefault;
+
+            if ($("#n3_descLong").val() == "") {
+
+                alert("The long description cannot be empty");
+
+                return false;
+            }
+
+            return true;
+        });
+    });
+</script>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.n3ID)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.n2ID, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(m => m.n2ID, Model.list_n2ID, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.n2ID, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.n3order, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.n3order, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.n3order, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.n3_nameShort, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.n3_nameShort, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.n3_nameShort, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.n3_nameLong, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.n3_nameLong, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.n3_nameLong, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.n3_descShort, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextAreaFor(model => model.n3_descShort, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.n3_descShort, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.n3_descLong, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextAreaFor(model => model.n3_descLong, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.n3_descLong, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.n3_active, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <select name="n3_active" class="form-control">
+                    @if (Model.n3_active == 1)
+                    {
+                        <option value="1" selected>Active</option>
+                    }
+                    else
+                    {
+                        <option value="0" selected>Not Active</option>
+                    }
+                    <option value="1">Active</option>
+                    <option value="0">Not Acitive</option>
+                </select>
+                @Html.ValidationMessageFor(model => model.n3_active, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.n3_products, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @{
+                    if (Model.n3_products != null)
+                    {
+                        char[] prod = Model.n3_products.ToArray();
+                        string prods = new string(prod);
+                        foreach (var items in Model.list_products)
+                        {
+                            if (prods.Contains(Convert.ToString(items.pp_ID)))
+                            {
+                                <input type="checkbox" name="n3_products" id="n3_products" value="@items.pp_ID" checked />@items.pp_product<br />
+                            }
+                            else
+                            {
+                                <input type="checkbox" name="n3_products" id="n3_products" value="@items.pp_ID" />@items.pp_product<br />
+                            }
+                        }
+
+                    }
+                    else
+                    {
+
+                        foreach (var items in Model.list_products)
+                        {
+                            <input type="checkbox" name="n3_products" id="n3_products" value="@items.pp_ID" />@items.pp_product<br />
+                        }
+
+                    }
+                }
+
+                @Html.ValidationMessageFor(model => model.n3_products, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.n3_usrTypes, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @{
+                    if (Model.n3_usrTypes != null)
+                    {
+                        char[] typ = Model.n3_usrTypes.ToArray();
+                        string typs = new string(typ);
+
+                        foreach (var items in Model.list_Type)
+                        {
+                            if (typs.Contains(Convert.ToString(items.pt_ID)))
+                            {
+                                <input type="checkbox" name="n3_usrTypes" id="n3_usrTypes" value="@items.pt_ID" checked />@items.pt_type<br />
+                            }
+                            else
+                            {
+                                <input type="checkbox" name="n3_usrTypes" id="n3_usrTypes" value="@items.pt_ID" />@items.pt_type<br />
+                            }
+                        }
+
+                    }
+                    else
+                    {
+
+                        foreach (var items in Model.list_Type)
+                        {
+                            <input type="checkbox" name="n3_usrTypes" id="n3_usrTypes" value="@items.pt_ID" />@items.pt_type<br />
+                        }
+
+                    }
+                }
+
+                @Html.ValidationMessageFor(model => model.n3_usrTypes, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.n3_redirect, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.n3_redirect, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.n3_redirect, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.n3_keywords, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.n3_keywords, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.n3_keywords, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.n3_industry, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @{
+                    if (Model.n3_industry != null)
+                    {
+                        char[] prod = Model.n3_industry.ToArray();
+                        string prods = new string(prod);
+                        foreach (var items in Model.list_industry)
+                        {
+                            if (prods.Contains(Convert.ToString(items.pi_ID)))
+                            {
+                                <input type="checkbox" name="n3_industry" id="n3_industry" value="@items.pi_ID" checked />@items.pi_industry<br />
+                            }
+                            else
+                            {
+                                <input type="checkbox" name="n3_industry" id="n3_industry" value="@items.pi_ID" />@items.pi_industry<br />
+                            }
+                        }
+
+                    }
+                    else
+                    {
+
+                        foreach (var items in Model.list_industry)
+                        {
+                            <input type="checkbox" name="n3_industry" id="n3_industry" value="@items.pi_ID" />@items.pi_industry<br />
+                        }
+
+                    }
+                }
+
+                @Html.ValidationMessageFor(model => model.n3_industry, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-10">
+                @Html.HiddenFor(model => model.old_n3id, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.old_n3id, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-10">
+                @Html.HiddenFor(model => model.old_n2id, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.old_n2id, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <input name="n3_editDate" id="n3_editDate" type="hidden" value=@DateTime.Now />
+        <input name="n3_editBy" id="n3_editBy" type="hidden" value=@Session["userId"] />
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index", new { n2Id = Model.n2ID, n1_name = Request.QueryString["n1_name"], n2_name = Request.QueryString["n2_name"] })
+</div>

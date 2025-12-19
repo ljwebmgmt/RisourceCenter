@@ -1,0 +1,94 @@
+﻿@model IEnumerable<newrisourcecenter.Models.Nav3ViewModel>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<table>
+    <tr>
+        <td>
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                    Filter Level 3 Menu
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    @foreach (var item in @ViewBag.list_n1ID)
+                    {
+                        <li><a href="?parentid=@item.id&childId=@item.n2id&n1_name=@Request.QueryString["n1_name"]&n2_name=@item.name&rarr;@item.n2name">@item.name - @item.n2name</a></li>
+                    }
+                </ul>
+            </div>
+        </td>
+        <td>
+            <div class="dropdown">
+                @Html.ActionLink("Add a Class", "Create", new { childId = @Request.QueryString["childId"], n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], msg = "Add a Class" }, htmlAttributes: new { @class = "btn btn-primary" })
+            </div>
+        </td>
+        <td>
+            <div class="dropdown" style="display:inline-block;">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                    Add Sales Communication
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    @foreach (var item in @ViewBag.list_n1ID)
+                    {
+                        <li><a href="/SalesComm/Create?n2id=@item.n2id&img=@item.img&n3id=1&n1_name=@Request.QueryString["n1_name"]&n2_name=@item.n2name&n3_name=Announcements" >@item.name - @item.n2name</a></li>
+                    }
+                </ul>
+            </div>
+        </td>
+    </tr>
+</table>
+<br />
+@if (@Model != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.n3order)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.n3_nameLong)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.n3_descLong)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.n3order)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.n3_nameLong)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.n3_descLong)
+                    </td>
+                    @if (Request.QueryString["n2Id"] == null)
+                    {
+                        <td>
+                            @Html.ActionLink("Edit", "Edit", new { id = item.n3ID, n1_name = Request.QueryString["n1_name"], n2_name = Request.QueryString["n2_name"], msg = item.n3_nameLong, parentid = Request.QueryString["parentid"], childId = Request.QueryString["childId"] }, new { @class = "btn btn-info" })
+                            @Html.ActionLink("Delete", "Delete", new { id = item.n3ID, n2Id = Request.QueryString["n2Id"], n1_name = Request.QueryString["n1_name"], msg = item.n3_nameLong, n2_name = Request.QueryString["n2_name"], parentid = Request.QueryString["parentid"], childId = Request.QueryString["childId"] }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false", @class = "btn btn-info" })
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            @Html.ActionLink("Edit", "Edit", new { id = item.n3ID, n1_name = Request.QueryString["n1_name"], n2_name = Request.QueryString["n2_name"], msg = item.n3_nameLong, parentid = Request.QueryString["parentid"], childId = Request.QueryString["childId"] }, new { @class = "btn btn-info" })
+                            @Html.ActionLink("Delete", "Delete", new { id = item.n3ID, n2Id = Request.QueryString["n2Id"], n1_name = Request.QueryString["n1_name"], n2_name = Request.QueryString["n2_name"], msg = item.n3_nameLong, parentid = Request.QueryString["parentid"], childId = Request.QueryString["childId"] }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false", @class = "btn btn-info" })
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+}

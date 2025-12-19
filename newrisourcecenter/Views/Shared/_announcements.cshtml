@@ -1,0 +1,89 @@
+﻿<br clear="all" />
+<div>
+    @if (!Request.RawUrl.Contains("Announcements"))
+    {
+        <script>
+            //handle site announcements
+            announ = {
+                init: function () {
+                    var closeit=$(".closeit"),announcement_placeholder=$("#announcement_placeholder"),announcement=$('#announcement');
+
+                    $.post("/Announcements/getAnnouncement", function (results) {
+                        announcement.hide();
+                        page = window.location.href;
+                        if (page.search(results.pages) > 0 || results.pages=="all" || results.pages==null) {
+                            if (results.hide == "show") {
+                                announcement.show();
+                                announcement_placeholder.html(results.message);
+                                closeit.attr("id", results.ID);
+                            }
+                        }
+                   });
+
+                   closeit.click(function () {
+                       var link = "/Announcements/getAnnouncement/?announcementID=" + this.id;
+                       $.post(link, function (results) {
+                           if (results == 'hideAnnouncement') {
+                               announcement.html("");
+                               announcement.hide();
+                           } else {
+                               alert("Something went wrong. Refresh this page.");
+                           }
+                       });
+                   });
+                }
+            }
+            jQuery(document).ready(announ.init);
+        </script>
+    }
+    else
+    {
+        <script>
+               //handle site announcements preview
+               announ = {
+                   init: function () {
+                       var closeit=$(".closeit"),announcement_placeholder=$("#announcement_placeholder"),announcement=$('#announcement');
+
+                       $.post("/Announcements/getAnnouncement/?preview=1", function (results) {
+                           announcement.hide();
+
+                           if (results.hide == "show") {
+                               announcement.show();
+                               announcement_placeholder.html(results.message);
+                               closeit.attr("id", results.ID);
+                           }
+                       });
+
+                       closeit.click(function () {
+                           announcement_placeholder.html("");
+                           announcement.hide();
+                       });
+                   }
+              }
+               jQuery(document).ready();
+
+        </script>
+    }
+    <script>
+          tutorial = {
+                  tour: function () {
+                      var tour_closeit = $(".tour_closeit"), tour_placeholder = $("#tour_placeholder"), tour = $('#tour');
+                      tour.show();
+                      tour_placeholder.html('<h1 style="text-align: center;"><strong>Take a tour- Site Tutorial</strong></h1> <p style="text-align: center;"><iframe src="https://www.youtube.com/embed/5Na1JoCw52o" width="100%" height="515" frameborder="0" allowfullscreen="allowfullscreen"></iframe></p> ');
+                      tour_closeit.click(function () {
+                          tour_placeholder.html("");
+                          tour.hide();
+                      });
+                  }
+          }
+    </script>
+    <div style="width: 100%;margin-right: auto;margin-left: auto;text-align: left;background-color:#fff;color:black;z-index: 2;margin-top: 0px;position: relative;display:none;" id="announcement">
+        <span class="closeit">X</span>
+        <div style="width:80%;margin-right: auto;margin-left: auto;margin-bottom:10px;margin-top:10px;" id="announcement_placeholder"></div>
+    </div>
+    <div style="width: 100%;margin-right: auto;margin-left: auto;text-align: left;background-color:#fff;color:black;z-index: 2;margin-top: 0px;position: relative;display:none;" id="tour">
+        <span class="tour_closeit">X</span>
+        <div style="width:80%;margin-right: auto;margin-left: auto;margin-bottom:10px;margin-top:10px;" id="tour_placeholder"></div>
+    </div>
+</div>
+

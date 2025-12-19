@@ -1,0 +1,171 @@
+﻿
+@{
+    ViewBag.Title = "ExpExcl";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="main_content">
+    <section>
+        <a href="/MDFView/ManageAdmin?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]" style="float:right;"><b>back</b></a>
+        <h3>Balances Report</h3>
+        <div id="workBox">
+            <form action="BalanceReportForm" method="post" target="_blank"  style="background:#fff;border:none;">
+                <table cellpadding="5px" class="table" >
+                    <tbody>
+                        <tr style="background:#fff;border:none;">
+                            <th align="right">Archive year:</th>
+                            <td>
+                                <select name="year" class="form-control">
+                                    <option value="">Current year</option>
+                                    @for (int i = DateTime.Now.Year - 1; i >= 2013; i--)
+                                    {
+                                        <option value="@i">@i</option>
+                                    }
+                                </select>
+                            </td>
+                        </tr>
+                        <tr style="background:#fff;border:none;">
+                            <th align="right">Company Type:</th>
+                            <td>
+                                <input name="compType" id="compType" type="checkbox" value="1" checked="checked"> Distributor<br>
+                                <input name="compType" id="compType" type="checkbox" value="2" checked="checked"> VAR<br>
+                                <input name="compType" id="compType" type="checkbox" value="3" checked="checked"> Manufacturers Rep<br>
+                                <input name="compType" id="compType" type="checkbox" value="4" checked="checked"> Reserved<br>
+                                <input name="compType" id="compType" type="checkbox" value="5" checked="checked"> Rittal<br>
+                            </td>
+                        </tr>
+                        <tr style="background:#fff;border:none;">
+                            <th align="right">Start Date:</th>
+                            <td>
+                                <input name="sDate" id="sDate" type="datefield" class="form-control date-picker">
+                            </td>
+                        </tr>
+                        <tr style="background:#fff;border:none;">
+                            <th align="right">End Date:</th>
+                            <td>
+                                <input name="eDate" id="eDate" type="datefield" class="form-control date-picker">
+                            </td>
+                        </tr>
+                        <tr style="background:#fff;border:none;">
+                            <th align="right">Date Type:</th>
+                            <td>
+                                <select name="dateType" id="dateType" class="form-control">
+                                    <option value="1" selected="">Request Date</option>
+                                    <option value="2">Expected Date</option>
+                                    <option value="3">Review Date</option>
+                                    <option value="4">Validation Date</option>
+                                    <option value="5">Credit Issue Date</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr style="background:#fff;border:none;">
+                            <th align="right">Cost Center:</th>
+                            <td>
+                                <select name="cost_center" id="cost_center" class="form-control">
+                                    <option value="MDF CC 7200" selected>MDF CC 7200</option>
+                                    <option value="MKT CC 7615">MKT CC 7615</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr style="background:#fff;border:none;"><td colspan="2" align="right"><input name="genBalance" id="genBalance" type="submit" value="Process"></td></tr>
+                    </tbody>
+                </table>
+            </form>
+
+        </div>
+        <hr style="display:block !important;background-color:#000;" />
+        <h3>Requests Report</h3>
+
+        <div id="workBox">
+            <form action="RequestReportForm" method="post" target="_blank" >
+                <table class="table" style="background:#fff;border:none;">
+                    <tbody>
+                        <tr style="background:#fff;border:none;">
+                            <th align="right">Archive year:</th>
+                            <td>
+                                <select name="year" class="form-control">
+                                    <option value="">Current year</option>
+                                    @for (int i = DateTime.Now.Year - 1; i >= 2013; i--)
+                                    {
+                                        <option value="@i">@i</option>
+                                    }
+                                </select>
+                            </td>
+                        </tr>
+                        <tr style="background:#fff;border:none;">
+                            <th align="right">Company Type:</th>
+                            <td>
+                                <input name="compType" id="compType" type="checkbox" value="1" checked="checked"> Distributor<br>
+                                <input name="compType" id="compType" type="checkbox" value="2" checked="checked"> VAR<br>
+                                <input name="compType" id="compType" type="checkbox" value="3" checked="checked"> Manufacturers Rep<br>
+                                <input name="compType" id="compType" type="checkbox" value="4" checked="checked"> Reserved<br>
+                                <input name="compType" id="compType" type="checkbox" value="5" checked="checked"> Rittal<br>
+                            </td>
+                        </tr>
+                        <tr style="background:#fff;border:none;">
+                            <th align="right">Request Type:</th>
+                            <td>
+                                <input name="reqType" id="reqType" type="checkbox" value="1" checked="checked"> Training<br>
+                                <input name="reqType" id="reqType" type="checkbox" value="2" checked="checked"> Promotional Event<br>
+                                <input name="reqType" id="reqType" type="checkbox" value="3" checked="checked"> Other Promotional Activity<br>
+                                <input name="reqType" id="reqType" type="checkbox" value="4" checked="checked"> Merchandise &amp; Collateral<br>
+                                <input name="reqType" id="reqType" type="checkbox" value="5" checked="checked"> Display Product<br>
+                                <input name="reqType" id="reqType" type="checkbox" value="6" checked="checked"> Other Activity<br>
+                                <input name="reqType" id="reqType" type="checkbox" value="7" checked="checked"> Rittal Automation Systems<br>
+                                <input name="reqType" id="reqType" type="checkbox" value="8" checked="checked"> Tradeshow &amp; Events<br>
+                                <input name="reqType" id="reqType" type="checkbox" value="10" checked="checked"> Sales Performance Incentive Fund<br>
+                            </td>
+                        </tr>
+                        <tr style="background:#fff;border:none;">
+                            <th align="right">Request Status:</th>
+                            <td>
+                                <input name="reqStatus" id="reqStatus" type="checkbox" value="1" checked="checked"> Pending<br>
+                                <input name="reqStatus" id="reqStatus" type="checkbox" value="2" checked="checked"> RCM Denied<br>
+                                <input name="reqStatus" id="reqStatus" type="checkbox" value="8" checked="checked"> RCM Approved<br>
+                                <input name="reqStatus" id="reqStatus" type="checkbox" value="7" checked="checked"> Marketing Denied<br>
+                                <input name="reqStatus" id="reqStatus" type="checkbox" value="3" checked="checked"> Marketing Approved<br>
+                                <input name="reqStatus" id="reqStatus" type="checkbox" value="4" checked="checked"> Completed<br>
+                                <input name="reqStatus" id="reqStatus" type="checkbox" value="5" checked="checked"> Credit Issued<br>
+                                <input name="reqStatus" id="reqStatus" type="checkbox" value="6" checked="checked"> Cancelled<br>
+                            </td>
+                        </tr>
+                        <tr style="background:#fff;border:none;">
+                            <th align="right">Start Date:</th>
+                            <td>
+                                <input name="sDate" id="sDate" type="datefield" class="form-control date-picker" />
+                            </td>
+                        </tr>
+                        <tr style="background:#fff;border:none;">
+                            <th align="right">End Date:</th>
+                            <td>
+                                <input name="eDate" id="eDate" type="datefield" class="form-control date-picker" />
+                            </td>
+                        </tr>
+                        <tr style="background:#fff;border:none;">
+                            <th align="right">Date Type:</th>
+                            <td>
+                                <select name="dateType" id="dateType" class="form-control">
+                                    <option value="1" selected="">Request Date</option>
+                                    <option value="2">Expected Date</option>
+                                    <option value="3">Review Date</option>
+                                    <option value="4">Validation Date</option>
+                                    <option value="5">Credit Issue Date</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr style="background:#fff;border:none;">
+                            <th align="right">Cost Center:</th>
+                            <td>
+                                <select name="cost_center" id="cost_center" class="form-control">
+                                    <option value="MDF CC 7200" selected>MDF CC 7200</option>
+                                    <option value="MKT CC 7615">MKT CC 7615</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr style="background:#fff;border:none;"><td colspan="2" align="right"><input name="genRequest" id="genRequest" type="submit" value="Process"></td></tr>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </section>
+</div>

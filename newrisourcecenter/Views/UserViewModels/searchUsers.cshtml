@@ -1,0 +1,69 @@
+﻿@model IEnumerable<newrisourcecenter.Models.UserViewModel>
+@{
+    Layout = null;
+    long companyId = Convert.ToInt64(Session["companyId"]);
+}
+
+<table class="table">
+        <thead>
+            <tr>
+                <td></td>
+                <th>User ID</th>
+                <th>
+                    @Html.DisplayNameFor(model => model.usr_fName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.usr_lName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.usr_email)
+                </th>
+                <td></td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @if (item.user_role == "Admin")
+                        {
+                            <span class="glyphicon glyphicon-star" style="color:red;"></span>
+                        }
+                    </td>
+                    <td> @item.usr_ID</td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.usr_fName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.usr_lName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.usr_email)
+                    </td>
+                    <td>
+                        @if (User.IsInRole("Super Admin") || User.IsInRole("Local Admin") || User.IsInRole("Global Admin"))
+                {
+                            @Html.ActionLink("Online Shop Accounts", controllerName: "Webshop", actionName: "Index", routeValues: new { n1_name = Request.QueryString["n1_name"], n2_name = "Webshop Accounts", msg = item.usr_fName + " " + item.usr_lName, user_ID = item.usr_ID, compid = item.comp_ID }, htmlAttributes: new { @class = "btn btn-info" })
+                            <span> </span>@Html.ActionLink("SAP Accounts", controllerName: "partnerStockCheck", actionName: "Index", routeValues: new { n1_name = Request.QueryString["n1_name"], n2_name = "SAP Accounts", msg = item.usr_fName + " " + item.usr_lName, user_ID = item.usr_ID, compid = item.comp_ID }, htmlAttributes: new { @class = "btn btn-info" })
+                        }
+
+                        @if (@Request.QueryString["compid"] != null)
+                {
+                            @Html.ActionLink("Edit", "Edit", new { id = item.usr_ID, n1_name = Request.QueryString["n1_name"], msg = item.usr_fName + " " + item.usr_lName, compid = Request.QueryString["compid"], user_ID = item.usr_ID, n2_name = "SAP Accounts" }, new { @class = "btn btn-info" })
+                        }
+                        else
+                        {
+                            @Html.ActionLink("Edit", "Edit", new { id = item.usr_ID, n1_name = Request.QueryString["n1_name"], msg = item.usr_fName + " " + item.usr_lName, compid = item.comp_ID, user_ID = item.usr_ID, n2_name = "SAP Accounts" }, new { @class = "btn btn-info" })
+                        }
+
+                        @if (User.IsInRole("Super Admin") || User.IsInRole("Global Admin"))
+                        {
+                            @Html.ActionLink("Delete", "Delete", new { id = item.usr_ID, n1_name = Request.QueryString["n1_name"] }, htmlAttributes: new { id = "delete", @class = "btn btn-info btn-delete-user" })
+                        }
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>

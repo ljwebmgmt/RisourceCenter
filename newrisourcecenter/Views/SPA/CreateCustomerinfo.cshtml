@@ -1,0 +1,377 @@
+﻿@model newrisourcecenter.Models.SPAViewModels
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "";
+    int? userId = Convert.ToInt32(Session["userId"]);
+    int? companyId = Convert.ToInt32(Session["companyId"]);
+}
+<style>
+    #customer_info{background-color:gainsboro;padding:10px;}
+    #specifications{background-color:aliceblue;padding:10px;}
+    #primary_contact{background-color:beige;padding:10px;}
+    #additional_info{background-color:#deefd2;padding:10px;}
+</style>
+<script>
+    $(function () {
+        $(".date-picker").datepicker();
+    });
+    // $("select").prop('class', 'selectpicker');
+    $("#Customer_company_name").attr("ng-model", "customerdata.Customer_company_name");
+    $("#Contract_id").attr("ng-model", "customerdata.Contract_id");
+    $("#Contract_id").attr("ng-blur", "checkforId()");
+    $("#Customer_address1").attr("ng-model", "customerdata.Customer_address1");
+    $("#Customer_address2").attr("ng-model", "customerdata.Customer_address2");
+    $("#Customer_city").attr("ng-model", "customerdata.Customer_city");
+    $("#Customer_state").attr("ng-model", "customerdata.Customer_state");
+    $("#Customer_zip").attr("ng-model", "customerdata.Customer_zip");
+    $("#Customer_phone").attr("ng-model", "customerdata.Customer_phone");
+    $("#Customer_name").attr("ng-model", "customerdata.Customer_name");
+    $("#Customer_title").attr("ng-model", "customerdata.Customer_title");
+    $("#Customer_email").attr("ng-model", "customerdata.Customer_email");
+    $("#Start_date").attr("ng-model", "customerdata.Start_date");
+    $("#End_date").attr("ng-model", "customerdata.End_date");
+    $("#Updated_date").attr("ng-model", "customerdata.Updated_date");
+    $("#Updated_by").attr("ng-model", "customerdata.Updated_by");
+    $("#Approved_date").attr("ng-model", "customerdata.Approved_date");
+    $("#Projected_sales").attr("ng-model", "customerdata.Projected_sales");
+    $("#Competition").attr("ng-model", "customerdata.Competition");
+    $("#Territory_code").attr("ng-model", "customerdata.Territory_code");
+    $("#Activity_status").attr("ng-model", "customerdata.Activity_status");
+    $("#Status").attr("ng-model", "customerdata.Status");
+    $("#Market_segement").attr("ng-model", "customerdata.Market_segement");
+    $("#Account_type").attr("ng-model", "customerdata.Account_type");
+    $("#Contract_type").attr("ng-model", "customerdata.Contract_type");
+    $("#Additional_information").attr("ng-model", "customerdata.Additional_information");
+    $("#Distributor_location").attr("ng-model", "customerdata.Distributor_location");
+    //$("#Distributor_location").attr("ng-change", "GetSalesReps(customerdata.Distributor_location)");
+
+    $("#Customer_zip").attr("ng-keyup", "GetSalesReps(customerdata.Customer_zip)");
+
+</script>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal" >
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <h4>Please select the type of the contract.</h4>
+            <div class="form-group">
+                @Html.LabelFor(model => model.Contract_type, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    <select id="Contract_type" name="Contract_type" ng-model="customerdata.Contract_type" class="form-control" >
+                        <option value="">---Please select contract type---</option>
+                        <option value="1">Fixed Quantity</option>
+                       <option value="2">Open Ended</option>
+                    </select>
+                    @Html.ValidationMessageFor(model => model.Contract_type, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <input type="hidden" name="Usr_id" id="Usr_id" value="@userId"  />
+            <input type="hidden" name="Comp_id" id="Comp_id" value="@companyId" />
+        <div id="customer_info" style="border-top:1px dotted #808080;" >
+            <h4>Enter the customer details required below. Please use as much accuracy as possible.</h4>
+            <div class="form-group">
+                @Html.LabelFor(model => model.Customer_company_name, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Customer_company_name, new { htmlAttributes = new { @class = "form-control", @value = "customerdata.Customer_company_name" } })
+                    @Html.ValidationMessageFor(model => model.Customer_company_name, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Contract_id, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Contract_id, new { htmlAttributes = new { @class = "form-control", @style= "display:inline-block;" } })
+                    <span style="cursor:pointer;display:inline-block;" ng-click="idtooltip = !idtooltip">?</span>
+                    <div style="position:absolute;width:200px;background:#ccc;color:#000;z-index:10;left:200px;padding:10px;border-radius:6px;" ng-show="idtooltip">
+                        This part is for the ID of the contract. This ID is unique per contract.
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Contract_id, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Customer_address1, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Customer_address1, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Customer_address1, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Customer_address2, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Customer_address2, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Customer_address2, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Customer_city, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Customer_city, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Customer_city, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Customer_state, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Customer_state, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Customer_state, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Customer_zip, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Customer_zip, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Customer_zip, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Customer_phone, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Customer_phone, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Customer_phone, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div id="primary_contact" style="border-top:1px dotted #808080;">
+            <h4>Please Identify the primary contact for this customer.</h4>
+            <div class="form-group">
+                @Html.LabelFor(model => model.Customer_name, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Customer_name, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Customer_name, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Customer_email, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Customer_email, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Customer_email, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Customer_title, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Customer_title, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Customer_title, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div id="specifications" style="border-top:1px dotted #808080;" >
+            <h4>Enter the contract specifications</h4>
+            <div class="form-group">
+                @Html.LabelFor(model => model.Projected_sales, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Projected_sales, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Projected_sales, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Distributor_location, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownListFor(m => m.Distributor_location, Model.List_dist_locations, htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Distributor_location, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group" >
+                @Html.LabelFor(model => model.Sales_rep_user, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    {{customerdata.Sales_rep_user_name}}
+                    <br />
+                    <span ng-bind-html="salesrepStatus" ></span>
+                    <select id="Sales_rep_user" name="Sales_rep_user" ng-model="customerdata.Sales_rep_user" class="form-control" >
+                        <option value="">---Please select a sales Rep---</option>
+                        <option ng-repeat="salesrep in salesrep" value="{{salesrep.email}}">{{salesrep.contact_name}}</option>
+                    </select>
+                    @Html.ValidationMessageFor(model => model.Contract_type, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2" for="Competition">Competition</label>
+                <div class="col-md-10">
+                    <select id="Competition" name="Competition" class="form-control">
+                        <option value="">--Please select competition--</option>
+                        <option value="1">Advantag</option>
+                        <option value="2">Cooper</option>
+                        <option value="3">Eldon</option>
+                        <option value="4">Eurobex</option>
+                        <option value="5">Haewa</option>
+                        <option value="6">Hammond</option>
+                        <option value="7">Hoffman</option>
+                        <option value="8">Ice Qube</option>
+                        <option value="9">Integra</option>
+                        <option value="10">ISC</option>
+                        <option value="11">Klockner</option>
+                        <option value="12">Kooltron</option>
+                        <option value="13">McLean</option>
+                        <option value="14">None</option>
+                        <option value="15">Other</option>
+                        <option value="16">Pfannenberg</option>
+                        <option value="17">Saginaw</option>
+                        <option value="18">SCE</option>
+                        <option value="19">Schaefer</option>
+                        <option value="20">SMI</option>
+                        <option value="21">Stahlin</option>
+                        <option value="22">SteeLine</option>
+                        <option value="23">Weigmann</option>
+                    </select>
+                    <span class="field-validation-valid text-danger" data-valmsg-for="Competition" data-valmsg-replace="true"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2" for="Status">Contract Status</label>
+                <div class="col-md-10">
+                    <select id="Status" name="Status" class="form-control">
+                        <option value="">--Please select Contract Status--</option>
+                        <option value="1">Convert existing customer</option>
+                        <option value="2">Move customer from another distributor</option>
+                        <option value="3">Ongoing SPA contract for new customer</option>
+                        <option value="4">One time use only</option>
+                        <option value="5">Short time period (under one year)</option>
+                        <option value="6">Unknown</option>
+                    </select>
+                    <span class="field-validation-valid text-danger" data-valmsg-for="Status" data-valmsg-replace="true"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Start_date, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Start_date, new { htmlAttributes = new { @class = "form-control date-picker" } })
+                    @Html.ValidationMessageFor(model => model.Start_date, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.End_date, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.End_date, new { htmlAttributes = new { @class = "form-control date-picker" } })
+                    @Html.ValidationMessageFor(model => model.End_date, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Market_segement, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    <select id="Market_segement" name="Market_segement" class="form-control">
+                        <option value="">--Please select--</option>
+                        <option value="1">Energy - Petrochemical</option>
+                        <option value="2">Energy - Power Generation</option>
+                        <option value="3">Energy - Others</option>
+                        <option value="4">Government</option>
+                        <option value="5">Industrial - Automotive</option>
+                        <option value="6">Industrial - Food&amp;Beverage</option>
+                        <option value="7">Industrial - Machinery Mfg</option>
+                        <option value="8">Industrial - Material Handling</option>
+                        <option value="9">Industrial - Process Automation</option>
+                        <option value="10">Industrial - Others</option>
+                        <option value="11">Infrastructure - Others</option>
+                        <option value="12">Infrastructure - Transportation</option>
+                        <option value="13">Infrastructure - Water&amp;Waste</option>
+                        <option value="14">IT - Education</option>
+                        <option value="15">IT - Financial</option>
+                        <option value="16">IT - Healthcare</option>
+                        <option value="17">IT - Others</option>
+                    </select>
+                    @Html.ValidationMessageFor(model => model.Market_segement, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Account_type, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    <select id="Account_type" name="Account_type" class="form-control">
+                        <option value="">--Please select--</option>
+                        <option value="1">Contractor</option>
+                        <option value="2">Distributor</option>
+                        <option value="3">Integrator</option>
+                        <option value="4">OEM</option>
+                        <option value="5">Other</option>
+                        <option value="6">Panel Builder</option>
+                        <option value="7">Specifier</option>
+                        <option value="8">User</option>
+                        <option value="9">VAR</option>
+                    </select>
+                    @Html.ValidationMessageFor(model => model.Account_type, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Updated_date, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    <span class="field-validation-valid text-danger" data-valmsg-for="Updated_date" data-valmsg-replace="true">{{customerdata.Updated_date}}</span>
+                    @Html.HiddenFor(model => model.Updated_date, new { htmlAttributes = new { @class = "form-control date-picker" } })
+                    @Html.ValidationMessageFor(model => model.Updated_date, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group" ng-show="activity_status" >
+                @Html.LabelFor(model => model.Activity_status, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    <select id="Activity_status" name="Activity_status" class="form-control">
+                        <option value="">--Please select--</option>
+                        <option value="1">Active/Approved</option>
+                        <option value="2">Declined</option>
+                        <option value="3">Draft</option>
+                        <option value="4">Expired</option>
+                        <option value="5">Upcoming</option>
+                        <option value="6">Waiting for Approval</option>
+                    </select>
+                    @Html.ValidationMessageFor(model => model.Activity_status, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            
+            <div class="form-group">
+                
+                @Html.LabelFor(model => model.Territory_code, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    {{customerdata.Territory_code}}
+                    @Html.HiddenFor(model => model.Territory_code, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Territory_code, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            @Html.HiddenFor(model => model.Updated_by, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.HiddenFor(model => model.Approved_date, new { htmlAttributes = new { @class = "form-control" } })
+        </div>
+
+        <div id="additional_info">
+            <h4>Enter additional information that my be relevant to this contract</h4>
+            <div class="form-group">
+                @Html.LabelFor(model => model.Additional_information, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.TextAreaFor(model => model.Additional_information, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Additional_information, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+        <br />
+        <div style="float:right;" ng-if="customerdata.Spa_id==null" >
+            <span class="btn btn-primary" ng-click="productView('product')">Next >></span>
+        </div>
+
+        <div style="float:right;" ng-if="customerdata.Spa_id!=null">
+            <span class="btn btn-primary" ng-click="productView('product')">Next >></span>
+        </div>
+        <br />
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>

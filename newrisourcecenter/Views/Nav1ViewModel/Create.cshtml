@@ -1,0 +1,245 @@
+﻿@model newrisourcecenter.Models.Nav1ViewModel
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            <label class="control-label col-md-2" for="n1order">
+                @Model.nav1labels.FirstOrDefault().location[0]
+                @if (Request.QueryString["translate"] != null)
+                {
+                    @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.nav1labels.FirstOrDefault().location[1], controllerName = "Nav1ViewModel", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                }
+            </label>
+            <div class="col-md-10">
+                @foreach (var item in Model.list_location_ids)
+                {
+                    <input type="checkbox" value="@item.id" name="locations">@item.name
+                }
+                @Html.ValidationMessageFor(model => model.locations, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="n1order">
+                @Model.nav1labels.FirstOrDefault().default_language[0]
+                @if (Request.QueryString["translate"] != null)
+                {
+                    @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.nav1labels.FirstOrDefault().default_language[1], controllerName = "Nav1ViewModel", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                }
+            </label>
+            <div class="col-md-10">
+                @Html.DropDownListFor(m => m.default_language, Model.list_language_ids, htmlAttributes: new { @onchange = "selectLocation(this);", @class = "form-control" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="n1order">
+            @Model.nav1labels.FirstOrDefault().n1order_label[0]
+            @if (Request.QueryString["translate"] != null)
+            {
+                @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.nav1labels.FirstOrDefault().n1order_label[1], controllerName = "Nav1ViewModel", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+            }          
+            </label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.n1order, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.n1order, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="n1order">
+            @Model.nav1labels.FirstOrDefault().n1_nameshort_label[0]
+            @if (Request.QueryString["translate"] != null)
+            {
+                @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.nav1labels.FirstOrDefault().n1_nameshort_label[1], controllerName = "Nav1ViewModel", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+            }          
+            </label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.n1_nameShort, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.n1_nameShort, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="n1order">
+            @Model.nav1labels.FirstOrDefault().n1_nameLong_label[0]
+            @if (Request.QueryString["translate"] != null)
+            {
+                @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.nav1labels.FirstOrDefault().n1_nameLong_label[1], controllerName = "Nav1ViewModel", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+            }          
+            </label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.n1_nameLong, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.n1_nameLong, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="n1order">
+                @Model.nav1labels.FirstOrDefault().linkId_label[0]
+                @if (Request.QueryString["translate"] != null)
+                {
+                    @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.nav1labels.FirstOrDefault().linkId_label[1], controllerName = "Nav1ViewModel", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                }
+            </label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.linkId, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.linkId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="n1order">
+                @Model.nav1labels.FirstOrDefault().pageName_label[0]
+                @if (Request.QueryString["translate"] != null)
+                {
+                    @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.nav1labels.FirstOrDefault().pageName_label[1], controllerName = "Nav1ViewModel", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                }
+            </label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.pageName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.pageName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="n1order">
+                @Model.nav1labels.FirstOrDefault().controller_label[0]
+                @if (Request.QueryString["translate"] != null)
+                {
+                    @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.nav1labels.FirstOrDefault().controller_label[1], controllerName = "Nav1ViewModel", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                }
+            </label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.controller, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.controller, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="n1order">
+                @Model.nav1labels.FirstOrDefault().n1_descShort_label[0]
+                @if (Request.QueryString["translate"] != null)
+                {
+                    @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.nav1labels.FirstOrDefault().n1_descShort_label[1], controllerName = "Nav1ViewModel", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                }
+            </label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.n1_descShort, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.n1_descShort, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="n1order">
+                @Model.nav1labels.FirstOrDefault().n1_descLong_label[0]
+                @if (Request.QueryString["translate"] != null)
+                {
+                    @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.nav1labels.FirstOrDefault().n1_descLong_label[1], controllerName = "Nav1ViewModel", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                }
+            </label>
+            <div class="col-md-10">
+                @Html.TextAreaFor(model => model.n1_descLong, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.n1_descLong, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="n1order">
+                @Model.nav1labels.FirstOrDefault().n1_active_label[0]
+                @if (Request.QueryString["translate"] != null)
+                {
+                    @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.nav1labels.FirstOrDefault().n1_active_label[1], controllerName = "Nav1ViewModel", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                }
+            </label>
+            <div class="col-md-10">
+                <select name="n1_active" class="form-control">
+                    <option value="0" selected>@Model.nav1labels.FirstOrDefault().select_status_label[0]</option>
+                    <option value="1">@Model.nav1labels.FirstOrDefault().active_label[0]</option>
+                    <option value="0">@Model.nav1labels.FirstOrDefault().not_active_label[0]</option>
+                </select>
+                @Html.ValidationMessageFor(model => model.n1_active, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="n1order">
+                @Model.nav1labels.FirstOrDefault().n1_headerImg_label[0]
+                @if (Request.QueryString["translate"] != null)
+                {
+                    @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.nav1labels.FirstOrDefault().n1_headerImg_label[1], controllerName = "Nav1ViewModel", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                }
+            </label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.n1_headerImg, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.n1_headerImg, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="n1order">
+                @Model.nav1labels.FirstOrDefault().usr_group_label[0]
+                @if (Request.QueryString["translate"] != null)
+                {
+                    @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.nav1labels.FirstOrDefault().usr_group_label[1], controllerName = "Nav1ViewModel", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                }
+            </label>
+            <div class="col-md-10">
+                @{
+                    if (Model.usr_group != null)
+                    {
+                        char[] role = Model.usr_group.ToArray();
+                        string roles = new string(role);
+                        foreach (var items in Model.user_roles)
+                        {
+                            <input type="checkbox" name="usr_group" id="usr_group" value="@items.id" />@items.name[0]
+                            if (Request.QueryString["translate"] != null)
+                            {
+                                @Html.ActionLink("T", "Create", "Labels", new { labelName = @items.name[1], controllerName = "Nav1ViewModel", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                            }
+                            <br />
+                        }
+                    }
+                    else
+                    {
+
+                        foreach (var items in Model.user_roles)
+                        {
+                            <input type="checkbox" name="usr_group" id="usr_group" value="@items.id" />@items.name[0]
+                            if (Request.QueryString["translate"] != null)
+                            {
+                                @Html.ActionLink("T", "Create", "Labels", new { labelName = @items.name[1], controllerName = "Nav1ViewModel", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                            }
+                            <br />
+                        }
+
+                    }
+                }
+
+                @Html.ValidationMessageFor(model => model.usr_group, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <input name="n1_editDate" id="n1_editDate" type="hidden" value=@DateTime.Now />
+        <input name="n1_editBy" id="n1_editBy" type="hidden" value=@Session["userId"] />
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+   }
+
+<div>
+    @Html.ActionLink("Back to List", "Index", new { n1_name =Request.QueryString["n1_name"] })
+</div>

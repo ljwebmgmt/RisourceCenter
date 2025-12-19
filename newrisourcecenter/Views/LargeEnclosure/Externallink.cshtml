@@ -1,0 +1,105 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_external.cshtml";
+}
+<link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" media="screen">
+
+<link href="~/Content/largeenclosure.css" rel="stylesheet" type="text/css" media="screen">
+<script src="~/Scripts/flexslider.js"></script>
+
+<div class="main_content" style="padding-top:10px;">
+    <div class="flexslider" id="0">
+        <div class="slides">
+            <div class="slider_1"><img src="~/attachments/LargeEnclosure/images/title01.png" style="height:298px;" /></div>
+
+            <div class="slider_2"><img src="~/attachments/LargeEnclosure/images/title02.jpg" style="height:298px;" /></div>
+
+            <div class="slider_3"><img src="~/attachments/LargeEnclosure/images/title03.jpg" style="height:298px;" /></div>
+        </div>
+
+        <div class="content_slider_txt">
+            <h3>Large Enclosure Selection &amp; Pricing Tool</h3>
+            <p>
+                The Large Enclosure Selection & Pricing Tool allows you to select an enclosure from our family of freestanding TS 8 and FMD product families and then add the appropriate accessories quickly and easily. The end result is a build of materials with list pricing which you can then export as a PDF or CSV, or send along to our quotes team for a final quote. Get started below!
+                <br />
+            </p>
+        </div>
+    </div>
+    <br />
+    <div class="Header">
+        <form>
+            <div id="formTable1">
+                <input type="hidden" name="language" id="language" value="">
+                <input type="hidden" name="step" id="step" value="">
+                <input type="hidden" name="satz" id="satz" value="">
+                Will you be baying this enclosure to another TS8?<br>
+                <input name="baying" class="baying" value="1" onclick="enclosureSelector.step0();" type="radio">Yes
+                <input name="baying" class="baying" id="baying" value="0" onclick="enclosureSelector.step0('yes');" type="radio">No
+                <br />
+                <br />
+                <span id="enclosureDimentions">
+                    <table id="table0" style="background-color:rgba(148, 145, 145, 0.76);padding:5px;color:#000;border-radius:5px;font-size:14px;">
+                        <tr>
+                            <td>
+                                <label>Height (in)</label><br />
+                                <select id="height" onchange="enclosureSelector.step0()"></select>
+                            </td>
+                            <td>
+                                <label>Width (in)</label><br />
+                                <select id="width" onchange="enclosureSelector.step0()"></select>
+                            </td>
+                            <td>
+                                <label>Depth (in)</label><br />
+                                <select id="depth" onchange="enclosureSelector.step0()"></select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">
+                                <div style="line-height:30px;">Choose the dimensions above. If you said yes to baying, we’ll display the widths available based on your height and depth requirements.</div>
+                            </td>
+                        </tr>
+                    </table>
+                </span><br />
+                <a href="#step1" class="step1button">
+                    <span class="ButtonLink btn btn-primary" onclick="enclosureSelector.step1();">Display Products</span>
+                </a>
+                <a class="step1button ButtonLink btn btn-primary" href=""><span>Reset</span></a>
+            </div>
+            <div id="formTable2">
+                Already know the product part number? Enter below.<br>
+                <div class="input-group stylish-input-group">
+                    <input name="articelnummer" id="articelnummer" placeholder="Enter Model Number, e.g.: 8845500" value="" maxlength="7" type="Text" class="form-control" onkeyup="enclosureSelector.step1()">
+                    <span class="input-group-addon" id="submit_search">
+                        <button type="submit" onclick="enclosureSelector.step1();return false;">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+                <br />
+                <a class="step12button ButtonLink btn btn-primary" href=""><span>Reset</span></a>
+                <br />
+                <br />
+                <div>
+                    <a href="#" onclick="enclosureSelector.ListConfigurations('show');" class="btn btn-primary">Show Saved Configurations</a>
+                </div>
+            </div>
+        </form>
+    </div>
+    <br clear="all" />
+    <br clear="all" />
+    <div id="step1">
+        <div id="ListTS8"></div>
+        <div id="ListFMDs"></div>
+        <div id="step2link" align="right" onclick="enclosureSelector.showAccessories();return false;"><span><a href="#">Show Accessories</a></span></div>
+    </div>
+    <span id="statusMessage"></span>
+    <div id="step2">
+        <div style="background-color:#000;height:350px;">
+            <span id="selectedEnclosureTitle"></span>
+        </div>
+        <br clear="all" />
+        <div id="accessoriestable"></div>
+        <div id="step3link"></div>
+    </div>
+</div>

@@ -1,0 +1,14 @@
+newrisourcecenter.Tests/bin/Debug/
+newrisourcecenter/obj/
+.vs/
+newrisourcecenter.Tests/obj/Debug/
+*.js
+newrisourcecenter/bin/
+newrisourcecenter/attachments/
+packages/
+newrisourcecenter/Migrations/
+newrisourcecenter.Tests/obj/
+newrisourcecenter/Properties/
+newrisourcecenter/classes/tmp/
+newrisourcecenter/exports/
+newrisourcecenter.Tests/bin/

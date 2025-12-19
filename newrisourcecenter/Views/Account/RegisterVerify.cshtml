@@ -1,0 +1,21 @@
+﻿@{
+    ViewBag.Title = "RegisterVerify";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<article id="main_content" align="center">
+    <div class="row" align="center">
+        <h2 style="color:#E50043;">@ViewBag.heading</h2>
+
+        <section id="confirmationForm" align="center">
+            <div>
+                <p>
+                    <br />
+                     Please @Html.ActionLink("click here", "VerifyEmail",new { userid = ViewBag.userId }, htmlAttributes: new { @class = "btn btn-link btn-sm" }) to verify your email.
+                    <br />
+                    <br />
+                </p>
+            </div>
+        </section>
+    </div>
+</article>
+

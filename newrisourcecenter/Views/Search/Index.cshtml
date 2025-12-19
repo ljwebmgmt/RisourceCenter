@@ -1,0 +1,242 @@
+﻿@model newrisourcecenter.Models.SearchViewModel
+@{
+    string userProducts = Convert.ToString(Session["userProducts"]);
+}
+
+<div class="main_content">
+    <section class="searchPage">
+        @if (User.IsInRole("Super Admin"))
+        {
+            if ( Model.user_results.Count() != 0 ) {
+                if (Request.QueryString["all"] == "all" || string.IsNullOrEmpty(Request.QueryString["onlyUsers"]))
+                {
+                    <strong>Users <span id="countResults" >@Model.user_results.Count()</span></strong>
+                    if (string.IsNullOrEmpty(Request.QueryString["msg"]))
+                    {
+                        @Html.ActionLink("X", "Index", new { all = "No", msg=" ", n1_name = @Request.QueryString["n1_name"], onlySalesComm = @Request.QueryString["onlySalesComm"], onlyRiSource = @Request.QueryString["onlyRiSource"], onlyUsers = "No", onlyPartComp = Request.QueryString["onlyPartComp"], onlyPartLoc = Request.QueryString["onlyPartLoc"] }, new { id = "searchlink" })
+                    }
+                    else
+                    {
+                        @Html.ActionLink("X", "Index", new { all = "No", msg = @Request.QueryString["msg"], n1_name = @Request.QueryString["n1_name"], onlySalesComm = @Request.QueryString["onlySalesComm"], onlyRiSource = @Request.QueryString["onlyRiSource"], onlyUsers = "No", onlyPartComp = Request.QueryString["onlyPartComp"], onlyPartLoc = Request.QueryString["onlyPartLoc"] }, new { id = "searchlink" })
+                    }
+                    <div>
+                        @foreach (var item in Model.user_results)
+                        {
+                            <br />
+                            <p>
+                                @Html.ActionLink("" + item.usr_fName + " " + item.usr_lName + "", "Edit", "UserViewModels", new { id = item.usr_ID, n1_name = "Admin User", msg = "" + item.usr_fName + " " + item.usr_lName + "" }, null)
+                            </p>
+                        }
+                    </div>
+                }
+            }
+
+            if ( Model.pComp_results.Count() != 0)
+            {
+                if (Request.QueryString["all"] == "all" || string.IsNullOrEmpty(Request.QueryString["onlyPartComp"]))
+                {
+                    <strong>Partner Company <span id="countResults">@Model.pComp_results.Count()</span></strong>
+                    if (string.IsNullOrEmpty(Request.QueryString["msg"]))
+                    {
+                        @Html.ActionLink("X", "Index", new { all = "No", msg =" ", n1_name = @Request.QueryString["n1_name"], onlySalesComm = @Request.QueryString["onlySalesComm"], onlyRiSource = @Request.QueryString["onlyRiSource"], onlyUsers = @Request.QueryString["onlyUsers"], onlyPartComp = "No", onlyPartLoc = Request.QueryString["onlyPartLoc"] }, new { id = "searchlink" })
+                    }
+                    else
+                    {
+                        @Html.ActionLink("X", "Index", new { all = "No", msg = @Request.QueryString["msg"], n1_name = @Request.QueryString["n1_name"], onlySalesComm = @Request.QueryString["onlySalesComm"], onlyRiSource = @Request.QueryString["onlyRiSource"], onlyUsers = @Request.QueryString["onlyUsers"], onlyPartComp = "No", onlyPartLoc = Request.QueryString["onlyPartLoc"] }, new { id = "searchlink" })
+                    }
+                    <div>
+                        @foreach (var item in Model.pComp_results)
+                        {
+                            <br />
+                            <p>
+                                @Html.ActionLink("" + item.comp_name + "", "Edit", "partnerCompany", new { id = item.comp_ID, n1_name = "Admin Partner Company", msg = "" + item.comp_name + "" }, null)
+                            </p>
+                        }
+                    </div>
+                }
+            }
+
+            if (Model.pLoc_results.Count() != 0)
+            {
+                if (Request.QueryString["all"] == "all" || string.IsNullOrEmpty(Request.QueryString["onlyPartLoc"]))
+                {
+                    <strong>Partner Location <span id="countResults">@Model.pLoc_results.Count()</span></strong>
+                    if (string.IsNullOrEmpty(Request.QueryString["msg"]))
+                    {
+                        @Html.ActionLink("X", "Index", new { all = "No", msg =" ", n1_name = @Request.QueryString["n1_name"], onlySalesComm = @Request.QueryString["onlySalesComm"], onlyRiSource = @Request.QueryString["onlyRiSource"], onlyUsers = @Request.QueryString["onlyUsers"], onlyPartComp = Request.QueryString["onlyPartComp"], onlyPartLoc = "No" }, new { id = "searchlink" })
+                    }
+                    else
+                    {
+                        @Html.ActionLink("X", "Index", new { all = "No", msg = @Request.QueryString["msg"], n1_name = @Request.QueryString["n1_name"], onlySalesComm = @Request.QueryString["onlySalesComm"], onlyRiSource = @Request.QueryString["onlyRiSource"], onlyUsers = @Request.QueryString["onlyUsers"], onlyPartComp = Request.QueryString["onlyPartComp"], onlyPartLoc = "No" }, new { id = "searchlink" })
+                    }
+                    <div>
+                        @foreach (var item in Model.pLoc_results)
+                        {
+                            if (!string.IsNullOrEmpty(item.loc_name) )
+                            {
+                                <br />
+                                <p>
+                                    @Html.ActionLink("" + item.loc_name + "", "Edit", "partnerLocation", new { id = item.loc_ID, n1_name = "Admin Partner Location", msg = "" + item.loc_name + "" }, null)
+                                </p>
+                            }
+                        }
+                    </div>
+                }
+            }
+        }
+
+        @*ReSources*@ 
+        @if (Model.risources_results.Count() != 0)
+        {
+            if (Request.QueryString["all"] == "all" || string.IsNullOrEmpty(Request.QueryString["onlyRiSource"]))
+            {
+                <strong>Resources <span id="countResults">@Model.risources_results.Count()</span></strong>
+                if (string.IsNullOrEmpty(Request.QueryString["msg"]))
+                {
+                    @Html.ActionLink("X", "Index", new { all = "No", msg = " ", n1_name = @Request.QueryString["n1_name"], onlySalesComm = @Request.QueryString["onlySalesComm"], onlyRiSource = "No", onlyUsers = @Request.QueryString["onlyUsers"], onlyPartComp = Request.QueryString["onlyPartComp"], onlyPartLoc = Request.QueryString["onlyPartLoc"] }, new { id = "searchlink" })
+                }
+                else
+                {
+                    @Html.ActionLink("X", "Index", new { all = "No", msg = @Request.QueryString["msg"], n1_name = @Request.QueryString["n1_name"], onlySalesComm = @Request.QueryString["onlySalesComm"], onlyRiSource = "No", onlyUsers = @Request.QueryString["onlyUsers"], onlyPartComp = Request.QueryString["onlyPartComp"], onlyPartLoc = Request.QueryString["onlyPartLoc"] }, new { id = "searchlink" })
+                }
+                <div>
+                    @foreach (var risource in Model.risources_results.OrderByDescending(a=>a.ris_ID))
+                    {
+                        if (userProducts != null)
+                        {
+                            foreach (var products in userProducts.ToArray())
+                            {
+                                if (!string.IsNullOrEmpty(risource.ris_products) && risource.ris_products.Contains(products))
+                                {
+                                    <div id="listings">
+                                        @{
+                                            Uri uriResult;
+                                            bool result = Uri.TryCreate(@risource.ris_link, UriKind.Absolute, out uriResult)
+                                            && (uriResult.Scheme == Uri.UriSchemeHttp
+                                            || uriResult.Scheme == Uri.UriSchemeHttps);
+
+                                            if (result)
+                                            {
+                                                <br />
+                                                <table style="border: solid #000 1px;color:#000;">
+                                                    <tr>
+                                                        <th style="color:#000;">@risource.ris_headline</th>
+                                                        <th></th>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>@String.Format("{0:d}", @risource.dateCreated)</td>
+                                                        <td><a target="_blank" href="@risource.ris_link" class="btn">Link</a></td>
+                                                    </tr>
+                                                </table>
+                                                <br />
+                                            }
+                                            else
+                                            {
+                                                <br />
+                                                <table style="border: solid #000 1px;color:#000;">
+                                                    <tr>
+                                                        <th style="color:#000;">@risource.ris_headline</th>
+                                                        <th></th>
+                                                        <th></th>
+                                                        <th></th>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>@risource.file_type</td>
+                                                        <td>@risource.file_size KB</td>
+                                                        <td>@String.Format("{0:d}", @risource.dateCreated)</td>
+                                                        <td><a href="~/attachments/risources/@risource.ris_link" class="btn"> Download</a></td>
+                                                    </tr>
+                                                </table>
+                                                <br />
+                                            }
+                                        }
+                                    </div>
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                </div>
+            }
+        }
+        @*Communication*@
+        @if (Model.salesComm_results.Count() != 0)
+        {
+            if (Request.QueryString["all"] == "all" || string.IsNullOrEmpty(Request.QueryString["onlySalesComm"]))
+            {
+                <strong>Sales Communications <span id="countResults">@Model.salesComm_results.Count()</span></strong>
+                if (string.IsNullOrEmpty(Request.QueryString["msg"]))
+                {
+                    @Html.ActionLink("X", "Index", new { all = "No", msg = " ", n1_name = @Request.QueryString["n1_name"], onlySalesComm = "No", onlyRiSource = @Request.QueryString["onlyRiSource"], onlyUsers = @Request.QueryString["onlyUsers"], onlyPartComp = Request.QueryString["onlyPartComp"], onlyPartLoc = Request.QueryString["onlyPartLoc"] }, new { id = "searchlink" })
+                }
+                else
+                {
+                    @Html.ActionLink("X", "Index", new { all = "No", msg = @Request.QueryString["msg"], n1_name = @Request.QueryString["n1_name"], onlySalesComm = "No", onlyRiSource = @Request.QueryString["onlyRiSource"], onlyUsers = @Request.QueryString["onlyUsers"], onlyPartComp = Request.QueryString["onlyPartComp"], onlyPartLoc = Request.QueryString["onlyPartLoc"] }, new { id = "searchlink" })
+                }
+                <div>
+                    @foreach (var salesComm in Model.salesComm_results)
+                    {
+                        string products = salesComm.sc_products;
+                        if (!string.IsNullOrEmpty(products))
+                        {
+                            bool islist = products.Any(m => m.ToString().Contains(","));
+                            if (!islist && userProducts.Contains(products))
+                            {
+                                <br />
+                                <table style="border: solid #000 1px;">
+                                    <tr>
+                                        <th>@Html.ActionLink("" + salesComm.sc_headline + "", actionName: "getSaleComById", controllerName: "salesComm", routeValues: new { scID = salesComm.scID, n1_name = "Communications", msg = salesComm.sc_headline }, htmlAttributes: new { @class = "btn", @style = "font-weight:bolder;" })</th>
+                                    </tr>
+                                    <tr>
+                                        <td style="border:dotted 1px #000;">
+                                            @Html.ActionLink(salesComm.nav2_longName + " - " + salesComm.nav3_longName, actionName: "Index", controllerName: "SalesComm", routeValues: new { parentid = salesComm.n1ID, childid = salesComm.n2ID, n2_name = salesComm.nav2_longName, n3id = salesComm.n3ID, n3_name = salesComm.nav3_longName, n1_name = Request.QueryString["n1_name"] }, htmlAttributes: new { @class = "btn" })
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            @String.Format("{0:d}", @salesComm.sc_startDate)
+                                        </td>
+                                    </tr>
+                                </table>
+                                <br />
+                                continue;
+                            }
+                            else
+                            {
+                                var prod = userProducts.ToArray();
+
+                                foreach (var item in prod)
+                                {
+
+                                    if (salesComm.sc_products.Contains(@item.ToString()))
+                                    {
+                                        <br />
+                                        <table style="border: solid #000 1px;">
+                                            <tr>
+                                                <th>@Html.ActionLink("" + salesComm.sc_headline + "", actionName: "getSaleComById", controllerName: "salesComm", routeValues: new { scID = salesComm.scID, n1_name = "Communications", msg = salesComm.sc_headline }, htmlAttributes: new { @class = "btn", @style = "font-weight:bolder;" })</th>
+                                            </tr>
+                                            <tr>
+                                                <td style="border:dotted 1px #000;">
+                                                    @Html.ActionLink(salesComm.nav2_longName + " - " + salesComm.nav3_longName, actionName: "Index", controllerName: "SalesComm", routeValues: new { parentid = salesComm.n1ID, childid = salesComm.n2ID, n2_name = salesComm.nav2_longName, n3id = salesComm.n3ID, n3_name = salesComm.nav3_longName, n1_name = Request.QueryString["n1_name"] }, htmlAttributes: new { @class = "btn" })
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    @String.Format("{0:d}", @salesComm.sc_startDate)
+                                                </td>
+                                            </tr>
+                                        </table>
+                                        <br />
+                                        break;
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+                </div>
+            }
+        }
+      </section>
+</div>
+

@@ -1,0 +1,165 @@
+﻿@model newrisourcecenter.Models.MDFViewModel
+
+@{
+    ViewBag.Title = "Manage";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="main_content">
+    <a href="/MDFView/?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]" style="float:right;">back</a>
+    <section>
+        <h2 style="padding-bottom:0px;margin-bottom:0px">Brand Central - @Model.company</h2>
+        <hr>
+        <table style="background:none;width:50%;border:solid 1px black;padding:0px;" id="myTable" class="tablesorter">
+            <tbody>
+                <tr>
+                    <th colspan="2" align="center">Total Starting MDF Amount: </th>
+                    <td colspan="1" align="center">
+                        @if (Model.comp_MDF_amount > 0)
+                        {
+                            <span style="color:GREEN;font-weight:bold;">
+                                @{
+                                    string comp_MDF_amount = string.Format("{0:C}", Model.comp_MDF_amount);
+                                }
+                                @comp_MDF_amount
+                            </span>
+                        }
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <br>
+        <br>
+        <table cellpadding="5px" width="100%" border="1px" class="table">
+            <thead>
+                <tr>
+                    <th style="background:#000;color:#fff;">Pending</th>
+                    <th style="background:#000;color:#fff;">Approved</th>
+                    <th style="background:#000;color:#fff;">Completed</th>
+                    <th style="background:#000;color:#fff;">Credited</th>
+                    <th style="background:#000;color:#fff;">Total Remaining MDF Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    @if (Model.comp_MDF_amount > 0)
+                    {
+                        <td>@string.Format("{0:C}", Model.mdf_parts.FirstOrDefault().totalPending)</td>
+                        <td>@string.Format("{0:C}", Model.mdf_parts.FirstOrDefault().totalApproved)</td>
+                        <td>@string.Format("{0:C}", Model.mdf_parts.FirstOrDefault().totalComplete)</td>
+                        <td>@string.Format("{0:C}", Model.mdf_parts.FirstOrDefault().totalCredit)</td>
+                        if (Model.mdf_parts.FirstOrDefault().totalMDFAva > 0)
+                        {
+                            <td align="center" style="color:green;font-weight:bold;">
+                                @string.Format("{0:C}", Model.mdf_parts.FirstOrDefault().totalMDFAva)
+                            </td>
+                        }
+                        else
+                        {
+                            <td align="center" style="color:red;font-weight:bold;">
+                                @string.Format("{0:C}", Model.mdf_parts.FirstOrDefault().totalMDFAva)
+                            </td>
+                        }
+                    }
+                    else
+                    {
+                        <td>@string.Format("{0:C}", 0)</td>
+                        <td>@string.Format("{0:C}", 0)</td>
+                        <td>@string.Format("{0:C}", 0)</td>
+                        <td>@string.Format("{0:C}", 0)</td>
+
+                        <td align="center" style="color:red;font-weight:bold;">
+                            @string.Format("{0:C}", 0)
+                        </td>
+                    }
+                </tr>
+            </tbody>
+        </table>
+        <br>
+        <b>Click on the request number to view/edit details.</b>
+        <br>
+        <br>
+        <table cellpadding="5px" width="75%" border="1px" class="table">
+            <thead>
+                <tr>
+                    <th align="center" class="header">#</th>
+                    <th align="left" class="header">Request Type</th>
+                    <th align="left" class="header">Requester</th>
+                    <th align="left" class="header">Estimated Cost</th>
+                    <th align="left" class="header">Actual Cost</th>
+                    <th align="left" class="header">Amount Approved</th>
+                    <th align="left" class="header">Amount Validated</th>
+                    <th align="center" class="header">Request Date</th>
+                    <th align="center" class="header">Title</th>
+                    <th align="left" class="header">Status</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.mdf_main != null)
+                {
+                    foreach (var item in Model.mdf_main.OrderByDescending(a => a.mdf_ID))
+                    {
+                        <tr>
+                            <td>
+                                <a href="/MDFView/Details/@item.mdf_ID/?&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=Details for @item.mdf_ID">@item.mdf_ID</a>
+                            </td>
+                            <td>@item.request_type</td>
+                            <td>@item.requester</td>
+                            <td>@string.Format("{0:C}", item.mdf_totalCost)</td>
+                            <td>@string.Format("{0:C}", item.mdf_mdfCost)</td>
+                            <td>@string.Format("{0:C}", item.mdf_approvedAmt)</td>
+                            <td>@string.Format("{0:C}", item.mdf_validatedAmt)</td>
+                            <td align="center">@String.Format("{0:d}", @item.mdf_requestDate)</td>
+                            <td align="center">@item.mdf_title</td>
+                            <td>
+                                @if (@item.mdf_status == 1)
+                                {
+                                    <span>Pending</span>
+                                }
+                                else if (@item.mdf_status == 2)
+                                {
+                                    <span>RCM Denied</span>
+                                }
+                                else if (@item.mdf_status == 8)
+                                {
+                                    <span>RCM Approved</span>
+                                }
+                                else if (@item.mdf_status == 8)
+                                {
+                                    <span>Marketing Denied</span>
+                                }
+                                else if (@item.mdf_status == 3)
+                                {
+                                    <span>Marketing Approved</span>
+                                }
+                                else if (@item.mdf_status == 4)
+                                {
+                                    <span>Completed</span>
+                                }
+                                else if (@item.mdf_status == 5)
+                                {
+                                    <span>Credit Issued</span>
+                                }
+                                else if (@item.mdf_status == 6)
+                                {
+                                    <span>Canceled</span>
+                                }
+                                else
+                                {
+                                    <span>In Progress</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+        <hr><b>Archived Requests:</b>
+        <a href="/MDFView/manage?&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=Manage MDFs">Current Year</a>
+        @for (int i = DateTime.Now.Year - 1; i >= 2013; i--)
+        {
+          @Html.Raw("| <a href='/MDFView/manageArchive?&n1_name=" + Request.QueryString["n1_name"] + "&n2_name=" + @Request.QueryString["n2_name"] + " &msg=Manage MDFs&year=" + i +"'>" + i + "</a> ") 
+        }
+    </section>
+</div>

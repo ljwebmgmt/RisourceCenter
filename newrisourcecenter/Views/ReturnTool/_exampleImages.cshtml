@@ -1,0 +1,90 @@
+﻿<div style="display:none;" id="modalcontent_1">
+    <div style="text-align:center;margin:50px;"><img src="~/images/Accessories Example.jpg" /></div>
+</div>
+<div style="display:none;" id="modalcontent_2">
+    <div style="text-align:center;margin:50px;"><img src="~/images/Climate Example.jpg" /></div>
+</div>
+<div style="display:none;" id="modalcontent_3">
+    <div style="text-align:center;margin:50px;"><img src="~/images/TSorWM Example.jpg" /></div>
+</div>
+@{
+    <ul style="list-style:none;">
+        @if (ViewBag.getUlImages != null)
+        {
+            foreach (var items in ViewBag.getUlImages)
+            {
+                <li style="display:inline-block;margin-right:20px;"><a href="/attachments/return_tools/images/@items.file_name" target="_blank"><img src="/attachments/return_tools/images/@items.file_name" style="width:60px;height:70px;" /></a></li>
+            }
+        }
+    </ul>
+}
+<div>
+    <div style="color:red;"><input type="file" name="attachments_ul" id="txtUploadFileUL" class="makethispretty" multiple />File Size cannot exceed 10MB</div>
+    <div class="col-md-10">
+        <br />
+        <div id="showULsTitle">Files To be uploaded</div>
+        <ul id="showULs" style="list-style:none;"></ul>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#close').click(function () {
+            $('#modal').hide();
+        });
+    });
+
+    //get the form id and asign it to the modal done button class id
+    function getid(id) {
+        $('#modal').show();
+        var modalcontent = $('#modalcontent_' + id).html();
+        $('#content').html(modalcontent);
+        //alert(modalcontent);
+    };
+</script>
+<style>
+    /* style the modal */
+    #modal {
+        background: none;
+        width: 60%;
+        height: 50%;
+        min-height: 50%;
+        position: fixed;
+        top: 0%;
+        left: 20%;
+        right: 20%;
+        display: none;
+    }
+
+        #modal > div:first-child {
+            margin-top: 20px;
+            padding: 20px;
+            background: white;
+            width: 70%;
+            height: auto;
+            position: relative;
+            top: 10px;
+            margin-left: auto;
+            margin-right: auto;
+            color: black;
+            overflow: auto;
+        }
+
+    #close {
+        top: 10px;
+        position: relative;
+        float: right;
+        background-color: red;
+        padding: 2px 5px 2px 5px;
+        color: white;
+        font-weight: bolder;
+        box-shadow: 1px 1px 5px #888888;
+    }
+</style>
+<div id="modal">
+    <div align="left">
+        <span id="close"><a href="javascript:void(0);">X</a></span>
+        <span id="content"></span>
+    </div>
+</div><!-- modals-->
+</div>

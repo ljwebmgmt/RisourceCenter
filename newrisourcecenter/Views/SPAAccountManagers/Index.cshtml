@@ -1,0 +1,84 @@
+﻿@model IEnumerable<newrisourcecenter.Models.SPAAccountManager>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="dropdown">
+    @Html.ActionLink("Add Sales Rep", "Create", "SPAAccountManagers", new { n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"],msg="Add Account" }, htmlAttributes: new { @class = "btn btn-primary" })
+</div>
+
+<div id="dropdown">
+    @Html.ActionLink("Export CSV", "ExportSPASalesReps", "SPAAccountManagers", new { n1_name = "SPA Skus", n2_name = "Add SPA Skus" }, htmlAttributes: new { @class = "btn btn-primary" })
+</div>
+
+<div id="dropdown">
+    @Html.ActionLink("Delete", "Deletefiles", new { n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"] }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false", @class = "btn btn-info" })
+</div>
+
+<div id="dropdown" style="background-color:#ccc;padding:1px;">
+    <form method="post" action="/SPAAccountManagers/UploadSKUdata/" enctype="multipart/form-data">
+        <input type="file" name="attachment" style="display:inline-block;" />
+        <input type="hidden" name="n1_name" value="@Request.QueryString["n1_name"]" />
+        <input type="hidden" name="n2_name" value="@Request.QueryString["n2_name"]" />
+        <input type="submit" value="submit" style="display:inline-block;" />
+    </form>
+</div>
+@if (Request.QueryString["success"] != null)
+{
+    <h4 style="color:green;">@Request.QueryString["success"]</h4>
+}
+
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.contact_name)
+        </th>
+        @*<th>
+            @Html.DisplayNameFor(model => model.contact_type)
+        </th>*@
+        @*@*<th>
+            @Html.DisplayNameFor(model => model.title)
+        </th>*@
+        <th>
+            @Html.DisplayNameFor(model => model.zip)
+        </th>
+        @*<th>
+            @Html.DisplayNameFor(model => model.email)
+        </th>*@
+        <th>
+            @Html.DisplayNameFor(model => model.territory_code)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.contact_name)
+        </td>
+        @*<td>
+            @Html.DisplayFor(modelItem => item.contact_type)
+        </td>*@
+        @*<td>
+            @Html.DisplayFor(modelItem => item.title)
+        </td>*@
+        <td>
+            @Html.DisplayFor(modelItem => item.zip)
+        </td>
+        @*<td>
+            @Html.DisplayFor(modelItem => item.email)
+        </td>*@
+        <td>
+            @Html.DisplayFor(modelItem => item.territory_code)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id = item.ID, n1_name = Request.QueryString["n1_name"], n2_name = Request.QueryString["n2_name"], @class = "btn btn-info" }) |
+            @Html.ActionLink("Delete", "Delete", new { id = item.ID, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"],msg=@item.contact_name }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false" })
+        </td>
+    </tr>
+}
+
+</table>

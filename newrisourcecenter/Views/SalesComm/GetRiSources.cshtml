@@ -1,0 +1,111 @@
+﻿@model IQueryable<newrisourcecenter.Models.RiSource>
+
+@{
+    ViewBag.Title = "Stockcheck";
+    Layout = null;
+}
+<span class="input-group stylish-input-group" style="width:300px;margin:10px 0px 0px 10px;">
+    <input type="text" class="form-control" name="search" id="risource_search_box" onkeyup="myFunction()" placeholder="Search for names..">
+    <span class="input-group-addon">
+            <span class="glyphicon glyphicon-search"></span>
+    </span>
+</span>
+<ul id="resultsList" >
+    @if (@ViewBag.attached_risources != null)
+    {
+
+        string attach = ViewBag.attached_risources;
+        bool islist = attach.Any(m => m.ToString().Contains(","));
+
+        foreach (var items in @Model)
+        {
+            Uri uriResult;
+            bool result = Uri.TryCreate(items.ris_link, UriKind.Absolute, out uriResult)
+            && (uriResult.Scheme == Uri.UriSchemeHttp
+            || uriResult.Scheme == Uri.UriSchemeHttps);
+
+            if (result)
+            {
+
+               <li><a href="#" class="attach_risou glyphicon glyphicon-paperclip" onclick="addList('@items.ris_ID','@items.ris_headline','@items.ris_link','link'); return false"> @items.ris_headline</a></li>
+            }
+            else
+            {
+               <li><a href="#" class="attach_risou glyphicon glyphicon-paperclip" onclick="addList('@items.ris_ID','@items.ris_headline','@items.ris_link','download'); return false"> @items.ris_headline</a></li>
+            }
+        }
+    }
+
+    @if (@ViewBag.attached_risources == null)
+    {
+        foreach (var items in Model)
+        {
+            Uri uriResult;
+            bool result = Uri.TryCreate(items.ris_link, UriKind.Absolute, out uriResult)
+            && (uriResult.Scheme == Uri.UriSchemeHttp
+            || uriResult.Scheme == Uri.UriSchemeHttps);
+
+            if (result)
+            {
+                <li><a href="#" class="attach_risou glyphicon glyphicon-paperclip" onclick="addList('@items.ris_ID','@items.ris_headline','@items.ris_link','link'); return false"> @items.ris_headline</a></li>
+            }
+            else
+            {
+                <li><a href="#" class="attach_risou glyphicon glyphicon-paperclip" onclick="addList('@items.ris_ID','@items.ris_headline','@items.ris_link','download'); return false"> @items.ris_headline</a></li>
+            }
+        }
+    }
+
+</ul>
+@*
+
+    @model IQueryable<newrisourcecenter.Models.RiSource>
+
+    @{
+        ViewBag.Title = "Stockcheck";
+        Layout = null;
+    }
+
+
+    @if (@ViewBag.attached_risources != null)
+    {
+
+        string attach = ViewBag.attached_risources;
+        bool islist = attach.Any(m => m.ToString().Contains(","));
+
+        foreach (var items in @Model)
+        {
+            if (islist)
+            {
+                if (attach.Contains(Convert.ToString(items.ris_ID)))
+                {
+                    <input type="checkbox" name="attach_risource" id="attach_risource" value="@items.ris_ID" checked />@items.ris_headline<br />
+                }
+                else
+                {
+                    <input type="checkbox" name="attach_risource" id="attach_risource" value="@items.ris_ID" />@items.ris_headline<br />
+                }
+            }
+            else
+            {
+                if (items.ris_ID == Convert.ToInt32(ViewBag.attached_risources))
+                {
+                    <input type="checkbox" name="attach_risource" id="attach_risource" value="@items.ris_ID" checked />@items.ris_headline<br />
+                }
+                else
+                {
+                    <input type="checkbox" name="attach_risource" id="attach_risource" value="@items.ris_ID" />@items.ris_headline<br />
+                }
+            }
+        }
+    }
+
+    @if (@ViewBag.attached_risources == null)
+    {
+        foreach (var items in Model)
+        {
+            <input type="checkbox" name="attach_risource" id="attach_risource" value="@items.ris_ID" />@items.ris_headline<br />
+        }
+    }
+*@
+

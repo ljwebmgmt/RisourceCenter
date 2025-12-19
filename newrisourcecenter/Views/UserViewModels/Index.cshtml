@@ -1,0 +1,251 @@
+﻿@model IEnumerable<newrisourcecenter.Models.UserViewModel>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    long siteRole = Convert.ToInt64(Session["siteRole"]);
+    long adminRole = Convert.ToInt64(Session["userRole"]);
+    long companyId = Convert.ToInt64(Session["companyId"]);
+}
+<script>
+    function getLink(href) {
+        window.location = href + "&querystring=" + $("#form_value").val();
+    }
+
+    $(document).on('change', '.selectpicker', function (e) {
+        if ($(this).val() == '')
+            return;
+        getLink($(this).val());
+    });
+
+    $(document).on('click', '.btn-delete-user', function (e) {
+        e.preventDefault();
+        if (!window.confirm('Are you sure you want to delete this user?')) {
+            return false;
+        }
+        var obj = $(this);
+        $.ajax({
+            url: obj.attr('href'),
+            type: 'DELETE',
+            dataType: 'json',
+            beforeSend: function () {
+                obj.text('Loading....');
+            },
+            success: function (res) {
+                if (res != 'Ok') {
+                    $('div#tabledata').before('<div class="alert alert-danger">' + res + '</div>');
+                }
+                else {
+                    $('div#tabledata').before('<div class="alert alert-success">User successfully deleted</div>');
+                    obj.parents('tr').remove();
+                }
+                setTimeout(function () {
+                    $('.alert').remove();
+                },3000);
+            },
+            complete: function () {
+                obj.text('Delete');
+            }
+        });
+        return false;
+    });
+</script>
+@if (!string.IsNullOrEmpty(@Request.QueryString["compid"]) && string.IsNullOrEmpty(@Request.QueryString["locid"]))
+{
+    <script>
+    var adminpanel = {
+        init: function () {
+            var filter_form = $("#submit_search");
+            filter_form.on('click', adminpanel.submit_filter_form);
+        },
+        submit_filter_form:function(e){
+            e.preventDefault();
+            var filter_form = $("#submit_search");
+            $('button[type="submit"]', filter_form).html('Loading....');
+            $.post("/UserViewModels/searchUsers/?form_value=" + $("#form_value").val()+"&n1_name=Admin Users"+"&selected_comp_id="+@Request.QueryString["compid"], function (result) {
+                $("#tabledata").empty();
+                $("#tabledata").html(result);
+                $('button[type="submit"]', filter_form).html('<span class="glyphicon glyphicon-search" ></span>');
+            });
+        },
+    }
+    jQuery(document).ready(adminpanel.init);
+    </script>
+}
+else if (!string.IsNullOrEmpty(@Request.QueryString["compid"]) &&  !string.IsNullOrEmpty(@Request.QueryString["locid"]))
+{
+    <script>
+    var adminpanel = {
+        init: function () {
+            var filter_form = $("#submit_search");
+            filter_form.on('click', adminpanel.submit_filter_form);
+        },
+        submit_filter_form:function(e){
+            e.preventDefault();
+            var filter_form = $("#submit_search");
+            $('button[type="submit"]', filter_form).html('Loading....');
+            $.post("/UserViewModels/searchUsers/?form_value=" + $("#form_value").val()+"&n1_name=Admin Users"+"&selected_comp_id="+@Request.QueryString["compid"]+"&selected_loc_id="+@Request.QueryString["locid"], function (result) {
+                $("#tabledata").empty();
+                $("#tabledata").html(result);
+                $('button[type="submit"]', filter_form).html('<span class="glyphicon glyphicon-search" ></span>');
+            });
+        },
+    }
+    jQuery(document).ready(adminpanel.init);
+    </script>
+}
+else
+{
+    <script>
+    var adminpanel = {
+        init: function () {
+            var filter_form = $("#submit_search");
+            filter_form.on('click', adminpanel.submit_filter_form);
+        },
+        submit_filter_form:function(e){
+            e.preventDefault();
+            var filter_form = $("#submit_search");
+            $('button[type="submit"]', filter_form).html('Loading....');
+            var querystring = $("#form_value").val();
+            if (querystring.trim() == '') {
+                window.location.href = $('.btn-reset').attr('href');
+                return false;
+            }
+            else {
+                $.post("/UserViewModels/searchUsers/?form_value=" + querystring + "&n1_name=Admin Users", function (result) {
+                    $("#tabledata").empty();
+                    $("#tabledata").html(result);
+                    $('button[type="submit"]', filter_form).html('<span class="glyphicon glyphicon-search" ></span>');
+                });
+            }
+        },
+    }
+    jQuery(document).ready(adminpanel.init);
+    </script>
+}
+
+@if (User.IsInRole("Super Admin") || User.IsInRole("Local Admin") || User.IsInRole("Global Admin"))
+{
+    <table>
+        <tr>
+            @if (User.IsInRole("Super Admin") || User.IsInRole("Local Admin") && User.IsInRole("Rittal User") || User.IsInRole("Global Admin"))
+            {
+            <td>
+                <select class="selectpicker select-dropdown" data-live-search="true" title="Filter By Companies">
+                    @foreach (var item in @ViewBag.compData)
+                    {
+                        if(string.IsNullOrEmpty(item.name))
+                        {
+                            continue;
+                        }
+                        <option value="?n1_name=@Request.QueryString["n1_name"]&compid=@item.id&msg=@item.name&comp_name=@item.name" @(item.id.ToString() == Request.QueryString["compid"] ? "selected" : "")>@item.name</option>
+                    }
+                </select>
+            </td>
+            if (!string.IsNullOrEmpty(Request.QueryString["compid"]))
+            {
+                <td>
+                    <select class="selectpicker select-dropdown" data-live-search="true" title="Filter By Locations">
+                        @foreach (var item in @ViewBag.locationsDatas)
+                        {
+                            string name = !string.IsNullOrEmpty(item.loc_name) ? item.loc_name : Request.QueryString["comp_name"] + "-" + item.loc_city;
+                            if(string.IsNullOrEmpty(name))
+                            {
+                                continue;
+                            }
+                            <option value="?n1_name=@Request.QueryString["n1_name"]&compid=@Request.QueryString["compid"]&locid=@item.loc_ID&msg=@name&comp_name=@Request.QueryString["comp_name"]" @(item.loc_ID.ToString() == Request.QueryString["locid"] ? "selected" : "")>@name</option>
+                        }
+                    </select>
+                </td>
+            }
+            <td>
+                @Html.ActionLink("Add Users", "AddUser", "Account", new { n1_name = "Add Users" }, htmlAttributes: new { @class = "btn btn-primary" })
+            </td>
+            }
+            <td>
+                <form>
+                    <span class="input-group stylish-input-group" style="width:300px;">
+                        <input type="text" id="form_value" value="@Request.QueryString["querystring"]" placeholder="first or last names or email" class="form-control" />
+                        <span class="input-group-addon" id="submit_search" >
+                            <button type="submit" >
+                                <span class="glyphicon glyphicon-search" ></span>
+                            </button>
+                        </span>
+                    </span>
+                </form>
+            </td>
+            <td>
+                <a href="/UserViewModels?parentId=0&childId=51&n1_name=User%20Admin&submenu=yes" class="btn btn-primary btn-reset" >Reset</a>
+            </td>
+        </tr>
+    </table>
+}
+<p class="glyphicon glyphicon-star" style="color:#E50043;font-size:14px;"> - Administrator</p>
+
+<div id="tabledata">
+    <table class="table">
+        <thead>
+            <tr>
+                <td></td>
+                <th>User ID</th>
+                <th>
+                    @Html.DisplayNameFor(model => model.usr_fName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.usr_lName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.usr_email)
+                </th>
+                <td></td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                    @if (item.user_role == "Admin")
+                    {
+                        <span class="glyphicon glyphicon-star" style="color:red;"></span>
+                    }
+                    </td>
+                    <td> @item.usr_ID</td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.usr_fName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.usr_lName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.usr_email)
+                    </td>
+                    <td>
+                        @if (User.IsInRole("Super Admin") || User.IsInRole("Local Admin") || User.IsInRole("Global Admin"))
+                        {
+                            @Html.ActionLink("Online Shop Accounts", controllerName: "Webshop", actionName: "Index", routeValues: new { n1_name = Request.QueryString["n1_name"], n2_name = "Online Shop Accounts", msg = item.usr_fName + " " + item.usr_lName, user_ID = item.usr_ID, compid = item.comp_ID }, htmlAttributes: new { @class = "btn btn-info" })
+                            <span> </span>; @Html.ActionLink("SAP Acounts", controllerName: "partnerStockCheck", actionName: "Index", routeValues: new { n1_name = Request.QueryString["n1_name"], n2_name = "SAP Accounts", msg = item.usr_fName + " " + item.usr_lName, user_ID = item.usr_ID, compid = item.comp_ID }, htmlAttributes: new { @class = "btn btn-info" })
+                        }
+
+                        @if (@Request.QueryString["compid"] != null)
+                        {
+                            @Html.ActionLink("Edit", "Edit", new { id = item.usr_ID, n1_name = Request.QueryString["n1_name"], msg = item.usr_fName + " " + item.usr_lName, compid = Request.QueryString["compid"], user_ID = item.usr_ID, n2_name = "User Account" }, new { @class = "btn btn-info" })
+                        }
+                        else
+                        {
+                            @Html.ActionLink("Edit", "Edit", new { id = item.usr_ID, n1_name = Request.QueryString["n1_name"], msg = item.usr_fName + " " + item.usr_lName, compid = companyId, user_ID = item.usr_ID, n2_name = "User Account" }, new { @class = "btn btn-info" })
+                        }
+
+                        @if (User.IsInRole("Super Admin") || User.IsInRole("Global Admin"))
+                        {
+                            @Html.ActionLink("Delete", "Delete", new { id = item.usr_ID, n1_name = Request.QueryString["n1_name"] }, htmlAttributes: new { id = "delete", @class = "btn btn-info btn-delete-user" })
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div>
+        @Html.ActionLink("Next >>", "Index", new { n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], next = @ViewBag.LastID, compid = @Request.QueryString["compid"], locid = @Request.QueryString["locid"], msg =@Request.QueryString["msg"], comp_name=@Request.QueryString["comp_name"] }, new { @class = "btn btn-info", onclick = "getLink(this.href); return false;" })
+    </div>
+</div>

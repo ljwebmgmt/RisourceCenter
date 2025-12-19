@@ -1,0 +1,235 @@
+﻿@model newrisourcecenter.Models.RiSourcesViewModel
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    $(document).ready(function () {   
+        $("form").submit(function (e) {
+            e.preventDefault;
+            if ($("#attachment").val().length > 100) {
+                alert("The length of the file name can not be more than 250 characters");
+                return false;
+            }
+
+            if ($("#n3ID").val() == "select") {
+                alert("Select A Top Menu Item");
+                return false;
+            }
+
+            return true;
+        });
+    });
+
+    $(function () {
+        $(".date-picker").datepicker();
+
+    });
+</script>
+
+@using (Html.BeginForm("Create", "RiSources", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.displayimage, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @{
+                    if (Model.list_displayimage != null)
+                    {
+                        <select name="displayimage" class="selectpicker" data-live-search="true">
+                            <option value="@Request.QueryString["img"]">Use default</option>
+
+                            @foreach (var items in Model.list_displayimage)
+                            {
+                                if (items.type_link == Model.displayimage)
+                                {
+                                    <option value="@items.type_link" selected>
+                                        @items.type_name
+                                    </option>
+                                }
+                                <option value="@items.type_link">@items.type_name</option>
+                            }
+                        </select>
+                    }
+                }
+
+                @Html.ValidationMessageFor(model => model.displayimage, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-10">
+                @Html.HiddenFor(model => model.n2ID, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.n2ID, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ris_headline, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ris_headline, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ris_headline, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ris_teaser, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ris_teaser, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ris_teaser, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-10">
+                @Html.HiddenFor(model => model.ris_body, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ris_body, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ris_status, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <select name="ris_status" class="form-control">
+                    <option value="0" selected>Select A Status</option>
+                    <option value="1">Active</option>
+                    <option value="0">Not Acitive</option>
+                </select>
+                @Html.ValidationMessageFor(model => model.ris_status, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ris_keywords, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ris_keywords, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ris_keywords, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ris_products, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @foreach (var items in Model.list_products)
+                {
+                    <input type="checkbox" name="ris_products" id="ris_products" value="@items.pp_ID" />@items.pp_product<br />
+                }
+                @Html.ValidationMessageFor(model => model.ris_products, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ris_categories, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @foreach (var items in Model.list_categories)
+                {
+                    <input type="checkbox" name="ris_categories" id="ris_categories" value="@items.cat_id" />@items.ris_categories<br />
+                }
+                @Html.ValidationMessageFor(model => model.ris_categories, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ris_industry, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @foreach (var items in Model.list_industry)
+                {
+                    if ( items.pi_ID!=3 )
+                    {
+                        <input type="checkbox" name="ris_industry" id="ris_industry" value="@items.pi_ID" />@items.pi_industry<br />
+                    }
+                }
+                @Html.ValidationMessageFor(model => model.ris_industry, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ris_usrTypes, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @foreach (var items in Model.list_Type)
+                {
+                    <input type="checkbox" name="ris_usrTypes" id="ris_usrTypes" value="@items.pt_ID" />@items.pt_type<br />
+                }
+                @Html.ValidationMessageFor(model => model.ris_usrTypes, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.list_partnerApp, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @foreach (var items in Model.list_partnerApp)
+                {
+                    <input type="checkbox" name="ris_parterApp" id="ris_parterApp" value="@items.appli_id" />@items.appli_name<br />
+                }
+                @Html.ValidationMessageFor(model => model.list_partnerApp, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-10">
+                @Html.HiddenFor(model => model.ris_editedBy, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ris_editedBy, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ris_link, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ris_link, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ris_link, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.attachment, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <input type="file" name="attachment" id="attachment" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ris_order, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ris_order, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ris_order, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-10">
+                @Html.HiddenFor(model => model.ris_startDate, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ris_startDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-10">
+                @Html.HiddenFor(model => model.ris_endDate, new { htmlAttributes = new {id= "sandbox-container", @class = "form-control date-picker" } })
+                @Html.ValidationMessageFor(model => model.ris_endDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <input name="dateCreated" id="dateCreated" type="hidden" value=@DateTime.Now />
+        <input name="ris_owner" id="ris_owner" type="hidden" value=@Session["userId"] />
+
+        <input name="n2_name" id="n2_name" type="hidden" value="@Request.QueryString["n2_name"]" />
+        <input name="n1_name" id="n1_name" type="hidden" value="@Request.QueryString["n1_name"]" />
+        <input name="img" id="n1_name" type="hidden" value="@Request.QueryString["img"]" />
+
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Allrisouces", new { n2Id = @Request.QueryString["n2Id"], n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], img = Request.QueryString["img"] })
+</div>

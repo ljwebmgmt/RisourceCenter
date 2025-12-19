@@ -1,0 +1,83 @@
+﻿@model newrisourcecenter.Models.LocalizationModel
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>LocalizationModel</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.table_name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.table_name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.parent_id)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.parent_id)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.column_name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.column_name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.message_original)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.message_original)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.message_translated)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.message_translated)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.language)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.language)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.status)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.status)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.date)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.date)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.localization_id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

@@ -1,0 +1,233 @@
+﻿@model IEnumerable<newrisourcecenter.Models.SRPViewModel>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    var adminpanel = {
+        init: function () {
+            var formID = $('#formID'), filter = $('#filter'), inputfilter = $('input[name=filter]'), adminform = $('#adminform'), filter_form = $("#filterform");
+            adminform.hide();
+            //create the forms content on the selection of the radio buttons
+            inputfilter.on("click", { adminform: adminform, filter: filter }, adminpanel.filters);
+            //submit the forms
+            filter_form.on('submit', adminpanel.submit_filter_form);
+        },
+        filters: function (e) {
+            if ($(this).val() == "formdata") {
+                e.data.adminform.show();
+                e.data.filter.html(
+                    '<div class="form-group" >' +
+                        '<input type="hidden" name="filterType" id="filterType" value="' + $(this).val() + '" />' +
+                        '<div style="float:left;" ><label class="control-label col-md-2">Form ID</label></div>' +
+                        '<div style="float:left;" ><input type="text" name="form_id" value="" id="form_value" placeholder="Search by form id" class="form-control" /></div>' +
+                        '<div style="float:left;" >&nbsp;&nbsp;<input type="submit" name="post" value="Filter" class="btn btn-default" /></div>' +
+                    '</div>'
+               );
+            }else if ($(this).val() == "po") {
+                e.data.adminform.show();
+                e.data.filter.html(
+                    '<div class="form-group" >' +
+                        '<input type="hidden" name="filterType" id="filterType" value="' + $(this).val() + '" />' +
+                        '<div style="float:left;" ><label class="control-label col-md-2">Enter PO#</label></div>' +
+                        '<div style="float:left;" ><input type="text" name="po_num" value="" id="form_value" placeholder="Search by PO#" class="form-control" /></div>' +
+                        '<div style="float:left;" >&nbsp;&nbsp;<input type="submit" name="post" value="Filter" class="btn btn-default" /></div>' +
+                    '</div>'
+               );
+            }
+            else if ($(this).val() == "companyName") {
+                e.data.adminform.show();
+                e.data.filter.html(
+                   '<div class="form-group">' +
+                        '<div style="float:left;" ><label class="control-label col-md-2">Company Name</label></div>' +
+                        '<input type="hidden" name="filterType" id="filterType" value="' + $(this).val() + '" />' +
+                        '<div style="float:left;" >' +
+                        '<select class="form-control" name="companyName" id="form_value" >' +
+                            '<option>Select a company</option>' +
+                             @Html.Raw(ViewBag.list_companys)
+                        '</select>' +
+                        '</div>' +
+                        '<div style="float:left;" >&nbsp;&nbsp;<input type="submit" name="post" value="Filter" class="btn btn-default" /></div>' +
+                    '</div>'
+               );
+            } else if ($(this).val() == "department") {
+                e.data.adminform.show();
+                e.data.filter.html(
+                   '<div class="form-group">' +
+                        '<input type="hidden" name="filterType" id="filterType" value="' + $(this).val() + '" />' +
+                        '<div style="float:left;" ><label class="control-label col-md-2">Request Type</label></div>' +
+                        '<div style="float:left;" >' +
+                        '<select class="form-control" name="department" id="form_value" >' +
+                            '<option>Select a Return Type</option>' +
+                            '<option value="0">IE Sales</option>'+
+                            '<option value="1">IT Sales</option>'+
+                            '<option value="2">Channel</option>'+
+                        '</select>' +
+                        '</div>' +
+                        '<div style="float:left;" >&nbsp;&nbsp;<input type="submit" name="post" value="Filter" class="btn btn-default" /></div>' +
+                    '</div>'
+               );
+            } else if ($(this).val() == "status") {
+                e.data.adminform.show();
+                e.data.filter.html(
+                   '<div class="form-group">' +
+                        '<input type="hidden" name="filterType" id="filterType" value="' + $(this).val() + '" />' +
+                        '<div style="float:left;" ><label class="control-label col-md-2">Status</label></div>' +
+                        '<div style="float:left;" >' +
+                            '<select class="form-control" name="status" id="form_value">' +
+                                '<option>Select a status</option>' +
+                                '<option value="Approved" >Approved</option>' +
+                                '<option value="PO" >PO Assigned</option>' +
+                                '<option value="Additional" >Additional Information</option>' +
+                                '<option value="Denied" >Denied</option>' +
+                                '<option value="Completed" >Completed</option>' +
+                            '</select>' +
+                        '</div>' +
+                        '<div style="float:left;" >&nbsp;&nbsp;<input type="submit" name="post" value="Filter" class="btn btn-default" /></div>' +
+                    '</div>'
+               );
+            }
+            else if ($(this).val() == "requester") {
+                e.data.adminform.show();
+                e.data.filter.html(
+                   '<div class="form-group">' +
+                        '<input type="hidden" name="filterType" id="filterType" value="' + $(this).val() + '" />' +
+                        '<div style="float:left;" ><label class="control-label col-md-2" >Requester</label></div>' +
+                        '<div style="float:left;" ><select class="form-control" name="requester" id="form_value" >' +
+                            '<option>Select a requester</option>' +
+                                  @Html.Raw(ViewBag.list_users)
+                        '</select>' +
+                        '</div>' +
+                        '<div style="float:left;" >&nbsp;&nbsp;<input type="submit" name="post" value="Filter" class="btn btn-default" style="inline-block;" /></div>' +
+                    '</div>'
+               );
+            }else if($(this).val() == "request_date"){
+                e.data.adminform.show();
+                e.data.filter.html(
+                '<div class="form-group" >' +
+                    '<br /><strong>Date Requested</strong><br /><br/>'+
+                    '<input type="hidden" name="filterType" id="filterType" value="' + $(this).val() + '" />' +
+                    '<div style="float:left;" ><label class="control-label col-md-2">Start Date</label></div>' +
+                    '<div style="float:left;" ><input type="text" name="request_date" value="" placeholder="Enter end date" class="form-control date-picker" id="form_value" style="float:left;inline-block;" /></div>' +
+                    '<div style="float:left;" ><label class="control-label col-md-2">End Date</label></div>' +
+                    '<div style="float:left;" ><input type="text" name="completed_date" value="" placeholder="Enter end date" class="form-control date-picker" id="form_value1" style="float:left;inline-block;"  /></div>' +
+                    '<div style="float:left;" >&nbsp;&nbsp;<input type="submit" name="post" value="Filter" class="btn btn-default" /></div>' +
+                '</div>'
+               );
+                //implement data picker
+                $(".date-picker").datepicker();
+            }else{
+                e.data.adminform.show();
+                e.data.filter.html(
+                '<div class="form-group" >' +
+                    '<br/><strong>Date Completed</strong><br /><br/>' +
+                    '<input type="hidden" name="filterType" id="filterType" value="' + $(this).val() + '" />' +
+                    '<div style="float:left;" ><label class="control-label col-md-2">Start Date</label></div>' +
+                    '<div style="float:left;" ><input type="text" name="request_date" value="" placeholder="Enter end date" class="form-control date-picker" id="form_value" style="float:left;inline-block;" /></div>' +
+                    '<div style="float:left;" ><label class="control-label col-md-2">End Date</label></div>' +
+                    '<div style="float:left;" ><input type="text" name="completed_date" value="" placeholder="Enter end date" class="form-control date-picker" id="form_value1" style="float:left;inline-block;"  /></div>' +
+                    '<div style="float:left;" >&nbsp;&nbsp;<input type="submit" name="post" value="Filter" class="btn btn-default" /></div>' +
+                '</div>'
+               );
+               //implement data picker
+               $(".date-picker").datepicker();
+            }
+        },
+        submit_filter_form:function(e){
+            e.preventDefault();
+            $.post("/SRPView/AdminFilter/?form_value1=" + $("#form_value1").val() + "&form_value=" + $("#form_value").val() + "&filterType=" + $("#filterType").val() + "&n1_name=Return Request", function (result) {
+                $("#tabledata").empty();
+                $("#tabledata").html(result);
+            });
+        },
+    }
+    jQuery(document).ready(adminpanel.init);
+</script>
+
+<div class="main_content">
+    <p>
+        @Html.ActionLink("Default Page", "Index", new { n1_name = Request.QueryString["n1_name"], n2_name = Request.QueryString["n2_name"] }, htmlAttributes: new { @class = "btn btn-primary" })
+        @Html.ActionLink("Start Request", "Create", new { n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], msg = "Create Sales Request" }, htmlAttributes: new { @class = "btn btn-primary" })
+    </p>
+    <div>
+        <strong>Filter By</strong>
+        <input type="radio" name="filter" value="formdata" id="formdata" />Form ID#&nbsp;&nbsp;
+        <input type="radio" name="filter" value="po" id="po" />PO#&nbsp;&nbsp;
+        <input type="radio" name="filter" value="companyName" />Company Name&nbsp;&nbsp;
+        <input type="radio" name="filter" value="department" />Department&nbsp;&nbsp;
+        <input type="radio" name="filter" value="status" />Status&nbsp;&nbsp;
+        <input type="radio" name="filter" value="requester" />Requester&nbsp;&nbsp;
+        <input type="radio" name="filter" value="request_date" />Request date&nbsp;&nbsp;
+        <input type="radio" name="filter" value="date_completed" />Date Completed&nbsp;&nbsp;
+    </div>
+    <form action="~/ReturnTool/AdminPanel" align="left" id="filterform">
+        <span id="filter"></span>
+    </form>
+    <br clear="left" /><br />
+    @if (!string.IsNullOrEmpty(Request.QueryString["success"]))
+    {
+        <h4 style="color:green;">@Request.QueryString["success"]</h4>
+    }
+    <div id="tabledata">
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.FormID)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.SalesRepID)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.department)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.status)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.ponumber)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.dateCreated)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.dateCompleted)
+                    </th>
+                    <td style="width:180px;"></td>
+                </tr>
+            </thead>
+            @foreach (var item in Model.OrderByDescending(a => a.FormID))
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FormID)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.fullname)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.department)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.status)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ponumber)
+                    </td>
+                    <td>
+                        @string.Format("{0:MM/dd/yyyy}", item.dateCreated)
+                    </td>
+                    <td>
+                        @string.Format("{0:MM/dd/yyyy}", item.dateCompleted) 
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { id = item.FormID, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"] }, htmlAttributes: new { @class = "btn btn-info" }) |
+                        @Html.ActionLink("Delete", "Delete", new { id = item.FormID, n1_name = @Request.QueryString["n1_name"] }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false", @class = "btn btn-info" })
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>

@@ -1,0 +1,216 @@
+﻿@model newrisourcecenter.Models.BidRegistration
+@{
+    ViewBag.Title = "View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    List<string> selectedProducts = !string.IsNullOrEmpty(Model.products) ? Model.products.Split(',').ToList() : new List<string>();
+    List<string> selectedActions = !string.IsNullOrEmpty(Model.actions_required) ? Model.actions_required.Split(',').ToList() : new List<string>();
+}
+
+@section Scripts {
+    <script>
+        jQuery(document).on('click', '.btn-status', function (e) {
+            e.preventDefault();
+            jQuery('input[name="status"]').val(jQuery(this).attr('data-value'));
+            jQuery('button[type="submit"]').trigger('click');
+            return false;
+        });
+    </script>
+}
+@using (Html.BeginForm("ViewRequest", "BidRegistration", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    if (Model != null && Model.ID > 0)
+    {
+        @Html.HiddenFor(model => model.ID);
+    }
+    <div class="form-horizontal">
+        <h3>Bid Registration - ID # @Model.ID</h3>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <h4>Channel Partner</h4>
+        <div class="form-group">
+            @Html.LabelFor(model => model.company_id, "Company : *", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                <p class="form-control-static">@Model.companyName</p>
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.contact_name, "Contact Name : *", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                <p class="form-control-static">@Model.contact_name</p>
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.contact_email, "Contact Email : *", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                <p class="form-control-static">@Model.contact_email</p>
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.contact_phone, "Contact Phone : *", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                <p class="form-control-static">@Model.contact_phone</p>
+            </div>
+        </div>
+        <hr />
+        <h4>End Customer</h4>
+        <div class="form-group">
+            @Html.LabelFor(model => model.customer_name, "Contact Name: *", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                <p class="form-control-static">@Model.customer_name</p>
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.decision_maker, "Is this person a decision maker? : *", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                <p class="form-control-static">@Html.Raw(Model.decision_maker ? "Yes" : "No")</p>
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.company_name, "Company Name: *", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                <p class="form-control-static">@Model.company_name</p>
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.company_location, "Company HQ Location: *", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                <p class="form-control-static">@Model.company_location</p>
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.project_location, "Company Project Location: *", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                <p class="form-control-static">@Model.project_location</p>
+            </div>
+        </div>
+        <hr />
+        <h4>Project Details</h4>
+        <div class="form-group">
+            @Html.LabelFor(model => model.project_name, "Project Name: *", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                <p class="form-control-static">@Model.project_name</p>
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.estimated_start_date, "Estimate of Start Date: *", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                <p class="form-control-static">@Html.Raw(Model.estimated_start_date.HasValue ? Model.estimated_start_date.Value.ToShortDateString() : "")</p>
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.project_value, "Ball Park Value of Project: *", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                <p class="form-control-static">@Model.project_value</p>
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.products, "Rittal products being recommended (Check all that apply): *", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                <p class="form-control-static">@Model.products</p>
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.IT_distributor, "Will you be fulfilling this order through an IT distributor? : *", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                <p class="form-control-static">@Html.Raw(Model.IT_distributor ? "Yes" : "No")</p>
+            </div>
+        </div>
+        <div class="form-group distributor-name @Html.Raw(!Model.IT_distributor ? "hide" : "")">
+            @Html.LabelFor(model => model.distributor_name, "Distributor Name: *", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                <p class="form-control-static">@Model.distributor_name</p>
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.project_type, "Is this project a one-time ship or a rollout? : *", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                <p class="form-control-static">@Model.project_type</p>
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.competition, "Who is our competition and or incumbent?:", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-7">
+                <p class="form-control-static">@Model.competition</p>
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.actions_required, "Action Required from Rittal, (Check the ones that apply): *", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                <p class="form-control-static">@Model.actions_required</p>
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.files, "Attach any other information that you think is important for us to know:", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @if (Model != null && !string.IsNullOrEmpty(Model.files))
+                {
+                    <ul style="padding-bottom:20px;width:100%;">
+                        @{
+                            string[] files = Model.files.Split(',');
+                        }
+                        @if (files.Count() > 0)
+                        {
+                            foreach (string file in files)
+                            {
+                                if (string.IsNullOrEmpty(file))
+                                {
+                                    continue;
+                                }
+                                string[] parts = file.Split(':');
+                                <li>
+                                    <a href="~/attachments/bid_registrations/@parts[1]" target="_blank" download="@parts[0]">@parts[0]</a>
+                                </li>
+                            }
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+        <hr />
+        <h4>Comments</h4>
+        <div class="form-group">
+            @Html.LabelFor(model => model.channel_manager_approval, "IT Channel/Territory Manager:", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-7">
+                @if (ViewBag.approverType == "it_territory_manager")
+                {
+                    @Html.TextAreaFor(model => model.channel_manager_approval, new { @class = "form-control" })
+                }
+                else
+                {
+                    <p class="form-control-static">@Model.channel_manager_approval</p>
+                }
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.gm_approval, "General Manager:", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-7">
+                @if (ViewBag.approverType == "general_manager")
+                {
+                    @Html.TextAreaFor(model => model.gm_approval, new { @class = "form-control" })
+                }
+                else
+                {
+                    <p class="form-control-static">@Model.gm_approval</p>
+                }
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-3 col-md-9">
+                @if (!string.IsNullOrEmpty(ViewBag.approverType))
+                {
+                    <input type="hidden" name="approver_type" value="@ViewBag.approverType" />
+                    <input type="hidden" name="status" value="" />
+                    <button type="button" data-value="approve" class="btn btn-success btn-status">Approve</button>
+                    <button type="button" data-value="reject" class="btn btn-danger btn-status">Reject</button>
+                    <button type="submit" class="hide"></button>
+                }
+                else
+                {
+                    @Html.ActionLink("BACK TO LIST", "Index", new { n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"] }, new { @class = "btn btn-default" })
+                }
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,43 @@
+﻿@model newrisourcecenter.Models.LabelsModel
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>LabelsModel</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.label_name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.label_name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.controller_name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.controller_name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.page_name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.page_name)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.label_id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

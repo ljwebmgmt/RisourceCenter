@@ -1,0 +1,28 @@
+﻿@{
+    ViewBag.Title = "Sales Communications";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<article>
+<div class="main_content">
+    <h3 align="center"><u>@ViewBag.Title</u></h3>
+    <section class="comms">
+        <div>
+            @if (Request.QueryString["status"] == "live")
+            {
+                <h1>@ViewBag.user_fName  @ViewBag.user_lName,</h1>
+                <h3> Will be emailed about the approval of the communication - <font color="green">@ViewBag.sales_title</font></h3>
+            }
+            else
+            {
+                <h1>@ViewBag.user_fName  @ViewBag.user_lName,</h1>
+                <h3> Will be emailed about the denial of the communication - <font color="red">@ViewBag.sales_title</font></h3>
+            }
+        </div>
+        </section>
+</div>
+</article>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+

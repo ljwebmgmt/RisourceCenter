@@ -1,0 +1,124 @@
+﻿@model IEnumerable<newrisourcecenter.Models.SPARebatesItemsViewModel>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.rebate_ID)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.contract_ID)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.sku)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.last_price)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.spa_price)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.quantity_rebated)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.quantity_requested)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.capping_status)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.current_rebate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.distributor_requests)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.original_difference)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.invoice_date)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.invoice_number)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.rebate_amount)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.reason)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.status)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.rebate_ID)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.contract_ID)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.sku)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.last_price)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.spa_price)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.quantity_rebated)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.quantity_requested)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.capping_status)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.current_rebate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.distributor_requests)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.original_difference)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.invoice_date)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.invoice_number)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.rebate_amount)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.reason)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.status)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.rebateItem_ID }) |
+            @Html.ActionLink("Details", "Details", new { id=item.rebateItem_ID }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.rebateItem_ID })
+        </td>
+    </tr>
+}
+
+</table>

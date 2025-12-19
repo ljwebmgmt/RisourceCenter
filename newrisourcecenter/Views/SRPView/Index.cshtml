@@ -1,0 +1,27 @@
+﻿@model newrisourcecenter.Models.SRPViewModel
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="main_content">
+        <section>
+            <div style="background:#fff;color:#000;padding:20px;">
+                @Html.Raw(Model.topdesc)
+            </div>
+            <hr>
+            <span style="float:right;">
+                @Html.ActionLink("Start Request", "Create", new { n1_name = @Request.QueryString["n1_name"],n2_name = @Request.QueryString["n2_name"], msg = "Create Sales Request" },htmlAttributes: new { @class = "btn btn-primary" }) ||
+                @Html.ActionLink("Manage Request", "Manage", new { n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], msg = "Manage Sales Request" }, htmlAttributes: new { @class="btn btn-success" })
+            </span>
+            <p></p>
+            @{
+                var proformaURL = String.Format("https://proformaprostores.com/LogonLink/09f4a948-1116-e611-80cb-0025907fdf4b?userName={0}&password={1}&firstName={2}&lastName={3}&emailAddress={4}&phoneNumber={5}", @Model.usr_email, "rittalusa", @Model.usr_fname, @Model.usr_lname, @Model.usr_email, @Model.usr_phone);
+            }
+
+            <a href="@proformaURL" target="_blank"><button class="btn btn-primary">Order Merchandise &amp; Collateral</button></a>
+            <br>
+            <br>
+        </section>
+</div>

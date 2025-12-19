@@ -1,0 +1,92 @@
+﻿@model IEnumerable<newrisourcecenter.Models.SPAMaterialMasterViewModel>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="dropdown">
+    @Html.ActionLink("Add a Skus", "Create", "Skus", new { n1_name = "SPA Skus", n2_name = "Add SPA Skus" }, htmlAttributes: new { @class = "btn btn-primary" })
+</div>
+
+<div id="dropdown" >
+    @Html.ActionLink("Export CSV", "ExportSKUdata", "Skus", new { n1_name = "SPA Skus", n2_name = "Add SPA Skus" }, htmlAttributes: new { @class = "btn btn-primary" })
+</div>
+
+<div id="dropdown" >
+    @Html.ActionLink("Delete", "Deletefiles", new { n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"] }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false", @class = "btn btn-info" })
+</div>
+
+<div id="dropdown" style="background-color:#ccc;padding:1px;">
+    <form method="post" action="/Skus/UploadSKUdata/" enctype="multipart/form-data" >
+        <input type="file" name="attachment" style="display:inline-block;" />
+        <input type="hidden" name="n1_name" value="@Request.QueryString["n1_name"]" />
+        <input type="hidden" name="n2_name" value="@Request.QueryString["n2_name"]" />
+        <input type="submit" value="submit" style="display:inline-block;" />
+    </form>
+</div>
+@if (Request.QueryString["success"] != null)
+{
+    <h4 style="color:green;">@Request.QueryString["success"]</h4>
+}
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.ID)
+        </th>
+
+        <th>
+            @Html.DisplayNameFor(model => model.material)
+        </th>
+
+        <th>
+            @Html.DisplayNameFor(model => model.material_description)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.mpg)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.mpg_description)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.list_price)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.cost)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.ID)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.material)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.material_description)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.mpg)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.mpg_description)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.list_price)
+        </td>
+
+        <td>
+            @Html.DisplayFor(modelItem => item.cost)
+        </td>
+
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.ID, n1_name=Request.QueryString["n1_name"], n2_name = Request.QueryString["n2_name"], @class = "btn btn-info" }) |
+            @Html.ActionLink("Delete", "Delete", new { id = item.ID, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"] }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false", @class = "btn btn-info" })
+        </td>
+    </tr>
+}
+
+</table>

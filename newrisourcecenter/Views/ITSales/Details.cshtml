@@ -1,0 +1,67 @@
+﻿@model newrisourcecenter.Models.tbl_MRK_Zipcode
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>tbl_MRK_Zipcode</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.PostalCode)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PostalCode)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CGrp)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CGrp)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.V1)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.V1)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.V1Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.V1Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.V1Email)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.V1Email)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.V1Phone)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.V1Phone)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

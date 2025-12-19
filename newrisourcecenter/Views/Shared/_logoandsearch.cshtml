@@ -1,0 +1,54 @@
+﻿@{
+    long companyId = Convert.ToInt64(Session["companyId"]);
+    long userId = Convert.ToInt64(Session["userId"]);
+}
+<div id="header">
+    <a href="~/Home?n1_name=Home"><div id="logo"></div></a>
+    <div id="mobile_menu"><img src="https://www.risourcecenter.com/includes/images/threelinesWhite.gif" /></div>
+    <div id="menu" class="menu">
+        <ul>
+            @using Microsoft.AspNet.Identity
+            @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+            {
+                @Html.AntiForgeryToken()
+                <li>
+                    @Html.ActionLink("Hello " + User.Identity.GetUserName(), "Edit", "UserViewModels", routeValues: new { id = userId, n1_name = "Admin Users", msg = User.Identity.GetUserName(), compid = companyId, user_ID = userId, n2_name = "SAP Accounts" }, htmlAttributes: new { title = "Edit my account" })
+                </li>
+                    <li><span>|</span><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
+            }
+        </ul>
+    </div>
+</div><!--End header-->
+<br class="clear" />
+<form id="search" action="~/search/index" method="get">
+    <div id="searchTypes" style="display:none;position:absolute;background-color:antiquewhite;padding:10px;z-index:20000000;border-radius:6px;">
+        <u>Search by :</u>
+        <ul>
+            <li>User email</li>
+            <li>User first Name</li>
+            <li>User Last Name</li>
+            <li>Partner Company</li>
+            <li>Partner Location</li>
+            <li>Sales Communications</li>
+            <li>RiSource</li>
+        </ul>
+    </div>
+    <br />
+    <input type="hidden" name="onlySalesComm" value="@Request.QueryString["onlySalesComm"]" />
+    <input type="hidden" name="onlyRiSource" value="@Request.QueryString["onlyRiSource"]" />
+    <input type="hidden" name="onlyUsers" value="@Request.QueryString["onlyUsers"]" />
+    <input type="hidden" name="onlyPartComp" value="@Request.QueryString["onlyPartComp"]" />
+    <input type="hidden" name="onlyPartLoc" value="@Request.QueryString["onlyPartLoc"]" />
+    <input type="text" name="msg" value="@Request.QueryString["msg"]" placeholder="Rittal Search:">
+    <input type="hidden" value="You Searched for" name="n1_name" />
+    @if (Request.QueryString["all"] == null)
+    {
+        <input type="hidden" value="all" name="all" />
+    }
+    else
+    {
+        <input type="hidden" value="" name="all" />
+    }
+    <button class="search glyphicon glyphicon-search "></button>&nbsp;<a href="#" class="glyphicon glyphicon-info-sign" id="tooltip"></a>
+</form>
+

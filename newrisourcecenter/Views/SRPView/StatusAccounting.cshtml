@@ -1,0 +1,26 @@
+﻿
+@{
+    ViewBag.Title = "StatusAccounting";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@ViewBag.status_data</h2>
+@{
+    if (!string.IsNullOrEmpty(@ViewBag.status))
+    {
+        <strong>Type in the additional information required?</strong>
+            <form name="sa_form" class="pure-form pure-form-aligned" action="update_status" method="GET" enctype="multipart/form-data">
+                <textarea name="comment" style="width:300px;" rows="10" placeholder="You may type in the additional information in a list. For instance
+							
+1) provide images
+2) proved a receipt
+3) or other related documents..."></textarea>
+
+                <input type="hidden" name="postComment" value="true">
+                <input type="hidden" name="status" value="@ViewBag.status">
+                <input type="hidden" name="formid" value="@ViewBag.formID">
+                <br />
+                <input type="submit" value="Update Status">
+            </form>
+    }
+}

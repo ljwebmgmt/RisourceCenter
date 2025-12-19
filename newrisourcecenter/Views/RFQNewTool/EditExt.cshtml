@@ -1,0 +1,2772 @@
+﻿@model newrisourcecenter.Models.RFQNewViewModelExt
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int comp_type = Convert.ToInt32(Session["companyType"]);
+}
+<style type="text/css">
+    input.rfq_text_input {
+        width: 250px;
+    }
+
+    div.box {
+        display: none;
+    }
+
+    div.ts8_it {
+        background: #DEF2E1;
+        padding: 15px 10px 60px 30px;
+        margin: 25px;
+    }
+
+    div.ts8_ie {
+        background: #E5E2AE;
+        padding: 15px 10px 60px 30px;
+        margin: 25px;
+    }
+
+    div.WM_AE_JB_box {
+        background-color: #BBDDF7;
+        padding: 15px 10px 60px 30px;
+        margin: 25px;
+    }
+
+    div.other_box {
+        background-color: #D7D5DD;
+        padding: 15px 10px 60px 30px;
+        margin: 25px;
+    }
+
+    input.rfq_text_input_table {
+        margin: 2px;
+    }
+
+    div.quote_num {
+        display: none;
+    }
+
+    .button-success,
+    .button-error,
+    .button-warning,
+    .button-secondary {
+        color: white;
+        border-radius: 4px;
+        text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+        background-color: black;
+    }
+
+    .button-error {
+        background: rgb(202, 60, 60); /* this is a maroon */
+    }
+
+    .table{width:80%;margin:40px auto 40px auto;}
+    #additional_information {padding: 0px 10px 60px 30px;margin:25px;margin-top:-30px;}
+</style>
+<script type="text/javascript">
+    $(document).ready(function(){
+
+        $("#product_category").change(function(){
+            $( "select option:selected").each(function(){
+ 		        if($(this).attr("value")=="ts8-it"){
+                    $(".box").hide();
+                    $(".ts8_it").show();
+		            $("#xpress_paint_data").show();
+		            //$("#xpress_paint_nondata").hide();
+		            $("#additional_information").css("background", "#DEF2E1");
+                }
+                if($(this).attr("value")=="ts8-ie"){
+                    $(".box").hide();
+                    $(".ts8_ie").show();
+		            $("#xpress_paint_data").hide();
+		            //$("#xpress_paint_nondata").show();
+		            $("#additional_information").css("background", "#E5E2AE");
+                }
+                if($(this).attr("value")=="WM_AE_JB"){
+                    $(".box").hide();
+                    $(".WM_AE_JB_box").show();
+		            $("#xpress_paint_data").hide();
+		            //$("#xpress_paint_nondata").show();
+		            $("#additional_information").css("background", "#BBDDF7");
+                }
+                if ($(this).attr("value") == "Other") {
+                    $(".box").hide();
+                    $(".other_box").show();
+		            $("#xpress_paint_data").hide();
+		            //$("#xpress_paint_nondata").show();
+		            $("#additional_information").css("background", " #D7D5DD");
+                }
+            });
+        }).change();
+
+		$('#xpress_mod_data').change(function() {
+	        if($(this).val() =="7-Day") {
+			    $("#enclosure_type_it option[value='server_optimized']").remove();
+		    } else {
+			    $('#enclosure_type_it').append('<option value="server_optimized">Server Optimized');
+		    }
+		});
+
+        $(document).ready(function() {
+    	    $('select[name="enclosure_type_it"]').change(function() {
+    		    if ($(this).val() == "global") {
+    			    $('#handles_datacenter').val("Semi Cylinder");
+    			    $('#inserts_datacenter').val("Locking");
+    		    }
+    		    if ($(this).val() == "server_optimized") {
+    			    $('#handles_datacenter').val("Comfort Handle");
+    			    $('#inserts_datacenter').val("Locking pushbutton");
+    		    }
+    	    }).change();
+        });
+
+        $(function () {
+            $('#updated_quote').ready(function () {
+                if (this.checked) {
+                    $('.quote_num').show();
+                } else {
+                    $('.quote_num').hide();
+                }
+            });
+            $('#updated_quote').change(function () {
+                if (this.checked) {
+                    $('.quote_num').show();
+                } else {
+                    $('.quote_num').hide();
+                }
+            });
+        });
+
+        $('#plinths_ie').change(function () {
+            if (this.value == 'without' || this.value == '') {
+                $('.plinth_types_ie').hide();
+
+                $('#plinths_type_ie_yes').prop('checked', '');
+
+            } else {
+                $('.plinth_types_ie').show();
+                if (!$('#plinths_type_ie_no').is(":checked")) {
+                    $('#plinths_type_ie_yes').prop('checked', 'true');
+                }
+            }
+        }).change();
+
+        //$(function() {
+        //    $('#plinths_ie').ready(function(){
+        //        if($('#plinths_ie').val() == 'without') {
+        //            $('.plinth_types_ie').hide();
+        //        } else {
+        //            $('.plinth_types_ie').show();
+        //        }
+        //    });
+        //    $('#plinths_ie').change(function(){
+        //        if($('#plinths_ie').val() == 'without') {
+        //            $('.plinth_types_ie').hide();
+        //        } else {
+        //            $('.plinth_types_ie').show();
+        //        }
+        //    });
+        //});
+
+        $(function () {
+            //Control ie 
+            $('.specialpaint_ie').hide();
+            $('.color_mod_ie').hide();
+            $('#specialpaint_ie_yes, #specialpaint_ie_no').ready(function () {
+                if ($('#specialpaint_ie_yes').is(":checked")) {
+                    $('.specialpaint_ie').show();
+                    $('.color_mod_ie').show();
+                    $('#color_ie').hide();
+                } else {
+                    $('.specialpaint_ie').hide();
+                    $('.color_mod_ie').hide();
+                }
+            });
+            $('#special_paint_ie').ready(function () {
+                if ($('#special_paint_ie').val() == '28 Color') {
+                    $('#color_ie').show();
+                    $('#specify_ie').hide();
+                } else {
+                    $('#color_ie').hide();
+                    $('#specify_ie').show();
+                }
+            });
+            $('#specialpaint_ie_yes, #specialpaint_ie_no').change(function () {
+                if ($('#specialpaint_ie_yes').is(":checked")) {
+                    $('.specialpaint_ie').show();
+                    $('.color_mod_ie').show();
+                    $('#color_ie').hide();
+                } else {
+                    $('.specialpaint_ie').hide();
+                    $('.color_mod_ie').hide();
+                }
+            });
+            $('#special_paint_ie').change(function () {
+                if ($('#special_paint_ie').val() == '28 Color') {
+                    $('#color_ie').show();
+                    $('#specify_ie').hide();
+                } else {
+                    $('#color_ie').hide();
+                    $('#specify_ie').show();
+                }
+            });
+        });
+
+        $(function () {
+            //Control Other or Spare parts
+            $('.specialpaint_other').hide();
+            $('.color_mod_other').hide();
+            $('#specialpaint_yes, #specialpaint_no').ready(function () {
+                if ($('#specialpaint_yes').is(":checked")) {
+                    $('.specialpaint_other').show();
+                    $('.color_mod_other').show();
+                    $('#color_other').hide();
+                } else {
+                    $('.specialpaint_other').hide();
+                    $('.color_mod_other').hide();
+                }
+            });
+            $('#specialpaint_other').ready(function () {
+                if ($('#specialpaint_other').val() == '28 Color') {
+                    $('#color_other').show();
+                    $('#specify_other').hide();
+                } else {
+                    $('#color_other').hide();
+                    $('#specify_other').show();
+                }
+            });
+            $('.specialpaint_other').hide();
+            $('.color_mod_other').hide();
+            $('#specialpaint_yes, #specialpaint_no').change(function () {
+                if ($('#specialpaint_yes').is(":checked")) {
+                    $('.specialpaint_other').show();
+                    $('.color_mod_other').show();
+                    $('#color_other').hide();
+                } else {
+                    $('.specialpaint_other').hide();
+                    $('.color_mod_other').hide();
+                }
+            });
+            $('#specialpaint_other').change(function () {
+                if ($('#specialpaint_other').val() == '28 Color') {
+                    $('#color_other').show();
+                    $('#specify_other').hide();
+                } else {
+                    $('#color_other').hide();
+                    $('#specify_other').show();
+                }
+            });
+        });
+
+        $(function () {
+            //Control Other or Spare parts
+            $('.specialpaint_wm').hide();
+            $('.color_mod_wm').hide();
+            $('#specialpaint_wm_yes, #specialpaint_wm_no').ready(function () {
+                if ($('#specialpaint_wm_yes').is(":checked")) {
+                    $('.specialpaint_wm').show();
+                    $('.color_mod_wm').show();
+                    $('#color_wm').hide();
+                } else {
+                    $('.specialpaint_wm').hide();
+                    $('.color_mod_wm').hide();
+                }
+            });
+            $('#special_paint_wm').ready(function () {
+                if ($('#special_paint_wm').val() == '28 Color') {
+                    $('#color_wm').show();
+                    $('#specify_wm').hide();
+                } else {
+                    $('#color_wm').hide();
+                    $('#specify_wm').show();
+                }
+            });
+            //Control Other or Spare parts
+            $('.specialpaint_wm').hide();
+            $('.color_mod_wm').hide();
+            $('#specialpaint_wm_yes, #specialpaint_wm_no').change(function () {
+                if ($('#specialpaint_wm_yes').is(":checked")) {
+                    $('.specialpaint_wm').show();
+                    $('.color_mod_wm').show();
+                    $('#color_wm').hide();
+                } else {
+                    $('.specialpaint_wm').hide();
+                    $('.color_mod_wm').hide();
+                }
+            });
+            $('#special_paint_wm').change(function () {
+                if ($('#special_paint_wm').val() == '28 Color') {
+                    $('#color_wm').show();
+                    $('#specify_wm').hide();
+                } else {
+                    $('#color_wm').hide();
+                    $('#specify_wm').show();
+                }
+            });
+        });
+
+        $(function() {
+            $('.ie_rating').hide();
+            $('#ul_nema_other_ie').ready(function(){
+                if($('#ul_nema_other_ie').val() != 'Not Rated') {
+                    $('.ie_rating').show();
+                } else {
+                    $('.ie_rating').hide();
+                }
+            });
+            $('#ul_nema_other_ie').change(function () {
+                if ($('#ul_nema_other_ie').val() != 'Not Rated') {
+                    $('.ie_rating').show();
+                } else {
+                    $('.ie_rating').hide();
+                }
+            });
+        });
+
+        $(function() {
+            $('.WM_AE_JB_rating').hide();
+            $('#ul_nema_WM_AE_JB').ready(function(){
+                if($('#ul_nema_WM_AE_JB').val() != 'Not Rated') {
+                    $('.WM_AE_JB_rating').show();
+                } else {
+                    $('.WM_AE_JB_rating').hide();
+                }
+            });
+            $('#ul_nema_WM_AE_JB').change(function () {
+                if ($('#ul_nema_WM_AE_JB').val() != 'Not Rated') {
+                    $('.WM_AE_JB_rating').show();
+                } else {
+                    $('.WM_AE_JB_rating').hide();
+                }
+            });
+        });
+
+        $(function() {
+            $('.other_rating').hide();
+            $('#ul_nema_other').ready(function () {
+                if ($('#ul_nema_other').val() != 'Not Rated') {
+                    $('.other_rating').show();
+                } else {
+                    $('.other_rating').hide();
+                }
+            });
+            $('#ul_nema_other').change(function(){
+                if($('#ul_nema_other').val() != 'Not Rated') {
+                    $('.other_rating').show();
+                } else {
+                    $('.other_rating').hide();
+                }
+            });
+        });
+
+        addparts = function () {
+            var id = $("#add_installed_parts tr:last").attr('id');
+            if (!id) {
+                var newid = 0;
+            } else {
+                var newid = parseInt(id) + 1;
+            }
+            $("#add_installed_parts").append('<tr id="' + newid + '" class="installed_parts_'+ newid +'" >' +
+            '<td>' +
+                '<input class="form-control text-box single-line" id="qty_installed" name="qty_installed" type="text" value="">' +
+                '<span class="field-validation-valid text-danger" data-valmsg-for="qty_installed" data-valmsg-replace="true"></span>' +
+            '</td>' +
+            '<td>' +
+                '<input class="form-control text-box single-line" id="part_number_installed" name="part_number_installed" type="text" value="">' +
+                '<span class="field-validation-valid text-danger" data-valmsg-for="part_number_installed" data-valmsg-replace="true"></span>' +
+            '</td>' +
+            '<td>' +
+                '<input class="form-control text-box single-line" id="description_installed" name="description_installed" type="text" value="">' +
+                '<span class="field-validation-valid text-danger" data-valmsg-for="description_installed" data-valmsg-replace="true"></span>' +
+            '</td>' +
+            '<td><div onclick="deleteinstalled('+newid+'); return false;" class="btn btn-primary">-</div></td>' +
+            '</tr>');
+        }
+
+        addshippedparts = function () {
+            var id = $("#add_shipped_parts tr:last").attr('id');
+            if (!id) {
+                var newid = 0;
+            } else {
+                var newid = parseInt(id) + 1;
+            }
+            $("#add_shipped_parts").append('<tr id="' + newid + '" class="shipped_parts_'+ newid +'" >' +
+            '<td>' +
+                '<input class="form-control text-box single-line" id="qty_shipped" name="qty_shipped" type="text" value="">' +
+                '<span class="field-validation-valid text-danger" data-valmsg-for="qty_shipped" data-valmsg-replace="true"></span>' +
+            '</td>' +
+            '<td>' +
+                '<input class="form-control text-box single-line" id="part_number_shipped" name="part_number_shipped" type="text" value="">' +
+                '<span class="field-validation-valid text-danger" data-valmsg-for="part_number_shipped" data-valmsg-replace="true"></span>' +
+            '</td>' +
+            '<td>' +
+                '<input class="form-control text-box single-line" id="description_shipped" name="description_shipped" type="text" value="">' +
+                '<span class="field-validation-valid text-danger" data-valmsg-for="description_shipped" data-valmsg-replace="true"></span>' +
+            '</td>' +
+            '<td><div onclick="deleteshipped('+newid+'); return false;" class="btn btn-primary">-</div></td>' +
+            '</tr>');
+        }
+
+        deleteinstalled= function(id){
+            $(".installed_parts_" + id).remove();
+        }
+
+        deleteshipped= function(id){
+            $(".shipped_parts_" + id).remove();
+        }
+
+        $("form").submit(function (e) {
+             if ($("#release_qty").val() == "") {
+                alert("Complete the Release Qty text box");
+                e.preventDefault();
+             } else if ($("#total_qty").val() == "") {
+                 alert("Complete the Total Qty text box");
+                 e.preventDefault();
+             }
+        });
+    });
+</script>
+
+@using (Html.BeginForm("EditExt", "RFQTool", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+<div class="form-horizontal">
+    <p class="text-right">
+        @if (Request.QueryString["admin"] == "yes")
+        {
+            @Html.ActionLink("RFQ Admin >>", "RfqAdmin", new { n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], msg = "RFQ Admin" }, htmlAttributes: new { @class = "btn btn-primary" })
+        }
+        else
+        {
+            @Html.ActionLink("<< RFQ Home", "Index", new { n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"] }, htmlAttributes: new { @class = "btn btn-primary" })
+        }
+        <div class="clearfix" ></div>
+    </p>
+    <div class="text-right pull-right">
+        @if (Model.IsCloned)
+        {
+            <div class="text-danger">@ViewBag.ClonedData</div>
+        }
+        <div class="text-danger">RFQ ID is @Model.form_id</div>
+        <div class="text-danger">RFQ Additional Parts ID is @Model.id</div>
+    </div>
+    <div class="">
+        @if (@ViewBag.comp_type == 1)
+        {
+            @*User data goes here if users company type is 1*@
+            <h3>Contact Information</h3>
+            <div class="form-group">
+                @Html.LabelFor(model => model.mainModel.distro_name, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DisplayFor(model => model.mainModel.distro_name, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.HiddenFor(model => model.mainModel.distro_name, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.mainModel.distro_name, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.mainModel.distro_company, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.HiddenFor(model => model.mainModel.distro_company, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.DisplayFor(model => model.mainModel.distro_company, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.mainModel.distro_company, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2" for="sales_engineer">Rittal Sales Engineer: *</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.mainModel.sales_engineer, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.mainModel.sales_engineer, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.mainModel.cell_phone, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.HiddenFor(model => model.mainModel.cell_phone, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.DisplayFor(model => model.mainModel.cell_phone, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.mainModel.cell_phone, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.mainModel.email, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DisplayFor(model => model.mainModel.email, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.HiddenFor(model => model.mainModel.email, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.mainModel.email, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.mainModel.submission_date, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DisplayFor(model => model.mainModel.submission_date, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.HiddenFor(model => model.mainModel.submission_date, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.mainModel.submission_date, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            //regional director hidden
+            @Html.HiddenFor(model => model.mainModel.regional_director, new { htmlAttributes = new { @class = "form-control" } })
+        }
+        else
+        {
+            @*RFQ Information goes here if users company type is not 1*@
+            <h3>Rittal Sales Information</h3>
+            <div class="form-group">
+                <label class="control-label col-md-2" for="sales_engineer">Sales Engineer: *</label>
+                <div class="col-md-10">
+                    @Html.DisplayFor(model => model.mainModel.sales_engineer, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.HiddenFor(model => model.mainModel.sales_engineer, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.mainModel.sales_engineer, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.mainModel.regional_director, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.mainModel.regional_director, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.mainModel.regional_director, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.mainModel.cell_phone, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DisplayFor(model => model.mainModel.cell_phone, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.HiddenFor(model => model.mainModel.cell_phone, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.mainModel.cell_phone, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.mainModel.email, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DisplayFor(model => model.mainModel.email, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.HiddenFor(model => model.mainModel.email, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.mainModel.email, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.mainModel.submission_date, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.HiddenFor(model => model.mainModel.submission_date, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.DisplayFor(model => model.mainModel.submission_date, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.mainModel.submission_date, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            //regional director hidden
+            @Html.HiddenFor(model => model.mainModel.distro_name, new { htmlAttributes = new { @class = "form-control" } })
+            //regional director hidden
+            @Html.HiddenFor(model => model.mainModel.distro_company, new { htmlAttributes = new { @class = "form-control" } })
+        }
+        @Html.HiddenFor(model => model.mainModel.completion_date, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.HiddenFor(model => model.mainModel.admin_status, new { htmlAttributes = new { @class = "form-control" } })
+
+        <h3>RFQ Information</h3>
+        <div class="form-group">
+            @Html.LabelFor(model => model.mainModel.updated_quote, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @if (Model.mainModel.updated_quote == "1")
+                {
+                    <input id="updated_quote" name="updated_quote" type="checkbox" checked value="1">
+                }
+                else
+                {
+                    <input id="updated_quote" name="updated_quote" type="checkbox" value="1">
+                }
+                @Html.ValidationMessageFor(model => model.mainModel.updated_quote, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group quote_num">
+            @Html.LabelFor(model => model.mainModel.qte_num, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.mainModel.qte_num, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.mainModel.qte_num, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        @if (comp_type == 1)
+        {
+            @Html.HiddenFor(model => model.mainModel.sold_to_party, Model.mainModel.sold_to_party = "Distributor Submission")
+            @Html.ValidationMessageFor(model => model.mainModel.sold_to_party, "", new { @class = "text-danger" })
+        }
+        else
+        {
+            <div class="form-group">
+                @Html.LabelFor(model => model.mainModel.sold_to_party, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.mainModel.sold_to_party, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.mainModel.sold_to_party, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        }
+
+        @if (comp_type == 1)
+        {
+            <div class="form-group">
+                <label class="control-label col-md-2" for="sap_account_num">Rittal Account Number: </label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.mainModel.sap_account_num, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.mainModel.sap_account_num, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="form-group">
+                <label class="control-label col-md-2" for="sap_account_num">SAP Account Number: </label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.mainModel.sap_account_num, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.mainModel.sap_account_num, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        }
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.mainModel.deal_registration, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.mainModel.deal_registration, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.mainModel.deal_registration, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.mainModel.location, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.mainModel.location, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.mainModel.location, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.mainModel.end_contact, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.mainModel.end_contact, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.mainModel.end_contact, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        @if (comp_type == 1)
+        {
+            @Html.HiddenFor(model => model.mainModel.opportunity_num, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.mainModel.opportunity_num, "", new { @class = "text-danger" })
+        }
+        else
+        {
+            <div class="form-group">
+                @Html.LabelFor(model => model.mainModel.opportunity_num, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.mainModel.opportunity_num, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.mainModel.opportunity_num, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        }
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.mainModel.qte_ref, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.mainModel.qte_ref, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.mainModel.qte_ref, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.mainModel.end_user, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.mainModel.end_user, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.mainModel.end_user, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        @*<div class="form-group">
+            @Html.LabelFor(model => model.draw_num, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.draw_num, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.draw_num, "", new { @class = "text-danger" })
+            </div>
+        </div>*@
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.mainModel.competition, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.mainModel.competition, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.mainModel.competition, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.mainModel.scale_volume, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.mainModel.scale_volume, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.mainModel.scale_volume, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        @if (comp_type == 1)
+        {
+            @Html.HiddenFor(model => model.mainModel.spa_mult, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.HiddenFor(model => model.mainModel.spa_contract_num, new { htmlAttributes = new { @class = "form-control" } })
+        }
+        else
+        {
+            <div class="form-group">
+                @Html.LabelFor(model => model.mainModel.spa_contract_num, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.mainModel.spa_contract_num, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.mainModel.spa_contract_num, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.mainModel.spa_mult, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.mainModel.spa_mult, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.mainModel.spa_mult, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        }
+        <div class="form-group">
+            @Html.LabelFor(model => model.mainModel.drawing_approval, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @if (Model.mainModel.drawing_approval == 1)
+                {
+                    <input id="drawing_approval" name="drawing_approval" type="checkbox" checked value="1">
+                }
+                else
+                {
+                    <input id="drawing_approval" name="drawing_approval" type="checkbox" value="1">
+                }
+                @Html.ValidationMessageFor(model => model.mainModel.drawing_approval, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    </div>
+    <h3>Product Information</h3>
+    <div>
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation">
+                @Html.ActionLink("Enclosure 1", "Edit", new { id = Model.form_id, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], ext_form = "yes" }, new { ariaControls = "enclosure_1", role = "tab", dataToggle = "tab" })
+            </li>
+            @{
+                int activeTab = 1;
+                if (Model.RFQExt != null)
+                {
+                    int i = 2;
+                    foreach (var item in Model.RFQExt)
+                    {
+                        string activeClass = "";
+                        if (item.rfqidExt == Model.id)
+                        {
+                            activeClass = "class=active";
+                            activeTab = i;
+                        }
+                        <li role="presentation" @activeClass>
+                            @Html.ActionLink("Enclosure " + i, "EditExt", new { id = item.rfqidExt, form_id = item.rfqid, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], ext_form = "yes" }, new { ariaControls = "enclosure_" + i, role = "tab", dataToggle = "tab" })
+                        </li>
+                        i += 1;
+                    }
+                }
+            }
+            @if ((Model.RFQExt == null || Model.RFQExt.Count() < 4) && string.IsNullOrEmpty(Request.QueryString["view"]))
+            {
+                <li role="presentation"><a href="javascript:void(0)" onclick="$('form').submit();"><i class="glyphicon glyphicon-plus"></i> Enclosure</a></li>
+            }
+        </ul>
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="enclosure_@activeTab">
+                <div class="panel-body">
+                    <div class="col-sm-3 no-padding pull-right">
+                        <div class="text-right">
+                            <span>
+                                @Html.ActionLink("Delete", "Deleteproducts", new { id = Model.id, form_id = Model.form_id, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"] }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false", @class = "btn btn-info" })
+                            </span>
+                            @Html.ActionLink("View PDF", "GetPDFExt", new { id = Model.id, form_id = Model.form_id, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], ext_form = "yes", admin = Request.QueryString["admin"], view = Request.QueryString["view"] }, new { @class = "btn btn-info" })
+                        </div>
+                    </div>
+                    <div class="form-group col-sm-9 no-padding">
+                        @Html.LabelFor(model => model.product_category, htmlAttributes: new { @class = "control-label col-md-3" })
+                        <div class="col-md-9 np-l">
+                            <select class="form-control" data-val="true" data-val-required="The Product Category: * field is required." id="product_category" name="product_category">
+                                @foreach (var item in ViewBag.list_prod_cat)
+                                {
+                                    if (@item.value == @Model.product_category)
+                                    {
+                                        <option selected="selected" value="@item.value">@item.cat_name</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.value">@item.cat_name</option>
+                                    }
+                                }
+                            </select>
+                            <span class="field-validation-valid text-danger" data-valmsg-for="product_category" data-valmsg-replace="true"></span>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="form-group" id="xpress_paint_data">
+                        @Html.LabelFor(model => model.xpress_mod_data, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @{string[] list_xpress_mod_data = { "Non-Xpress", "7-Day" };}
+                            <select name="xpress_mod_data" id="xpress_mod_data" class="form-control">
+                                @foreach (var item in list_xpress_mod_data)
+                                {
+                                    if (item == Model.xpress_mod_data)
+                                    {
+                                        <option value="@item" selected="selected">@item</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item">@item</option>
+                                    }
+                                }
+                            </select>
+                            @Html.ValidationMessageFor(model => model.xpress_mod_data, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    @*<div class="form-group" id="xpress_paint_nondata">
+                        @{string[] list_xpress_mod_non_dat = { "Non Xpress", "Paint", "Paint and Mods", "Mods" };}
+                        @Html.LabelFor(model => model.xpress_mod_non_data, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            <select name="xpress_mod_non_data" id="xpress_mod_non_data" class="form-control">
+                                @foreach (var item in list_xpress_mod_non_dat)
+                                {
+                                    if (item == Model.xpress_mod_non_data)
+                                    {
+                                        <option value="@item" selected="selected" >@item</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item">@item</option>
+                                    }
+                                }
+                            </select>
+                            @Html.ValidationMessageFor(model => model.xpress_mod_non_data, "", new { @class = "text-danger" })
+                        </div>
+                    </div>*@
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.total_qty, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.total_qty, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.total_qty, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.release_qty, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.release_qty, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.release_qty, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    @*<div class="form-group">
+                        @Html.LabelFor(model => model.target_price, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.target_price, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.target_price, "", new { @class = "text-danger" })
+                        </div>
+                    </div>*@
+
+                    <div class="box ts8_it">
+                        <h3>TS8-Data Center</h3>
+                        <div class="form-group">
+                            @{ Dictionary<string, string> list_enclosure_type_it = new Dictionary<string, string>();
+                                list_enclosure_type_it.Add("global", "Global");
+                                list_enclosure_type_it.Add("server_optimized", "Server Optimized");
+                            }
+                            @Html.LabelFor(model => model.enclosure_type_it, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <select name="enclosure_type_it" id="enclosure_type_it" class="form-control">
+                                    @foreach (var item in list_enclosure_type_it)
+                                    {
+                                        if (Model.enclosure_type_it == @item.Key)
+                                        {
+                                            <option value="@item.Key" selected="selected">@item.Value</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(model => model.enclosure_type_it, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.part_num_it, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.part_num_it, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.part_num_it, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.size_hxwxd_it, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.size_hxwxd_it, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.size_hxwxd_it, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @{ Dictionary<string, string> list_color_it = new Dictionary<string, string>();
+                                list_color_it.Add("RAL9005TXT", "RAL9005TXT");
+                                list_color_it.Add("RAL7035TXT", "RAL7035TXT");
+                                list_color_it.Add("other", "Other");
+                            }
+                            @Html.LabelFor(model => model.color_it, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <select name="color_it" class="form-control">
+                                    @foreach (var item in list_color_it)
+                                    {
+                                        if (Model.color_it == @item.Key)
+                                        {
+                                            <option value="@item.Key" selected="selected">@item.Value</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(model => model.color_it, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @{ Dictionary<string, string> list_sidewall_style_it = new Dictionary<string, string>();
+                                list_sidewall_style_it.Add("Without sidewall", "Without sidewall");
+                                list_sidewall_style_it.Add("split", "Split");
+                                list_sidewall_style_it.Add("solid", "Solid");
+                            }
+                            @Html.LabelFor(model => model.sidewall_style_it, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <select name="sidewall_style_it" class="form-control">
+                                    @foreach (var item in list_sidewall_style_it)
+                                    {
+                                        if (Model.sidewall_style_it == @item.Key)
+                                        {
+                                            <option value="@item.Key" selected="selected">@item.Value</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(model => model.sidewall_style_it, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @{ Dictionary<string, string> list_sidewall_location_it = new Dictionary<string, string>();
+                                list_sidewall_location_it.Add("without_sidewall", "Without sidewall");
+                                list_sidewall_location_it.Add("sidewall_left", "Sidewall Left");
+                                list_sidewall_location_it.Add("sidewall_right", "Sidewall Right");
+                                list_sidewall_location_it.Add("sidewall_left_right", "Sidewall Left/Right");
+                            }
+                            @Html.LabelFor(model => model.sidewall_location_it, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <select name="sidewall_location_it" class="form-control">
+                                    @foreach (var item in list_sidewall_location_it)
+                                    {
+                                        if (Model.sidewall_location_it == @item.Key)
+                                        {
+                                            <option value="@item.Key" selected="selected">@item.Value</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(model => model.sidewall_location_it, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @{ Dictionary<string, string> list_castors_it = new Dictionary<string, string>();
+                                list_castors_it.Add("without", "Without");
+                                list_castors_it.Add("with", "With");
+                            }
+                            @Html.LabelFor(model => model.castors_it, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <select name="castors_it" class="form-control">
+                                    @foreach (var item in list_castors_it)
+                                    {
+                                        if (Model.castors_it == @item.Key)
+                                        {
+                                            <option value="@item.Key" selected="selected">@item.Value</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(model => model.castors_it, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @{ Dictionary<string, string> list_Leveling_feet_it = new Dictionary<string, string>();
+                                list_Leveling_feet_it.Add("shipped_with", "Shipped With");
+                                list_Leveling_feet_it.Add("Installed", "Installed");
+                            }
+                            @Html.LabelFor(model => model.Leveling_feet_it, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <select name="Leveling_feet_it" class="form-control">
+                                    @foreach (var item in list_Leveling_feet_it)
+                                    {
+                                        if (Model.Leveling_feet_it == @item.Key)
+                                        {
+                                            <option value="@item.Key" selected="selected">@item.Value</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(model => model.Leveling_feet_it, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @{ Dictionary<string, string> list_front_it = new Dictionary<string, string>();
+                                list_front_it.Add("Perf_Door", "Perf Door");
+                                list_front_it.Add("split_perf", "Split Perf Door");
+                                list_front_it.Add("without", "Without");
+                                list_front_it.Add("with_rear_wall", "With Rear Wall");
+                                list_front_it.Add("Solid Hinged Right", "Solid Hinged Right");
+                                list_front_it.Add("viewing_door", "Viewing Door");
+                                list_front_it.Add("Split Solid door", "Split Solid door");
+                            }
+                            @Html.LabelFor(model => model.front_it, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <select name="front_it" class="form-control">
+                                    @foreach (var item in list_front_it)
+                                    {
+                                        if (Model.front_it == @item.Key)
+                                        {
+                                            <option value="@item.Key" selected="selected">@item.Value</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(model => model.front_it, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @{ Dictionary<string, string> list_rear_it = new Dictionary<string, string>();
+                                list_rear_it.Add("split_perf", "Split Perf Door");
+                                list_rear_it.Add("Perf_Door", "Perf Door");
+                                list_rear_it.Add("without", "Without");
+                                list_rear_it.Add("with_rear_wall", "With Rear Wall");
+                                list_rear_it.Add("Solid Hinged Right", "Solid Hinged Right");
+                                list_rear_it.Add("viewing_door", "Viewing Door");
+                                list_rear_it.Add("Split Solid door", "Split Solid door");
+                            }
+                            @Html.LabelFor(model => model.rear_it, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <select name="rear_it" class="form-control">
+                                    @foreach (var item in list_rear_it)
+                                    {
+                                        if (Model.rear_it == @item.Key)
+                                        {
+                                            <option value="@item.Key" selected="selected">@item.Value</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(model => model.rear_it, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @{ Dictionary<string, string> list_cable_it = new Dictionary<string, string>();
+                                list_cable_it.Add("open", "Open");
+                                list_cable_it.Add("w_base frame w_gland plate", "w/base frame w/gland plate");
+                            }
+                            @Html.LabelFor(model => model.cable_it, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <select name="cable_it" class="form-control">
+                                    @foreach (var item in list_cable_it)
+                                    {
+                                        if (Model.cable_it == @item.Key)
+                                        {
+                                            <option value="@item.Key" selected="selected">@item.Value</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(model => model.cable_it, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @{ Dictionary<string, string> list_handles_it = new Dictionary<string, string>();
+                                list_handles_it.Add("Semi Cylinder", "Semi Cylinder");
+                                list_handles_it.Add("Combo_Security Handle", "Combo/Security Handle");
+                                list_handles_it.Add("Comfort Handle", "Comfort Handle");
+                            }
+                            @Html.LabelFor(model => model.handles_it, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <select name="handles_it" id="handles_datacenter" class="form-control">
+                                    @foreach (var item in list_handles_it)
+                                    {
+                                        if (Model.handles_it == @item.Key)
+                                        {
+                                            <option value="@item.Key" selected="selected">@item.Value</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(model => model.handles_it, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.inserts_it, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <select name="inserts_it" id="inserts_datacenter" class="form-control">
+                                    <option value="Pushbutton">Pushbutton </option>
+                                    <option value="Locking pushbutton">Locking pushbutton </option>
+                                    <option value="Locking">Locking </option>
+                                </select>
+                                @Html.ValidationMessageFor(model => model.inserts_it, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <h3>Accessories</h3>
+                        <b>Installed Accessories</b>
+                        <div class="form-group">
+                            @{ Dictionary<string, string> list_partition_wall_it = new Dictionary<string, string>();
+                                list_partition_wall_it.Add("without", "Without");
+                                list_partition_wall_it.Add("solid_right", "Solid Right");
+                                list_partition_wall_it.Add("solid_left", "Solid Left");
+                                list_partition_wall_it.Add("cable_entry_right", "Cable Entry Right");
+                            }
+                            @Html.LabelFor(model => model.partition_wall_it, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <select name="partition_wall_it" class="form-control">
+                                    @foreach (var item in list_partition_wall_it)
+                                    {
+                                        if (Model.partition_wall_it == item.Key)
+                                        {
+                                            <option value="@item.Key" selected="selected">@item.Value</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(model => model.partition_wall_it, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @{ Dictionary<string, string> list_baffles_it = new Dictionary<string, string>();
+                                list_baffles_it.Add("no baffles", "No Baffles");
+                                list_baffles_it.Add("Standard Brush", "Standard Brush");
+                                list_baffles_it.Add("Standard Metal", "Standard Metal");
+                                list_baffles_it.Add("other", "Other");
+                            }
+                            @Html.LabelFor(model => model.baffles_it, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <select name="baffles_it" class="form-control">
+                                    @foreach (var item in list_baffles_it)
+                                    {
+                                        if (Model.baffles_it == item.Key)
+                                        {
+                                            <option value="@item.Key" selected="selected">@item.Value</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(model => model.baffles_it, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <b>Ship Loose Accessories</b>
+                        <div class="form-group">
+                            @{ Dictionary<string, string> list_bsaying_brackets_it = new Dictionary<string, string>();
+                                list_bsaying_brackets_it.Add("no", "No");
+                                list_bsaying_brackets_it.Add("Yes-Define below", "Yes");
+                            }
+                            @Html.LabelFor(model => model.bsaying_brackets_it, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <select name="bsaying_brackets_it" class="form-control">
+                                    @foreach (var item in list_bsaying_brackets_it)
+                                    {
+                                        if (Model.bsaying_brackets_it == item.Key)
+                                        {
+                                            <option value="@item.Key" selected="selected">@item.Value</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(model => model.bsaying_brackets_it, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <h3>PDU A Quantity:</h3>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.intell_data, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.intell_data, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.intell_data, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.voltage_data, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.voltage_data, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.voltage_data, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.amp_data, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.amp_data, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.amp_data, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.outlet_it, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.outlet_it, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.outlet_it, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.quantity_type_data, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.quantity_type_data, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.quantity_type_data, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.input_cord_it, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.input_cord_it, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.input_cord_it, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.expansion_it, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @if (Model.expansion_it == "1")
+                                {
+                                    <input id="expansion_it" name="expansion_it" type="checkbox" value="1" checked>
+                                }
+                                else
+                                {
+                                    <input id="expansion_it" name="expansion_it" type="checkbox" value="1">
+                                }
+                                @Html.ValidationMessageFor(model => model.expansion_it, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="box ts8_ie">
+                        <h3>TS8-Industrial</h3>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.part_num_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.part_num_ie, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.part_num_ie, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.size_hxwxd_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.size_hxwxd_ie, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.size_hxwxd_ie, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @{ Dictionary<string, string> list_material_ie = new Dictionary<string, string>();
+                                list_material_ie.Add("", "Select");
+                                list_material_ie.Add("carbon", "Carbon");
+                                list_material_ie.Add("304", "304 Stainless");
+                                list_material_ie.Add("316", "316 Stainless");
+                                list_material_ie.Add("aluzinc", "Aluzinc");
+                            }
+                            @Html.LabelFor(model => model.material_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <select name="material_ie" class="form-control">
+                                    @foreach (var item in list_material_ie)
+                                    {
+                                        if (Model.material_ie == @item.Key)
+                                        {
+                                            <option value="@item.Key" selected="selected">@item.Value</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(model => model.material_ie, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @{ Dictionary<string, string> list_mpl_ie = new Dictionary<string, string>();
+                                list_mpl_ie.Add("", "Select");
+                                list_mpl_ie.Add("with", "With MPL");
+                                list_mpl_ie.Add("without", "Without MPL");
+                                list_mpl_ie.Add("2 MPL", "With 2 MPL");
+                                list_mpl_ie.Add("back to back", "Back to Back MPL");
+                            }
+                            @Html.LabelFor(model => model.mpl_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <select name="mpl_ie" class="form-control">
+                                    @foreach (var item in list_mpl_ie)
+                                    {
+                                        if (Model.mpl_ie == @item.Key)
+                                        {
+                                            <option value="@item.Key" selected="selected">@item.Value</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(model => model.mpl_ie, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @{ Dictionary<string, string> list_sidewall_ie = new Dictionary<string, string>();
+                                list_sidewall_ie.Add("", "Select");
+                                list_sidewall_ie.Add("without", "Without Sidewall");
+                                list_sidewall_ie.Add("left", "Sidewall Left");
+                                list_sidewall_ie.Add("right", "Sidewall Right");
+                                list_sidewall_ie.Add("left and right", "Sidewall Left and Right");
+                            }
+                            @Html.LabelFor(model => model.sidewall_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <select name="sidewall_ie" class="form-control">
+                                    @foreach (var item in list_sidewall_ie)
+                                    {
+                                        if (Model.sidewall_ie == @item.Key)
+                                        {
+                                            <option value="@item.Key" selected="selected">@item.Value</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(model => model.sidewall_ie, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @{ Dictionary<string, string> list_front_ie = new Dictionary<string, string>();
+                                list_front_ie.Add("", "Select");
+                                list_front_ie.Add("solid right 130", "Solid Hinged Right 130");
+                                list_front_ie.Add("solid left 130", "Solid Hinged Left 130");
+                                list_front_ie.Add("solid right 180", "Solid Hinged Right 180");
+                                list_front_ie.Add("solid left 180", "Solid Hinged Left 180");
+                                list_front_ie.Add("Safety glass Viewing door hinged Right 130", "Safety glass Viewing door hinged Right 130");
+                                list_front_ie.Add("Safety glass Viewing door hinged Left 130", "Safety glass Viewing door hinged Left 130");
+                                list_front_ie.Add("Rear Wall", "Rear Wall");
+                            }
+                            @Html.LabelFor(model => model.front_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <select name="front_ie" class="form-control">
+                                    @foreach (var item in list_front_ie)
+                                    {
+                                        if (Model.front_ie == @item.Key)
+                                        {
+                                            <option value="@item.Key" selected="selected">@item.Value</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(model => model.front_ie, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @{ Dictionary<string, string> list_rear_ie = new Dictionary<string, string>();
+                                list_rear_ie.Add("", "Select");
+                                list_rear_ie.Add("Rear Wall", "Rear Wall");
+                                list_rear_ie.Add("solid right 130", "Solid Hinged Right 130");
+                                list_rear_ie.Add("solid left 130", "Solid Hinged Left 130");
+                                list_rear_ie.Add("solid right 180", "Solid Hinged Right 180");
+                                list_rear_ie.Add("solid left 180", "Solid Hinged Left 180");
+                                list_rear_ie.Add("Safety glass Viewing door hinged Right 130", "Safety glass Viewing door hinged Right 130");
+                                list_rear_ie.Add("Safety glass Viewing door hinged Left 130", "Safety glass Viewing door hinged Left 130");
+                            }
+                            @Html.LabelFor(model => model.rear_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <select name="rear_ie" class="form-control">
+                                    @foreach (var item in list_rear_ie)
+                                    {
+                                        if (Model.rear_ie == @item.Key)
+                                        {
+                                            <option value="@item.Key" selected="selected">@item.Value</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(model => model.rear_ie, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @{ Dictionary<string, string> list_plinths_ie = new Dictionary<string, string>();
+                                list_plinths_ie.Add("", "Select");
+                                list_plinths_ie.Add("without", "Without");
+                                list_plinths_ie.Add("100mm", "100mm");
+                                list_plinths_ie.Add("200mm", "200mm");
+                            }
+                            @Html.LabelFor(model => model.plinths_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <select name="plinths_ie" class="form-control" id="plinths_ie">
+                                    @foreach (var item in list_plinths_ie)
+                                    {
+                                        if (Model.plinths_ie == @item.Key)
+                                        {
+                                            <option value="@item.Key" selected="selected">@item.Value</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(model => model.plinths_ie, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group plinth_types_ie" style="display:none;">
+                            @Html.LabelFor(model => model.plinths_type_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @if (Model.plinths_type_ie == "1")
+                                {
+                                    <input id="plinths_type_ie_yes" type="radio" name="plinths_type_ie" value="1" checked> <span>Flex Block</span>
+                                }
+                                else
+                                {
+                                    <input id="plinths_type_ie_yes" type="radio" name="plinths_type_ie" value="1"> <span>Flex Block</span>
+                                }
+                                @if (Model.plinths_type_ie == "0")
+                                {
+                                    <input id="plinths_type_ie_no" type="radio" name="plinths_type_ie" value="0" checked><span>Carbon Steel</span>
+                                }
+                                else
+                                {
+                                    <input id="plinths_type_ie_no" type="radio" name="plinths_type_ie" value="0"><span>Carbon Steel</span>
+                                }
+                                @Html.ValidationMessageFor(model => model.plinths_type_ie, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @{ Dictionary<string, string> list_cable_ie = new Dictionary<string, string>();
+                                list_cable_ie.Add("", "Select");
+                                list_cable_ie.Add("w/base frame w/gland plate", "w/base frame w/gland plate");
+                                list_cable_ie.Add("w/base frame w/out glnd plt", "w/base frame w/out glnd plt");
+                                list_cable_ie.Add("w/o base frame w/o glnd plt", "w/o base frame w/o glnd plt");
+                                list_cable_ie.Add("with solid bottom", "with solid bottom");
+                            }
+                            @Html.LabelFor(model => model.cable_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <select name="cable_ie" class="form-control">
+                                    @foreach (var item in list_cable_ie)
+                                    {
+                                        if (Model.cable_ie == @item.Key)
+                                        {
+                                            <option value="@item.Key" selected="selected">@item.Value</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(model => model.cable_ie, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @{ Dictionary<string, string> list_handles_ie = new Dictionary<string, string>();
+                                list_handles_ie.Add("", "Select");
+                                list_handles_ie.Add("Comfort Handle", "Comfort Handle");
+                                list_handles_ie.Add("Other define below", "Other define below");
+                                list_handles_ie.Add("Padlock Comfort Handle", "Padlock Comfort Handle");
+                                list_handles_ie.Add("Semi Cylinder", "Semi Cylinder");
+                                list_handles_ie.Add("Standard Lock Block", "Standard Lock Block");
+                                list_handles_ie.Add("Standard Lock Cover", "Standard Lock Cover");
+                            }
+                            @Html.LabelFor(model => model.handles_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <select name="handles_ie" class="form-control">
+                                    @foreach (var item in list_handles_ie)
+                                    {
+                                        if (Model.handles_ie == @item.Key)
+                                        {
+                                            <option value="@item.Key" selected="selected">@item.Value</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(model => model.handles_ie, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @{ Dictionary<string, string> list_inserts_ie = new Dictionary<string, string>();
+                                list_inserts_ie.Add("", "Select");
+                                list_inserts_ie.Add("Double Bit", "Double Bit");
+                                list_inserts_ie.Add("Locking", "Locking");
+                                list_inserts_ie.Add("Locking pushbutton", "Locking pushbutton");
+                                list_inserts_ie.Add("Pushbutton", "Pushbutton");
+                                list_inserts_ie.Add("Screw driver insert", "Screw driver insert");
+                            }
+                            @Html.LabelFor(model => model.inserts_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <select name="inserts_ie" class="form-control">
+                                    @foreach (var item in list_inserts_ie)
+                                    {
+                                        if (Model.inserts_ie == @item.Key)
+                                        {
+                                            <option value="@item.Key" selected="selected">@item.Value</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(model => model.inserts_ie, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Rails, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @if (Model.Rails == "1")
+                                {
+                                    <input id="rails_yes" type="radio" name="Rails" value="1" checked> <span>YES</span>
+                                }
+                                else
+                                {
+                                    <input id="rails_yes" type="radio" name="Rails" value="1"> <span>YES</span>
+                                }
+                                @if (Model.Rails == "0")
+                                {
+                                    <input id="rails_no" type="radio" name="Rails" value="0" checked><span>NO</span>
+                                }
+                                else
+                                {
+                                    <input id="rails_no" type="radio" name="Rails" value="0"><span>NO</span>
+                                }
+                                @Html.ValidationMessageFor(model => model.Rails, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Suited, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @if (Model.Suited == "1")
+                                {
+                                    <input id="suited_yes" type="radio" name="Suited" value="1" checked><span>YES</span>
+                                }
+                                else
+                                {
+                                    <input id="suited_yes" type="radio" name="Suited" value="1"><span>YES</span>
+                                }
+                                @if (Model.Suited == "0")
+                                {
+                                    <input id="suited_no" type="radio" name="Suited" value="0" checked><span>NO</span>
+                                }
+                                else
+                                {
+                                    <input id="suited_no" type="radio" name="Suited" value="0"><span>NO</span>
+                                }
+                                @Html.ValidationMessageFor(model => model.Suited, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <input type="hidden" name="suited_bay_ie" value="@((Model.suited_bay_ie == "" && Model.suited_bay_ie == null) ? "1" : Model.suited_bay_ie)" />
+                        <B>Must use separate sheet for ea. bay</B><br /><Br />
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.door_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @if (Model.door_ie == "1")
+                                {
+                                    <input id="door_ie_yes" type="radio" name="door_ie" value="1" checked> <span>YES</span>
+                                }
+                                else
+                                {
+                                    <input id="door_ie_yes" type="radio" name="door_ie" value="1"> <span>YES</span>
+                                }
+                                @if (Model.door_ie == "0")
+                                {
+                                    <input id="door_ie_no" type="radio" name="door_ie" value="0" checked><span>NO</span>
+                                }
+                                else
+                                {
+                                    <input id="door_ie_no" type="radio" name="door_ie" value="0"><span>NO</span>
+                                }
+                                @Html.ValidationMessageFor(model => model.door_ie, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.roof_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @if (Model.roof_ie == "1")
+                                {
+                                    <input id="roof_ie_yes" type="radio" name="roof_ie" value="1" checked> <span>YES</span>
+                                }
+                                else
+                                {
+                                    <input id="roof_ie_yes" type="radio" name="roof_ie" value="1"> <span>YES</span>
+                                }
+                                @if (Model.roof_ie == "0")
+                                {
+                                    <input id="roof_ie_no" type="radio" name="roof_ie" value="0" checked><span>NO</span>
+                                }
+                                else
+                                {
+                                    <input id="roof_ie_no" type="radio" name="roof_ie" value="0"><span>NO</span>
+                                }
+                                @Html.ValidationMessageFor(model => model.roof_ie, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.rear_wall_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @if (Model.rear_wall_ie == "1")
+                                {
+                                    <input id="rear_wall_ie_yes" type="radio" name="rear_wall_ie" value="1" checked> <span>YES</span>
+                                }
+                                else
+                                {
+                                    <input id="rear_wall_ie_yes" type="radio" name="rear_wall_ie" value="1"> <span>YES</span>
+                                }
+                                @if (Model.rear_wall_ie == "0")
+                                {
+                                    <input id="rear_wall_ie_no" type="radio" name="rear_wall_ie" value="0" checked><span>NO</span>
+                                }
+                                else
+                                {
+                                    <input id="rear_wall_ie_no" type="radio" name="rear_wall_ie" value="0"><span>NO</span>
+                                }
+                                @Html.ValidationMessageFor(model => model.rear_wall_ie, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.sidewall_mod_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @if (Model.sidewall_mod_ie == "1")
+                                {
+                                    <input id="sidewall_mod_ie_yes" type="radio" name="sidewall_mod_ie" value="1" checked> <span>YES</span>
+                                }
+                                else
+                                {
+                                    <input id="sidewall_mod_ie_yes" type="radio" name="sidewall_mod_ie" value="1"> <span>YES</span>
+                                }
+                                @if (Model.sidewall_mod_ie == "0")
+                                {
+                                    <input id="sidewall_mod_ie_no" type="radio" name="sidewall_mod_ie" value="0" checked><span>NO</span>
+                                }
+                                else
+                                {
+                                    <input id="sidewall_mod_ie_no" type="radio" name="sidewall_mod_ie" value="0"><span>NO</span>
+                                }
+                                @Html.ValidationMessageFor(model => model.sidewall_mod_ie, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.mpl_mod_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @if (Model.mpl_mod_ie == "1")
+                                {
+                                    <input id="mpl_mod_ie_yes" type="radio" name="mpl_mod_ie" value="1" checked> <span>YES</span>
+                                }
+                                else
+                                {
+                                    <input id="mpl_mod_ie_yes" type="radio" name="mpl_mod_ie" value="1"> <span>YES</span>
+                                }
+                                @if (Model.mpl_mod_ie == "0")
+                                {
+                                    <input id="mpl_mod_ie_no" type="radio" name="mpl_mod_ie" value="0" checked><span>NO</span>
+                                }
+                                else
+                                {
+                                    <input id="mpl_mod_ie_no" type="radio" name="mpl_mod_ie" value="0"><span>NO</span>
+                                }
+                                @Html.ValidationMessageFor(model => model.mpl_mod_ie, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.specialpaint_ie_1, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @if (Model.specialpaint_ie_1 == "1")
+                                {
+                                    <input id="specialpaint_ie_yes" type="radio" name="specialpaint_ie_1" value="1" checked> <span>YES</span>
+                                }
+                                else
+                                {
+                                    <input id="specialpaint_ie_yes" type="radio" name="specialpaint_ie_1" value="1"> <span>YES</span>
+                                }
+                                @if (Model.specialpaint_ie_1 == "0")
+                                {
+                                    <input id="specialpaint_ie_no" type="radio" name="specialpaint_ie_1" value="0" checked><span>NO</span>
+                                }
+                                else
+                                {
+                                    <input id="specialpaint_ie_no" type="radio" name="specialpaint_ie_1" value="0"><span>NO</span>
+                                }
+                                @Html.ValidationMessageFor(model => model.specialpaint_ie_1, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group specialpaint_ie">
+                            @{ Dictionary<string, string> list_special_paint_ie = new Dictionary<string, string>();
+                                list_special_paint_ie.Add("standard", "standard");
+                                list_special_paint_ie.Add("28 Color", "28 Color");
+                                list_special_paint_ie.Add("other", "Other");
+                            }
+                            @Html.LabelFor(model => model.special_paint_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <select name="special_paint_ie" id="special_paint_ie" class="form-control">
+                                    @foreach (var item in list_special_paint_ie)
+                                    {
+                                        if (Model.special_paint_ie == @item.Key)
+                                        {
+                                            <option value="@item.Key" selected="selected">@item.Value</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(model => model.special_paint_ie, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group color_mod_ie">
+                            @{ Dictionary<string, string> list_color_mod_ie = new Dictionary<string, string>();
+                                list_color_mod_ie.Add("ANSI 61", "ANSI 61");
+                                list_color_mod_ie.Add("RAL 1015", "RAL 1015");
+                                list_color_mod_ie.Add("RAL 1023", "RAL 1023");
+                                list_color_mod_ie.Add("RAL 1033", "RAL 1033");
+                                list_color_mod_ie.Add("RAL 2000", "RAL 2000");
+                                list_color_mod_ie.Add("RAL 2002", "RAL 2002");
+                                list_color_mod_ie.Add("RAL 2004", "RAL 2004");
+                                list_color_mod_ie.Add("RAL 3001", "RAL 3001");
+                                list_color_mod_ie.Add("RAL 3005", "RAL 3005");
+                                list_color_mod_ie.Add("RAL 3020", "RAL 3020");
+                                list_color_mod_ie.Add("RAL 5005", "RAL 5005");
+                                list_color_mod_ie.Add("RAL 5010", "RAL 5010");
+                                list_color_mod_ie.Add("RAL 5012", "RAL 5012");
+                                list_color_mod_ie.Add("RAL 5015", "RAL 5015");
+                                list_color_mod_ie.Add("RAL 5017", "RAL 5017");
+                                list_color_mod_ie.Add("RAL 5018", "RAL 5018");
+                                list_color_mod_ie.Add("RAL 6002", "RAL 6002");
+                                list_color_mod_ie.Add("RAL 6003", "RAL 6003");
+                                list_color_mod_ie.Add("RAL 6011", "RAL 6011");
+                                list_color_mod_ie.Add("RAL 7012", "RAL 7012");
+                                list_color_mod_ie.Add("RAL 7022", "RAL 7022");
+                                list_color_mod_ie.Add("RAL 7032", "RAL 7032");
+                                list_color_mod_ie.Add("RAL 7035", "RAL 7035");
+                                list_color_mod_ie.Add("RAL 9001", "RAL 9001");
+                                list_color_mod_ie.Add("RAL 9002", "RAL 9002");
+                                list_color_mod_ie.Add("RAL 9003", "RAL 9003");
+                                list_color_mod_ie.Add("RAL 9005", "RAL 9005");
+                                list_color_mod_ie.Add("RAL 9010", "RAL 9010");
+                            }
+                            @Html.LabelFor(model => model.color_mod_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10" id="color_ie">
+                                <select name="color_mod_ie" class="form-control">
+                                    @foreach (var item in list_color_mod_ie)
+                                    {
+                                        if (Model.color_mod_ie == @item.Key)
+                                        {
+                                            <option value="@item.Key" selected="selected">@item.Value</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(model => model.color_mod_ie, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-md-10" id="specify_ie">
+                                <span>please specify below</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @{ Dictionary<string, string> list_ul_nema_other_ie = new Dictionary<string, string>();
+                                list_ul_nema_other_ie.Add("Not Rated", "Not Rated");
+                                list_ul_nema_other_ie.Add("UL", "UL");
+                                list_ul_nema_other_ie.Add("NEMA", "NEMA");
+                            }
+                            @Html.LabelFor(model => model.ul_nema_other_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <select name="ul_nema_other_ie" class="form-control" id="ul_nema_other_ie">
+                                    @foreach (var item in list_ul_nema_other_ie)
+                                    {
+                                        if (Model.ul_nema_other_ie == @item.Key)
+                                        {
+                                            <option value="@item.Key" selected="selected">@item.Value</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(model => model.ul_nema_other_ie, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group ie_rating">
+                            @{ Dictionary<string, string> list_rating_ie = new Dictionary<string, string>();
+                                list_rating_ie.Add("Not Rated", "Not Rated");
+                                list_rating_ie.Add("1_12", "1, 12");
+                                list_rating_ie.Add("1_12_3R_4", "1, 12, 3R, 4");
+                                list_rating_ie.Add("1_12_3R_4x", "1, 12, 3R, 4x");
+                            }
+                            @Html.LabelFor(model => model.rating_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <select name="rating_ie" class="form-control">
+                                    @foreach (var item in list_rating_ie)
+                                    {
+                                        if (Model.rating_ie == @item.Key)
+                                        {
+                                            <option value="@item.Key" selected="selected">@item.Value</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(model => model.rating_ie, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="box WM_AE_JB_box">
+                        <h3>WM/AE/JB</h3>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.part_num_WM_AE_JB, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.part_num_WM_AE_JB, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.part_num_WM_AE_JB, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        @*<div class="form-group">
+                            @{ Dictionary<string, string> list_part_num_WM_AE_JB = new Dictionary<string, string>();
+                                list_part_num_WM_AE_JB.Add("carbon", "Carbon");
+                                list_part_num_WM_AE_JB.Add("314", "314 Stainless");
+                                list_part_num_WM_AE_JB.Add("316", "316 Stainless");
+                            }
+                            @Html.LabelFor(model => model.part_num_WM_AE_JB, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <select name="part_num_WM_AE_JB" class="form-control">
+                                    @foreach (var item in list_part_num_WM_AE_JB)
+                                    {
+                                        if (Model.part_num_WM_AE_JB == @item.Key)
+                                        {
+                                            <option value="@item.Key" selected="selected">@item.Value</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(model => model.part_num_WM_AE_JB, "", new { @class = "text-danger" })
+                            </div>
+                        </div>*@
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.size_hxwxd_WM_AE_JB, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.size_hxwxd_WM_AE_JB, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.size_hxwxd_WM_AE_JB, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @{ Dictionary<string, string> list_material_WM_AE_JB = new Dictionary<string, string>();
+                                list_material_WM_AE_JB.Add("", "Select");
+                                list_material_WM_AE_JB.Add("carbon", "Carbon");
+                                list_material_WM_AE_JB.Add("304", "304 Stainless");
+                                list_material_WM_AE_JB.Add("316", "316 Stainless");
+                            }
+                            @Html.LabelFor(model => model.material_WM_AE_JB, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <select name="material_WM_AE_JB" class="form-control">
+                                    @foreach (var item in list_material_WM_AE_JB)
+                                    {
+                                        if (Model.material_WM_AE_JB == @item.Key)
+                                        {
+                                            <option value="@item.Key" selected="selected">@item.Value</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(model => model.material_WM_AE_JB, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @{ Dictionary<string, string> list_mpl_WM_AE_JB = new Dictionary<string, string>();
+                                list_mpl_WM_AE_JB.Add("", "Select");
+                                list_mpl_WM_AE_JB.Add("with", "With MPL");
+                                list_mpl_WM_AE_JB.Add("without", "Without MPL");
+                            }
+                            @Html.LabelFor(model => model.mpl_WM_AE_JB, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <select name="mpl_WM_AE_JB" class="form-control">
+                                    @foreach (var item in list_mpl_WM_AE_JB)
+                                    {
+                                        if (Model.mpl_WM_AE_JB == @item.Key)
+                                        {
+                                            <option value="@item.Key" selected="selected">@item.Value</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(model => model.mpl_WM_AE_JB, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @{ Dictionary<string, string> list_latching_wm = new Dictionary<string, string>();
+                                list_latching_wm.Add("", "Select");
+                                list_latching_wm.Add("Slotted Quarterturn", "Slotted Quarterturn");
+                                list_latching_wm.Add("Double bit Quarterturn", "Double bit Quarterturn");
+                                list_latching_wm.Add("3 Point Latch L Handle", "3 Point Latch L Handle");
+                                list_latching_wm.Add("3 Point Latch Locking L handle", "3 Point Latch Locking L handle");
+                                list_latching_wm.Add("3 Point Latch Pad lockable", "3 Point Latch Locking L handlen");
+                                list_latching_wm.Add("other", "Other");
+                            }
+                            @Html.LabelFor(model => model.latching_wm, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <select name="latching_wm" class="form-control">
+                                    @foreach (var item in list_latching_wm)
+                                    {
+                                        if (Model.latching_wm == @item.Key)
+                                        {
+                                            <option value="@item.Key" selected="selected">@item.Value</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(model => model.latching_wm, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.body_modified_wm, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @if (Model.body_modified_wm == "1")
+                                {
+                                    <input id="body_modified_wm_yes" type="radio" name="body_modified_wm" value="1" checked> <span>YES</span>
+                                }
+                                else
+                                {
+                                    <input id="body_modified_wm_yes" type="radio" name="body_modified_wm" value="1"> <span>YES</span>
+                                }
+                                @if (Model.body_modified_wm == "0")
+                                {
+                                    <input id="body_modified_wm_no" type="radio" name="body_modified_wm" value="0" checked><span>NO</span>
+                                }
+                                else
+                                {
+                                    <input id="body_modified_wm_no" type="radio" name="body_modified_wm" value="0"><span>NO</span>
+                                }
+                                @Html.ValidationMessageFor(model => model.body_modified_wm, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.door_modified_wm, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @if (Model.door_modified_wm == "1")
+                                {
+                                    <input id="door_modified_wm_yes" type="radio" name="door_modified_wm" value="1" checked> <span>YES</span>
+                                }
+                                else
+                                {
+                                    <input id="door_modified_wm_yes" type="radio" name="door_modified_wm" value="1"> <span>YES</span>
+                                }
+                                @if (Model.door_modified_wm == "0")
+                                {
+                                    <input id="door_modified_wm_no" type="radio" name="door_modified_wm" value="0" checked><span>NO</span>
+                                }
+                                else
+                                {
+                                    <input id="door_modified_wm_no" type="radio" name="door_modified_wm" value="0"><span>NO</span>
+                                }
+                                @Html.ValidationMessageFor(model => model.door_modified_wm, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.mpl_modified_wm, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @if (Model.mpl_modified_wm == "1")
+                                {
+                                    <input id="mpl_modified_wm_yes" type="radio" name="mpl_modified_wm" value="1" checked> <span>YES</span>
+                                }
+                                else
+                                {
+                                    <input id="mpl_modified_wm_yes" type="radio" name="mpl_modified_wm" value="1"> <span>YES</span>
+                                }
+                                @if (Model.mpl_modified_wm == "0")
+                                {
+                                    <input id="mpl_modified_wm_no" type="radio" name="mpl_modified_wm" value="0" checked><span>NO</span>
+                                }
+                                else
+                                {
+                                    <input id="mpl_modified_wm_no" type="radio" name="mpl_modified_wm" value="0"><span>NO</span>
+                                }
+                                @Html.ValidationMessageFor(model => model.mpl_modified_wm, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.specialpaint_wm_1, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @if (Model.specialpaint_wm_1 == "1")
+                                {
+                                    <input id="specialpaint_wm_yes" type="radio" name="specialpaint_wm_1" value="1" checked> <span>YES</span>
+                                }
+                                else
+                                {
+                                    <input id="specialpaint_wm_yes" type="radio" name="specialpaint_wm_1" value="1"> <span>YES</span>
+                                }
+                                @if (Model.specialpaint_wm_1 == "0")
+                                {
+                                    <input id="specialpaint_wm_no" type="radio" name="specialpaint_wm_1" value="0" checked><span>NO</span>
+                                }
+                                else
+                                {
+                                    <input id="specialpaint_wm_no" type="radio" name="specialpaint_wm_1" value="0"><span>NO</span>
+                                }
+                                @Html.ValidationMessageFor(model => model.specialpaint_wm_1, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group specialpaint_wm">
+                            @{ Dictionary<string, string> list_special_paint_wm = new Dictionary<string, string>();
+                                list_special_paint_wm.Add("standard", "Standard");
+                                list_special_paint_wm.Add("28 Color", "28 Color");
+                                list_special_paint_wm.Add("other", "Other");
+                            }
+                            @Html.LabelFor(model => model.special_paint_wm, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <select name="special_paint_wm" id="special_paint_wm" class="form-control">
+                                    @foreach (var item in list_special_paint_wm)
+                                    {
+                                        if (Model.special_paint_wm == @item.Key)
+                                        {
+                                            <option value="@item.Key" selected="selected">@item.Value</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(model => model.special_paint_wm, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group color_mod_wm">
+                            @{ Dictionary<string, string> list_color_WM_AE_JB = new Dictionary<string, string>();
+                                list_color_WM_AE_JB.Add("ANSI 61", "ANSI 61");
+                                list_color_WM_AE_JB.Add("RAL 1015", "RAL 1015");
+                                list_color_WM_AE_JB.Add("RAL 1023", "RAL 1023");
+                                list_color_WM_AE_JB.Add("RAL 1033", "RAL 1033");
+                                list_color_WM_AE_JB.Add("RAL 2000", "RAL 2000");
+                                list_color_WM_AE_JB.Add("RAL 2002", "RAL 2002");
+                                list_color_WM_AE_JB.Add("RAL 2004", "RAL 2004");
+                                list_color_WM_AE_JB.Add("RAL 3001", "RAL 3001");
+                                list_color_WM_AE_JB.Add("RAL 3005", "RAL 3005");
+                                list_color_WM_AE_JB.Add("RAL 3020", "RAL 3020");
+                                list_color_WM_AE_JB.Add("RAL 5005", "RAL 5005");
+                                list_color_WM_AE_JB.Add("RAL 5010", "RAL 5010");
+                                list_color_WM_AE_JB.Add("RAL 5012", "RAL 5012");
+                                list_color_WM_AE_JB.Add("RAL 5015", "RAL 5015");
+                                list_color_WM_AE_JB.Add("RAL 5017", "RAL 5017");
+                                list_color_WM_AE_JB.Add("RAL 5018", "RAL 5018");
+                                list_color_WM_AE_JB.Add("RAL 6002", "RAL 6002");
+                                list_color_WM_AE_JB.Add("RAL 6003", "RAL 6003");
+                                list_color_WM_AE_JB.Add("RAL 6011", "RAL 6011");
+                                list_color_WM_AE_JB.Add("RAL 7012", "RAL 7012");
+                                list_color_WM_AE_JB.Add("RAL 7022", "RAL 7022");
+                                list_color_WM_AE_JB.Add("RAL 7032", "RAL 7032");
+                                list_color_WM_AE_JB.Add("RAL 7035", "RAL 7035");
+                                list_color_WM_AE_JB.Add("RAL 9001", "RAL 9001");
+                                list_color_WM_AE_JB.Add("RAL 9002", "RAL 9002");
+                                list_color_WM_AE_JB.Add("RAL 9003", "RAL 9003");
+                                list_color_WM_AE_JB.Add("RAL 9005", "RAL 9005");
+                                list_color_WM_AE_JB.Add("RAL 9010", "RAL 9010");
+                            }
+                            @Html.LabelFor(model => model.color_WM_AE_JB, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10" id="color_wm">
+                                <select name="color_WM_AE_JB" class="form-control">
+                                    @foreach (var item in list_color_WM_AE_JB)
+                                    {
+                                        if (Model.color_WM_AE_JB == @item.Key)
+                                        {
+                                            <option value="@item.Key" selected="selected">@item.Value</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(model => model.color_WM_AE_JB, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-md-10" id="specify_wm">
+                                <span>please specify below</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @{ Dictionary<string, string> list_ul_nema_WM_AE_JB = new Dictionary<string, string>();
+                                list_ul_nema_WM_AE_JB.Add("Not Rated", "Not Rated");
+                                list_ul_nema_WM_AE_JB.Add("UL", "UL");
+                                list_ul_nema_WM_AE_JB.Add("NEMA", "NEMA");
+                            }
+                            @Html.LabelFor(model => model.ul_nema_WM_AE_JB, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <select name="ul_nema_WM_AE_JB" class="form-control" id="ul_nema_WM_AE_JB">
+                                    @foreach (var item in list_ul_nema_WM_AE_JB)
+                                    {
+                                        if (Model.ul_nema_WM_AE_JB == @item.Key)
+                                        {
+                                            <option value="@item.Key" selected="selected">@item.Value</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(model => model.ul_nema_WM_AE_JB, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group WM_AE_JB_rating">
+                            @{ Dictionary<string, string> list_rating_WM_AE_JB = new Dictionary<string, string>();
+                                list_rating_WM_AE_JB.Add("Not Rated", "Not Rated");
+                                list_rating_WM_AE_JB.Add("1_12", "1, 12");
+                                list_rating_WM_AE_JB.Add("1_12_3R_4", "1, 12, 3R, 4");
+                                list_rating_WM_AE_JB.Add("1_12_3R_4x", "1, 12, 3R, 4x");
+                            }
+                            @Html.LabelFor(model => model.rating_WM_AE_JB, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <select name="rating_WM_AE_JB" class="form-control">
+                                    @foreach (var item in list_rating_WM_AE_JB)
+                                    {
+                                        if (Model.rating_WM_AE_JB == @item.Key)
+                                        {
+                                            <option value="@item.Key" selected="selected">@item.Value</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(model => model.rating_WM_AE_JB, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="box other_box">
+                        <h3>Other</h3>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.part_num_other_1, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.part_num_other_1, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.part_num_other_1, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.size_hxwxd_other_1, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.size_hxwxd_other_1, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.size_hxwxd_other_1, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        @*<div class="form-group">
+                            @{ Dictionary<string, string> list_producttype_other_1 = new Dictionary<string, string>();
+                                list_producttype_other_1.Add("carbon", "Carbon");
+                                list_producttype_other_1.Add("304", "304 Stainless");
+                                list_producttype_other_1.Add("316", "316 Stainless");
+                                list_producttype_other_1.Add("aluzinc", "Aluzinc");
+                            }
+                            @Html.LabelFor(model => model.producttype_other_1, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <select name="producttype_other_1" class="form-control">
+                                    @foreach (var item in list_producttype_other_1)
+                                    {
+                                        if (Model.producttype_other_1 == @item.Key)
+                                        {
+                                            <option value="@item.Key" selected="selected">@item.Value</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(model => model.producttype_other_1, "", new { @class = "text-danger" })
+                            </div>
+                        </div>*@
+
+                        <div class="form-group">
+                            @{ Dictionary<string, string> list_material_other_1 = new Dictionary<string, string>();
+                                list_material_other_1.Add("", "Select");
+                                list_material_other_1.Add("carbon", "Carbon");
+                                list_material_other_1.Add("304", "304 Stainless");
+                                list_material_other_1.Add("316", "316 Stainless");
+                                list_material_other_1.Add("aluzinc", "Aluzinc");
+                            }
+                            @Html.LabelFor(model => model.material_other_1, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <select name="material_other_1" class="form-control">
+                                    @foreach (var item in list_material_other_1)
+                                    {
+                                        if (Model.material_other_1 == @item.Key)
+                                        {
+                                            <option value="@item.Key" selected="selected">@item.Value</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(model => model.material_other_1, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.body_modified_other_1, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @if (Model.body_modified_other_1 == "1")
+                                {
+                                    <input id="body_modified_other_1_yes" type="radio" name="body_modified_other_1" value="1" checked> <span>YES</span>
+                                }
+                                else
+                                {
+                                    <input id="body_modified_other_1_yes" type="radio" name="body_modified_other_1" value="1"> <span>YES</span>
+                                }
+                                @if (Model.body_modified_other_1 == "0")
+                                {
+                                    <input id="body_modified_other_1_no" type="radio" name="body_modified_other_1" value="0" checked><span>NO</span>
+                                }
+                                else
+                                {
+                                    <input id="body_modified_other_1_no" type="radio" name="body_modified_other_1" value="0"><span>NO</span>
+                                }
+                                @Html.ValidationMessageFor(model => model.body_modified_other_1, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.door_modified_other_1, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @if (Model.door_modified_other_1 == "1")
+                                {
+                                    <input id="door_modified_other_1_yes" type="radio" name="door_modified_other_1" value="1" checked> <span>YES</span>
+                                }
+                                else
+                                {
+                                    <input id="door_modified_other_1_yes" type="radio" name="door_modified_other_1" value="1"> <span>YES</span>
+                                }
+                                @if (Model.door_modified_other_1 == "0")
+                                {
+                                    <input id="door_modified_other_1_no" type="radio" name="door_modified_other_1" value="0" checked><span>NO</span>
+                                }
+                                else
+                                {
+                                    <input id="door_modified_other_1_no" type="radio" name="door_modified_other_1" value="0"><span>NO</span>
+                                }
+                                @Html.ValidationMessageFor(model => model.door_modified_other_1, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.mpl_modified_other_1, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @if (Model.mpl_modified_other_1 == "1")
+                                {
+                                    <input id="mpl_modified_other_1_yes" type="radio" name="mpl_modified_other_1" value="1" checked> <span>YES</span>
+                                }
+                                else
+                                {
+                                    <input id="mpl_modified_other_1_yes" type="radio" name="mpl_modified_other_1" value="1"> <span>YES</span>
+                                }
+                                @if (Model.mpl_modified_other_1 == "0")
+                                {
+                                    <input id="mpl_modified_other_1_no" type="radio" name="mpl_modified_other_1" value="0" checked><span>NO</span>
+                                }
+                                else
+                                {
+                                    <input id="mpl_modified_other_1_no" type="radio" name="mpl_modified_other_1" value="0"><span>NO</span>
+                                }
+                                @Html.ValidationMessageFor(model => model.mpl_modified_other_1, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.specialpaint_other_1, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @if (Model.specialpaint_other_1 == "1")
+                                {
+                                    <input id="specialpaint_yes" type="radio" name="specialpaint_other_1" value="1" checked> <span>YES</span>
+                                }
+                                else
+                                {
+                                    <input id="specialpaint_yes" type="radio" name="specialpaint_other_1" value="1"> <span>YES</span>
+                                }
+                                @if (Model.specialpaint_other_1 == "0")
+                                {
+                                    <input id="specialpaint_no" type="radio" name="specialpaint_other_1" value="0" checked><span>NO</span>
+                                }
+                                else
+                                {
+                                    <input id="specialpaint_no" type="radio" name="specialpaint_other_1" value="0"><span>NO</span>
+                                }
+                                @Html.ValidationMessageFor(model => model.specialpaint_other_1, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group specialpaint_other">
+                            @{ Dictionary<string, string> list_special_paint_other = new Dictionary<string, string>();
+                                list_special_paint_other.Add("standard", "standard");
+                                list_special_paint_other.Add("28 Color", "28 Color");
+                                list_special_paint_other.Add("other", "Other");
+                            }
+                            @Html.LabelFor(model => model.special_paint_ie, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <select name="specialpaint_other" id="specialpaint_other" class="form-control">
+                                    @foreach (var item in list_special_paint_other)
+                                    {
+                                        if (Model.specialpaint_other == @item.Key)
+                                        {
+                                            <option value="@item.Key" selected="selected">@item.Value</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(model => model.specialpaint_other, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group color_mod_other">
+                            @{ Dictionary<string, string> list_color_mod_other = new Dictionary<string, string>();
+                                list_color_mod_other.Add("ANSI 61", "ANSI 61");
+                                list_color_mod_other.Add("RAL 1015", "RAL 1015");
+                                list_color_mod_other.Add("RAL 1023", "RAL 1023");
+                                list_color_mod_other.Add("RAL 1033", "RAL 1033");
+                                list_color_mod_other.Add("RAL 2000", "RAL 2000");
+                                list_color_mod_other.Add("RAL 2002", "RAL 2002");
+                                list_color_mod_other.Add("RAL 2004", "RAL 2004");
+                                list_color_mod_other.Add("RAL 3001", "RAL 3001");
+                                list_color_mod_other.Add("RAL 3005", "RAL 3005");
+                                list_color_mod_other.Add("RAL 3020", "RAL 3020");
+                                list_color_mod_other.Add("RAL 5005", "RAL 5005");
+                                list_color_mod_other.Add("RAL 5010", "RAL 5010");
+                                list_color_mod_other.Add("RAL 5012", "RAL 5012");
+                                list_color_mod_other.Add("RAL 5015", "RAL 5015");
+                                list_color_mod_other.Add("RAL 5017", "RAL 5017");
+                                list_color_mod_other.Add("RAL 5018", "RAL 5018");
+                                list_color_mod_other.Add("RAL 6002", "RAL 6002");
+                                list_color_mod_other.Add("RAL 6003", "RAL 6003");
+                                list_color_mod_other.Add("RAL 6011", "RAL 6011");
+                                list_color_mod_other.Add("RAL 7012", "RAL 7012");
+                                list_color_mod_other.Add("RAL 7022", "RAL 7022");
+                                list_color_mod_other.Add("RAL 7032", "RAL 7032");
+                                list_color_mod_other.Add("RAL 7035", "RAL 7035");
+                                list_color_mod_other.Add("RAL 9001", "RAL 9001");
+                                list_color_mod_other.Add("RAL 9002", "RAL 9002");
+                                list_color_mod_other.Add("RAL 9003", "RAL 9003");
+                                list_color_mod_other.Add("RAL 9005", "RAL 9005");
+                                list_color_mod_other.Add("RAL 9010", "RAL 9010");
+                            }
+                            @Html.LabelFor(model => model.color_mod_other, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10" id="color_other">
+                                <select name="color_mod_other" class="form-control">
+                                    @foreach (var item in list_color_mod_other)
+                                    {
+                                        if (Model.color_mod_other == @item.Key)
+                                        {
+                                            <option value="@item.Key" selected="selected">@item.Value</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(model => model.color_mod_other, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-md-10" id="specify_other">
+                                <span>please specify below</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @{ Dictionary<string, string> list_ul_nema_other_1 = new Dictionary<string, string>();
+                                list_ul_nema_other_1.Add("Not Rated", "Not Rated");
+                                list_ul_nema_other_1.Add("UL", "UL");
+                                list_ul_nema_other_1.Add("NEMA", "NEMA");
+                            }
+                            @Html.LabelFor(model => model.ul_nema_other_1, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <select name="ul_nema_other_1" class="form-control" id="ul_nema_other">
+                                    @foreach (var item in list_ul_nema_other_1)
+                                    {
+                                        if (Model.ul_nema_other_1 == @item.Key)
+                                        {
+                                            <option value="@item.Key" selected="selected">@item.Value</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(model => model.ul_nema_other_1, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group other_rating">
+                            @{ Dictionary<string, string> list_rating_other_1 = new Dictionary<string, string>();
+                                list_rating_other_1.Add("Not Rated", "Not Rated");
+                                list_rating_other_1.Add("1_12", "1, 12");
+                                list_rating_other_1.Add("1_12_3R_4", "1, 12, 3R, 4");
+                                list_rating_other_1.Add("1_12_3R_4x", "1, 12, 3R, 4x");
+                            }
+                            @Html.LabelFor(model => model.rating_other_1, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <select name="rating_other_1" class="form-control">
+                                    @foreach (var item in list_rating_other_1)
+                                    {
+                                        if (Model.rating_other_1 == @item.Key)
+                                        {
+                                            <option value="@item.Key" selected="selected">@item.Value</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(model => model.rating_other_1, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div id="additional_information">
+                        <h3>Additional information:</h3>
+                        <div class="form-group">
+                            <label class="control-label col-md-2" for="ul_nema_other_ie"></label>
+                            <div class="col-md-8">
+                                @Html.TextAreaFor(model => model.additional_info_footer, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.additional_info_footer, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <h3>Installed Parts</h3>
+                        @*insert installed parts*@
+                        <table class="table">
+                            <tr><td colspan="3" align="right"><div onclick="addparts(); return false;" class="btn btn-primary">+ Add a part</div></td></tr>
+                            <tr>
+                                <td>Qty</td>
+                                <td>Part No.</td>
+                                <td>Description</td>
+                                <td></td>
+                            </tr>
+                            <tbody id="add_installed_parts">
+                                @if (Model.list_installed_parts != null && Model.list_installed_parts.Count() > 0)
+                                {
+                                    int m = 0;
+                                    var installed = Model.list_installed_parts.FirstOrDefault();
+                                    if (installed != null && !string.IsNullOrEmpty(installed.qty_installed))
+                                    {
+                                        foreach (string item in installed.qty_installed.Split(','))
+                                        {
+                                            <tr id="@m" class="installed_parts_@m">
+                                                <td>
+                                                    <input class="form-control text-box single-line" id="qty_installed" name="qty_installed" type="text" value="@item">
+                                                    <span class="field-validation-valid text-danger" data-valmsg-for="qty_installed" data-valmsg-replace="true"></span>
+                                                </td>
+                                                <td>
+                                                    <input class="form-control text-box single-line" id="part_number_installed" name="part_number_installed" type="text" value="@(!string.IsNullOrEmpty(installed.part_number_installed) ? installed.part_number_installed.Split(',')[m] : "")">
+                                                    <span class="field-validation-valid text-danger" data-valmsg-for="part_number_installed" data-valmsg-replace="true"></span>
+                                                </td>
+                                                <td>
+                                                    <input class="form-control text-box single-line" id="description_installed" name="description_installed" type="text" value="@(!string.IsNullOrEmpty(installed.description_installed) ? installed.description_installed.Split(',')[m] : "")">
+                                                    <span class="field-validation-valid text-danger" data-valmsg-for="description_installed" data-valmsg-replace="true"></span>
+                                                </td>
+                                                <td><div onclick="deleteinstalled(@m); return false;" class="btn btn-primary">-</div></td>
+                                            </tr>
+                                            m++;
+                                        }
+                                    }
+                                }
+                            </tbody>
+                        </table>
+
+                        <h3>Ship with Parts</h3>
+                        <table class="table">
+                            <tr><td colspan="3" align="right"><div onclick="addshippedparts(); return false;" class="btn btn-primary">+ Add a part</div></td></tr>
+                            <tr>
+                                <td>Qty</td>
+                                <td>Part No.</td>
+                                <td>Description</td>
+                                <td></td>
+                            </tr>
+                            <tbody id="add_shipped_parts">
+                                @if (Model.list_shipped_parts != null && Model.list_shipped_parts.Count() > 0)
+                                {
+                                    int m = 0;
+                                    foreach (var item in Model.list_shipped_parts.FirstOrDefault().qty_shipped.Split(','))
+                                    {
+                                        <tr id="@m" class="shipped_parts_@m">
+                                            <td>
+                                                <input class="form-control text-box single-line" id="qty_shipped" name="qty_shipped" type="text" value="@Model.list_shipped_parts.FirstOrDefault().qty_shipped.Split(',')[m]">
+                                                <span class="field-validation-valid text-danger" data-valmsg-for="qty_shipped" data-valmsg-replace="true"></span>
+                                            </td>
+                                            <td>
+                                                <input class="form-control text-box single-line" id="part_number_shipped" name="part_number_shipped" type="text" value="@Model.list_shipped_parts.FirstOrDefault().part_number_shipped.Split(',')[m]">
+                                                <span class="field-validation-valid text-danger" data-valmsg-for="part_number_shipped" data-valmsg-replace="true"></span>
+                                            </td>
+                                            <td>
+                                                <input class="form-control text-box single-line" id="description_shipped" name="description_shipped" type="text" value="@Model.list_shipped_parts.FirstOrDefault().description_shipped.Split(',')[m]">
+                                                <span class="field-validation-valid text-danger" data-valmsg-for="description_shipped" data-valmsg-replace="true"></span>
+                                            </td>
+                                            <td><div onclick="deleteshipped(@m); return false;" class="btn btn-primary">-</div></td>
+                                        </tr>
+                                        m++;
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        @if (string.IsNullOrEmpty(ViewBag.first_time))
+        {
+            <input name="first_time" type="hidden" id="first_time" value="@Request.QueryString["first_time"]" />
+        }
+        else
+        {
+            <input name="first_time" type="hidden" id="first_time" value="@ViewBag.first_time" />
+        }
+
+        @if (string.IsNullOrEmpty(ViewBag.form_id))
+        {
+            <input name="form_id" type="hidden" id="form_id" value="@Request.QueryString["form_id"]" />
+        }
+        else
+        {
+            <input name="form_id" type="hidden" id="form_id" value="@ViewBag.form_id" />
+        }
+
+        @if (string.IsNullOrEmpty(ViewBag.n2_name))
+        {
+            <input name="n2_name" type="hidden" id="n2_name" value="@Request.QueryString["n2_name"]" />
+        }
+        else
+        {
+            <input name="n2_name" type="hidden" id="n2_name" value="@ViewBag.n2_name" />
+        }
+
+        @if (string.IsNullOrEmpty(ViewBag.n1_name))
+        {
+            <input name="n1_name" type="hidden" id="n1_name" value="@Request.QueryString["n1_name"]" />
+        }
+        else
+        {
+            <input name="n1_name" type="hidden" id="n1_name" value="@ViewBag.n1_name" />
+        }
+
+        @if (string.IsNullOrEmpty(ViewBag.msg))
+        {
+            <input name="msg" type="hidden" id="msg" value="@Request.QueryString["msg"]" />
+        }
+        else
+        {
+            <input name="msg" type="hidden" id="msg" value="@ViewBag.msg" />
+        }
+
+        <div class="form-group" id="images">
+            @if (!string.IsNullOrEmpty(Request.QueryString["imagesuccess"]))
+            {
+                <h2 style="color:green;">@Request.QueryString["imagesuccess"]</h2>
+            }
+            <div class="col-md-10">
+                @if (string.IsNullOrEmpty(Request.QueryString["admin"]))
+                {
+                    if (string.IsNullOrEmpty(Request.QueryString["view"]))
+                    {
+                        @Html.LabelFor(model => model.Image_Name, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <input type="file" name="fileupload" id="fileupload" class="makethispretty" multiple />
+                    }
+                }
+                <br />
+                @if (Model.list_RFQ_files != null)
+                {
+                    <ul style="background:#a4f19e;padding-bottom:20px;width:62%;">
+                        @{Dictionary<string, string> img_extensions = new Dictionary<string, string>();
+                            img_extensions.Add(".jpg", ".jpg");
+                            img_extensions.Add(".png", ".png");
+                            img_extensions.Add(".gif", ".gif");
+                            img_extensions.Add(".bmp", ".bmp");
+                        }
+                        @if (Model.list_RFQ_files.Count() > 0)
+                        {
+                            foreach (var item in Model.list_RFQ_files)
+                            {
+                                if (img_extensions.Values.ToList().Contains(item.file_type))
+                                {
+                                    <li style="display:inline-block;margin:20px;">
+                                        <a href="~/attachments/rfq_tool/images/@item.file_name" target="_blank"><img src="~/attachments/rfq_tool/images/@item.file_name" style="width:60px;height:70px;" /></a>
+                                        @if (string.IsNullOrEmpty(Request.QueryString["admin"]))
+                                        {
+                                            @Html.ActionLink("Delete", "DeleteImage", new { id = item.file_id, ext_form_id = Model.id, form_id = Model.form_id, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], ext_form = @Request.QueryString["ext_form"] }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false", @class = "btn btn-info" })
+                                        }
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li style="display:inline-block;margin:20px;">
+                                        <a href="~/attachments/rfq_tool/images/@item.file_name" target="_blank">View File</a>
+                                        @if (string.IsNullOrEmpty(Request.QueryString["admin"]))
+                                        {
+                                            @Html.ActionLink("Delete", "DeleteImage", new { id = item.file_id, ext_form_id = Model.id, form_id = Model.form_id, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], ext_form = @Request.QueryString["ext_form"] }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false", @class = "btn btn-info" })
+                                        }
+                                    </li>
+                                }
+                            }
+                        }
+                    </ul>
+                }
+                @Html.ValidationMessageFor(model => model.Image_Name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <br /><br />
+        @if (string.IsNullOrEmpty(Request.QueryString["admin"]))
+        {
+            if (string.IsNullOrEmpty(Request.QueryString["view"]))
+            {
+                <div class="form-group col-md-8">
+                    <div class="col-md-4">
+                        <input type="submit" value="Submit Quote" name="send" class="btn btn-default" />
+                    </div>
+
+                    <div class="col-md-4">
+                        <input type="submit" value="Save Progress" name="save" class="btn btn-default" />
+                    </div>
+
+                    @*<div class="col-md-4">
+                        <input type="submit" value="Add an Enclosure" name="newprod" class="btn btn-default" />
+                    </div>*@
+                </div>
+            }
+        }
+        <br />
+        <br />
+        <br />
+        <br />
+    </div>
+            }
+
+            <div>
+                @Html.ActionLink("Back to List", "Index")
+            </div>
+

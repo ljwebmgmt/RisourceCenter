@@ -1,0 +1,34 @@
+﻿@model IEnumerable<newrisourcecenter.Models.partnerProductsViewModel>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<p>
+    @Html.ActionLink("Add a Partner Product", "Create", new { n1_name=Request.QueryString["n1_name"], msg = "Add a Partner Products" }, htmlAttributes: new { @class = "btn btn-primary" })
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.pp_product)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.pp_product)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.pp_ID, n1_name = Request.QueryString["n1_name"], msg = item.pp_product }, new { @class = "btn btn-info" })
+                    @Html.ActionLink("Delete", "Delete", new { id = item.pp_ID, n1_name = Request.QueryString["n1_name"] }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false", @class = "btn btn-info" })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

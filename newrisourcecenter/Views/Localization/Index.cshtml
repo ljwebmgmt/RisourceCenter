@@ -1,0 +1,79 @@
+﻿@model IEnumerable<newrisourcecenter.Models.LocalizationModel>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.table_name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.parent_id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.column_name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.message_original)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.message_translated)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.language)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.status)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.date)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.table_name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.parent_id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.column_name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.message_original)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.message_translated)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.language)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.status)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.date)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.localization_id }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.localization_id }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.localization_id })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

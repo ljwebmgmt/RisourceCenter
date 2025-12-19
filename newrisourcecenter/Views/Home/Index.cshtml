@@ -1,0 +1,382 @@
+﻿@model newrisourcecenter.Models.HomeViewModel
+@{
+    ViewBag.Title = "Home Page";
+    long userId = Convert.ToInt64(Session["userId"]);
+    long companyId = Convert.ToInt64(Session["companyId"]);
+    long companyType = Convert.ToInt64(Session["companyType"]);
+    string host = "";
+    int comp_MDF = Convert.ToInt32(Session["comp_MDF"]);
+    string[] dropdown_pages = {"104","67","30129","116" };
+    string my_pages = Convert.ToString(Session["userPages"]);
+    string[] user_pages = { };
+    if (my_pages != null)
+    {
+        user_pages = my_pages.Split(',');
+    }
+}
+@if (companyId != Model.comp_ID)
+{
+   <script>window.location.href = "/Account/Login/";</script>
+}
+
+<article class="main_content">
+    <section>
+        <div style="background:silver;">
+            <b style="padding:10px;">Welcome: @Model.usr_full_name</b>   <a href="#" class="btn-xs btn-primary" id="show_profile_info" style="float:right;"><span class="glyphicon glyphicon-user"></span> my info</a>
+        </div>
+        <div class="home-jumbotron show_profile_info" >
+           <div>
+                <strong>
+                    @if (Model.personal_info_heading != null)
+                    {
+                            @Model.personal_info_heading[0]
+                    }
+                    @if (Request.QueryString["translate"] != null)
+                    {
+                        @Html.ActionLink("T", "Create", "Labels", new { labelName = Model.personal_info_heading[1], controllerName = "Home", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                    }
+                </strong>
+                <br />
+                <div id="inside_home">
+                    <span id="home_change_password">
+                        @Html.ActionLink(@Model.edit_label[0], "Edit", "UserViewModels", routeValues: new { id = userId, n1_name = "Admin Users", msg = Model.usr_full_name, compid = companyId, user_ID = userId, n2_name = "home" }, htmlAttributes: new { title = "Manage", @class = "glyphicon glyphicon-edit" })
+                        @if (Request.QueryString["translate"] != null)
+                        {
+                            @Html.ActionLink("T", "Create", "Labels", new { labelName = Model.edit_label[1], controllerName = "Home", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                        }
+                    </span>
+                    <p>
+                        <strong>
+                            @Model.name_label[0]:
+                            @if (Request.QueryString["translate"] != null)
+                            {
+                                @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.name_label[1], controllerName = "Home", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                            }
+                        </strong>
+                        <span> @Model.usr_full_name</span>
+                    </p>
+                    <p>
+                        <strong>
+                            @Model.title_label[0]:
+                            @if (Request.QueryString["translate"] != null)
+                            {
+                                @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.title_label[1], controllerName = "Home", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                            }
+                        </strong>
+                        <span>@Model.usr_title</span>
+                    </p>
+                    <p>
+                        <strong>
+                            <label>@Model.address_label[0]:</label>
+                            @if (Request.QueryString["translate"] != null)
+                            {
+                                @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.address_label[1], controllerName = "Home", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                            }
+                        </strong>
+                        <span id="address"> @Html.Raw(Model.usr_address)</span>
+                    </p>
+                    <p>
+                        <strong>
+                            @Model.phone_label[0]:
+                            @if (Request.QueryString["translate"] != null)
+                            {
+                                @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.phone_label[1], controllerName = "Home", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                            }
+                        </strong>
+                        <span>@Model.usr_phone</span>
+                    </p>
+                    <p>
+                        <strong>
+                            @Model.language_label[0]:
+                            @if (Request.QueryString["translate"] != null)
+                            {
+                                @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.language_label[1], controllerName = "Home", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                            }
+                        </strong>
+                        <span>@Model.usr_language</span>
+                    </p>
+                    <p>
+                        <strong>
+                            @Model.email_label[0]:
+                            @if (Request.QueryString["translate"] != null)
+                            {
+                                @Html.ActionLink("T", "Create", "Labels", new { labelName = "Email", controllerName = "Home", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                            }
+                        </strong>
+                        <span>@Model.usr_email</span>
+                    </p>
+                    <p>
+                        <strong>
+                            @Model.website_label[0]:
+                            @if (Request.QueryString["translate"] != null)
+                            {
+                                @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.website_label[1], controllerName = "Home", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                            }
+                        </strong>
+                        @{Uri uriResult;
+                            bool result = Uri.TryCreate(@Model.usr_website, UriKind.Absolute, out uriResult)
+                            && (uriResult.Scheme == Uri.UriSchemeHttp
+                            || uriResult.Scheme == Uri.UriSchemeHttps);
+
+                            if (result)
+                            {
+                                <span><a href="@Model.usr_website" target="_blank">@Model.usr_website</a></span>
+                            }
+                            else
+                            {
+                                string mylink = string.Format("http://{0}", @Model.usr_website);
+                                <span><a href="@mylink" target="_blank">@Model.usr_website</a></span>
+                            }
+                        }
+                    </p>
+                </div>
+            </div>
+            <div>
+                <strong>
+                    @Model.company_info_heading[0]
+                    @if (Request.QueryString["translate"] != null)
+                    {
+                        @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.company_info_heading[1], controllerName = "Home", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                    }
+                </strong><br />
+                <div id="inside_home">
+                    @{
+                        if (User.IsInRole("Super Admin") || User.IsInRole("Local Admin"))
+                        {
+                            if (Request.QueryString["translate"] != null)
+                            {
+                                @Html.ActionLink("T", "Create", "Labels", new { labelName = Model.edit_label[1], controllerName = "Home", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit", style = "float:right;" })
+                            }
+                            @Html.ActionLink(@Model.edit_label[0], "Index", "partnerLocation", routeValues: new { n1_name = "Admin Partner Location", }, htmlAttributes: new { style = "float:right;", @class = "glyphicon glyphicon-edit" })
+                        }
+                    }
+                    <p>
+                        <strong>
+                            @Model.company_name_label[0]:
+                            @if (Request.QueryString["translate"] != null)
+                            {
+                                @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.company_name_label[1], controllerName = "Home", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                            }
+                        </strong>
+                        <span>@Model.company_name</span>
+                    </p>
+                    <p>
+                        <strong>
+                            @Model.company_logo_label[0]:
+                            @if (Request.QueryString["translate"] != null)
+                            {
+                                @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.company_logo_label[1], controllerName = "Home", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                            }
+                        </strong>
+                        @if (Request.Url.Port != 443)
+                        {
+                            host = "http://" + Request.Url.Host + ":" + Request.Url.Port;
+                        }
+                        else
+                        {
+                            host = "https://" + Request.Url.Host + ":" + Request.Url.Port;
+                        }
+                        @if (!string.IsNullOrEmpty(@Model.company_logo))
+                        {
+                            <span><img src="@string.Format(host + "/company/partners/logos/{0}", @Model.company_logo)" id="company_logo" /></span>
+                        }
+                        else
+                        {
+                            <span id="company_logo" class="glyphicon"><strong style="text-align:center;width:100%;">No Logo</strong></span>
+                        }
+                    </p>
+                    <p>
+                        <strong>
+                            @Model.company_prod_label[0]:
+                            @if (Request.QueryString["translate"] != null)
+                            {
+                                @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.company_prod_label[1], controllerName = "Home", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                            }
+                        </strong>
+                        <span id="address">
+                            @{
+                                if (Model.company_prod != null)
+                                {
+                                    char[] prod = Model.company_prod.ToArray();
+                                    string prods = new string(prod);
+                                    foreach (var items in Model.list_products)
+                                    {
+                                        if (prods.Contains(Convert.ToString(items.pp_ID)))
+                                        {
+                                            @items.pp_product<br />
+                                        }
+                                    }
+                                }
+                            }
+                        </span>
+                    </p>
+                    <p>
+                        <strong>
+                            @Model.company_industry_label[0]:
+                            @if (Request.QueryString["translate"] != null)
+                            {
+                                @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.company_industry_label[1], controllerName = "Home", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                            }
+                        </strong>
+                        <span>
+                            @if (@Model.company_industry == 1)
+                            {
+                                <span>IT</span>
+                            }
+                            else if (@Model.company_industry == 2)
+                            {
+                                <span> Industry</span>
+                            }
+                            else if (@Model.company_industry == 3)
+                            {
+                                <span>IT and Industrial</span>
+                            }
+                        </span>
+                    </p>
+                    <p>
+                        <strong>
+                            @Model.company_type_label[0]:
+                            @if (Request.QueryString["translate"] != null)
+                            {
+                                @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.company_type_label[1], controllerName = "Home", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                            }
+                        </strong>
+                        <span>
+                            @if (@Model.company_type == 1)
+                            {
+                                <span>Distributor</span>
+                            }
+                            else if (@Model.company_type == 2)
+                            {
+                                <span>Var</span>
+                            }
+                            else if (@Model.company_type == 3)
+                            {
+                                <span>Manufacturers Rep</span>
+                            }
+                            else if (@Model.company_type == 4)
+                            {
+                                <span>Reserved</span>
+                            }
+                            else if (@Model.company_type == 5)
+                            {
+                                <span>Rittal</span>
+                            }
+                        </span>
+                    </p>
+                    <p>
+                        <strong>
+                            @Model.phone_label[0]:
+                            @if (Request.QueryString["translate"] != null)
+                            {
+                                @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.phone_label[1], controllerName = "Home", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                            }
+                        </strong>
+                        <span>@Model.loc_phone</span>
+                    </p>
+                    <p>
+                        <strong>
+                            @Model.Location_label[0]:
+                            @if (Request.QueryString["translate"] != null)
+                            {
+                                @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.Location_label[1], controllerName = "Home", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                            }
+                        </strong>
+                        <span>@Model.Location</span>
+                    </p>
+                    <p>
+                        <strong>
+                            @if (Model.loc_address_label != null) {
+                                @Model.loc_address_label[0]
+                            }
+                            @if (Request.QueryString["translate"] != null)
+                            {
+                                @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.loc_address_label[1], controllerName = "Home", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                            }
+                        </strong>
+                        <span id="address"> @Html.Raw(Model.loc_address)</span>
+                    </p>
+                    <p>
+                        @{  var email = String.Format("mailto:{0}?Subject=RiSourceCenter%20access%20request", @Model.loc_email); }
+                        <strong>
+                            @Model.loc_email_label[0]:
+                            @if (Request.QueryString["translate"] != null)
+                            {
+                                @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.loc_email_label[1], controllerName = "Home", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                            }
+                        </strong>
+                        <span><a href="@email" target="_top">@Model.loc_email</a></span>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <br clear="all" />
+        <div>
+            <div class="dropdown">
+                <button class="btn-xs btn-primary dropdown-toggle" type="button" data-toggle="dropdown" style="border:none;">
+                    I want to <span class="glyphicon glyphicon-list"></span>
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    @foreach (var item in ViewBag.list_n2_data)
+                    {
+                        if (@item.n2ID == 6)
+                        {
+                            if (user_pages.Contains("6"))
+                            {
+                                <li><a href="/MDFView?parentId=3&childId=6&n1_name=Support%20Tools&n2_name=Brand%20Central&submenu=yes">Submit an MDF Request</a></li>
+                            }
+                        }
+                        else
+                        {
+                            string id = Convert.ToString(@item.n2ID);
+
+                            if (@dropdown_pages.Contains(id))//if (@user_pages.Contains(id) && @dropdown_pages.Contains(id))
+                            {
+                                if (string.IsNullOrEmpty(@item.n2_redirect))//check redirect
+                                {
+                                    <li><a href="/@item.Controller/@item.PageName?parentId=@item.n1ID&amp;childId=@item.n2ID&amp;n1_name=Support%20Tools&amp;n2_name=@item.n2_nameLong&amp;submenu=yes">@item.n2_nameLong</a></li>
+                                }
+                                else
+                                {
+                                    <li><a target="_blank" href="@item.n2_redirect">@item.n2_nameLong</a></li>
+                                }
+                            }
+                        }
+                    }
+
+                    @foreach (var item in ViewBag.list_n2_data_links)
+                    {
+                        string id = Convert.ToString(@item.n2ID);
+
+                        if (@dropdown_pages.Contains(id))
+                        {
+                            if (string.IsNullOrEmpty(@item.n2_redirect))//check redirect
+                            {
+                                <li><a href="/@item.Controller/@item.PageName?parentId=@item.n1ID&amp;childId=@item.n2ID&amp;n1_name=Support%20Tools&amp;n2_name=@item.n2_nameLong&amp;submenu=yes">@item.n2_nameLong</a></li>
+                            }
+                            else
+                            {
+                                <li><a target="_blank" href="@item.n2_redirect">@item.n2_nameLong</a></li>
+                            }
+                        }
+                    }
+                    @if (!string.IsNullOrEmpty(ViewBag.interlynxtoken))
+                    {
+                        <li><a target="_blank" href="https://rittal-interlynx.com/srv/sso-autologin?sso_auth_str=@ViewBag.interlynxtoken">View SPA contracts and rebates</a></li>
+                    }
+                    @if (!string.IsNullOrEmpty(ViewBag.dealInterlynxToken))
+                    {
+                        <li><a target="_blank" href="https://rittal-interlynx.com/srv/sso-dealautologin?sso_auth_str=@ViewBag.dealInterlynxToken&path=dealregistration_tab%2Frebate_deals_type_active">Register a Deal</a></li>
+                    }
+
+                </ul>
+            </div>
+            <iframe src="/Home/stockcheck" style="width:100%;height:250px;margin-top:20px;" frameborder="0" id="iframe"></iframe>
+            @*@ (User.Identity.Name== "presswala.z@rittal.us" || User.Identity.Name == "henderson.r@rittal.us") {*@
+            <iframe src="/Home/webshop" style="width:100%;height:250px;margin-top:20px;" frameborder="0" id="iframe"></iframe>
+            @*}*@
+        </div>
+    </section>
+
+</article>

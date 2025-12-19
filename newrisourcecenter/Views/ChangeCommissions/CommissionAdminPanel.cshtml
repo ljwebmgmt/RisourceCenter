@@ -1,0 +1,101 @@
+﻿@model newrisourcecenter.Models.CommissionAdmin
+
+@{
+    ViewBag.Title = "CommissionAdminPanel";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    select {
+        max-width: none;
+    }
+</style>
+
+@section Scripts {
+    <link href="~/Content/css/select2.min.css" rel="stylesheet" />
+    <script src="~/Scripts/select2.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            var AssignedFrom = '@Model.Req_Manager', RepTo = '@Model.Assigned_Manager';
+            AssignedFrom = AssignedFrom == undefined? "": AssignedFrom.split(',');
+            RepTo = RepTo == undefined ? "" :RepTo.split(',');
+
+            for (var i = 0; i < AssignedFrom.length; i++) {
+                if (AssignedFrom[i] != "")
+                $('#AssignedRepFrom option[value=' + AssignedFrom[i] + ']').attr('selected', true);
+            }
+
+
+            for (var i = 0; i < RepTo.length; i++) {
+                if (RepTo[i] != "")
+                $('#AssignedRepTo option[value=' + RepTo[i] + ']').attr('selected', true);
+            }
+
+            $('.select2').select2();
+        });
+
+        $('form').submit(function (event ) {
+            var event = event ;
+            if (confirm("Please be sure to verify all pending requests before proceeding, are you sure you want to continue?")) {
+                
+            } else {
+                event.preventDefault();
+            }
+        });
+
+        $("form").submit(function (e) {
+            $("#Req_Manager").val($("#AssignedRepFrom").val().toString());
+            $("#Assigned_Manager").val($("#AssignedRepTo").val().toString());
+        });
+
+    </script>
+
+}
+
+@{
+    List<SelectListItem> selectList = (List<SelectListItem>)ViewBag.users;
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+
+    <div class="form-horizontal">
+        <h4>Commission Admin Panel</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.Req_Manager, "Requesting Manager : ", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("AssignedRepFrom", selectList, new { @required = "required", @multiple = "multiple", @class = "select2 form-control" })
+                @*@Html.EditorFor(model => model.AssignedRepFrom, new { htmlAttributes = new { @class = "form-control" } })*@
+                @Html.ValidationMessageFor(model => model.Req_Manager, "", new { @class = "text-danger" })
+                <input type="text" id="Req_Manager" name="Req_Manager" class="hidden" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Assigned_Manager, "Assigned Manager : ", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("AssignedRepTo", selectList, new { @required = "required", @multiple = "multiple", @class = "select2 form-control" })
+                @*@Html.EditorFor(model => model.AssignedRepTo, new { htmlAttributes = new { @class = "form-control" } })*@
+                @Html.ValidationMessageFor(model => model.Assigned_Manager, "", new { @class = "text-danger" })
+                <input type="text" id="Assigned_Manager" name="Assigned_Manager" class="hidden" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+                @Html.ActionLink("BACK TO LIST", "Index", new { n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"] }, new { @class = "btn btn-default" })
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+
+</div>

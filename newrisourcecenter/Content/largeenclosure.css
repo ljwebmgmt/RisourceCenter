@@ -1,0 +1,91 @@
+﻿/* FlexSlider Necessary Styles*********************************/
+.slider_1, .slider_2, .slider_3 {display: none;float: right;}
+.flexslider{min-height:298px;display:block;}
+.content_slider_txt{width:40%;position:absolute;vertical-align:top;}
+.Header form {width:100%;}
+#formTable1{width:45%;padding:20px;background-color:#ccc;color:#000;margin-right:20px;font-size:14px;vertical-align:top;float:left;}
+#formTable2{width:45%;padding:20px;background-color:#ccc;color:#000;font-size:14px;vertical-align:top;float:right;}
+#enclosureDimentions select {width:100%;}
+#enclosureDimentions,.step1button,.step12button,#step1,#step2,#step2link,#step3,#getAccessorieslink,#getAccessorieslink1,#printPDF,#printCSV,#emailattachment{display:none;}
+select{padding:15px;color:#000;}
+ol.newtiptext{display:none;}
+ol#newtiptext {width:90%;background-color:#ccc;color: #000;padding: 20px;text-align: left;line-height: 30px;border-radius: 6px;margin-left:auto;margin-right:auto;}
+#table1 {padding:5px;margin:5px;background-color:#fff;color:#000;margin-left:auto;margin-right:auto;width:90%;}
+#table1 div> div {display:inline-block;width:19%;margin-right:10px;vertical-align: top;}
+#selectedEnclosureTitle{background-color:#000;}
+#selectedEnclosureTitle img {height:350px;float:right;}
+#selectedEnclosureTitle div~div {width:40%;color:#000;background-color:#ccc;opacity:0.8;padding:40px;font-weight:400;font-size:20px;border:1px solid gray;position:absolute;}
+#selectedEnclosureTitle div~div{-moz-box-shadow: 1px 1px 1px 3px gray;-webkit-box-shadow: 1px 1px 1px 3px gray;box-shadow: 1px 1px 1px 3px gray;}
+div.stylish-input-group {width: 250px;}
+#configlinks table{width:100%;}
+#configlinks td{width:30%;padding:5px;}
+#myModal1{position: fixed;top: 200px;background-color: #fff;width: 100%;left: 0;right: 0;min-height: 300px;z-index: 1000000;opacity:0.9;}
+#myModal1 div {background-color: #ccc;width: 50%;margin-top:50px;margin-bottom:50px;margin-left: auto;margin-right: auto;padding:20px;min-height: 300px;border-radius:6px;opacity:1;}
+#myModal1 div h3{background-color: gray;padding:5px;}
+#myModal1 div a{padding:5px;margin:10px;}
+#myModal1 div a:hover{padding:5px;text-decoration:none;}
+.printDiv{display:inline-block;margin-top:10px;}
+
+
+
+@media only screen and (min-width: 990px) and (max-width: 1200px) {
+.slider_1, .slider_2, .slider_3 {display: none;float: right;width:55%;}
+.content_slider_txt{width:40%;}
+}
+@media only screen and (min-width: 828px) and (max-width: 990px) {
+.flexslider{height:auto;display:block;}
+.slider_1, .slider_2, .slider_3 {display: none;float: none;width:100%;text-align:center;}
+.content_slider_txt{width:100%;position:relative;top:0px;}
+}
+@media only screen and (min-width: 740px) and (max-width: 828px) {
+.flexslider{height:auto;display:block;}
+.slider_1, .slider_2, .slider_3 {display: none;float: none;width:100%;text-align:center;}
+.content_slider_txt{width:100%;position:relative;top:0px;}
+}
+@media only screen and (min-width: 580px) and (max-width: 740px) {
+.flexslider{height:auto;display:block;}
+.slider_1, .slider_2, .slider_3 {display: none;float: none;width:100%;text-align:center;}
+.content_slider_txt{width:100%;position:relative;top:0px;}
+}
+@media only screen and (min-width: 424px) and (max-width: 580px) {	
+.flexslider{height:auto;display:block;}
+.slider_1, .slider_2, .slider_3 {display: none;float: none;width:100%;text-align:center;}
+.slider_1 img, .slider_2 img, .slider_3 img {width:100%;}
+.content_slider_txt{width:90%;position:relative;top:0px;}
+#formTable1{width:100%;padding:20px;background-color:#ccc;color:#000;margin-right:20px;font-size:14px;vertical-align:top;float:none;}
+#formTable2{width:100%;padding:20px;background-color:#ccc;color:#000;font-size:14px;vertical-align:top;float:none;}
+div.stylish-input-group {width: 250px;}
+#selectedEnclosureTitle div~div {width:100%;color:#000;background-color:#ccc;opacity:0.8;padding:40px;font-weight:400;font-size:20px;border:1px solid gray;position:absolute;}
+}
+@media only screen and (min-width: 350px) and (max-width: 424px) {	
+.flexslider{height:auto;display:block;}
+.slider_1, .slider_2, .slider_3 {display: none;float: none;width:100%;text-align:center;}
+.slider_1 img, .slider_2 img, .slider_3 img {width:100%;}
+.content_slider_txt{width:90%;position:relative;top:0px;}
+#formTable1{width:100%;padding:20px;background-color:#ccc;color:#000;margin-right:20px;font-size:14px;vertical-align:top;float:none;}
+#formTable2{width:100%;padding:20px;background-color:#ccc;color:#000;font-size:14px;vertical-align:top;float:none;}
+div.stylish-input-group {width: 250px;}
+#selectedEnclosureTitle div~div {width:100%;color:#000;background-color:#ccc;opacity:0.8;padding:40px;font-weight:400;font-size:20px;border:1px solid gray;position:absolute;}
+}
+@media only screen and (max-width: 350px) {	
+.flexslider{height:auto;display:block;}
+.slider_1, .slider_2, .slider_3 {display: none;float: none;width:100%;text-align:center;}
+.slider_1 img, .slider_2 img, .slider_3 img {width:100%;}
+.content_slider_txt{width:90%;position:relative;top:0px;}
+#formTable1{width:100%;padding:20px;background-color:#ccc;color:#000;margin-right:20px;font-size:14px;vertical-align:top;float:none;}
+#formTable2{width:100%;padding:20px;background-color:#ccc;color:#000;font-size:14px;vertical-align:top;float:none;}
+div.stylish-input-group {width: 250px;}
+#selectedEnclosureTitle div~div {width:100%;color:#000;background-color:#ccc;opacity:0.8;padding:40px;font-weight:400;font-size:20px;border:1px solid gray;position:absolute;}
+
+}
+
+/*Style toggle button*/
+.btn-primary{background:#E50043;border-color:#E50043;font-weight:bold;}
+.btn-primary:hover{color: #000;background:#000;border-color:#E50043;}
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .open .dropdown-toggle.btn-primary {color: #696969;background-color: #000;border-color: #696969;}
+.btn-info {color:#696969;background: none;border-color: #696969;}
+.btn-info a {color:#696969;background: none;border-color: #696969;}
+.btn-info:hover {color:#3b3838;background: none;border-color: #696969;}
+.btn-info:hover a {color:#5f5b5b;background: none;border-color: #696969;}
+.stylish-input-group .form-control {border-right: 0;box-shadow: 0 0 0;border-color: #ccc;padding:10px;}
+.stylish-input-group button {border: 0;background: transparent;}

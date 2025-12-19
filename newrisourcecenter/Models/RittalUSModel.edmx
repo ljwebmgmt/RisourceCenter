@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="RittalUSModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'RittalUS.dbo.tbl_MRK_Zipcode' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="tbl_MRK_Zipcode">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PostalCode" Type="nvarchar" MaxLength="10" />
+          <Property Name="CGrp" Type="nvarchar" MaxLength="5" />
+          <Property Name="V1" Type="nvarchar" MaxLength="30" />
+          <Property Name="V1Name" Type="nvarchar" MaxLength="60" />
+          <Property Name="V1Email" Type="nvarchar" MaxLength="200" />
+          <Property Name="V1Phone" Type="nvarchar" MaxLength="18" />
+          <Property Name="V6" Type="nvarchar" MaxLength="30" />
+          <Property Name="V6Name" Type="nvarchar" MaxLength="60" />
+          <Property Name="V6Phone" Type="nvarchar" MaxLength="18" />
+          <Property Name="V6Email" Type="nvarchar" MaxLength="200" />
+          <Property Name="DateImported" Type="varchar" MaxLength="10" StoreGeneratedPattern="Computed" />
+        </EntityType>
+        <EntityContainer Name="RittalUSModelStoreContainer">
+          <EntitySet Name="tbl_MRK_Zipcode" EntityType="Self.tbl_MRK_Zipcode" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [tbl_MRK_Zipcode].[id] AS [id], 
+    [tbl_MRK_Zipcode].[PostalCode] AS [PostalCode], 
+    [tbl_MRK_Zipcode].[CGrp] AS [CGrp], 
+    [tbl_MRK_Zipcode].[V1] AS [V1], 
+    [tbl_MRK_Zipcode].[V1Name] AS [V1Name], 
+    [tbl_MRK_Zipcode].[V1Email] AS [V1Email], 
+    [tbl_MRK_Zipcode].[V1Phone] AS [V1Phone], 
+    [tbl_MRK_Zipcode].[V6] AS [V6], 
+    [tbl_MRK_Zipcode].[V6Name] AS [V6Name], 
+    [tbl_MRK_Zipcode].[V6Phone] AS [V6Phone], 
+    [tbl_MRK_Zipcode].[V6Email] AS [V6Email], 
+    [tbl_MRK_Zipcode].[DateImported] AS [DateImported]
+    FROM [dbo].[tbl_MRK_Zipcode] AS [tbl_MRK_Zipcode]</DefiningQuery>
+          </EntitySet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="RittalUSModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="tbl_MRK_Zipcode">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PostalCode" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="CGrp" Type="String" MaxLength="5" FixedLength="false" Unicode="true" />
+          <Property Name="V1" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="V1Name" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="V1Email" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="V1Phone" Type="String" MaxLength="18" FixedLength="false" Unicode="true" />
+          <Property Name="V6" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="V6Name" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="V6Phone" Type="String" MaxLength="18" FixedLength="false" Unicode="true" />
+          <Property Name="V6Email" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="DateImported" Type="String" MaxLength="10" FixedLength="false" Unicode="false" annotation:StoreGeneratedPattern="Computed" />
+        </EntityType>
+        <EntityContainer Name="RittalUSAPIEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="tbl_MRK_Zipcode" EntityType="Self.tbl_MRK_Zipcode" />
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="RittalUSModelStoreContainer" CdmEntityContainer="RittalUSAPIEntities">
+          <EntitySetMapping Name="tbl_MRK_Zipcode">
+            <EntityTypeMapping TypeName="RittalUSModel.tbl_MRK_Zipcode">
+              <MappingFragment StoreEntitySet="tbl_MRK_Zipcode">
+                <ScalarProperty Name="DateImported" ColumnName="DateImported" />
+                <ScalarProperty Name="V6Email" ColumnName="V6Email" />
+                <ScalarProperty Name="V6Phone" ColumnName="V6Phone" />
+                <ScalarProperty Name="V6Name" ColumnName="V6Name" />
+                <ScalarProperty Name="V6" ColumnName="V6" />
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="PostalCode" ColumnName="PostalCode" />
+                <ScalarProperty Name="CGrp" ColumnName="CGrp" />
+                <ScalarProperty Name="V1" ColumnName="V1" />
+                <ScalarProperty Name="V1Name" ColumnName="V1Name" />
+                <ScalarProperty Name="V1Email" ColumnName="V1Email" />
+                <ScalarProperty Name="V1Phone" ColumnName="V1Phone" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

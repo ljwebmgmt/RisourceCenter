@@ -1,0 +1,76 @@
+﻿@model  newrisourcecenter.Models.SupportToolsModels
+
+@{
+    ViewBag.Title = "Support Tools";
+    int comp_MDF = Convert.ToInt32(Session["comp_MDF"]);
+    string pass = Convert.ToString(Session["userPassword"]);
+    string fName = Convert.ToString(Session["firstName"]);
+    string lName = Convert.ToString(Session["lastName"]);
+    string phone = Convert.ToString(Session["phone"]);
+    string state = Convert.ToString(Session["state"]);
+    string add1 = Convert.ToString(Session["add1"]);
+    string city = Convert.ToString(Session["city"]);
+    string zip = Convert.ToString(Session["zip"]);
+    string email = Convert.ToString(Session["email"]);
+    long companyType = Convert.ToInt64(Session["companyType"]);
+    string my_pages = Convert.ToString(Session["userPages"]);
+    string[] user_pages = { };
+    if (my_pages != null)
+    {
+       user_pages = my_pages.Split(',');
+    }
+}
+<div class="main_content">
+    <section>
+        @Model.n1_descLong
+    </section>
+    <hr id="header_bar" />
+    <ul>
+        @foreach (var item in Model.list_n2_data.OrderBy(a => a.n2order))
+        {
+            if ((user_pages.Contains(item.n2ID.ToString()) || item.usr_group == null) && item.n2ID!=6)
+            {
+                if (!string.IsNullOrEmpty(item.n2_redirect) || !string.IsNullOrEmpty(item.n2_redirectJS))
+                {
+                    <div class="col-sm-6 col-md-3">
+                        <a href="@item.n2_redirect" onclick="@item.n2_redirectJS">
+                            <div class="thumbnail tile rittal-lightblue ">
+                                <h2 style="font-size:12px;line-height:30px;">
+                                    @item.n2_nameLong
+                                </h2>
+                            </div>
+                        </a>
+                    </div>
+                }
+                else
+                {
+                    <div class="col-sm-6 col-md-3">
+                        <a href="/@item.Controller/@item.PageName?parentid=@item.n1ID&amp;childid=@item.n2ID&amp;n2_name=@item.n2_nameLong&amp;n1_name=@Request.QueryString["n1_name"]">
+                            <div class="thumbnail tile rittal-lightblue ">
+                                <h2 style="font-size:12px;line-height:30px;">
+                                    @item.n2_nameLong
+                                </h2>
+                            </div>
+                        </a>
+                    </div>
+                }
+            }
+            else if (item.n2ID == 6)
+            {
+                //This link is for brand central
+                if (user_pages.Contains(item.n2ID.ToString()))
+                {
+                    <div class="col-sm-6 col-md-3">
+                        <a href="/@item.Controller/@item.PageName?parentid=@item.n1ID&amp;childid=@item.n2ID&amp;n2_name=@item.n2_nameLong&amp;n1_name=@Request.QueryString["n1_name"]">
+                            <div class="thumbnail tile rittal-lightblue ">
+                                <h2 style="font-size:12px;line-height:30px;">
+                                    @item.n2_nameLong
+                                </h2>
+                            </div>
+                        </a>
+                    </div>
+                }
+            }
+        }
+</ul>
+</div>

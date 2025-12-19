@@ -1,0 +1,199 @@
+<lectoratest>
+<survey>0</survey>
+<grade>1</grade>
+<showresults>10</showresults>
+<scoreonly>1</scoreonly>
+<get>0</get>
+<incvar>0</incvar>
+<promptsuccess>1</promptsuccess>
+<persist>0</persist>
+<name>New Products 2017</name>
+<submitto>/RittalUniversity/score</submitto>
+<subject>Test Results</subject>
+<testtime>0</testtime>
+<numrandom>0</numrandom>
+<passinggrade>80</passinggrade>
+<cancelfail>page65.html</cancelfail>
+<passdone>page80.html</passdone>
+<prevpage>page86.html</prevpage>
+<page>
+<index>0</index>
+<name>page319.html</name>
+<question>
+<id>332</id>
+<type>2</type>
+<weight>1</weight>
+<name>Question 1</name>
+<var>VarQuestion_0002</var>
+<text>Deep-hinged window kits are how deep?</text>
+<correctans>50 mm</correctans>
+<choices>25 mm|50 mm|80 mm</choices>
+<allowmult>0</allowmult>
+<persist>0</persist>
+<gradeindividual>0</gradeindividual>
+<surveyquestion>0</surveyquestion>
+</question>
+</page>
+<page>
+<index>1</index>
+<name>page331.html</name>
+<question>
+<id>324</id>
+<type>1</type>
+<weight>1</weight>
+<name>Question 2</name>
+<var>VarQuestion_0001</var>
+<text>Deep-hinged window kits are available in both carbon and stainless steel.</text>
+<correctans>True</correctans>
+<choices>True|False</choices>
+<allowmult>0</allowmult>
+<persist>0</persist>
+<gradeindividual>0</gradeindividual>
+<surveyquestion>0</surveyquestion>
+</question>
+</page>
+<page>
+<index>2</index>
+<name>page350.html</name>
+<question>
+<id>341</id>
+<type>2</type>
+<weight>1</weight>
+<name>Question 3</name>
+<var>VarQuestion_0003</var>
+<text>Deep-hinged window kits have which approval?</text>
+<correctans>UL Listed</correctans>
+<choices>TUV|UL Recognized|UL Listed</choices>
+<allowmult>0</allowmult>
+<persist>0</persist>
+<gradeindividual>0</gradeindividual>
+<surveyquestion>0</surveyquestion>
+</question>
+</page>
+<page>
+<index>3</index>
+<name>page360.html</name>
+<question>
+<id>351</id>
+<type>2</type>
+<weight>1</weight>
+<name>Question 4</name>
+<var>VarQuestion_0004</var>
+<text>RiLine Compact is rated for amperes up to ?</text>
+<correctans>125 A</correctans>
+<choices>125 A|250 A|690 A</choices>
+<allowmult>0</allowmult>
+<persist>0</persist>
+<gradeindividual>0</gradeindividual>
+<surveyquestion>0</surveyquestion>
+</question>
+</page>
+<page>
+<index>4</index>
+<name>page368.html</name>
+<question>
+<id>361</id>
+<type>1</type>
+<weight>1</weight>
+<name>Question 5</name>
+<var>VarQuestion_0005</var>
+<text>The mounting board for the RiLine Compact busbar system installs on DIN rail?</text>
+<correctans>True</correctans>
+<choices>True|False</choices>
+<allowmult>0</allowmult>
+<persist>0</persist>
+<gradeindividual>0</gradeindividual>
+<surveyquestion>0</surveyquestion>
+</question>
+</page>
+<page>
+<index>5</index>
+<name>page376.html</name>
+<question>
+<id>369</id>
+<type>1</type>
+<weight>1</weight>
+<name>Question 6</name>
+<var>VarQuestion_0006</var>
+<text>HD enclosures and HD air-to-water heat exchangers are designed for contact zones \rin food and beverage facilities. </text>
+<correctans>True</correctans>
+<choices>True|False</choices>
+<allowmult>0</allowmult>
+<persist>0</persist>
+<gradeindividual>0</gradeindividual>
+<surveyquestion>0</surveyquestion>
+</question>
+</page>
+<page>
+<index>6</index>
+<name>page384.html</name>
+<question>
+<id>377</id>
+<type>1</type>
+<weight>1</weight>
+<name>Question 7</name>
+<var>VarQuestion_0007</var>
+<text>The 1.5 kW Blue e+ air conditioner has the same cutout all the others 2 kW-6 kW.</text>
+<correctans>False</correctans>
+<choices>True|False</choices>
+<allowmult>0</allowmult>
+<persist>0</persist>
+<gradeindividual>0</gradeindividual>
+<surveyquestion>0</surveyquestion>
+</question>
+</page>
+<page>
+<index>7</index>
+<name>page392.html</name>
+<question>
+<id>385</id>
+<type>1</type>
+<weight>1</weight>
+<name>Question 8</name>
+<var>VarQuestion_0008</var>
+<text>With the introduction of Blue e+ air conditioners, \rBlue e air conditioners are being phased-out.</text>
+<correctans>False</correctans>
+<choices>True|False</choices>
+<allowmult>0</allowmult>
+<persist>0</persist>
+<gradeindividual>0</gradeindividual>
+<surveyquestion>0</surveyquestion>
+</question>
+</page>
+<page>
+<index>8</index>
+<name>page402.html</name>
+<question>
+<id>393</id>
+<type>2</type>
+<weight>1</weight>
+<name>Question 9</name>
+<var>VarQuestion_0009</var>
+<text>Choose which is correct regarding the Blue e+ ComModule.</text>
+<correctans>will allow for networking of Blue e+ units,will allow for remote monitoring and control</correctans>
+<choices>will allow for networking of Blue e+ units|will not work with Blue e+ units already in the field.|will allow for remote monitoring and control</choices>
+<allowmult>1</allowmult>
+<persist>0</persist>
+<gradeindividual>0</gradeindividual>
+<surveyquestion>0</surveyquestion>
+</question>
+</page>
+<page>
+<index>9</index>
+<name>page320.html</name>
+<question>
+<id>405</id>
+<type>1</type>
+<weight>1</weight>
+<name>Question 10</name>
+<var>VarQuestion_0010</var>
+<text>The 19" 1U fastener is ideal for use not only in IT cabinets, \rbut on swingframes in industrial cabinets.</text>
+<correctans>True</correctans>
+<choices>True|False</choices>
+<allowmult>0</allowmult>
+<persist>0</persist>
+<gradeindividual>0</gradeindividual>
+<surveyquestion>0</surveyquestion>
+</question>
+</page>
+</lectoratest>

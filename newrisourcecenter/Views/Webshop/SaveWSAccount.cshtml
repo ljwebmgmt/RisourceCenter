@@ -1,0 +1,26 @@
+﻿@model newrisourcecenter.Models.WebshopConnectViewModel
+
+@{
+    Layout = null;
+}
+
+<tr>
+    <td>
+        @Model.ws_account
+    </td>
+    <td>
+        @if (Model.location_name!="")
+        {
+           <span>@Model.company_name - @Model.location_name</span>
+
+        }
+        else
+        {
+            @Model.company_name
+        }
+    </td>
+    <td>
+        @*@Html.ActionLink("Edit", "Edit", new { id = Model.ws_ID, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], msg = @Request.QueryString["msg"], user_ID = Model.usr_user, compid = Request.QueryString["dcompid"] }, new { @class = "btn btn-info" })*@
+        @Html.ActionLink("Delete", "Delete", new { id = Model.ws_ID, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], msg = @Request.QueryString["msg"], user_ID = Model.usr_user, compid = Request.QueryString["dcompid"] }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false", @class = "btn btn-info" })
+    </td>
+</tr>

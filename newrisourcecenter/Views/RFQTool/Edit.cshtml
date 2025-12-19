@@ -1,0 +1,1308 @@
+﻿@model newrisourcecenter.Models.RFQViewModel
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int comp_type = Convert.ToInt32(Session["companyType"]);
+    string[] options = new string[] { "New quote", "Re-validate existing quote, no configuration changes", "Change configuration of existing specially quoted product" };
+    string[] partTypeOptions = new string[] { "Single Enclosure", "Bayed Configuration" };
+    string[] modOptions = new string[] { "No mods.  If this is for special pricing contact customer service", "Assembly only", "Assembly and/or holes and cutouts", "Assembly and/or holes and cutouts plus special paint from 28 color palet", "Special Paint 28 Color", "Fabricated Bolts/Nuts (Studs)", "Special size or specially Rittal sourced part" };
+    bool isRittalUser = comp_type == 3 || comp_type == 5;
+}
+<style type="text/css">
+    input.rfq_text_input {
+        width: 250px;
+    }
+
+    div.box {
+        display: none;
+    }
+
+    div.category-box {
+        padding: 15px 10px 60px 30px;
+        margin: 25px;
+    }
+
+    div.ts8-it {
+        background: #DEF2E1;
+    }
+
+    div.ts8-ie {
+        background: #E5E2AE;
+    }
+
+    div.WM_AE_JB {
+        background-color: #BBDDF7;
+    }
+
+    div.other {
+        background-color: #D7D5DD;
+    }
+
+    input.rfq_text_input_table {
+        margin: 2px;
+    }
+
+    div.quote_num {
+        display: none;
+    }
+
+    .button-success,
+    .button-error,
+    .button-warning,
+    .button-secondary {
+        color: white;
+        border-radius: 4px;
+        text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+        background-color: black;
+    }
+
+    .button-error {
+        background: rgb(202, 60, 60); /* this is a maroon */
+    }
+
+    .table {
+        width: 80%;
+        margin: 40px auto 40px auto;
+    }
+
+    #additional_information, #spare_parts {
+        padding: 0px 10px 30px 30px;
+        margin: 25px;
+    }
+
+    #additional_information {
+        margin-top: -30px;
+    }
+
+    .help-text {
+        margin-left: 20px;
+    }
+
+    .btn.btn-primary.main-btn {
+        height: 75px !important;
+    }
+
+    .variants-table .table {
+        margin-left: 0;
+    }
+
+    .cursor {
+        cursor: pointer;
+    }
+
+    .popover {
+        max-width: inherit;
+    }
+    .checkbox-lg {
+        transform: scale(1.5);
+    }
+</style>
+<script type="text/javascript">
+    var rfqType = '@Model.part_type_other'
+    $(document).on('click', '.main-tab .show-form', function (e) {
+        e.preventDefault();
+        $('.main-tab').addClass('hide');
+        $('.tabs-wrapper.enclosures-wrapper,.tabs-wrapper.enclosures-wrapper .non-spare-wrapper').removeClass('hide');
+        $('.tabs-wrapper.enclosures-wrapper .spare-wrapper').addClass('hide');
+        $('.tabs-wrapper.enclosures-wrapper .spare-wrapper [data-name]').removeAttr('name');
+        return false;
+    });
+
+    $(document).on('click', '.main-tab .show-spare-form', function (e) {
+        e.preventDefault();
+        showSpare($(this).attr('data-type'));
+        return false;
+    });
+
+    function showSpare(type) {
+        $('.main-tab').addClass('hide');
+        $('.tabs-wrapper.enclosures-wrapper,.tabs-wrapper.enclosures-wrapper .spare-wrapper').removeClass('hide');
+        $('.tabs-wrapper.enclosures-wrapper .non-spare-wrapper').addClass('hide');
+        $('.spare-wrapper').each(function () {
+            $('[data-name]', this).each(function () {
+                $(this).attr('name', $(this).attr('data-name'));
+            });
+        });
+        $('select[name="part_type_other"] option.option').addClass('hide');
+        $('select[name="part_type_other"] option.' + type + '-option').removeClass('hide');
+        if ($('select[name="part_type_other"] option.' + type + '-option').length == 1)
+            $('select[name="part_type_other"] option.' + type + '-option').attr('selected', true);
+        $('input[name="rfq_type"]').val(type);
+    }
+
+    $(document).on('change', "#product_category",function () {
+        changeProductCategory();
+    });
+
+    function changeProductCategory() {
+        var val = $('select#product_category').val();
+        $('.category-box').hide().attr('class', 'box category-box');
+        if (val != "") {
+            $('.category-box').show().addClass(val);
+            if (val == 'ts8-it')
+                $('.not-datacenter').addClass('hide');
+            else
+                $('.not-datacenter').removeClass('hide');
+        }
+    }
+
+    $(document).ready(function () {
+        $('[data-toggle="popover"]').popover();
+        if (rfqType == 'Climate Control' || rfqType == 'Enclosure Spare Parts') {
+            showSpare('spare');
+        }
+        else if (rfqType == "Busbar") {
+            showSpare('busbar');
+        }
+        else {
+            $('.show-form').trigger('click');
+            setTimeout(function () {
+                changeProductCategory();
+                changeVariant(false);
+                var color = $('select[data-name="color_mod_ie"]').attr('data-value');
+                if (color != '') {
+                    $('select[data-name="color_mod_ie"]').val(color);
+                }
+            }, 500);
+        }
+        changeAccountNumber();
+
+        $('#xpress_mod_data').change(function () {
+            if ($(this).val() == "7-Day") {
+                $("#enclosure_type_it option[value='server_optimized']").remove();
+            } else {
+                $('#enclosure_type_it').append('<option value="server_optimized">Server Optimized');
+            }
+        });
+
+        $('select[name="enclosure_type_it"]').change(function () {
+            if ($(this).val() == "global") {
+                $('#handles_datacenter').val("Semi Cylinder");
+                $('#inserts_datacenter').val("Locking");
+            }
+            if ($(this).val() == "server_optimized") {
+                $('#handles_datacenter').val("Comfort Handle");
+                $('#inserts_datacenter').val("Locking pushbutton");
+            }
+        }).change();
+
+        $(function () {
+            $('#updated_quote').ready(function () {
+                quoteCheck($('#updated_quote').val());
+            });
+            $('#updated_quote').change(function () {
+                quoteCheck($(this).val());
+            });
+        });
+
+        function quoteCheck(val) {
+            $('.quote_num,.revalidate-wrapper').hide();
+            $('.revalidate-wrapper [name]').removeAttr('name');
+            $('.quote-text').remove();
+            $('.product-wrapper').show();
+            if (val == '')
+                return;
+            if (val == 'Re-validate existing quote, no configuration changes' || val == 'Change configuration of existing specially quoted product') {
+                $('.quote_num').show();
+                $('.quote_num .field-validation-valid').after('<span class="help-text quote-text">A new quote number may be assigned</span>');
+                if (val == 'Re-validate existing quote, no configuration changes') {
+                    $('.revalidate-wrapper').show();
+                    $('.revalidate-wrapper [data-name]').each(function () {
+                        $(this).attr('name', $(this).attr('data-name'));
+                    });
+                    $('.product-wrapper').hide();
+                }
+            }
+        }
+
+        $('#plinths_ie').change(function () {
+            if (this.value == 'without' || this.value == '') {
+                $('.plinth_types_ie').hide();
+                $('#plinths_type_ie_flex').prop('checked', '');
+            } else {
+                $('.plinth_types_ie').show();
+                $('#plinths_type_ie_flex').prop('checked', 'true');
+            }
+        });
+
+        $(function () {
+            //Control ie
+            //$('.specialpaint_ie').hide();
+            $('.color_mod_ie,.color_mod_it,.color_mod_other,.color_mod_wm,.suited_it,.suited_ie,.suited_enclosures_it,.suited_enclosures_ie').hide();
+            $('input[name="part_type_it"]').change(function () {
+                $('.suited_it,.suited_enclosures_it').hide();
+                if ($('input[name="part_type_it"]:checked').val() == 'Bayed Configuration') {
+                    $('.suited_it').show();
+                    $('select#suited_enclosures_it').change();
+                }
+            });
+            $('input[name="part_type_ie"]').change(function () {
+                $('.suited_ie,.suited_enclosures_ie').hide();
+                if ($('input[name="part_type_ie"]:checked').val() == 'Bayed Configuration') {
+                    $('.suited_ie').show();
+                    $('select#suited_enclosures_ie').change();
+                }
+            });
+            $('#mods_ie').change(function () {
+                var val = $(this).val().toLowerCase();
+                $('.suited_ie,.color_mod_ie,.suited_enclosures_ie').hide();
+                if (val.indexOf('special paint') > -1)
+                    $('.color_mod_ie').show();
+                else if (val == 'suited') {
+                    $('.suited_ie').show();
+                    $('select#suited_enclosures_ie').change();
+                }
+            });
+            $('#mods_it').change(function () {
+                var val = $(this).val().toLowerCase();
+                $('.suited_it,.color_mod_it,.suited_enclosures_it').hide();
+                if (val.indexOf('special paint') > -1)
+                    $('.color_mod_it').show();
+                else if (val == 'suited') {
+                    $('.suited_it').show();
+                    $('select#suited_enclosures_it').change();
+                }
+            });
+            $('#mods_other').change(function () {
+                var val = $(this).val();
+                if (val.toLowerCase().indexOf('special paint') > -1)
+                    $('.color_mod_other').show();
+                else
+                    $('.color_mod_other').hide();
+            });
+            $('#mods_WM_AE_JB').change(function () {
+                var val = $(this).val();
+                if (val.toLowerCase().indexOf('special paint') > -1)
+                    $('.color_mod_wm').show();
+                else
+                    $('.color_mod_wm').hide();
+            });
+            $('select#suited_enclosures_it').change(function () {
+                $('.suited_enclosures_it').show();
+                $('.suited_enclosures_it [data-enclosure]').hide();
+                var val = $(this).val();
+                for (var i = 1; i <= val; i++) {
+                    $('.suited_enclosures_it [data-enclosure="' + i + '"]').show();
+                }
+            });
+            $('select#suited_enclosures_ie').change(function () {
+                $('.suited_enclosures_ie').show();
+                $('.suited_enclosures_ie [data-enclosure]').hide();
+                var val = $(this).val();
+                for (var i = 1; i <= val; i++) {
+                    $('.suited_enclosures_ie [data-enclosure="' + i + '"]').show();
+                }
+            });
+            //$('#specialpaint_ie_yes, #specialpaint_ie_no').change(function () {
+            //    if ($('#specialpaint_ie_yes').is(":checked")) {
+            //        $('.specialpaint_ie').show();
+            //        $('.color_mod_ie').show();
+            //        $('#color_ie').hide();
+            //    } else {
+            //        $('.specialpaint_ie').hide();
+            //        $('.color_mod_ie').hide();
+            //    }
+            //});
+            //$('#special_paint_ie').change(function () {
+            //    if ($('#special_paint_ie').val() == '28 Color') {
+            //        $('#color_ie').show();
+            //        $('#specify_ie').hide();
+            //    } else {
+            //        $('#color_ie').hide();
+            //        $('#specify_ie').show();
+            //    }
+            //});
+            //Control Other or Spare parts
+            //$('.specialpaint_other').hide();
+            //$('.').hide();
+            //  $('#specialpaint_yes, #specialpaint_no').change(function () {
+            //      if ($('#specialpaint_yes').is(":checked")) {
+            //          $('.specialpaint_other').show();
+            //          $('.color_mod_other').show();
+            //          $('#color_other').hide();
+            //      } else {
+            //          $('.specialpaint_other').hide();
+            //          $('.color_mod_other').hide();
+            //      }
+            //  });
+            //  $('#specialpaint_other').change(function () {
+            //      if ($('#specialpaint_other').val() == '28 Color') {
+            //          $('#color_other').show();
+            //          $('#specify_other').hide();
+            //      } else {
+            //          $('#color_other').hide();
+            //          $('#specify_other').show();
+            //      }
+            //  });
+
+            ////Control Other or Spare parts
+            //  $('.specialpaint_wm').hide();
+            //  $('.').hide();
+            //  $('#specialpaint_wm_yes, #specialpaint_wm_no').change(function () {
+            //      if ($('#specialpaint_wm_yes').is(":checked")) {
+            //          $('.specialpaint_wm').show();
+            //          $('.color_mod_wm').show();
+            //          $('#color_wm').hide();
+            //      } else {
+            //          $('.specialpaint_wm').hide();
+            //          $('.color_mod_wm').hide();
+            //      }
+            //  });
+            //  $('#special_paint_wm').change(function () {
+            //      if ($('#special_paint_wm').val() == '28 Color') {
+            //          $('#color_wm').show();
+            //          $('#specify_wm').hide();
+            //      } else {
+            //          $('#color_wm').hide();
+            //          $('#specify_wm').show();
+            //      }
+            //  });
+        });
+
+        $(function () {
+            $('.ie_rating').hide();
+            $('#ul_nema_other_ie').change(function () {
+                if ($('#ul_nema_other_ie').val() != 'Not Rated') {
+                    $('.ie_rating').show();
+                } else {
+                    $('.ie_rating').hide();
+                }
+            });
+        });
+
+        $(function () {
+            $('.WM_AE_JB_rating').hide();
+            $('#ul_nema_WM_AE_JB').change(function () {
+                if ($('#ul_nema_WM_AE_JB').val() != 'Not Rated') {
+                    $('.WM_AE_JB_rating').show();
+                } else {
+                    $('.WM_AE_JB_rating').hide();
+                }
+            });
+        });
+
+        $(function () {
+            $('.other_rating').hide();
+            $('#ul_nema_other').change(function () {
+                if ($('#ul_nema_other').val() != 'Not Rated') {
+                    $('.other_rating').show();
+                } else {
+                    $('.other_rating').hide();
+                }
+            });
+        });
+
+        addparts = function () {
+            var id = $("#add_installed_parts tr:last").attr('id');
+            if (!id) {
+                var newid = 0;
+            } else {
+                var newid = parseInt(id) + 1;
+            }
+            $("#add_installed_parts").append('<tr id="' + newid + '" class="installed_parts_' + newid + '" >' +
+                '<td>' +
+                '<input class="form-control text-box single-line" id="qty_installed" name="qty_installed" type="text" value="">' +
+                '<span class="field-validation-valid text-danger" data-valmsg-for="qty_installed" data-valmsg-replace="true"></span>' +
+                '</td>' +
+                '<td>' +
+                '<input class="form-control text-box single-line" id="part_number_installed" name="part_number_installed" type="text" value="">' +
+                '<span class="field-validation-valid text-danger" data-valmsg-for="part_number_installed" data-valmsg-replace="true"></span>' +
+                '</td>' +
+                '<td>' +
+                '<input class="form-control text-box single-line" id="description_installed" name="description_installed" type="text" value="">' +
+                '<span class="field-validation-valid text-danger" data-valmsg-for="description_installed" data-valmsg-replace="true"></span>' +
+                '</td>' +
+                '<td><div onclick="deleteinstalled(' + newid + '); return false;" class="btn btn-primary">-</div></td>' +
+                '</tr>');
+        }
+
+        addshippedparts = function () {
+            var id = $("#add_shipped_parts tr:last").attr('id');
+            if (!id) {
+                var newid = 0;
+            } else {
+                var newid = parseInt(id) + 1;
+            }
+            $("#add_shipped_parts").append('<tr id="' + newid + '" class="shipped_parts_' + newid + '" >' +
+                '<td>' +
+                '<input class="form-control text-box single-line" id="qty_shipped" name="qty_shipped" type="text" value="">' +
+                '<span class="field-validation-valid text-danger" data-valmsg-for="qty_shipped" data-valmsg-replace="true"></span>' +
+                '</td>' +
+                '<td>' +
+                '<input class="form-control text-box single-line" id="part_number_shipped" name="part_number_shipped" type="text" value="">' +
+                '<span class="field-validation-valid text-danger" data-valmsg-for="part_number_shipped" data-valmsg-replace="true"></span>' +
+                '</td>' +
+                '<td>' +
+                '<input class="form-control text-box single-line" id="description_shipped" name="description_shipped" type="text" value="">' +
+                '<span class="field-validation-valid text-danger" data-valmsg-for="description_shipped" data-valmsg-replace="true"></span>' +
+                '</td>' +
+                '<td><div onclick="deleteshipped(' + newid + '); return false;" class="btn btn-primary">-</div></td>' +
+                '</tr>');
+        }
+
+        deleteinstalled = function (id) {
+            $(".installed_parts_" + id).remove();
+        }
+
+        deleteshipped = function (id) {
+            $(".shipped_parts_" + id).remove();
+        }
+
+        $("form").submit(function (e) {
+            var error = '';
+            if ($('.quote_num').is(':visible') && $('#qte_num').val() == '') {
+                error = "Quote Number / Line Item updating cannot be blank";
+            }
+            else if ($('.variants-table').is(':visible') && $('.variant-chkbox:checked').length == 0) {
+                error = "Variant not selected";
+            }
+            else {
+                var bValid = true;
+                $('.required-field:visible').each(function () {
+                    if ($(this).val() == '') {
+                        bValid = false;
+                        return false;
+                    }
+                });
+                if (!bValid) {
+                    error = 'Fill all required fields (fields marked with "*" are required)';
+                }
+            }
+            if (error != '') {
+                alert(error);
+                e.preventDefault();
+                return false;
+            }
+        });
+    });
+
+    $(document).on('change', 'select[name="sap_account_num"]', function (e) {
+        changeAccountNumber();
+    });
+
+    function changeAccountNumber() {
+        var val = $('select[name="sap_account_num"]').val();
+        $('input[name="other_sap_account_num"]').addClass('hide');
+        if (val == '-1')
+            $('input[name="other_sap_account_num"]').removeClass('hide');
+    }
+
+    $(document).on('change', '.variant-chkbox', function (e) {
+        changeVariant(true);
+    });
+
+    function changeVariant(manual) {
+        var parent = $('.category-box');
+        var variant = $('.variant-chkbox:checked', parent).val();
+        if (manual && (variant == "1" || variant == "2")) {
+            if (!window.confirm('Do you want to continue with quote request or cancel and pursue PrimeXpress?')) {
+                window.history.back();
+            }
+        }
+        $('.variant-tab', parent).addClass('hide');
+        $('.variant-tab [data-name]').removeAttr('name');
+        $('.variant-tab', parent).each(function () {
+            var variants = $(this).attr('data-variant').split('|');
+            if (variants.indexOf(variant) > -1) {
+                $(this).removeClass('hide');
+                $('[data-name]', this).each(function () {
+                    $(this).attr('name', $(this).attr('data-name'));
+                });
+                return false;
+            }
+        });
+    }
+</script>
+
+@if (!string.IsNullOrEmpty(@ViewBag.error))
+{
+    <h2 style="color:red;">@ViewBag.error</h2>
+}
+
+@if (!string.IsNullOrEmpty(Request.QueryString["success"]))
+{
+    <h2 style="color:green;">@Request.QueryString["success"]</h2>
+}
+@using (Html.BeginForm("Edit", "RFQTool", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{  
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="ID" value="@Model.ID" />
+    <div class="form-horizontal">
+        <p class="text-right">
+            @if (Model.IsCloned)
+            {
+                if (@ViewBag.ClonedData == "Cloned Without Changes")
+                {
+                    @Html.ActionLink("View PDF", "getPDF", new { id = @ViewBag.original_id, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], ext_form = "no", admin = Request.QueryString["admin"], view = Request.QueryString["view"] }, new { @class = "btn btn-primary pull-left" })
+                }
+            }
+            <div class="pull-right">
+                @if (Request.QueryString["admin"] == "yes")
+                {
+                    @Html.ActionLink("RFQ Admin >>", "RfqAdmin", new { n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], msg = "RFQ Admin" }, htmlAttributes: new { @class = "btn btn-primary" })
+                }
+                else
+                {
+                    @Html.ActionLink("<< RFQ Home", "Index", new { n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"] }, htmlAttributes: new { @class = "btn btn-primary" })
+                }
+            </div>
+            <div class="clearfix"></div>
+        </p>
+
+        <div class="pull-right text-right">
+            <div class="text-danger">RFQ ID is @Model.ID</div>
+        </div>
+        <div class="main-tab">
+            <div class="row">
+                <div class="row">
+                    <div class="col-lg-3 text-center"><button class="btn btn-primary show-form main-btn">RFQ for Enclosures</button></div>
+                    <div class="col-lg-3 text-center"><button class="btn btn-primary show-spare-form main-btn" data-type="spare">RFQ for Spare Parts &<br />Climate Control</button></div>
+                    <div class="col-lg-3 text-center"><button class="btn btn-primary show-spare-form main-btn" data-type="busbar">RFQ for Busbar</button></div>
+                    <div class="col-lg-3 text-center"><a href='@Url.Action("CreateRAS")' class="btn btn-primary main-btn">RFQs for RAS Machines; MT, LC,<br /> WT and Secarex</a></div>
+                </div>
+            </div>
+        </div>
+        @Html.HiddenFor(model => model.rfq_type)
+        <div class="enclosures-wrapper tabs-wrapper hide">
+            <div>
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <div class="spare-wrapper hide">
+                    <div class="form-group">
+                        <label class="control-label col-md-2">RFQ Type: *</label>
+                        <div class="col-md-10">
+                            <select name="part_type_other" class="form-control required-field">
+                                <option value="">Select Option</option>
+                                <option value="Climate Control" class="spare-option option" @(Model.part_type_other == "Climate Control" ? "selected" : "")>Climate Control</option>
+                                <option value="Enclosure Spare Parts" class="spare-option option" @(Model.part_type_other == "Enclosure Spare Parts" ? "selected" : "")>Enclosure Spare Parts</option>
+                                <option value="Busbar" class="busbar-option option hide" @(Model.part_type_other == "Busbar" ? "selected" : "")>Busbar</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div id="details">
+                    @if (comp_type == 1)
+                    {
+                        Model.regional_director = "null";
+                        @*User data goes here if users company type is 1*@
+                        <div class="form-group">
+                            <label class="control-label col-md-2" for="sales_engineer">Requested By: *</label>
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.sales_engineer, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.sales_engineer, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.account_manager, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.account_manager, new { htmlAttributes = new { @class = "form-control required-field" } })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.cell_phone, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.HiddenFor(model => model.cell_phone, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.DisplayFor(model => model.cell_phone, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.cell_phone, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.email, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.DisplayFor(model => model.email, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.email, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.email, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.submission_date, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @{
+                                    //Set date in URL for testing purposes
+                                    if (!string.IsNullOrEmpty(Request.QueryString["date"]))
+                                    {
+                                        Model.submission_date = Convert.ToDateTime(Request.QueryString["date"]);
+                                    }
+                                }
+                                @Html.DisplayFor(model => model.submission_date, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.submission_date, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.submission_date, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        //regional director hidden
+                        @Html.HiddenFor(model => model.regional_director, new { htmlAttributes = new { @class = "form-control" } })
+                    }
+                    else
+                    {
+                        @*RFQ Information goes here if users company type is not 1*@
+                        <h3>Rittal Sales Information</h3>
+                        <div class="form-group">
+                            <label class="control-label col-md-2" for="sales_engineer">Requested By: *</label>
+                            <div class="col-md-10">
+                                @Html.DisplayFor(model => model.sales_engineer, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.sales_engineer, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.sales_engineer, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.account_manager, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.account_manager, new { htmlAttributes = new { @class = "form-control required-field" } })
+                            </div>
+                        </div>
+
+                        @*<div class="form-group">
+                            @Html.LabelFor(model => model.regional_director, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.regional_director, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.regional_director, "", new { @class = "text-danger" })
+                            </div>
+                        </div>*@
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.cell_phone, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.DisplayFor(model => model.cell_phone, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.cell_phone, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.cell_phone, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.email, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.DisplayFor(model => model.email, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.email, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.email, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.submission_date, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @{
+                                    //Set date in URL for testing purposes
+                                    if (!string.IsNullOrEmpty(Request.QueryString["date"]))
+                                    {
+                                        Model.submission_date = Convert.ToDateTime(Request.QueryString["date"]);
+                                    }
+                                }
+                                @Html.HiddenFor(model => model.submission_date, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.DisplayFor(model => model.submission_date, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.submission_date, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    }
+
+                    <h3>Contact Information</h3>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.distro_name, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.distro_name, new { htmlAttributes = new { @class = "form-control required-field" } })
+                            @Html.ValidationMessageFor(model => model.distro_name, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.distro_company, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.distro_company, new { htmlAttributes = new { @class = "form-control required-field" } })
+                            @Html.ValidationMessageFor(model => model.distro_company, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="date" value="@Request.QueryString["date"]" />
+
+                    <h3>RFQ Information</h3>
+                    <div class="col-sm-3 pull-right no-padding">
+                        <div class="text-right">
+                            @Html.ActionLink("View PDF", "getPDF", new { id = @ViewBag.original_id, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], ext_form = "no", admin = Request.QueryString["admin"], view = Request.QueryString["view"] }, new { @class = "btn btn-info" })
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.updated_quote, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            <select id="updated_quote" name="updated_quote" class="form-control required-field" style="max-width:400px;">
+                                <option value="">Select Option</option>
+                                @{
+                                    foreach (string option in options)
+                                    {
+                                        string selected = Model.updated_quote == option ? "selected" : "";
+                                        <option value="@option" @selected>@option</option>
+                                    }
+                                }
+                            </select>
+                            @Html.ValidationMessageFor(model => model.updated_quote, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group quote_num">
+                        @Html.LabelFor(model => model.qte_num, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.qte_num, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.qte_num, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    @if (comp_type == 1)
+                    {
+                        @Html.HiddenFor(model => model.sold_to_party, Model.sold_to_party = "Distributor Submission")
+                        @Html.ValidationMessageFor(model => model.sold_to_party, "", new { @class = "text-danger" })
+                    }
+                    else
+                    {
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.sold_to_party, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.sold_to_party, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.sold_to_party, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    }
+
+                    @if (comp_type == 1)
+                    {
+                        <div class="form-group">
+                            <label class="control-label col-md-2" for="sap_account_num">Rittal Account Number *: </label>
+                            <div class="col-md-10">
+                                @Html.DropDownListFor(model => model.sap_account_num, Model.listSAP, htmlAttributes: new { @class = "form-control" })
+                                @Html.EditorFor(model => model.other_sap_account_num, new { htmlAttributes = new { @class = "form-control required-field hide", @placeholder = "Other Account Number" } })
+                                @Html.ValidationMessageFor(model => model.sap_account_num, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="form-group">
+                            <label class="control-label col-md-2" for="sap_account_num">SAP Account Number *: </label>
+                            <div class="col-md-10">
+
+                                @Html.DropDownListFor(model => model.sap_account_num, Model.listSAP, htmlAttributes: new { @class = "form-control" })
+                                @Html.EditorFor(model => model.other_sap_account_num, new { htmlAttributes = new { @class = "form-control required-field hide", @placeholder = "Other Account Number" } })
+                                @Html.ValidationMessageFor(model => model.sap_account_num, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    }
+                    @if (comp_type == 1)
+                    {
+                        @Html.HiddenFor(model => model.opportunity_num, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.opportunity_num, "", new { @class = "text-danger" })
+                    }
+                    else
+                    {
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.opportunity_num, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.opportunity_num, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.opportunity_num, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    }
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.end_user_name, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.end_user_name, new { htmlAttributes = new { @class = "form-control required-field" } })
+                            @Html.ValidationMessageFor(model => model.end_user_name, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.qte_ref, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.qte_ref, new { htmlAttributes = new { @class = "form-control required-field" } })
+                            @Html.ValidationMessageFor(model => model.qte_ref, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="non-spare-wrapper">
+                        <div class="product-wrapper">
+                            <div>
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.total_qty, htmlAttributes: new { @class = "control-label col-md-2" })
+                                    <div class="col-md-10">
+                                        @Html.EditorFor(model => model.total_qty, new { htmlAttributes = new { @class = "form-control required-field" } })
+                                        @Html.ValidationMessageFor(model => model.total_qty, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.release_qty, htmlAttributes: new { @class = "control-label col-md-2" })
+                                    <div class="col-md-10">
+                                        @Html.EditorFor(model => model.release_qty, new { htmlAttributes = new { @class = "form-control required-field" } })
+                                        @Html.ValidationMessageFor(model => model.release_qty, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.product_category, htmlAttributes: new { @class = "control-label col-md-2" })
+                                    <div class="col-md-10">
+                                        <select name="product_category" id="product_category" class="form-control required-field">
+                                            <option value="">Select Option</option>
+                                            @foreach (var item in ViewBag.list_prod_cat)
+                                            {
+                                                if (@item.value == @Model.product_category)
+                                                {
+                                                    <option selected="selected" value="@item.value">@item.cat_name</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@item.value">@item.cat_name</option>
+                                                }
+                                            }
+                                        </select>
+                                        @Html.ValidationMessageFor(model => model.product_category, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+
+                                <div class="box category-box hide">
+                                    <h3>
+                                        How is your selected enclosure to be modified?
+                                        @*<span class="help"><span class="cursor" role="button" data-toggle="popover" tabindex="0" data-trigger="focus" data-content="<div><img src='/images/rfq-help-1.png' /></div>" data-html="true" data-title="Help Instructions and Examples"><i class="glyphicon glyphicon-question-sign"></i></span></span>*@
+                                        <span class="help"><span class="cursor" role="button" data-toggle="popover" data-trigger="focus" tabindex="0" data-html="true" data-content="<div style='font-size:75%;font-weight:normal;'>Choose the level of modification you need Rittal to perform on the product you have selected. Rittal uses a variant level scaling system to define the level of complexity. Variants 0 to 5. Choosing this at the time of RFQ will allow the quotations team to prioritize the requests and assign them to the appropriate team member<br/>Example:  8808500 with a door added to the rear of the enclosure and back-to-back mounting panels would the second check box from the top."><i class="glyphicon glyphicon-question-sign"></i></span></span>
+                                    </h3>
+                                    <div class="form-group variants-table">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th colspan="2">Dimensions</th>
+                                                    <th colspan="2">Assembly</th>
+                                                    <th colspan="2">Fabrication</th>
+                                                    <th>Paint</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="text-center"><input type="radio" name="mods_it" class="variant-chkbox" value="0" @(Model.mods_it == "0" ? "checked" : "") /></td>
+                                                    <td>Standard dimensions</td>
+                                                    <td class="text-center">and/or</td>
+                                                    <td>No assembly</td>
+                                                    <td class="text-center">and/or</td>
+                                                    <td>No fabrication</td>
+                                                    <td class="text-center">and/or</td>
+                                                    <td>Standard color</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center"><input type="radio" name="mods_it" class="variant-chkbox" value="1" @(Model.mods_it == "1" ? "checked" : "") /></td>
+                                                    <td>Standard dimensions</td>
+                                                    <td class="text-center">and/or</td>
+                                                    <td>Standard accessories</td>
+                                                    <td class="text-center">and/or</td>
+                                                    <td>No fabrication</td>
+                                                    <td class="text-center">and/or</td>
+                                                    <td>Standard color</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center"><input type="radio" name="mods_it" class="variant-chkbox" value="2" @(Model.mods_it == "2" ? "checked" : "") /></td>
+                                                    <td>Standard dimensions</td>
+                                                    <td class="text-center">and/or</td>
+                                                    <td>Standard accessories</td>
+                                                    <td class="text-center">and/or</td>
+                                                    <td>Holes, cutouts, and threads</td>
+                                                    <td class="text-center">and/or</td>
+                                                    <td>Standard color</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center"><input type="radio" name="mods_it" class="variant-chkbox" value="3" @(Model.mods_it == "3" ? "checked" : "") /></td>
+                                                    <td>Standard dimensions</td>
+                                                    <td class="text-center">and/or</td>
+                                                    <td>Standard accessories</td>
+                                                    <td class="text-center">and/or</td>
+                                                    <td>Holes, cutouts, and threads</td>
+                                                    <td class="text-center">and/or</td>
+                                                    <td>Special stock color</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center"><input type="radio" name="mods_it" class="variant-chkbox" value="4" @(Model.mods_it == "4" ? "checked" : "") /></td>
+                                                    <td>Standard dimensions</td>
+                                                    <td class="text-center">and/or</td>
+                                                    <td>Special accessories</td>
+                                                    <td class="text-center">and/or</td>
+                                                    <td>Bolts and nuts</td>
+                                                    <td class="text-center">and/or</td>
+                                                    <td>Non-stock special color</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center"><input type="radio" name="mods_it" class="variant-chkbox" value="5" @(Model.mods_it == "5" ? "checked" : "") /></td>
+                                                    <td>Special dimensions</td>
+                                                    <td class="text-center">and/or</td>
+                                                    <td>Special accessories</td>
+                                                    <td class="text-center">and/or</td>
+                                                    <td>Special fabrication</td>
+                                                    <td class="text-center">and/or</td>
+                                                    <td>Non-stock special color</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center"><input type="radio" name="mods_it" class="variant-chkbox" value="-1" @(Model.mods_it == "-1" ? "checked" : "") /></td>
+                                                    <td colspan="7">Variant Unknown</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="variant-tabs-wrapper">
+                                        <div class="variant-tab hide" data-variant="0">
+                                            <div><h3>It seems that you are requesting a price for a non-modified catalog item. You can contact Rittal customer service at <a href="tel:800-477-4000">800-477-4000</a> or <a href="mailto:customerservice@rittal.us">customerservice@rittal.us</a> for price and availability.</h3></div>
+                                        </div>
+                                        <div class="variant-tab hide" data-variant="1|2">
+                                            <div class="not-datacenter">
+                                                <h3>
+                                                    With the level of modifications that you have requested this may be eligible for the Rittal PrimeXpress program.
+                                                    @*<span class="help"><span class="cursor" role="button" data-toggle="popover" tabindex="0" data-trigger="focus" data-content="<div><img src='/images/rfq-help-2.png' /></div>" data-placement="left" data-html="true" data-title="Help Instructions and Examples"><i class="glyphicon glyphicon-question-sign"></i></span></span>*@
+                                                    <span class="help"><span class="cursor" role="button" data-toggle="popover" data-trigger="focus" tabindex="0" data-html="true" data-content="<div style='font-size:75%;font-weight:normal;'>What you have selected may qualify for processing as a PrimeXpress order and not require a quotation. Prime Express orders are flat rated and may have a shorter lead time. Contact customer service with any questions.<br/>Ph: 800-477-4000<br/>email: customerservice@rittal.us</div>"><i class="glyphicon glyphicon-question-sign"></i></span></span>
+                                                </h3>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-md-2">List part numbers and quantities to be quoted</label>
+                                                <div class="col-md-10">
+                                                    <textarea data-name="part_num_ie">@Model.part_num_ie</textarea>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-md-2">Modifications to be performed and Additional Information</label>
+                                                <div class="col-md-10">
+                                                    <textarea data-name="additional_info_footer">@Model.additional_info_footer</textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="variant-tab hide" data-variant="3">
+                                            <div class="form-group">
+                                                <label class="control-label col-md-2">List part numbers and quantities to be quoted. Minimum order quantities will apply.</label>
+                                                <div class="col-md-10">
+                                                    <textarea data-name="part_num_ie">@Model.part_num_ie</textarea>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-md-2">Special Stocking color</label>
+                                                <div class="col-md-10" id="color_ie">
+                                                    <select data-name="color_mod_ie" class="form-control" data-value="@Model.color_mod_ie">
+                                                        <option value="">Select Option</option>
+                                                        <option value='RAL9003TX'>RAL9003TX - SIGNAL WHITE</option>
+                                                        <option value='RAL9010TX'>RAL9010TX - PURE WHITE</option>
+                                                        <option value='RAL9016TX'>RAL9016TX - TRAFFIC WHITE</option>
+                                                        <option value='ANSI61TX'>ANSI61TX - GRAY</option>
+                                                        <option value='RAL9005FN'>RAL9005FN - BLACK</option>
+                                                        <option value='RAL9005TX'>RAL9005TX - BLACK</option>
+                                                        <option value='RAL3020TX'>RAL3020TX - TRAFFIC RED</option>
+                                                        <option value='RAL9010SM'>RAL9010SM - PURE WHITE (MOUNTING PANELS ONLY)</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-md-2">Modifications to be performed and Additional Information</label>
+                                                <div class="col-md-10">
+                                                    <textarea data-name="additional_info_footer">@Model.additional_info_footer</textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="variant-tab hide" data-variant="4|5">
+                                            <div><h3>Since you have a requested a special size enclosure we will have an account representative contact you to assist.  Please provide a basic description of what you are looking for below and make sure that your contact information is correct. Minimum order quantities required if approved.</h3></div>
+                                            @if (isRittalUser)
+                                            {
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-6"><h4 style="margin:0;">Since this enclosure is not a catalog item, has your territory system consultant reviewed for possible alternatives?</h4></label>
+                                                    <div class="col-md-6">
+
+                                                        <div class="checkbox">
+                                                            <label>
+                                                                <input data-name="check_project" type="checkbox" class="checkbox-lg" value="1" @(Model.check_project == 1 ? "checked" : "")>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-2">Explanation of Decision *:</label>
+                                                    <div class="col-md-10">
+                                                        <textarea data-name="part_num_it" class="required-field">@Model.part_num_it</textarea>
+                                                    </div>
+                                                </div>
+                                            }
+                                            <div class="form-group">
+                                                <label class="control-label col-md-2">Describe the Changes</label>
+                                                <div class="col-md-10">
+                                                    <textarea data-name="part_num_ie">@Model.part_num_ie</textarea>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-md-2">Modifications to be performed and Additional Information</label>
+                                                <div class="col-md-10">
+                                                    <textarea data-name="additional_info_footer">@Model.additional_info_footer</textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="variant-tab hide" data-variant="-1">
+                                            <div class="form-group">
+                                                <label class="control-label col-md-2">List part numbers and quantities to be quoted</label>
+                                                <div class="col-md-10">
+                                                    <textarea data-name="part_num_ie">@Model.part_num_ie</textarea>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-md-2">Modifications to be performed and Additional Information</label>
+                                                <div class="col-md-10">
+                                                    <textarea data-name="additional_info_footer">@Model.additional_info_footer</textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="revalidate-wrapper">
+                            <div class="form-group">
+                                <label class="control-label col-md-2">Notes</label>
+                                <div class="col-md-10">
+                                    <textarea data-name="additional_info_footer">@Model.additional_info_footer</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="spare-wrapper hide">
+                        <div class="form-group">
+                            <label class="control-label col-md-2">List part numbers and quantities to be quoted</label>
+                            <div class="col-md-10">
+                                <textarea data-name="part_num_it">@Model.part_num_it</textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2">Modifications to be performed and Additional Information</label>
+                            <div class="col-md-10">
+                                <textarea data-name="additional_info_footer">@Model.additional_info_footer</textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                @if (string.IsNullOrEmpty(ViewBag.first_time))
+                {
+                    <input name="first_time" type="hidden" id="first_time" value="@Request.QueryString["first_time"]" />
+                }
+                else
+                {
+                    <input name="first_time" type="hidden" id="first_time" value="@ViewBag.first_time" />
+                }
+
+                @if (string.IsNullOrEmpty(ViewBag.form_id))
+                {
+                    <input name="form_id" type="hidden" id="form_id" value="@Model.ID" />
+                }
+                else
+                {
+                    <input name="form_id" type="hidden" id="form_id" value="@ViewBag.form_id" />
+                }
+
+                @if (string.IsNullOrEmpty(ViewBag.n2_name))
+                {
+                    <input name="n2_name" type="hidden" id="n2_name" value="@Request.QueryString["n2_name"]" />
+                }
+                else
+                {
+                    <input name="n2_name" type="hidden" id="n2_name" value="@ViewBag.n2_name" />
+                }
+
+                @if (string.IsNullOrEmpty(ViewBag.n1_name))
+                {
+                    <input name="n1_name" type="hidden" id="n1_name" value="@Request.QueryString["n1_name"]" />
+                }
+                else
+                {
+                    <input name="n1_name" type="hidden" id="n1_name" value="@ViewBag.n1_name" />
+                }
+
+                @if (string.IsNullOrEmpty(ViewBag.msg))
+                {
+                    <input name="msg" type="hidden" id="msg" value="@Request.QueryString["msg"]" />
+                }
+                else
+                {
+                    <input name="msg" type="hidden" id="msg" value="@ViewBag.msg" />
+                }
+                <input name="user_id" id="user_id" type="hidden" value="@Model.user_id" />
+
+                <div class="form-group" id="images">
+                    @if (!string.IsNullOrEmpty(Request.QueryString["imagesuccess"]))
+                    {
+                        <h2 style="color:green;">@Request.QueryString["imagesuccess"]</h2>
+                    }
+                    <div class="col-md-10">
+                        @if (string.IsNullOrEmpty(Request.QueryString["admin"]))
+                        {
+                            if (string.IsNullOrEmpty(Request.QueryString["view"]))
+                            {
+                                @Html.LabelFor(model => model.fileupload, htmlAttributes: new { @class = "control-label col-md-2" })
+                                <input type="file" name="fileupload" id="fileupload" class="makethispretty" multiple accept=".doc,.docx,.xls,.xlsx,.dwg,.dxf,.jpg,.jpeg,.png,.ppt,.pptx,.eml,.pdf" />
+                                <span class="help"><span class="cursor" role="button" data-toggle="popover" data-trigger="hover" tabindex="0" data-content="Here is where you can provide the quote team with any drawings or larger BOM's. Acceptable file types are Documents, Spreadsheets, CAD files, and Images (.doc, .docx, .xls, .xlsx, .dwg, .dxf, .jpg, .jpeg, .png, .ppt, .pptx, .eml) "><i class="glyphicon glyphicon-question-sign"></i></span></span>
+                            }
+                        }
+                        <br clear="all" />
+                        @if (Model.list_RFQ_files != null)
+                        {
+                            <ul style="background:#a4f19e;padding-bottom:20px;width:100%;">
+                                @{Dictionary<string, string> img_extensions = new Dictionary<string, string>();
+                                    img_extensions.Add(".jpg", ".jpg");
+                                    img_extensions.Add(".png", ".png");
+                                    img_extensions.Add(".gif", ".gif");
+                                    img_extensions.Add(".bmp", ".bmp");
+                                }
+                                @if (Model.list_RFQ_files.Count() > 0)
+                                {
+                                    foreach (var item in Model.list_RFQ_files)
+                                    {
+                                        if (img_extensions.Values.ToList().Contains(item.file_type))
+                                        {
+                                            <li style="display:inline-block;margin:20px;">
+                                                <a href="~/attachments/rfq_tool/images/@item.file_name" target="_blank"><img src="~/attachments/rfq_tool/images/@item.file_name" style="width:60px;height:70px;" /></a>
+                                                @if (string.IsNullOrEmpty(Request.QueryString["admin"]))
+                                                {
+                                                    @Html.ActionLink("Delete", "DeleteImage", new { id = item.file_id, form_id = Model.ID, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], ext_form = @Request.QueryString["ext_form"] }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false", @class = "btn btn-info" })
+                                                }
+                                            </li>
+                                        }
+                                        else
+                                        {
+                                            <li style="display:inline-block;margin:20px;">
+                                                <a href="~/attachments/rfq_tool/images/@item.file_name" target="_blank">View File</a>
+                                                @if (string.IsNullOrEmpty(Request.QueryString["admin"]))
+                                                {
+                                                    @Html.ActionLink("Delete", "DeleteImage", new { id = item.file_id, form_id = Model.ID, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], ext_form = @Request.QueryString["ext_form"] }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false", @class = "btn btn-info" })
+                                                }
+                                            </li>
+                                        }
+                                    }
+                                }
+                            </ul>
+                        }
+                        @Html.ValidationMessageFor(model => model.fileupload, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <br />
+                @if (string.IsNullOrEmpty(Request.QueryString["admin"]))
+                {
+                    <br />
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Quote_Num, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.DisplayFor(model => model.Quote_Num, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.HiddenFor(model => model.Quote_Num)
+                            @Html.ValidationMessageFor(model => model.Quote_Num, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    if (string.IsNullOrEmpty(Request.QueryString["view"]))
+                    {
+                        <div class="form-group col-md-8">
+                            <div class="col-md-4">
+                                <input type="submit" value="Submit Quote" name="send" class="btn btn-default" />
+                            </div>
+
+                            <div class="col-md-4">
+                                <input type="submit" value="Save Progress" name="save" class="btn btn-default" />
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <h3>Admin Notes Section</h3>
+                    <p>All notes will be recorded and can be viewed by both parties</p>
+                    if (Model.list_RFQ_logs != null)
+                    {
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <td colspan="4" style="color:#fff;font-weight:bolder;text-align:center;">Previous Admin Notes</td>
+                                </tr>
+                                <tr style="background:#E5E2AE;">
+                                    <td>Name</td>
+                                    <td>Action</td>
+                                    <td>Time of Action</td>
+                                    <td>Admin Note</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.list_RFQ_logs)
+                                {
+                                    <tr>
+                                        <td>@item.fullName</td>
+                                        <td>@item.Action</td>
+                                        <td>@item.Action_Time</td>
+                                        <td>@item.Notes</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    <fieldset>
+                        <h3>Admin Notes:</h3>
+                        <textarea name="admin_notes" rows="10" cols="50"></textarea>
+                    </fieldset>
+                    <br />
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Quote_Num, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.Quote_Num, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Quote_Num, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <br />
+                    if (Model.completion_date == null)
+                    {
+                        <div class="form-group">
+                            <label class="control-label col-md-2">On Wait Status</label>
+                            <div class="col-md-10">
+                                <select class="form-control" name="wait_status">
+                                    <option value=""></option>
+                                    @{
+                                        foreach (var status in ViewBag.waitStatus)
+                                        {
+                                            if (Model.list_RFQ_logs.LastOrDefault().Action == status)
+                                            {
+                                                <option selected value="@status">@status</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@status">@status</option>
+                                            }
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-3">
+                                <input type="submit" value="Save Notes and Close" name="saveadmin" class="btn btn-default" />
+                            </div>
+
+                            <div class="col-sm-3">
+                                <input type="submit" value="Mark as Complete" name="complete" class="btn btn-default" />
+                            </div>
+
+                            <div class="col-sm-3">
+                                <input type="submit" value="Return with Notes" name="return" class="btn btn-default" />
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <h4>This RFQ was completed on @Model.completion_date</h4>
+                    }
+                }
+                <br />
+                <br />
+                <br />
+                <br />
+            </div>
+        </div>
+    </div>
+
+}
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+

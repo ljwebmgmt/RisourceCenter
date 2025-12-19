@@ -1,0 +1,151 @@
+﻿@model IEnumerable<newrisourcecenter.Models.SPAViewModels>
+
+@{
+    ViewBag.Title = "Manageparticipant";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    $(document).ready(function () {
+        $("#salecontracts").change(function () {
+            location.href = "/SPA/manageparticipant?n1_name=Support%20Tools&n2_name=SPA%20Tool&comp_id=" + $("#salecontracts").val()+"&msg=@Request.QueryString["msg"]&isAdmin=yes";
+        });
+
+        $('#checkall').click(function () {
+            if ($('#checkall').is(":checked")) {
+                $(".checkit").prop("checked",true);
+            } else {
+                $(".checkit").prop("checked", false);
+            }
+        });
+
+        $("#Selectparticipant").keyup(function () {
+            if ($("#Selectparticipant").val().length > 0) {
+                $("#search_results").show();
+                $("#search_results").html("");
+
+                $.ajax({
+                    type: "GET",
+                    url: '/SPA/Selectparticipant/?querystring=' + $("#Selectparticipant").val(),
+                    dataType: 'json',
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        $.each(response.spaaccountmanager, function (i, x) {
+                            $("#search_results").append('<div><a href="#" onclick="populateemail(this.id);return false;" id="' + x.email + '" >' + x.contact_name + ' (' + x.email + ') </a></div>');
+                        });
+                    }
+                });
+            } else {
+                $("#search_results").hide();
+            }
+        });
+
+        populateemail = function (text) {
+            $("#Selectparticipant").val(text);
+            $("#search_results").hide();
+        }
+
+    });
+</script>
+<div class="main_content">
+    <div style="float:right;margin:0px 10px 0px 0px;">
+        @if (Request.QueryString["isAdmin"] == "yes")
+        {
+            <a class="btn btn-info" href="/SPA/SPAadmin/@Request.QueryString["details"]?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&isAdmin=@Request.QueryString["isAdmin"]&submenu=yes">Back</a>
+        }
+        else
+        {
+            <a class="btn btn-info" href="/SPA?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&isAdmin=@Request.QueryString["isAdmin"]&submenu=yes">Back</a>
+        }
+    </div>
+    <form action="/SPA/manageparticipant/" method="post">
+        <div style="width:100%;padding:20px;">
+            <div>
+                Select a user whose contracts you would like to re-assign on the left and assign it to the user on the right
+            </div>
+
+            <div style="width:30%;padding:20px;display:inline-block;vertical-align:top;">
+                Select contracts by distributor:
+                <select name="salecontracts" id="salecontracts" class="form-control">
+                    <option value="" selected>Select A Distributor</option>
+
+                    @foreach (var items in @ViewBag.partnerComp)
+                    {
+                        if (!string.IsNullOrEmpty(@Request.QueryString["comp_id"]) && @Request.QueryString["comp_id"] == @items.comp_ID.ToString())
+                        {
+                            <option value="@items.comp_ID.ToString()" selected>@items.comp_name (@items.count_users) </option>
+                        }
+                        else
+                        {
+                            <option value="@items.comp_ID.ToString()">@items.comp_name (@items.count_users) </option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <div style="width:400px;padding:20px;display:inline-block;vertical-align:top;">
+                Select sales rep to add as a participant:
+                <select name="selectUser" id="selectUser" class="form-control">
+                    <option value="" selected >Select A Sales Rep</option>
+
+                    @foreach (var items in @ViewBag.salesreps)
+                    {
+                        <option value="@items.email">@items.contact_name </option>
+                    }
+                </select>
+            </div>
+
+            <div style="width:400px;padding:20px;display:inline-block;vertical-align:top;">
+                Select sales rep to add as a participant:
+                <input type="text" value="" name="enderedUser" placeholder="search email" class="form-control" id="Selectparticipant" style="display:inline;" />
+                <input type="submit" value="Assign" class="btn btn-primary" style="margin-left:-50px;"/>
+                <div id="search_results" style="position:absolute;background:#ccc;padding:10px 10px;display:none;" ></div>
+            </div>
+        </div>
+
+        <div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="checkall" name="checkall" value="1" /> @Html.DisplayNameFor(model => model.FirstOrDefault().Spa_id)
+                        </td>
+                        <td>
+                            @Html.DisplayNameFor(model => model.FirstOrDefault().UserName)
+                        </td>
+                        <td>
+                            @Html.DisplayNameFor(model => model.FirstOrDefault().Customer_name)
+                        </td>
+                        <td>Participants</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var items in Model)
+                    {
+                    <tr>
+                        <td><input type="checkbox" class="checkit" name="spa_ids" value="@items.Spa_id" /> @items.Spa_id</td><td>@items.Sales_rep_user_name</td><td>@items.Customer_name</td>
+                        <td>
+                            @foreach(var participants in items.List_sales_reps){ 
+                                <div>@participants.FullName</div>
+                            }
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        
+        <input type="hidden" value="@Request.QueryString["n1_name"]" name="n1_name" />
+        <input type="hidden" value="@Request.QueryString["n2_name"]" name="n2_name" />
+        <input type="hidden" value="@Request.QueryString["comp_id"]" name="comp_id" />
+        <input type="hidden" value="@Request.QueryString["msg"]" name="msg" />
+
+        @if (!string.IsNullOrEmpty(Request.QueryString["comp_id"]))
+        {
+            <input type="submit" value="Assign" class="btn btn-primary" />
+        }
+    </form>       
+</div>
+
+
+

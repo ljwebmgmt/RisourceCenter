@@ -1,0 +1,174 @@
+﻿@model List<newrisourcecenter.Models.SalesCommunicationsViewModel>
+@{
+    string userProducts = Convert.ToString(Session["userProducts"]);
+    long userId = Convert.ToInt64(Session["userId"]);
+}
+
+<script>
+    $(document).ready(function () {
+
+        $("a").click(function (event) {
+            $("#sc_body_" + event.target.id).toggleClass("show_sales_comm");
+            $("#sc_teaser_" + event.target.id).toggleClass("show_sales_comm");
+
+            if ($("#sc_teaser_" + event.target.id).hasClass("show_sales_comm")) {
+                $("#" + event.target.id).css("color", "#5f5b5b");
+                $("#sc_body_" + event.target.id).css("padding", "10px");
+                $("#sc_body_" + event.target.id).css("box-shadow", "#696969 -1px 3px 3px 3px");
+                $("#toggle_" + event.target.id).attr("class", "glyphicon glyphicon-circle-arrow-up");
+            } else {
+                $("#" + event.target.id).css("color", "#e21785");
+                $("#toggle_" + event.target.id).attr("class", "glyphicon glyphicon-circle-arrow-down");
+            }
+        });
+
+		var path = window.location.href;
+		var pathArray = path.split('&');
+		var arraylen = pathArray.length;
+		var url = "/SupportTools/TrackEmail?usr=@userId&usraction=click&type=wN&" + pathArray[arraylen - 1]+ "&url=" + encodeURIComponent(path);
+		$.post( url, function( data ) {});	
+    });
+</script>
+<div class="main_content">
+    <div>
+        <div id="dropdown">
+            <div class="dropdown" style="text-align:left;">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                    Filter by Category
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    @foreach (var items in Model)
+                    {
+                        if (@items.sales_submenu != null)
+                        {
+                            foreach (var item in items.sales_submenu)
+                            {
+                                <li><a href="~/SalesComm?parentID=1&childId=@item.n2Id&n1_name=Communications&n2_name=@item.n2_longName&submenu=yes">@item.n2_longName</a></li>
+                            }
+                        }
+                    }
+                </ul>
+            </div>
+        </div>
+        <div id="dropdown">
+            <div class="dropdown" style="text-align:left;">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                    Filter by Sub-Category
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    @foreach (var items in Model)
+                    {
+                        if (@items.sales_menu != null)
+                        {
+                            foreach (var item in items.sales_menu)
+                            {
+                                <li><a href="~/SalesComm?parentID=1&childId=@item.n2Id&n3id=@item.n3Id&n1_name=Communications&n2_name=@item.n2_longName&n3_name=@item.n3_longName">@item.n2_longName-@item.n3_longName</a></li>
+                            }
+                        }
+                    }
+                </ul>
+            </div>
+        </div>
+        @if (Request.QueryString["n1_name"]=="Rittal University")
+        {
+        <a name="button313anc" href="/RittalUniversity?n1_name=Rittal%20University" title="Print" style="float:right;margin-right:20px;" class="btn btn-primary">Back</a>
+        }
+    </div>
+    <div align="center">
+        @if (Request.QueryString["n3id"] != null && Request.QueryString["childId"] != null && Request.QueryString["submenu"] != "yes")
+        {
+            <span class="btn btn-info btn-sm">
+                @Request.QueryString["n2_name"]
+                <a href="/SalesComm?parentID=1&n3id=@Request.QueryString["n3id"]&n1_name=Communications&n3_name=@Request.QueryString["n3_name"]&submenu=yes"> X </a>
+            </span>
+        }
+
+        @if (Request.QueryString["n3id"] != null && Request.QueryString["childId"] != null && Request.QueryString["submenu"] != "yes")
+        {
+            <span class="btn btn-info btn-sm">
+                @Request.QueryString["n3_name"]
+                <a href="/SalesComm?parentID=1&childId=@Request.QueryString["childId"]&n1_name=Communications&n2_name=@Request.QueryString["n2_name"]&submenu=yes"> X </a>
+            </span>
+        }
+
+        @if (Request.QueryString["n3id"] != null && Request.QueryString["childId"] == null && Request.QueryString["submenu"] == "yes")
+        {
+            <span class="btn btn-info btn-sm">
+                @Request.QueryString["n3_name"]
+                <a href="/SalesComm/?n1_name=Communications"> X </a>
+            </span>
+        }
+
+        @if (Request.QueryString["n3id"] == null && Request.QueryString["childId"] != null && Request.QueryString["submenu"] == "yes")
+        {
+            <span class="btn btn-info btn-sm">
+                @Request.QueryString["n2_name"]
+                <a href="/SalesComm/?n1_name=Communications"> X </a>
+            </span>
+        }
+
+        @if (Request.QueryString["childId"] != null && Request.QueryString["n3id"] == null && Request.QueryString["submenu"] != "yes" && Request.QueryString["n2_name"] == null)
+        {
+            <span class="btn btn-info btn-sm">
+                @ViewBag.n2Name
+                <a href="/SalesComm/?n1_name=Communications"> X </a>
+            </span>
+        }
+
+        @if (Request.QueryString["parentID"] != null)
+        {
+            <a class="btn btn-info btn-sm" id="reset" href="/SalesComm/?n1_name=Communications">Reset</a>
+        }
+    </div>
+    <hr style="border:solid 1px #fff;" />
+    <section class="comms">
+        @{
+            foreach (var salesComm in Model)
+            {
+                <div>
+                    <h4><a style="cursor:pointer;" id="@salesComm.scID"><span style="font-size:14px;" id="toggle_@salesComm.scID"></span> @salesComm.sc_headline </a></h4>
+                    @Html.ActionLink(salesComm.nav2_longName, actionName: "Index", controllerName: "SalesComm", routeValues: new { parentid = salesComm.n1ID, childid = salesComm.n2ID, n1_name ="Communications", n2_name = salesComm.nav2_longName, submenu="yes" }, htmlAttributes: null)
+                    - @Html.ActionLink(salesComm.nav3_longName, actionName: "Index", controllerName: "SalesComm", routeValues: new { parentid = salesComm.n1ID, childid = salesComm.n2ID, n1_name = "Communications", n2_name = salesComm.nav2_longName, n3id = salesComm.n3ID, n3_name = salesComm.nav3_longName }, htmlAttributes: null)
+                    <br />
+                    <div style="line-height:30px;" class="subtext" id="sc_teaser_@salesComm.scID">
+                        @Html.Raw(salesComm.sc_teaser)<br />
+                        @String.Format("{0:d}", @salesComm.sc_startDate)
+                       <br />
+                        <a class="salesComm_more btn btn-primary" id="@salesComm.scID">More</a>
+                    </div>
+                    <div id="sc_body_@salesComm.scID" class="show_sales_comm">
+                        @Html.Raw(salesComm.sc_body)
+                        @if (@salesComm.list_attachments.Count() != 0)
+                        {
+                            <h4><u>Attached RiSources</u></h4>
+                            foreach (var items in salesComm.list_attachments)
+                            {
+                                Uri uriResult;
+                                bool result = Uri.TryCreate(items.img, UriKind.Absolute, out uriResult)
+                                && (uriResult.Scheme == Uri.UriSchemeHttp
+                                || uriResult.Scheme == Uri.UriSchemeHttps);
+
+                                if (result)
+                                {
+                                    <div>
+                                        @items.name -
+                                        <a id="@ViewBag.file_size" target="_blank" href="@items.img" class="btn btn-primary btn-sm glyphicon glyphicon-new-window"> Link</a>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div>
+                                        @items.name -
+                                        <a id="@ViewBag.file_size" href="~/attachments/risources/@items.img" class="btn btn-primary btn-sm glyphicon glyphicon-download-alt" target="_blank" > Download</a>
+                                    </div>
+                                }
+                            }
+                        }
+                    </div>
+                </div>
+            }
+        }
+    </section>
+</div>

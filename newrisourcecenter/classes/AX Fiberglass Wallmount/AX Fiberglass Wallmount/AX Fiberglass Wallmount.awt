@@ -1,0 +1,5658 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lectoratitle lectorafileversion="18.2" lectoraproductversion="19.0.3" lectoraproductname="Lectora" lectoraproductcode="LD">
+<titledata titletype="standard">
+<currentid>9057</currentid>
+<currtheme></currtheme>
+<language>en</language>
+<ribbonpasteoption>0</ribbonpasteoption>
+<logpixelsx>96</logpixelsx>
+<logpixelsy>96</logpixelsy>
+<guide type="horz" val="264" />
+<guide type="horz" val="448" />
+<guide type="vert" val="800" />
+</titledata>
+<resourcedata>
+<resource id="87" resourcetype="image">
+<name>Platinum Back_norm.gif</name>
+<relativelink>images\Platinum Back_norm.gif</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="88" resourcetype="image">
+<name>Platinum Back_down.gif</name>
+<relativelink>images\Platinum Back_down.gif</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="89" resourcetype="image">
+<name>Platinum Back_over.gif</name>
+<relativelink>images\Platinum Back_over.gif</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="90" resourcetype="image">
+<name>Platinum Exit_norm.gif</name>
+<relativelink>images\Platinum Exit_norm.gif</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="91" resourcetype="image">
+<name>Platinum Exit_down.gif</name>
+<relativelink>images\Platinum Exit_down.gif</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="92" resourcetype="image">
+<name>Platinum Exit_over.gif</name>
+<relativelink>images\Platinum Exit_over.gif</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="93" resourcetype="image">
+<name>Platinum Next_norm.gif</name>
+<relativelink>images\Platinum Next_norm.gif</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="94" resourcetype="image">
+<name>Platinum Next_down.gif</name>
+<relativelink>images\Platinum Next_down.gif</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="95" resourcetype="image">
+<name>Platinum Next_over.gif</name>
+<relativelink>images\Platinum Next_over.gif</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="96" resourcetype="image">
+<name>Image 20.bmp</name>
+<relativelink>images\Image 20.bmp</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="264" resourcetype="image">
+<name>Image.bmp</name>
+<relativelink>images\Image.bmp</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="348" resourcetype="image">
+<name>Image001.bmp</name>
+<relativelink>images\Image001.bmp</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="877" resourcetype="image">
+<name>Image002.bmp</name>
+<relativelink>images\Image002.bmp</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="917" resourcetype="image">
+<name>Image003.bmp</name>
+<relativelink>images\Image003.bmp</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="980" resourcetype="image">
+<name>Image 2.bmp</name>
+<relativelink>images\Image 2.bmp</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="1038" resourcetype="image">
+<name>Image004.bmp</name>
+<relativelink>images\Image004.bmp</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="1078" resourcetype="image">
+<name>Image005.bmp</name>
+<relativelink>images\Image005.bmp</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="1106" resourcetype="image">
+<name>Image006.bmp</name>
+<relativelink>images\Image006.bmp</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="1158" resourcetype="image">
+<name>Image007.bmp</name>
+<relativelink>images\Image007.bmp</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="1198" resourcetype="image">
+<name>Image008.bmp</name>
+<relativelink>images\Image008.bmp</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="1226" resourcetype="image">
+<name>Image009.bmp</name>
+<relativelink>images\Image009.bmp</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="1254" resourcetype="image">
+<name>Image010.bmp</name>
+<relativelink>images\Image010.bmp</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="1282" resourcetype="image">
+<name>Image011.bmp</name>
+<relativelink>images\Image011.bmp</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="1334" resourcetype="image">
+<name>Image012.bmp</name>
+<relativelink>images\Image012.bmp</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="1368" resourcetype="image">
+<name>Image013.bmp</name>
+<relativelink>images\Image013.bmp</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="1420" resourcetype="image">
+<name>Image014.bmp</name>
+<relativelink>images\Image014.bmp</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="1478" resourcetype="image">
+<name>Image015.bmp</name>
+<relativelink>images\Image015.bmp</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="1607" resourcetype="image">
+<name>capture001.jpg</name>
+<relativelink>images\capture001.jpg</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="1608" resourcetype="image">
+<name>view_and_print_certificate_norm.gif</name>
+<relativelink>images\view_and_print_certificate_norm.gif</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="1609" resourcetype="image">
+<name>view_and_print_certificate_down.gif</name>
+<relativelink>images\view_and_print_certificate_down.gif</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="1610" resourcetype="image">
+<name>view_and_print_certificate_over.gif</name>
+<relativelink>images\view_and_print_certificate_over.gif</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="2564" resourcetype="image">
+<name>Image017.bmp</name>
+<relativelink>images\Image017.bmp</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="2971" resourcetype="image">
+<name>std_qt_cancel_normal.png</name>
+<relativelink>images\std_qt_cancel_normal.png</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="2972" resourcetype="image">
+<name>std_qt_cancel_clicked.png</name>
+<relativelink>images\std_qt_cancel_clicked.png</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="2973" resourcetype="image">
+<name>std_qt_cancel_over.png</name>
+<relativelink>images\std_qt_cancel_over.png</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="2982" resourcetype="image">
+<name>std_qt_back_normal.png</name>
+<relativelink>images\std_qt_back_normal.png</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="2983" resourcetype="image">
+<name>std_qt_back_clicked.png</name>
+<relativelink>images\std_qt_back_clicked.png</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="2984" resourcetype="image">
+<name>std_qt_back_over.png</name>
+<relativelink>images\std_qt_back_over.png</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="2993" resourcetype="image">
+<name>std_qt_next_normal.png</name>
+<relativelink>images\std_qt_next_normal.png</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="2994" resourcetype="image">
+<name>std_qt_next_clicked.png</name>
+<relativelink>images\std_qt_next_clicked.png</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="2995" resourcetype="image">
+<name>std_qt_next_over.png</name>
+<relativelink>images\std_qt_next_over.png</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="3006" resourcetype="image">
+<name>std_qt_ok_normal.png</name>
+<relativelink>images\std_qt_ok_normal.png</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="3007" resourcetype="image">
+<name>std_qt_ok_clicked.png</name>
+<relativelink>images\std_qt_ok_clicked.png</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="3008" resourcetype="image">
+<name>std_qt_ok_over.png</name>
+<relativelink>images\std_qt_ok_over.png</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="3712" resourcetype="image">
+<name>Image018.bmp</name>
+<relativelink>images\Image018.bmp</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="6466" resourcetype="image">
+<name>std_qt_print_normal.png</name>
+<relativelink>images\std_qt_print_normal.png</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="6467" resourcetype="image">
+<name>std_qt_print_clicked.png</name>
+<relativelink>images\std_qt_print_clicked.png</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="6468" resourcetype="image">
+<name>std_qt_print_over.png</name>
+<relativelink>images\std_qt_print_over.png</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="6525" resourcetype="image">
+<name>Image 3017.bmp</name>
+<relativelink>images\Image 3017.bmp</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="8487" resourcetype="audio">
+<name>audio002.mp3</name>
+<relativelink>media\audio002.mp3</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="8494" resourcetype="audio">
+<name>audio003.mp3</name>
+<relativelink>media\audio003.mp3</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="8534" resourcetype="audio">
+<name>audio005.mp3</name>
+<relativelink>media\audio005.mp3</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="8587" resourcetype="audio">
+<name>audio008.mp3</name>
+<relativelink>media\audio008.mp3</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="8650" resourcetype="audio">
+<name>audio011.mp3</name>
+<relativelink>media\audio011.mp3</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="8663" resourcetype="audio">
+<name>audio012.mp3</name>
+<relativelink>media\audio012.mp3</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="8676" resourcetype="audio">
+<name>audio013.mp3</name>
+<relativelink>media\audio013.mp3</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="8687" resourcetype="audio">
+<name>audio014.mp3</name>
+<relativelink>media\audio014.mp3</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="8733" resourcetype="image">
+<name>Image 2001.bmp</name>
+<relativelink>images\Image 2001.bmp</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="8833" resourcetype="audio">
+<name>audio017.mp3</name>
+<relativelink>media\audio017.mp3</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="8844" resourcetype="audio">
+<name>audio018.mp3</name>
+<relativelink>media\audio018.mp3</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="8855" resourcetype="audio">
+<name>audio019.mp3</name>
+<relativelink>media\audio019.mp3</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="8866" resourcetype="audio">
+<name>audio020.mp3</name>
+<relativelink>media\audio020.mp3</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="8902" resourcetype="audio">
+<name>audio022.mp3</name>
+<relativelink>media\audio022.mp3</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="8913" resourcetype="audio">
+<name>audio023.mp3</name>
+<relativelink>media\audio023.mp3</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+<resource id="8947" resourcetype="audio">
+<name>audio025.mp3</name>
+<relativelink>media\audio025.mp3</relativelink>
+<fileoffset>000000000000</fileoffset>
+<filelength>000000000000</filelength>
+<uncompressedlength>000000000000</uncompressedlength>
+<resourceflags>000000000000</resourceflags>
+</resource>
+</resourcedata>
+<variabledata>
+<variable id="1581" referenceobjectid="1582">
+<name>StudentName</name>
+<initialvalue></initialvalue>
+<lastupdated>0</lastupdated>
+<reserved_variable />
+<automatic_variable />
+<form_variable />
+</variable>
+<variable id="3010" referenceobjectid="2959">
+<name>AX_FG_Test_Score</name>
+<initialvalue>0</initialvalue>
+<lastupdated>0</lastupdated>
+<reserved_variable />
+<autoscore_variable />
+<automatic_variable />
+<persist_variable />
+</variable>
+<variable id="3833" referenceobjectid="3832">
+<name>Question_0001</name>
+<initialvalue></initialvalue>
+<lastupdated>0</lastupdated>
+<reserved_variable />
+<automatic_variable />
+<question_variable />
+</variable>
+<variable id="5123" referenceobjectid="5122">
+<name>Question_0002</name>
+<initialvalue></initialvalue>
+<lastupdated>0</lastupdated>
+<reserved_variable />
+<automatic_variable />
+<question_variable />
+</variable>
+<variable id="5593" referenceobjectid="5592">
+<name>Question_0003</name>
+<initialvalue></initialvalue>
+<lastupdated>0</lastupdated>
+<reserved_variable />
+<automatic_variable />
+<question_variable />
+</variable>
+<variable id="5725" referenceobjectid="5724">
+<name>Question_0004</name>
+<initialvalue></initialvalue>
+<lastupdated>0</lastupdated>
+<reserved_variable />
+<automatic_variable />
+<question_variable />
+</variable>
+<variable id="5886" referenceobjectid="5885">
+<name>Question_0005</name>
+<initialvalue></initialvalue>
+<lastupdated>0</lastupdated>
+<reserved_variable />
+<automatic_variable />
+<question_variable />
+</variable>
+<variable id="6016" referenceobjectid="6015">
+<name>Question_0006</name>
+<initialvalue></initialvalue>
+<lastupdated>0</lastupdated>
+<reserved_variable />
+<automatic_variable />
+<question_variable />
+</variable>
+<variable id="6115" referenceobjectid="6114">
+<name>Question_0007</name>
+<initialvalue></initialvalue>
+<lastupdated>0</lastupdated>
+<reserved_variable />
+<automatic_variable />
+<question_variable />
+</variable>
+<variable id="6166" referenceobjectid="6165">
+<name>Question_0008</name>
+<initialvalue></initialvalue>
+<lastupdated>0</lastupdated>
+<reserved_variable />
+<automatic_variable />
+<question_variable />
+</variable>
+<variable id="6300" referenceobjectid="6299">
+<name>Question_0009</name>
+<initialvalue></initialvalue>
+<lastupdated>0</lastupdated>
+<reserved_variable />
+<automatic_variable />
+<question_variable />
+</variable>
+<variable id="6346" referenceobjectid="6345">
+<name>Question_0010</name>
+<initialvalue></initialvalue>
+<lastupdated>0</lastupdated>
+<reserved_variable />
+<automatic_variable />
+<question_variable />
+</variable>
+</variabledata>
+<objectdefaults />
+<objectdata>
+<title id="1" center="center" respdesign="true">
+<name>AX Fiberglass Wallmount</name>
+<lastupdated>1612206732</lastupdated>
+<respprops>
+<phoneportrait>
+<title pubthisview="true" />
+</phoneportrait>
+<tabletlandscape>
+<title pubthisview="true" />
+</tabletlandscape>
+<phonelandscape>
+<title pubthisview="true" />
+</phonelandscape>
+<tabletportrait>
+<title pubthisview="true" />
+</tabletportrait>
+</respprops>
+<pageduration>60000</pageduration>
+<bgcolor>000000</bgcolor>
+<textcolor>000000</textcolor>
+<linkcolor>0000FF</linkcolor>
+<width>1600</width>
+<height>900</height>
+<font>
+<height>12</height>
+<facename>Arial</facename>
+</font>
+<image id="86" parent="1" resource="96" ontop="true" fixed="false" proportional="true">
+<name>logo</name>
+<lastupdated>1611858673</lastupdated>
+<possize>
+<point>
+<x>1483</x>
+<y>23</y>
+</point>
+<size>
+<cx>72</cx>
+<cy>104</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+</image>
+<textbutton id="83" parent="1" resource="93" ontop="true" fixed="false" proportional="true" initdisabled="false" enablevisited="false" enableselected="false">
+<name>Platinum Next</name>
+<lastupdated>1611761540</lastupdated>
+<possize>
+<point>
+<x>832</x>
+<y>790</y>
+</point>
+<size>
+<cx>56</cx>
+<cy>25</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<autosize>0</autosize>
+<type>20000</type>
+<linestyle>0</linestyle>
+<strokewidth>0</strokewidth>
+<strokecolor>0963B1</strokecolor>
+<text></text>
+<textcolor>FFFFFF</textcolor>
+<fontsize>-16</fontsize>
+<fontheight>12</fontheight>
+<fontstyle>0</fontstyle>
+<textalignment>1</textalignment>
+<fontfamily>Lucida Sans Unicode</fontfamily>
+<handledata />
+<shapefillinfo fillstyle="17" gradientangle="315" bevelheight="0" color="transparent" />
+<action id="84" parent="83" on="mouseclick">
+<name>OnMClkGoTo</name>
+<lastupdated>1611758029</lastupdated>
+<actionitem actiontaken="goto" target="nextpage">
+<browserWnd />
+</actionitem>
+</action>
+<type>20000</type>
+<initialstate>0</initialstate>
+<overstate resource="95" ontop="false" fixed="false" proportional="true">
+<name></name>
+<lastupdated>0</lastupdated>
+<possize>
+<point>
+<x>0</x>
+<y>0</y>
+</point>
+<size>
+<cx>-1</cx>
+<cy>-1</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<autosize>0</autosize>
+<type>0</type>
+<linestyle>0</linestyle>
+<strokewidth>0</strokewidth>
+<strokecolor>010000</strokecolor>
+<text></text>
+<textcolor>FFFFFF</textcolor>
+<fontsize>-16</fontsize>
+<fontheight>12</fontheight>
+<fontstyle>0</fontstyle>
+<textalignment>1</textalignment>
+<fontfamily>Lucida Sans Unicode</fontfamily>
+<handledata />
+<shapefillinfo fillstyle="17" gradientangle="315" bevelheight="0" color="transparent" />
+</overstate>
+<downstate resource="94" ontop="false" fixed="false" proportional="true">
+<name></name>
+<lastupdated>0</lastupdated>
+<possize>
+<point>
+<x>0</x>
+<y>0</y>
+</point>
+<size>
+<cx>-1</cx>
+<cy>-1</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<autosize>0</autosize>
+<type>0</type>
+<linestyle>0</linestyle>
+<strokewidth>0</strokewidth>
+<strokecolor>010000</strokecolor>
+<text></text>
+<textcolor>FFFFFF</textcolor>
+<fontsize>-16</fontsize>
+<fontheight>12</fontheight>
+<fontstyle>0</fontstyle>
+<textalignment>1</textalignment>
+<fontfamily>Lucida Sans Unicode</fontfamily>
+<handledata />
+<shapefillinfo fillstyle="17" gradientangle="315" bevelheight="0" color="transparent" />
+</downstate>
+</textbutton>
+<textbutton id="75" parent="1" resource="90" ontop="true" fixed="false" proportional="true" initdisabled="false" enablevisited="false" enableselected="false">
+<name>Platinum Exit</name>
+<lastupdated>1611761540</lastupdated>
+<possize>
+<point>
+<x>788</x>
+<y>788</y>
+</point>
+<size>
+<cx>28</cx>
+<cy>28</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<autosize>0</autosize>
+<type>20000</type>
+<linestyle>0</linestyle>
+<strokewidth>0</strokewidth>
+<strokecolor>0963B1</strokecolor>
+<text></text>
+<textcolor>FFFFFF</textcolor>
+<fontsize>-16</fontsize>
+<fontheight>12</fontheight>
+<fontstyle>0</fontstyle>
+<textalignment>1</textalignment>
+<fontfamily>Lucida Sans Unicode</fontfamily>
+<handledata />
+<shapefillinfo fillstyle="17" gradientangle="315" bevelheight="0" color="transparent" />
+<action id="76" parent="75" on="mouseclick">
+<name>OnMClkExitClose</name>
+<lastupdated>1611758029</lastupdated>
+<actionitem actiontaken="exit">
+<browserWnd />
+</actionitem>
+</action>
+<type>20000</type>
+<initialstate>0</initialstate>
+<overstate resource="92" ontop="false" fixed="false" proportional="true">
+<name></name>
+<lastupdated>0</lastupdated>
+<possize>
+<point>
+<x>0</x>
+<y>0</y>
+</point>
+<size>
+<cx>-1</cx>
+<cy>-1</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<autosize>0</autosize>
+<type>0</type>
+<linestyle>0</linestyle>
+<strokewidth>0</strokewidth>
+<strokecolor>010000</strokecolor>
+<text></text>
+<textcolor>FFFFFF</textcolor>
+<fontsize>-16</fontsize>
+<fontheight>12</fontheight>
+<fontstyle>0</fontstyle>
+<textalignment>1</textalignment>
+<fontfamily>Lucida Sans Unicode</fontfamily>
+<handledata />
+<shapefillinfo fillstyle="17" gradientangle="315" bevelheight="0" color="transparent" />
+</overstate>
+<downstate resource="91" ontop="false" fixed="false" proportional="true">
+<name></name>
+<lastupdated>0</lastupdated>
+<possize>
+<point>
+<x>0</x>
+<y>0</y>
+</point>
+<size>
+<cx>-1</cx>
+<cy>-1</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<autosize>0</autosize>
+<type>0</type>
+<linestyle>0</linestyle>
+<strokewidth>0</strokewidth>
+<strokecolor>010000</strokecolor>
+<text></text>
+<textcolor>FFFFFF</textcolor>
+<fontsize>-16</fontsize>
+<fontheight>12</fontheight>
+<fontstyle>0</fontstyle>
+<textalignment>1</textalignment>
+<fontfamily>Lucida Sans Unicode</fontfamily>
+<handledata />
+<shapefillinfo fillstyle="17" gradientangle="315" bevelheight="0" color="transparent" />
+</downstate>
+</textbutton>
+<textbutton id="67" parent="1" resource="87" ontop="true" fixed="false" proportional="true" initdisabled="false" enablevisited="false" enableselected="false">
+<name>Platinum Back</name>
+<lastupdated>1611761540</lastupdated>
+<possize>
+<point>
+<x>710</x>
+<y>788</y>
+</point>
+<size>
+<cx>58</cx>
+<cy>27</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<autosize>0</autosize>
+<type>20000</type>
+<linestyle>0</linestyle>
+<strokewidth>0</strokewidth>
+<strokecolor>0963B1</strokecolor>
+<text></text>
+<textcolor>FFFFFF</textcolor>
+<fontsize>-16</fontsize>
+<fontheight>12</fontheight>
+<fontstyle>0</fontstyle>
+<textalignment>1</textalignment>
+<fontfamily>Lucida Sans Unicode</fontfamily>
+<handledata />
+<shapefillinfo fillstyle="17" gradientangle="315" bevelheight="0" color="transparent" />
+<action id="68" parent="67" on="mouseclick">
+<name>OnMClkGoTo</name>
+<lastupdated>1611758029</lastupdated>
+<actionitem actiontaken="goto" target="prevpage">
+<browserWnd />
+</actionitem>
+</action>
+<type>20000</type>
+<initialstate>0</initialstate>
+<overstate resource="89" ontop="false" fixed="false" proportional="true">
+<name></name>
+<lastupdated>0</lastupdated>
+<possize>
+<point>
+<x>0</x>
+<y>0</y>
+</point>
+<size>
+<cx>-1</cx>
+<cy>-1</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<autosize>0</autosize>
+<type>0</type>
+<linestyle>0</linestyle>
+<strokewidth>0</strokewidth>
+<strokecolor>010000</strokecolor>
+<text></text>
+<textcolor>FFFFFF</textcolor>
+<fontsize>-16</fontsize>
+<fontheight>12</fontheight>
+<fontstyle>0</fontstyle>
+<textalignment>1</textalignment>
+<fontfamily>Lucida Sans Unicode</fontfamily>
+<handledata />
+<shapefillinfo fillstyle="17" gradientangle="315" bevelheight="0" color="transparent" />
+</overstate>
+<downstate resource="88" ontop="false" fixed="false" proportional="true">
+<name></name>
+<lastupdated>0</lastupdated>
+<possize>
+<point>
+<x>0</x>
+<y>0</y>
+</point>
+<size>
+<cx>-1</cx>
+<cy>-1</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<autosize>0</autosize>
+<type>0</type>
+<linestyle>0</linestyle>
+<strokewidth>0</strokewidth>
+<strokecolor>010000</strokecolor>
+<text></text>
+<textcolor>FFFFFF</textcolor>
+<fontsize>-16</fontsize>
+<fontheight>12</fontheight>
+<fontstyle>0</fontstyle>
+<textalignment>1</textalignment>
+<fontfamily>Lucida Sans Unicode</fontfamily>
+<handledata />
+<shapefillinfo fillstyle="17" gradientangle="315" bevelheight="0" color="transparent" />
+</downstate>
+</textbutton>
+<text id="59" parent="1" ontop="true" fixed="false" proportional="false" defaulttext="none">
+<name>x-date</name>
+<lastupdated>1611926740</lastupdated>
+<possize>
+<point>
+<x>39</x>
+<y>30</y>
+</point>
+<size>
+<cx>223</cx>
+<cy>26</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text59Font1 { font-size:16px; font-family:&quot;Arial&quot;, sans-serif; color:#ffffff; font-weight:bold; font-style:italic;}&#x0A;span.text59Font2 { font-size:13px; font-family:&quot;Arial&quot;, sans-serif; color:#ffffff;}&#x0A;&lt;p  style=&quot;margin-left:0px;text-indent:0px;margin-top:0px;margin-bottom:0px;text-align:left;&quot; &gt;&#x0A;&lt;span class=&quot;text59Font1&quot;  &gt;date goes here&lt;/span &gt;&lt;span class=&quot;text59Font2&quot; style=&quot;background-color:transparent&quot; &gt;&#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;</html>
+<rtf>{\rtf1\ansi\deflang1033\ftnbj\uc1\deff1&#x0A;{\fonttbl{\f0 \froman \fcharset0 Times New Roman;}{\f1 \fswiss Arial;}}&#x0A;{\colortbl\red0\green0\blue0 ;\red255\green255\blue255 ;\red0\green0\blue0 ;}&#x0A;{\stylesheet{\f1\fs20\cf2\cb1\ulc2 Normal;}{\cs1\cf2\cb1\ulc2 Default Paragraph Font;}}&#x0A;{\*\revtbl{Unknown;}}&#x0A;\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\headery720\footery720\deftab360\formshade\aendnotes\aftnnrlc\pgbrdrhead\pgbrdrfoot&#x0A;\sectd\pgwsxn12240\pghsxn15840\marglsxn1800\margrsxn1800\margtsxn1440\margbsxn1440\headery720\footery720\sbkpage\pgncont\pgndec&#x0A;\plain\plain\f1\fs24\ql\cf1\b\i date goes here\fs20\b0\i0\par}&#x0A;</rtf>
+<raw>﻿date goes here</raw>
+<numoflines>1</numoflines>
+<numpubbullets>0</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+<action id="60" parent="59" on="show">
+<name>show date</name>
+<lastupdated>1611758029</lastupdated>
+<actionitem actiontaken="changecontents" target="object" targetobject="59" targetvariable="-264" modvariable="set">
+<browserWnd />
+</actionitem>
+</action>
+</text>
+<page id="2" parent="1" inherit="some">
+<name>title</name>
+<lastupdated>1612279271</lastupdated>
+<pageduration>60000</pageduration>
+<excluded id="67" />
+<transitionin>
+<transtype>-1</transtype>
+<delay>0</delay>
+<speed>10</speed>
+<effect>0</effect>
+</transitionin>
+<image id="981" parent="2" resource="980" ontop="true" fixed="false" proportional="true">
+<name>Image 2</name>
+<lastupdated>1611761967</lastupdated>
+<possize>
+<point>
+<x>188</x>
+<y>496</y>
+</point>
+<size>
+<cx>437</cx>
+<cy>160</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+</image>
+<image id="265" parent="2" resource="264" ontop="false" fixed="false" proportional="true">
+<name>Image</name>
+<lastupdated>1611761556</lastupdated>
+<possize>
+<point>
+<x>173</x>
+<y>131</y>
+</point>
+<size>
+<cx>1254</cx>
+<cy>617</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+</image>
+</page>
+<page id="6521" parent="1" inherit="some">
+<name>audio</name>
+<lastupdated>1612206732</lastupdated>
+<pageduration>60000</pageduration>
+<bgcolor>FFFFFF</bgcolor>
+<transitionin>
+<transtype>-1</transtype>
+<delay>0</delay>
+<speed>10</speed>
+<effect>0</effect>
+</transitionin>
+<image id="6523" parent="6521" resource="6525" ontop="false" fixed="false" proportional="true">
+<name>Image 1</name>
+<lastupdated>1611928233</lastupdated>
+<possize>
+<point>
+<x>681</x>
+<y>363</y>
+</point>
+<size>
+<cx>251</cx>
+<cy>201</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+</image>
+<text id="6524" parent="6521" ontop="false" fixed="false" proportional="false" defaulttext="none">
+<name>Text Block 1</name>
+<lastupdated>1612278066</lastupdated>
+<possize>
+<point>
+<x>454</x>
+<y>232</y>
+</point>
+<size>
+<cx>709</cx>
+<cy>46</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text6524Font1 { font-size:27px; font-family:&quot;Arial&quot;, sans-serif; color:#010101;}&#x0A;&lt;p  style=&quot;margin-left:0px;text-indent:0px;margin-top:0px;margin-bottom:0px;text-align:left;&quot; &gt;&#x0A;&lt;span class=&quot;text6524Font1&quot;  &gt;This session contains audio, make sure your sound is on.&#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;</html>
+<rtf>{\rtf1\ansi\deflang1033\ftnbj\uc1\deff1&#x0A;{\fonttbl{\f0 \froman \fcharset0 Times New Roman;}{\f1 \fswiss Arial;}}&#x0A;{\colortbl\red0\green0\blue0 ;\red255\green255\blue255 ;\red0\green0\blue0 ;}&#x0A;{\stylesheet{\f1\fs20\cf2\cb1\ulc2 Normal;}{\cs1\cf2\cb1\ulc2 Default Paragraph Font;}}&#x0A;{\*\revtbl{Unknown;}}&#x0A;\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\headery720\footery720\deftab360\formshade\aendnotes\aftnnrlc\pgbrdrhead\pgbrdrfoot&#x0A;\sectd\pgwsxn12240\pghsxn15840\marglsxn1800\margrsxn1800\margtsxn1440\margbsxn1440\headery720\footery720\sbkpage\pgncont\pgndec&#x0A;\plain\plain\f1\fs24\ql\fs40 This session contains audio,\lang1033\hich\f1\loch\f1  \lang1033\hich\f1\loch\f1 make sure your sound is on.\par}&#x0A;</rtf>
+<raw>﻿This session contains audio, make sure your sound is on.</raw>
+<numoflines>1</numoflines>
+<numpubbullets>0</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+</text>
+</page>
+<page id="345" parent="1">
+<name>sizes</name>
+<lastupdated>1612206732</lastupdated>
+<pageduration>101000</pageduration>
+<transitionin>
+<transtype>-1</transtype>
+<delay>0</delay>
+<speed>10</speed>
+<effect>0</effect>
+</transitionin>
+<audio id="8485" parent="345" resource="8487" visible="false" ontop="false" fixed="false" proportional="false" display="controller" audiotype="standard" autostart="true">
+<name>audio002</name>
+<lastupdated>1612192618</lastupdated>
+<possize>
+<point>
+<x>44</x>
+<y>746</y>
+</point>
+<size>
+<cx>300</cx>
+<cy>24</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<controlbarheight>0</controlbarheight>
+</audio>
+<image id="349" parent="345" resource="348" ontop="false" fixed="false" proportional="true">
+<name>Image</name>
+<lastupdated>1611761599</lastupdated>
+<possize>
+<point>
+<x>185</x>
+<y>98</y>
+</point>
+<size>
+<cx>1225</cx>
+<cy>628</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+</image>
+</page>
+<page id="522" parent="1">
+<name>pricing</name>
+<lastupdated>1612206732</lastupdated>
+<pageduration>60000</pageduration>
+<transitionin>
+<transtype>-1</transtype>
+<delay>0</delay>
+<speed>10</speed>
+<effect>0</effect>
+</transitionin>
+<audio id="8492" parent="522" resource="8494" visible="false" ontop="false" fixed="false" proportional="false" display="controller" audiotype="standard" autostart="true">
+<name>audio003</name>
+<lastupdated>1612192607</lastupdated>
+<possize>
+<point>
+<x>56</x>
+<y>729</y>
+</point>
+<size>
+<cx>300</cx>
+<cy>24</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<controlbarheight>0</controlbarheight>
+</audio>
+<image id="878" parent="522" resource="877" ontop="false" fixed="false" proportional="true">
+<name>Image</name>
+<lastupdated>1611761723</lastupdated>
+<possize>
+<point>
+<x>39</x>
+<y>88</y>
+</point>
+<size>
+<cx>1434</cx>
+<cy>650</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+</image>
+</page>
+<page id="916" parent="1">
+<name>overview</name>
+<lastupdated>1612206732</lastupdated>
+<pageduration>117000</pageduration>
+<transitionin>
+<transtype>-1</transtype>
+<delay>0</delay>
+<speed>10</speed>
+<effect>0</effect>
+</transitionin>
+<audio id="8532" parent="916" resource="8534" visible="false" ontop="false" fixed="false" proportional="false" display="controller" audiotype="standard" autostart="true">
+<name>audio005</name>
+<lastupdated>1612193144</lastupdated>
+<possize>
+<point>
+<x>68</x>
+<y>760</y>
+</point>
+<size>
+<cx>300</cx>
+<cy>24</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<controlbarheight>0</controlbarheight>
+</audio>
+<image id="918" parent="916" resource="917" ontop="false" fixed="false" proportional="true">
+<name>Image</name>
+<lastupdated>1611761851</lastupdated>
+<possize>
+<point>
+<x>90</x>
+<y>119</y>
+</point>
+<size>
+<cx>1420</cx>
+<cy>641</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+</image>
+</page>
+<page id="1037" parent="1">
+<name>outdoor</name>
+<lastupdated>1612206732</lastupdated>
+<pageduration>134000</pageduration>
+<transitionin>
+<transtype>-1</transtype>
+<delay>0</delay>
+<speed>10</speed>
+<effect>0</effect>
+</transitionin>
+<audio id="8585" parent="1037" resource="8587" visible="false" ontop="false" fixed="false" proportional="false" display="controller" audiotype="standard" autostart="true">
+<name>audio008</name>
+<lastupdated>1612194607</lastupdated>
+<possize>
+<point>
+<x>50</x>
+<y>737</y>
+</point>
+<size>
+<cx>300</cx>
+<cy>24</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<controlbarheight>0</controlbarheight>
+</audio>
+<image id="1039" parent="1037" resource="1038" ontop="false" fixed="false" proportional="true">
+<name>Image</name>
+<lastupdated>1611763075</lastupdated>
+<possize>
+<point>
+<x>82</x>
+<y>68</y>
+</point>
+<size>
+<cx>1433</cx>
+<cy>696</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+</image>
+</page>
+<page id="1077" parent="1">
+<name>mods</name>
+<lastupdated>1612206732</lastupdated>
+<pageduration>60000</pageduration>
+<transitionin>
+<transtype>-1</transtype>
+<delay>0</delay>
+<speed>10</speed>
+<effect>0</effect>
+</transitionin>
+<audio id="8648" parent="1077" resource="8650" visible="false" ontop="false" fixed="false" proportional="false" display="controller" audiotype="standard" autostart="true">
+<name>audio011</name>
+<lastupdated>1612196263</lastupdated>
+<possize>
+<point>
+<x>35</x>
+<y>738</y>
+</point>
+<size>
+<cx>300</cx>
+<cy>24</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<controlbarheight>0</controlbarheight>
+</audio>
+<image id="1079" parent="1077" resource="1078" ontop="false" fixed="false" proportional="true">
+<name>Image</name>
+<lastupdated>1611763245</lastupdated>
+<possize>
+<point>
+<x>80</x>
+<y>36</y>
+</point>
+<size>
+<cx>1433</cx>
+<cy>712</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+</image>
+</page>
+<page id="1105" parent="1">
+<name>door</name>
+<lastupdated>1612206732</lastupdated>
+<pageduration>60000</pageduration>
+<transitionin>
+<transtype>-1</transtype>
+<delay>0</delay>
+<speed>10</speed>
+<effect>0</effect>
+</transitionin>
+<audio id="8661" parent="1105" resource="8663" visible="false" ontop="false" fixed="false" proportional="false" display="controller" audiotype="standard" autostart="true">
+<name>audio012</name>
+<lastupdated>1612278591</lastupdated>
+<possize>
+<point>
+<x>53</x>
+<y>743</y>
+</point>
+<size>
+<cx>300</cx>
+<cy>24</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<controlbarheight>0</controlbarheight>
+</audio>
+<image id="1107" parent="1105" resource="1106" ontop="false" fixed="false" proportional="true">
+<name>Image</name>
+<lastupdated>1611763751</lastupdated>
+<possize>
+<point>
+<x>46</x>
+<y>94</y>
+</point>
+<size>
+<cx>1485</cx>
+<cy>645</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+</image>
+</page>
+<page id="1157" parent="1">
+<name>install</name>
+<lastupdated>1612206732</lastupdated>
+<pageduration>60000</pageduration>
+<transitionin>
+<transtype>-1</transtype>
+<delay>0</delay>
+<speed>10</speed>
+<effect>0</effect>
+</transitionin>
+<audio id="8674" parent="1157" resource="8676" visible="false" ontop="false" fixed="false" proportional="false" display="controller" audiotype="standard" autostart="true">
+<name>audio013</name>
+<lastupdated>1612197358</lastupdated>
+<possize>
+<point>
+<x>79</x>
+<y>768</y>
+</point>
+<size>
+<cx>300</cx>
+<cy>24</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<controlbarheight>0</controlbarheight>
+</audio>
+<image id="1159" parent="1157" resource="1158" ontop="false" fixed="false" proportional="true">
+<name>Image</name>
+<lastupdated>1611763854</lastupdated>
+<possize>
+<point>
+<x>86</x>
+<y>93</y>
+</point>
+<size>
+<cx>1436</cx>
+<cy>682</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+</image>
+</page>
+<page id="1197" parent="1">
+<name>door acc</name>
+<lastupdated>1612206732</lastupdated>
+<pageduration>60000</pageduration>
+<transitionin>
+<transtype>-1</transtype>
+<delay>0</delay>
+<speed>10</speed>
+<effect>0</effect>
+</transitionin>
+<audio id="8685" parent="1197" resource="8687" visible="false" ontop="false" fixed="false" proportional="false" display="controller" audiotype="standard" autostart="true">
+<name>audio014</name>
+<lastupdated>1612197540</lastupdated>
+<possize>
+<point>
+<x>42</x>
+<y>771</y>
+</point>
+<size>
+<cx>300</cx>
+<cy>24</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<controlbarheight>0</controlbarheight>
+</audio>
+<image id="1199" parent="1197" resource="1198" ontop="false" fixed="false" proportional="true">
+<name>Image</name>
+<lastupdated>1611764220</lastupdated>
+<possize>
+<point>
+<x>83</x>
+<y>110</y>
+</point>
+<size>
+<cx>1435</cx>
+<cy>652</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+</image>
+</page>
+<page id="1225" parent="1">
+<name>locks</name>
+<lastupdated>1612206732</lastupdated>
+<pageduration>60000</pageduration>
+<transitionin>
+<transtype>-1</transtype>
+<delay>0</delay>
+<speed>10</speed>
+<effect>0</effect>
+</transitionin>
+<image id="8734" parent="1225" resource="8733" ontop="true" fixed="false" proportional="true">
+<name>Image 2</name>
+<lastupdated>1612278806</lastupdated>
+<possize>
+<point>
+<x>1308</x>
+<y>199</y>
+</point>
+<size>
+<cx>231</cx>
+<cy>179</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+</image>
+<audio id="8831" parent="1225" resource="8833" visible="false" ontop="false" fixed="false" proportional="false" display="controller" audiotype="standard" autostart="true">
+<name>audio017</name>
+<lastupdated>1612205873</lastupdated>
+<possize>
+<point>
+<x>34</x>
+<y>732</y>
+</point>
+<size>
+<cx>300</cx>
+<cy>24</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<controlbarheight>0</controlbarheight>
+</audio>
+<image id="1227" parent="1225" resource="1226" ontop="false" fixed="false" proportional="true">
+<name>Image</name>
+<lastupdated>1611764432</lastupdated>
+<possize>
+<point>
+<x>86</x>
+<y>95</y>
+</point>
+<size>
+<cx>1428</cx>
+<cy>666</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+</image>
+</page>
+<page id="1253" parent="1">
+<name>panel</name>
+<lastupdated>1612206732</lastupdated>
+<pageduration>60000</pageduration>
+<transitionin>
+<transtype>-1</transtype>
+<delay>0</delay>
+<speed>10</speed>
+<effect>0</effect>
+</transitionin>
+<audio id="8842" parent="1253" resource="8844" visible="false" ontop="false" fixed="false" proportional="false" display="controller" audiotype="standard" autostart="true">
+<name>audio018</name>
+<lastupdated>1612206349</lastupdated>
+<possize>
+<point>
+<x>50</x>
+<y>768</y>
+</point>
+<size>
+<cx>300</cx>
+<cy>24</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<controlbarheight>0</controlbarheight>
+</audio>
+<image id="1255" parent="1253" resource="1254" ontop="false" fixed="false" proportional="true">
+<name>Image</name>
+<lastupdated>1611764497</lastupdated>
+<possize>
+<point>
+<x>155</x>
+<y>89</y>
+</point>
+<size>
+<cx>1295</cx>
+<cy>667</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+</image>
+</page>
+<page id="1281" parent="1">
+<name>RiCS</name>
+<lastupdated>1612206732</lastupdated>
+<pageduration>82000</pageduration>
+<transitionin>
+<transtype>-1</transtype>
+<delay>0</delay>
+<speed>10</speed>
+<effect>0</effect>
+</transitionin>
+<audio id="8853" parent="1281" resource="8855" visible="false" ontop="false" fixed="false" proportional="false" display="controller" audiotype="standard" autostart="true">
+<name>audio019</name>
+<lastupdated>1612206491</lastupdated>
+<possize>
+<point>
+<x>68</x>
+<y>788</y>
+</point>
+<size>
+<cx>300</cx>
+<cy>24</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<controlbarheight>0</controlbarheight>
+</audio>
+<image id="1283" parent="1281" resource="1282" ontop="false" fixed="false" proportional="true">
+<name>Image</name>
+<lastupdated>1611782671</lastupdated>
+<possize>
+<point>
+<x>36</x>
+<y>116</y>
+</point>
+<size>
+<cx>1482</cx>
+<cy>620</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+</image>
+</page>
+<page id="1333" parent="1">
+<name>field install</name>
+<lastupdated>1612206732</lastupdated>
+<pageduration>81000</pageduration>
+<transitionin>
+<transtype>-1</transtype>
+<delay>0</delay>
+<speed>10</speed>
+<effect>0</effect>
+</transitionin>
+<audio id="8864" parent="1333" resource="8866" visible="false" ontop="false" fixed="false" proportional="false" display="controller" audiotype="standard" autostart="true">
+<name>audio020</name>
+<lastupdated>1612206747</lastupdated>
+<possize>
+<point>
+<x>36</x>
+<y>776</y>
+</point>
+<size>
+<cx>300</cx>
+<cy>24</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<controlbarheight>0</controlbarheight>
+</audio>
+<image id="1335" parent="1333" resource="1334" ontop="false" fixed="false" proportional="true">
+<name>Image</name>
+<lastupdated>1611782745</lastupdated>
+<possize>
+<point>
+<x>77</x>
+<y>147</y>
+</point>
+<size>
+<cx>1438</cx>
+<cy>602</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+</image>
+</page>
+<page id="1367" parent="1">
+<name>certs</name>
+<lastupdated>1612206948</lastupdated>
+<pageduration>60000</pageduration>
+<transitionin>
+<transtype>-1</transtype>
+<delay>0</delay>
+<speed>10</speed>
+<effect>0</effect>
+</transitionin>
+<audio id="8900" parent="1367" resource="8902" visible="false" ontop="false" fixed="false" proportional="false" display="controller" audiotype="standard" autostart="true">
+<name>audio022</name>
+<lastupdated>1612279073</lastupdated>
+<possize>
+<point>
+<x>44</x>
+<y>813</y>
+</point>
+<size>
+<cx>300</cx>
+<cy>24</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<controlbarheight>0</controlbarheight>
+</audio>
+<image id="1369" parent="1367" resource="1368" ontop="false" fixed="false" proportional="true">
+<name>Image</name>
+<lastupdated>1611783076</lastupdated>
+<possize>
+<point>
+<x>56</x>
+<y>120</y>
+</point>
+<size>
+<cx>1490</cx>
+<cy>625</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+</image>
+</page>
+<page id="3711" parent="1">
+<name>NEMA</name>
+<lastupdated>1612206732</lastupdated>
+<pageduration>60000</pageduration>
+<transitionin>
+<transtype>-1</transtype>
+<delay>0</delay>
+<speed>10</speed>
+<effect>0</effect>
+</transitionin>
+<audio id="8911" parent="3711" resource="8913" visible="false" ontop="false" fixed="false" proportional="false" display="controller" audiotype="standard" autostart="true">
+<name>audio023</name>
+<lastupdated>1612215159</lastupdated>
+<possize>
+<point>
+<x>37</x>
+<y>769</y>
+</point>
+<size>
+<cx>300</cx>
+<cy>24</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<controlbarheight>0</controlbarheight>
+</audio>
+<text id="3769" parent="3711" ontop="false" fixed="false" proportional="false" defaulttext="none">
+<name>Text Block</name>
+<lastupdated>1611851819</lastupdated>
+<possize>
+<point>
+<x>804</x>
+<y>240</y>
+</point>
+<size>
+<cx>667</cx>
+<cy>189</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text3769Font1 { font-size:27px; font-family:&quot;Arial&quot;, sans-serif; color:#ffffff; font-weight:normal; font-style:normal; text-decoration:normal;}&#x0A;li.text3769Font1 { font-size:27px; font-family:&quot;Arial&quot;, sans-serif; color:#ffffff; font-weight:normal; font-style:normal; text-decoration:normal;}&#x0A;span.text3769Font2 { font-size:24px; font-family:&quot;Arial&quot;, sans-serif; color:#ffffff; font-weight:normal; font-style:normal; text-decoration:normal;}&#x0A;li.text3769Font2 { font-size:24px; font-family:&quot;Arial&quot;, sans-serif; color:#ffffff; font-weight:normal; font-style:normal; text-decoration:normal;}&#x0A;span.text3769Font3 { font-size:16px; font-family:&quot;Arial&quot;, sans-serif; color:#010101; font-weight:normal; font-style:normal; text-decoration:normal;}&#x0A;li.text3769Font3 { font-size:16px; font-family:&quot;Arial&quot;, sans-serif; color:#010101; font-weight:normal; font-style:normal; text-decoration:normal;}&#x0A;&lt;ul  style=&quot;list-style-position:outside;text-align:left;&quot; &gt;&#x0A;&lt;li  class=&quot;text3769Font1&quot; data-bltIndnt=&quot;0&quot; style=&quot;line-height:1.149;position:relative;margin-left:19px;margin-top:0px;margin-bottom:0px; list-style-image:url(&apos;images/text3769CircleBulletFont6.png&apos;); padding-left:4px;&quot;&gt;&lt;!--{ &#x0A;data-bltIndnt:0&#x0A;} --&gt;&lt;span class=&quot;text3769Font1&quot;  &gt;Solid door enclosures are rated UL 4X (NEMA 4X)&#x0A;&lt;/span &gt;&lt;/li &gt;&#x0A;&lt;/ul &gt;&#x0A;&lt;p  legLH=&quot;1.149&quot; style=&quot;margin-left:0px;text-indent:0px;line-height:1.149;margin-top:0px;margin-bottom:0px;text-align:left;&quot; &gt;&#x0A;&lt;span class=&quot;text3769Font1&quot; style=&quot;background-color:transparent&quot; &gt;&#x0A;&amp;nbsp;&lt;/span &gt;&lt;/p &gt;&#x0A;&lt;ul  style=&quot;list-style-position:outside;text-align:left;&quot; &gt;&#x0A;&lt;li  class=&quot;text3769Font1&quot; data-bltIndnt=&quot;0&quot; style=&quot;line-height:1.149;position:relative;margin-left:19px;margin-top:0px;margin-bottom:0px; list-style-image:url(&apos;images/text3769CircleBulletFont6.png&apos;); padding-left:4px;&quot;&gt;&lt;!--{ &#x0A;data-bltIndnt:0&#x0A;} --&gt;&lt;span class=&quot;text3769Font1&quot;  &gt;Viewing door enclosures are rated UL 12 (NEMA 12)&#x0A;&lt;/span &gt;&lt;/li &gt;&#x0A;&lt;li  class=&quot;text3769Font3&quot; data-bltIndnt=&quot;0&quot; style=&quot;line-height:1.168;position:relative;margin-left:15px;margin-top:0px;margin-bottom:0px; list-style-image:url(&apos;images/text3769CircleBulletFont8.png&apos;); padding-left:8px;&quot;&gt;&lt;!--{ &#x0A;data-bltIndnt:0&#x0A;} --&gt;&lt;span class=&quot;text3769Font2&quot;  &gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/span &gt;&lt;span class=&quot;text3769Font3&quot; style=&quot;background-color:transparent&quot; &gt;&#x0A;&lt;/span &gt;&lt;/li &gt;&#x0A;&lt;/ul &gt;&#x0A;</html>
+<rtf>{\rtf1\ansi\deflang1033\ftnbj\uc1\deff1&#x0A;{\fonttbl{\f0 \froman \fcharset0 Times New Roman;}{\f1 \fswiss Arial;}{\f2 \froman \fcharset2 Symbol;}{\f3 \fnil \fcharset2 Wingdings;}}&#x0A;{\colortbl\red0\green0\blue0 ;\red255\green255\blue255 ;\red0\green0\blue0 ;}&#x0A;{\stylesheet{\f1\fs24\cf2\cb1\ulc2 Normal;}{\cs1\cf2\cb1\ulc2 Default Paragraph Font;}}&#x0A;{\*\revtbl{Unknown;}}&#x0A;\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\headery720\footery720\deftab360\formshade\aendnotes\aftnnrlc\pgbrdrhead\pgbrdrfoot&#x0A;\sectd\pgwsxn12240\pghsxn15840\marglsxn1800\margrsxn1800\margtsxn1440\margbsxn1440\headery720\footery720\sbkpage\pgncont\pgndec&#x0A;\plain\plain\f1\fs24\pard\s0{\*\pn\pnlvlblt\pnhang\pnf2{\pntxtb \&apos;b7}}\fi-360\li360\ql\cf1\fs40 Solid door enclosures are rated UL 4X (NEMA 4X)\par\pard\s0\ql\plain\f1\fs24\cf1\fs40\par\pard\s0{\*\pn\pnlvlblt\pnhang\pnf2{\pntxtb \&apos;b7}}\fi-360\li360\ql\plain\f1\fs24\cf1\fs40 &#x0A;Viewing door enclosures are rated UL 12 (NEMA 12)\par\fs36    \plain\f1\fs24\par}&#x0A;</rtf>
+<raw>﻿Solid door enclosures are rated UL 4X (NEMA 4X)&#x0A;&#x0A;Viewing door enclosures are rated UL 12 (NEMA 12)&#x0A;   </raw>
+<publishedbullets>
+<bullet>
+<type>0</type>
+<size>20</size>
+<color>16777215</color>
+<name>text3769CircleBulletFont6.png</name>
+</bullet>
+<bullet>
+<type>0</type>
+<size>12</size>
+<color>65793</color>
+<name>text3769CircleBulletFont8.png</name>
+</bullet>
+</publishedbullets>
+<numoflines>4</numoflines>
+<numpubbullets>2</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+</text>
+<image id="3713" parent="3711" resource="3712" ontop="false" fixed="false" proportional="true">
+<name>Image</name>
+<lastupdated>1611851448</lastupdated>
+<possize>
+<point>
+<x>39</x>
+<y>86</y>
+</point>
+<size>
+<cx>766</cx>
+<cy>668</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+</image>
+</page>
+<page id="1419" parent="1">
+<name>eplan</name>
+<lastupdated>1612215799</lastupdated>
+<pageduration>60000</pageduration>
+<transitionin>
+<transtype>-1</transtype>
+<delay>0</delay>
+<speed>10</speed>
+<effect>0</effect>
+</transitionin>
+<audio id="8945" parent="1419" resource="8947" visible="false" ontop="false" fixed="false" proportional="false" display="controller" audiotype="standard" autostart="true">
+<name>audio025</name>
+<lastupdated>1612216076</lastupdated>
+<possize>
+<point>
+<x>76</x>
+<y>730</y>
+</point>
+<size>
+<cx>300</cx>
+<cy>24</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<controlbarheight>0</controlbarheight>
+</audio>
+<image id="1421" parent="1419" resource="1420" ontop="false" fixed="false" proportional="true">
+<name>Image</name>
+<lastupdated>1611783462</lastupdated>
+<possize>
+<point>
+<x>111</x>
+<y>72</y>
+</point>
+<size>
+<cx>1395</cx>
+<cy>692</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+</image>
+</page>
+<page id="1477" parent="1">
+<name>summary</name>
+<lastupdated>1612216062</lastupdated>
+<pageduration>60000</pageduration>
+<transitionin>
+<transtype>-1</transtype>
+<delay>0</delay>
+<speed>10</speed>
+<effect>0</effect>
+</transitionin>
+<image id="1479" parent="1477" resource="1478" ontop="false" fixed="false" proportional="true">
+<name>Image</name>
+<lastupdated>1611783525</lastupdated>
+<possize>
+<point>
+<x>56</x>
+<y>98</y>
+</point>
+<size>
+<cx>1488</cx>
+<cy>628</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+</image>
+</page>
+<page id="1584" parent="1" inherit="some">
+<name>Ready?</name>
+<lastupdated>1612206732</lastupdated>
+<pageduration>60000</pageduration>
+<bgcolor>FFFFFF</bgcolor>
+<excluded id="67" />
+<excluded id="75" />
+<excluded id="83" />
+<excluded id="59" />
+<transitionin>
+<transtype>-1</transtype>
+<delay>0</delay>
+<speed>10</speed>
+<effect>0</effect>
+</transitionin>
+<textbutton id="1595" parent="1584" ontop="true" fixed="false" proportional="true" initdisabled="false" enablevisited="false" enableselected="false">
+<name>Not Ready</name>
+<lastupdated>1611845958</lastupdated>
+<possize>
+<point>
+<x>820</x>
+<y>400</y>
+</point>
+<size>
+<cx>100</cx>
+<cy>33</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<autosize>0</autosize>
+<type>20300</type>
+<linestyle>0</linestyle>
+<strokewidth>0</strokewidth>
+<strokecolor>000000</strokecolor>
+<text>Not Ready</text>
+<textcolor>FFFFFF</textcolor>
+<fontsize>-12</fontsize>
+<fontheight>9</fontheight>
+<fontstyle>1</fontstyle>
+<textalignment>1</textalignment>
+<fontfamily>Arial</fontfamily>
+<handledata>
+<controlpoint value="30" />
+</handledata>
+<shapefillinfo fillstyle="1" gradientangle="0" bevelheight="5" color="FF0000" />
+<action id="1596" parent="1595" on="mouseclick">
+<name>OnMClkGoTo</name>
+<lastupdated>1611844779</lastupdated>
+<actionitem actiontaken="goto" target="chapsectpage" targetobject="2">
+<browserWnd />
+</actionitem>
+</action>
+<type>20300</type>
+<initialstate>0</initialstate>
+<overstate ontop="false" fixed="false" proportional="true">
+<name></name>
+<lastupdated>0</lastupdated>
+<possize>
+<point>
+<x>0</x>
+<y>0</y>
+</point>
+<size>
+<cx>-1</cx>
+<cy>-1</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<autosize>0</autosize>
+<type>0</type>
+<linestyle>0</linestyle>
+<strokewidth>0</strokewidth>
+<strokecolor>000000</strokecolor>
+<text></text>
+<textcolor>FFFF00</textcolor>
+<fontsize>-12</fontsize>
+<fontheight>9</fontheight>
+<fontstyle>1</fontstyle>
+<textalignment>1</textalignment>
+<fontfamily>Arial</fontfamily>
+<handledata />
+<shapefillinfo fillstyle="1" gradientangle="0" bevelheight="5" color="000000" />
+</overstate>
+<downstate ontop="false" fixed="false" proportional="true">
+<name></name>
+<lastupdated>0</lastupdated>
+<possize>
+<point>
+<x>0</x>
+<y>0</y>
+</point>
+<size>
+<cx>-1</cx>
+<cy>-1</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<autosize>0</autosize>
+<type>0</type>
+<linestyle>0</linestyle>
+<strokewidth>0</strokewidth>
+<strokecolor>000000</strokecolor>
+<text></text>
+<textcolor>FFFF00</textcolor>
+<fontsize>-12</fontsize>
+<fontheight>9</fontheight>
+<fontstyle>1</fontstyle>
+<textalignment>1</textalignment>
+<fontfamily>Arial</fontfamily>
+<handledata />
+<shapefillinfo fillstyle="1" gradientangle="0" bevelheight="5" color="000000" />
+</downstate>
+</textbutton>
+<textbutton id="1603" parent="1584" ontop="true" fixed="false" proportional="true" initdisabled="false" enablevisited="false" enableselected="false">
+<name>Ready</name>
+<lastupdated>1611846066</lastupdated>
+<possize>
+<point>
+<x>705</x>
+<y>400</y>
+</point>
+<size>
+<cx>72</cx>
+<cy>33</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<autosize>0</autosize>
+<type>20300</type>
+<linestyle>0</linestyle>
+<strokewidth>0</strokewidth>
+<strokecolor>000000</strokecolor>
+<text>Ready</text>
+<textcolor>FFFFFF</textcolor>
+<fontsize>-12</fontsize>
+<fontheight>9</fontheight>
+<fontstyle>1</fontstyle>
+<textalignment>1</textalignment>
+<fontfamily>Arial</fontfamily>
+<handledata>
+<controlpoint value="30" />
+</handledata>
+<shapefillinfo fillstyle="1" gradientangle="0" bevelheight="5" color="00FF00" />
+<action id="2841" parent="1603" on="mouseclick">
+<name>OnMClkGoTo</name>
+<lastupdated>1611846034</lastupdated>
+<actionitem actiontaken="goto" target="nextpage">
+<browserWnd />
+</actionitem>
+</action>
+<type>20300</type>
+<initialstate>0</initialstate>
+<overstate ontop="false" fixed="false" proportional="true">
+<name></name>
+<lastupdated>0</lastupdated>
+<possize>
+<point>
+<x>0</x>
+<y>0</y>
+</point>
+<size>
+<cx>-1</cx>
+<cy>-1</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<autosize>0</autosize>
+<type>0</type>
+<linestyle>0</linestyle>
+<strokewidth>0</strokewidth>
+<strokecolor>000000</strokecolor>
+<text></text>
+<textcolor>FFFF00</textcolor>
+<fontsize>-12</fontsize>
+<fontheight>9</fontheight>
+<fontstyle>1</fontstyle>
+<textalignment>1</textalignment>
+<fontfamily>Arial</fontfamily>
+<handledata />
+<shapefillinfo fillstyle="1" gradientangle="0" bevelheight="5" color="000000" />
+</overstate>
+<downstate ontop="false" fixed="false" proportional="true">
+<name></name>
+<lastupdated>0</lastupdated>
+<possize>
+<point>
+<x>0</x>
+<y>0</y>
+</point>
+<size>
+<cx>-1</cx>
+<cy>-1</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<autosize>0</autosize>
+<type>0</type>
+<linestyle>0</linestyle>
+<strokewidth>0</strokewidth>
+<strokecolor>000000</strokecolor>
+<text></text>
+<textcolor>FFFF00</textcolor>
+<fontsize>-12</fontsize>
+<fontheight>9</fontheight>
+<fontstyle>1</fontstyle>
+<textalignment>1</textalignment>
+<fontfamily>Arial</fontfamily>
+<handledata />
+<shapefillinfo fillstyle="1" gradientangle="0" bevelheight="5" color="000000" />
+</downstate>
+</textbutton>
+<text id="1605" parent="1584" ontop="false" fixed="false" proportional="false" defaulttext="none">
+<name>Text Block 1</name>
+<lastupdated>1611845960</lastupdated>
+<possize>
+<point>
+<x>537</x>
+<y>201</y>
+</point>
+<size>
+<cx>522</cx>
+<cy>46</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text1605Font1 { font-size:24px; font-family:&quot;Arial&quot;, sans-serif; color:#010101;}&#x0A;span.text1605Font2 { font-size:13px; font-family:&quot;Arial&quot;, sans-serif; color:#010101;}&#x0A;&lt;p  style=&quot;margin-left:0px;text-indent:0px;margin-top:0px;margin-bottom:0px;text-align:left;&quot; &gt;&#x0A;&lt;span class=&quot;text1605Font1&quot;  &gt;It&apos;s time to test your knowledge. &amp;nbsp;Are you ready?&lt;/span &gt;&lt;span class=&quot;text1605Font2&quot; style=&quot;background-color:transparent&quot; &gt;&#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;</html>
+<rtf>{\rtf1\ansi\deflang1033\ftnbj\uc1\deff1&#x0A;{\fonttbl{\f0 \froman \fcharset0 Times New Roman;}{\f1 \fswiss Arial;}}&#x0A;{\colortbl\red0\green0\blue0 ;\red255\green255\blue255 ;\red0\green0\blue0 ;}&#x0A;{\stylesheet{\f1\fs20\cf0\cb1\ulc0 Normal;}{\cs1\cf0\cb1\ulc0 Default Paragraph Font;}}&#x0A;{\*\revtbl{Unknown;}}&#x0A;\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\headery720\footery720\deftab360\formshade\aendnotes\aftnnrlc\pgbrdrhead\pgbrdrfoot&#x0A;\sectd\pgwsxn12240\pghsxn15840\marglsxn1800\margrsxn1800\margtsxn1440\margbsxn1440\headery720\footery720\sbkpage\pgncont\pgndec&#x0A;\plain\plain\f1\fs20\ql\lang1033\hich\f1\loch\f1\fs36 It&apos;s time to test your knowledge.  Are you ready?\plain\f1\fs20\par}&#x0A;</rtf>
+<raw>﻿It&apos;s time to test your knowledge.  Are you ready?</raw>
+<numoflines>1</numoflines>
+<numpubbullets>0</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+</text>
+</page>
+<test id="2959" parent="1" inherit="some" resultaction="submit" autograde="true" showfeedback="true" promptforname="true" promptsuccess="true">
+<name>AX FG Test</name>
+<lastupdated>1611929273</lastupdated>
+<pageduration>60000</pageduration>
+<bgcolor>FFFFFF</bgcolor>
+<excluded id="67" />
+<excluded id="75" />
+<excluded id="83" />
+<excluded id="59" />
+<transitionin>
+<transtype>-1</transtype>
+<delay>0</delay>
+<speed>10</speed>
+<effect>0</effect>
+</transitionin>
+<resultstring>/sales/rittal_university/score.cfm</resultstring>
+<subjectstring>Test Results</subjectstring>
+<actionitem actiontaken="goto" target="chapsectpage" targetobject="1571">
+<browserWnd />
+</actionitem>
+<actitemcancel actiontaken="goto" target="chapsectpage" targetobject="1549">
+<browserWnd />
+</actitemcancel>
+<passinggrade>80</passinggrade>
+<showresultstype>10</showresultstype>
+<textbutton id="2964" parent="2959" resource="2971" ontop="true" fixed="false" proportional="false" posfrombottom="true" initdisabled="false" enablevisited="false" enableselected="false">
+<name>Cancel</name>
+<lastupdated>1611859555</lastupdated>
+<possize>
+<point>
+<x>660</x>
+<y>185</y>
+</point>
+<size>
+<cx>60</cx>
+<cy>40</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<autosize>0</autosize>
+<type>20000</type>
+<linestyle>0</linestyle>
+<strokewidth>0</strokewidth>
+<strokecolor>0963B1</strokecolor>
+<text></text>
+<textcolor>FFFFFF</textcolor>
+<fontsize>-16</fontsize>
+<fontheight>12</fontheight>
+<fontstyle>0</fontstyle>
+<textalignment>1</textalignment>
+<fontfamily>Lucida Sans Unicode</fontfamily>
+<handledata />
+<shapefillinfo fillstyle="17" gradientangle="315" bevelheight="0" color="transparent" />
+<action id="2974" parent="2964" on="mouseclick">
+<name>OnMClkCancTestSurv</name>
+<lastupdated>1611846238</lastupdated>
+<actionitem actiontaken="canceltest" target="object" targetobject="2959">
+<browserWnd />
+</actionitem>
+</action>
+<type>20000</type>
+<initialstate>0</initialstate>
+<overstate id="2964" resource="2973" ontop="false" fixed="false" proportional="true">
+<name>Cancel</name>
+<lastupdated>0</lastupdated>
+<possize>
+<point>
+<x>0</x>
+<y>0</y>
+</point>
+<size>
+<cx>-1</cx>
+<cy>-1</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<autosize>0</autosize>
+<type>0</type>
+<linestyle>0</linestyle>
+<strokewidth>0</strokewidth>
+<strokecolor>0963B1</strokecolor>
+<text></text>
+<textcolor>FFFFFF</textcolor>
+<fontsize>-16</fontsize>
+<fontheight>12</fontheight>
+<fontstyle>0</fontstyle>
+<textalignment>1</textalignment>
+<fontfamily>Lucida Sans Unicode</fontfamily>
+<handledata />
+<shapefillinfo fillstyle="17" gradientangle="315" bevelheight="0" color="transparent" />
+</overstate>
+<downstate id="2964" resource="2972" ontop="false" fixed="false" proportional="true">
+<name>Cancel</name>
+<lastupdated>0</lastupdated>
+<possize>
+<point>
+<x>0</x>
+<y>0</y>
+</point>
+<size>
+<cx>-1</cx>
+<cy>-1</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<autosize>0</autosize>
+<type>0</type>
+<linestyle>0</linestyle>
+<strokewidth>0</strokewidth>
+<strokecolor>0963B1</strokecolor>
+<text></text>
+<textcolor>FFFFFF</textcolor>
+<fontsize>-16</fontsize>
+<fontheight>12</fontheight>
+<fontstyle>0</fontstyle>
+<textalignment>1</textalignment>
+<fontfamily>Lucida Sans Unicode</fontfamily>
+<handledata />
+<shapefillinfo fillstyle="17" gradientangle="315" bevelheight="0" color="transparent" />
+</downstate>
+</textbutton>
+<textbutton id="2975" parent="2959" resource="2982" ontop="true" fixed="false" proportional="false" posfromright="true" posfrombottom="true" initdisabled="false" enablevisited="false" enableselected="false">
+<name>Back</name>
+<lastupdated>1611859555</lastupdated>
+<possize>
+<point>
+<x>942</x>
+<y>185</y>
+</point>
+<size>
+<cx>60</cx>
+<cy>40</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<autosize>0</autosize>
+<type>20000</type>
+<linestyle>0</linestyle>
+<strokewidth>0</strokewidth>
+<strokecolor>0963B1</strokecolor>
+<text></text>
+<textcolor>FFFFFF</textcolor>
+<fontsize>-16</fontsize>
+<fontheight>12</fontheight>
+<fontstyle>0</fontstyle>
+<textalignment>1</textalignment>
+<fontfamily>Lucida Sans Unicode</fontfamily>
+<handledata />
+<shapefillinfo fillstyle="17" gradientangle="315" bevelheight="0" color="transparent" />
+<action id="2985" parent="2975" on="mouseclick">
+<name>OnMClkGoTo</name>
+<lastupdated>0</lastupdated>
+<actionitem actiontaken="goto" target="prevpage">
+<browserWnd />
+</actionitem>
+</action>
+<type>20000</type>
+<initialstate>0</initialstate>
+<overstate id="2975" resource="2984" ontop="false" fixed="false" proportional="true">
+<name>Back</name>
+<lastupdated>0</lastupdated>
+<possize>
+<point>
+<x>0</x>
+<y>0</y>
+</point>
+<size>
+<cx>-1</cx>
+<cy>-1</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<autosize>0</autosize>
+<type>0</type>
+<linestyle>0</linestyle>
+<strokewidth>0</strokewidth>
+<strokecolor>0963B1</strokecolor>
+<text></text>
+<textcolor>FFFFFF</textcolor>
+<fontsize>-16</fontsize>
+<fontheight>12</fontheight>
+<fontstyle>0</fontstyle>
+<textalignment>1</textalignment>
+<fontfamily>Lucida Sans Unicode</fontfamily>
+<handledata />
+<shapefillinfo fillstyle="17" gradientangle="315" bevelheight="0" color="transparent" />
+</overstate>
+<downstate id="2975" resource="2983" ontop="false" fixed="false" proportional="true">
+<name>Back</name>
+<lastupdated>0</lastupdated>
+<possize>
+<point>
+<x>0</x>
+<y>0</y>
+</point>
+<size>
+<cx>-1</cx>
+<cy>-1</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<autosize>0</autosize>
+<type>0</type>
+<linestyle>0</linestyle>
+<strokewidth>0</strokewidth>
+<strokecolor>0963B1</strokecolor>
+<text></text>
+<textcolor>FFFFFF</textcolor>
+<fontsize>-16</fontsize>
+<fontheight>12</fontheight>
+<fontstyle>0</fontstyle>
+<textalignment>1</textalignment>
+<fontfamily>Lucida Sans Unicode</fontfamily>
+<handledata />
+<shapefillinfo fillstyle="17" gradientangle="315" bevelheight="0" color="transparent" />
+</downstate>
+</textbutton>
+<textbutton id="2986" parent="2959" resource="2993" ontop="true" fixed="false" proportional="false" posfromright="true" posfrombottom="true" initdisabled="false" enablevisited="false" enableselected="false">
+<name>Next</name>
+<lastupdated>1611850678</lastupdated>
+<possize>
+<point>
+<x>734</x>
+<y>184</y>
+</point>
+<size>
+<cx>60</cx>
+<cy>40</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<autosize>0</autosize>
+<type>20000</type>
+<linestyle>0</linestyle>
+<strokewidth>0</strokewidth>
+<strokecolor>0963B1</strokecolor>
+<text></text>
+<textcolor>FFFFFF</textcolor>
+<fontsize>-16</fontsize>
+<fontheight>12</fontheight>
+<fontstyle>0</fontstyle>
+<textalignment>1</textalignment>
+<fontfamily>Lucida Sans Unicode</fontfamily>
+<handledata />
+<shapefillinfo fillstyle="17" gradientangle="315" bevelheight="0" color="transparent" />
+<action id="2996" parent="2986" on="mouseclick">
+<name>OnMClkGoTo</name>
+<lastupdated>0</lastupdated>
+<actionitem actiontaken="goto" target="nextpage">
+<browserWnd />
+</actionitem>
+</action>
+<type>20000</type>
+<initialstate>0</initialstate>
+<overstate id="2986" resource="2995" ontop="false" fixed="false" proportional="true">
+<name>Next</name>
+<lastupdated>0</lastupdated>
+<possize>
+<point>
+<x>0</x>
+<y>0</y>
+</point>
+<size>
+<cx>-1</cx>
+<cy>-1</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<autosize>0</autosize>
+<type>0</type>
+<linestyle>0</linestyle>
+<strokewidth>0</strokewidth>
+<strokecolor>0963B1</strokecolor>
+<text></text>
+<textcolor>FFFFFF</textcolor>
+<fontsize>-16</fontsize>
+<fontheight>12</fontheight>
+<fontstyle>0</fontstyle>
+<textalignment>1</textalignment>
+<fontfamily>Lucida Sans Unicode</fontfamily>
+<handledata />
+<shapefillinfo fillstyle="17" gradientangle="315" bevelheight="0" color="transparent" />
+</overstate>
+<downstate id="2986" resource="2994" ontop="false" fixed="false" proportional="true">
+<name>Next</name>
+<lastupdated>0</lastupdated>
+<possize>
+<point>
+<x>0</x>
+<y>0</y>
+</point>
+<size>
+<cx>-1</cx>
+<cy>-1</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<autosize>0</autosize>
+<type>0</type>
+<linestyle>0</linestyle>
+<strokewidth>0</strokewidth>
+<strokecolor>0963B1</strokecolor>
+<text></text>
+<textcolor>FFFFFF</textcolor>
+<fontsize>-16</fontsize>
+<fontheight>12</fontheight>
+<fontstyle>0</fontstyle>
+<textalignment>1</textalignment>
+<fontfamily>Lucida Sans Unicode</fontfamily>
+<handledata />
+<shapefillinfo fillstyle="17" gradientangle="315" bevelheight="0" color="transparent" />
+</downstate>
+</textbutton>
+<page id="2997" parent="2959" inherit="some">
+<name>Page 1</name>
+<lastupdated>1611929273</lastupdated>
+<pageduration>60000</pageduration>
+<excluded id="2975" />
+<transitionin>
+<transtype>-1</transtype>
+<delay>0</delay>
+<speed>10</speed>
+<effect>0</effect>
+</transitionin>
+<objquestion id="3832" parent="2997" questiontype="multchoice" idtext="3834" idvar="3833">
+<name>Question 1</name>
+<lastupdated>1611857682</lastupdated>
+<questiontext>FRP stands for?</questiontext>
+<objchoice idtext="3835" idbutton="3836">
+<choicetext>Fiberglass reinforced plastic</choicetext>
+<feedbackmethod>0</feedbackmethod>
+</objchoice>
+<objchoice idtext="3837" idbutton="3838">
+<choicetext>Further refined polycarbonate</choicetext>
+<feedbackmethod>0</feedbackmethod>
+</objchoice>
+<objchoice idtext="3839" idbutton="3840" correctanswer="true">
+<choicetext>Fiberglass reinforced polyester</choicetext>
+<feedbackmethod>0</feedbackmethod>
+</objchoice>
+<objchoice idtext="3841" idbutton="3842">
+<choicetext>Forged resin plastic</choicetext>
+<feedbackmethod>0</feedbackmethod>
+</objchoice>
+<text id="3834" parent="3832" ontop="false" fixed="false" proportional="false" defaulttext="none">
+<name>Question Text</name>
+<lastupdated>1611857673</lastupdated>
+<respprops>
+<phoneportrait>
+<text>
+<possize>
+<size>
+<cx>396</cx>
+<cy>37</cy>
+</size>
+<point>
+<x>42</x>
+<y>60</y>
+</point>
+</possize>
+</text>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>734</x>
+<y>251</y>
+</point>
+<size>
+<cx>200</cx>
+<cy>37</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text3834Font1 { font-size:19px; font-family:&quot;Arial&quot;, sans-serif; color:#000000;}&#x0A;&lt;p  style=&quot;margin-left:0px;text-indent:0px;margin-top:0px;margin-bottom:0px;text-align:left;&quot; &gt;&#x0A;&lt;span class=&quot;text3834Font1&quot;  &gt;FRP stands for?&#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;</html>
+<rtf>{\rtf1\ansi\deflang1033\ftnbj\uc1\deff1&#x0A;{\fonttbl{\f0 \froman \fcharset0 Times New Roman;}{\f1 \fswiss Arial;}}&#x0A;{\colortbl\red0\green0\blue0 ;\red255\green255\blue255 ;\red0\green0\blue0 ;}&#x0A;{\stylesheet{\f1\fs24\cf0\cb1\ulc0 Normal;}{\cs1\cf0\cb1\ulc0 Default Paragraph Font;}}&#x0A;{\*\revtbl{Unknown;}}&#x0A;\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\headery720\footery720\deftab360\formshade\aendnotes\aftnnrlc\pgbrdrhead\pgbrdrfoot&#x0A;\sectd\pgwsxn12240\pghsxn15840\marglsxn1800\margrsxn1800\margtsxn1440\margbsxn1440\headery720\footery720\sbkpage\pgncont\pgndec&#x0A;\plain\hich\f1\loch\f1\cf0\fs28\ql FRP stands for?\par}&#x0A;</rtf>
+<raw>﻿FRP stands for?</raw>
+<numoflines>1</numoflines>
+<numpubbullets>0</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+</text>
+<text id="3835" parent="3832" ontop="false" fixed="false" proportional="false" labelobject="3836" defaulttext="none">
+<name>Choice 1 text</name>
+<lastupdated>1611857682</lastupdated>
+<respprops>
+<phoneportrait>
+<text>
+<possize>
+<size>
+<cx>369</cx>
+<cy>37</cy>
+</size>
+<point>
+<x>69</x>
+<y>105</y>
+</point>
+</possize>
+</text>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>686</x>
+<y>379</y>
+</point>
+<size>
+<cx>285</cx>
+<cy>37</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text3835Font1 { font-size:19px; font-family:&quot;Arial&quot;, sans-serif; color:#000000;}&#x0A;&lt;p  style=&quot;margin-left:0px;text-indent:0px;margin-top:0px;margin-bottom:0px;text-align:left;&quot; &gt;&#x0A;&lt;span class=&quot;text3835Font1&quot;  &gt;Fiberglass reinforced plastic&#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;</html>
+<rtf>{\rtf1\ansi\deflang1033\ftnbj\uc1\deff1&#x0A;{\fonttbl{\f0 \froman \fcharset0 Times New Roman;}{\f1 \fswiss Arial;}}&#x0A;{\colortbl\red0\green0\blue0 ;\red255\green255\blue255 ;\red0\green0\blue0 ;}&#x0A;{\stylesheet{\f1\fs24\cf0\cb1\ulc0 Normal;}{\cs1\cf0\cb1\ulc0 Default Paragraph Font;}}&#x0A;{\*\revtbl{Unknown;}}&#x0A;\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\headery720\footery720\deftab360\formshade\aendnotes\aftnnrlc\pgbrdrhead\pgbrdrfoot&#x0A;\sectd\pgwsxn12240\pghsxn15840\marglsxn1800\margrsxn1800\margtsxn1440\margbsxn1440\headery720\footery720\sbkpage\pgncont\pgndec&#x0A;\plain\hich\f1\loch\f1\cf0\fs28\ql Fiberglass reinforced plastic\par}&#x0A;</rtf>
+<raw>﻿Fiberglass reinforced plastic</raw>
+<numoflines>1</numoflines>
+<numpubbullets>0</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+</text>
+<radio id="3836" parent="3832" ontop="false" fixed="false" proportional="false">
+<name>Choice 1 button</name>
+<lastupdated>1611857682</lastupdated>
+<respprops>
+<phoneportrait>
+<radio>
+<possize>
+<point>
+<x>42</x>
+<y>105</y>
+</point>
+</possize>
+</radio>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>658</x>
+<y>378</y>
+</point>
+<size>
+<cx>19</cx>
+<cy>19</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<label></label>
+</radio>
+<text id="3837" parent="3832" ontop="false" fixed="false" proportional="false" labelobject="3838" defaulttext="none">
+<name>Choice 2 text</name>
+<lastupdated>1611857682</lastupdated>
+<respprops>
+<phoneportrait>
+<text>
+<possize>
+<size>
+<cx>369</cx>
+<cy>37</cy>
+</size>
+<point>
+<x>69</x>
+<y>150</y>
+</point>
+</possize>
+</text>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>686</x>
+<y>424</y>
+</point>
+<size>
+<cx>334</cx>
+<cy>37</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text3837Font1 { font-size:19px; font-family:&quot;Arial&quot;, sans-serif; color:#000000;}&#x0A;&lt;p  style=&quot;margin-left:0px;text-indent:0px;margin-top:0px;margin-bottom:0px;text-align:left;&quot; &gt;&#x0A;&lt;span class=&quot;text3837Font1&quot;  &gt;Further refined polycarbonate&#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;</html>
+<rtf>{\rtf1\ansi\deflang1033\ftnbj\uc1\deff1&#x0A;{\fonttbl{\f0 \froman \fcharset0 Times New Roman;}{\f1 \fswiss Arial;}}&#x0A;{\colortbl\red0\green0\blue0 ;\red255\green255\blue255 ;\red0\green0\blue0 ;}&#x0A;{\stylesheet{\f1\fs24\cf0\cb1\ulc0 Normal;}{\cs1\cf0\cb1\ulc0 Default Paragraph Font;}}&#x0A;{\*\revtbl{Unknown;}}&#x0A;\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\headery720\footery720\deftab360\formshade\aendnotes\aftnnrlc\pgbrdrhead\pgbrdrfoot&#x0A;\sectd\pgwsxn12240\pghsxn15840\marglsxn1800\margrsxn1800\margtsxn1440\margbsxn1440\headery720\footery720\sbkpage\pgncont\pgndec&#x0A;\plain\hich\f1\loch\f1\cf0\fs28\ql Further refined polycarbonate\par}&#x0A;</rtf>
+<raw>﻿Further refined polycarbonate</raw>
+<numoflines>1</numoflines>
+<numpubbullets>0</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+</text>
+<radio id="3838" parent="3832" ontop="false" fixed="false" proportional="false">
+<name>Choice 2 button</name>
+<lastupdated>1611857682</lastupdated>
+<respprops>
+<phoneportrait>
+<radio>
+<possize>
+<point>
+<x>42</x>
+<y>150</y>
+</point>
+</possize>
+</radio>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>658</x>
+<y>423</y>
+</point>
+<size>
+<cx>19</cx>
+<cy>19</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<label></label>
+</radio>
+<text id="3839" parent="3832" ontop="false" fixed="false" proportional="false" labelobject="3840" defaulttext="none">
+<name>Choice 3 text</name>
+<lastupdated>1611857682</lastupdated>
+<respprops>
+<phoneportrait>
+<text>
+<possize>
+<size>
+<cx>369</cx>
+<cy>37</cy>
+</size>
+<point>
+<x>69</x>
+<y>195</y>
+</point>
+</possize>
+</text>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>686</x>
+<y>469</y>
+</point>
+<size>
+<cx>333</cx>
+<cy>37</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text3839Font1 { font-size:19px; font-family:&quot;Arial&quot;, sans-serif; color:#000000;}&#x0A;&lt;p  style=&quot;margin-left:0px;text-indent:0px;margin-top:0px;margin-bottom:0px;text-align:left;&quot; &gt;&#x0A;&lt;span class=&quot;text3839Font1&quot;  &gt;Fiberglass reinforced polyester&#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;</html>
+<rtf>{\rtf1\ansi\deflang1033\ftnbj\uc1\deff1&#x0A;{\fonttbl{\f0 \froman \fcharset0 Times New Roman;}{\f1 \fswiss Arial;}}&#x0A;{\colortbl\red0\green0\blue0 ;\red255\green255\blue255 ;\red0\green0\blue0 ;}&#x0A;{\stylesheet{\f1\fs24\cf0\cb1\ulc0 Normal;}{\cs1\cf0\cb1\ulc0 Default Paragraph Font;}}&#x0A;{\*\revtbl{Unknown;}}&#x0A;\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\headery720\footery720\deftab360\formshade\aendnotes\aftnnrlc\pgbrdrhead\pgbrdrfoot&#x0A;\sectd\pgwsxn12240\pghsxn15840\marglsxn1800\margrsxn1800\margtsxn1440\margbsxn1440\headery720\footery720\sbkpage\pgncont\pgndec&#x0A;\plain\hich\f1\loch\f1\cf0\fs28\ql Fiberglass reinforced polyester\par}&#x0A;</rtf>
+<raw>﻿Fiberglass reinforced polyester</raw>
+<numoflines>1</numoflines>
+<numpubbullets>0</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+</text>
+<radio id="3840" parent="3832" ontop="false" fixed="false" proportional="false">
+<name>Choice 3 button</name>
+<lastupdated>1611857682</lastupdated>
+<respprops>
+<phoneportrait>
+<radio>
+<possize>
+<point>
+<x>42</x>
+<y>195</y>
+</point>
+</possize>
+</radio>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>658</x>
+<y>468</y>
+</point>
+<size>
+<cx>19</cx>
+<cy>19</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<label></label>
+</radio>
+<text id="3841" parent="3832" ontop="false" fixed="false" proportional="false" labelobject="3842" defaulttext="none">
+<name>Choice 4 text</name>
+<lastupdated>1611857682</lastupdated>
+<respprops>
+<phoneportrait>
+<text>
+<possize>
+<size>
+<cx>369</cx>
+<cy>37</cy>
+</size>
+<point>
+<x>69</x>
+<y>240</y>
+</point>
+</possize>
+</text>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>686</x>
+<y>514</y>
+</point>
+<size>
+<cx>254</cx>
+<cy>37</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text3841Font1 { font-size:19px; font-family:&quot;Arial&quot;, sans-serif; color:#000000;}&#x0A;&lt;p  style=&quot;margin-left:0px;text-indent:0px;margin-top:0px;margin-bottom:0px;text-align:left;&quot; &gt;&#x0A;&lt;span class=&quot;text3841Font1&quot;  &gt;Forged resin plastic&#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;</html>
+<rtf>{\rtf1\ansi\deflang1033\ftnbj\uc1\deff1&#x0A;{\fonttbl{\f0 \froman \fcharset0 Times New Roman;}{\f1 \fswiss Arial;}}&#x0A;{\colortbl\red0\green0\blue0 ;\red255\green255\blue255 ;\red0\green0\blue0 ;}&#x0A;{\stylesheet{\f1\fs24\cf0\cb1\ulc0 Normal;}{\cs1\cf0\cb1\ulc0 Default Paragraph Font;}}&#x0A;{\*\revtbl{Unknown;}}&#x0A;\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\headery720\footery720\deftab360\formshade\aendnotes\aftnnrlc\pgbrdrhead\pgbrdrfoot&#x0A;\sectd\pgwsxn12240\pghsxn15840\marglsxn1800\margrsxn1800\margtsxn1440\margbsxn1440\headery720\footery720\sbkpage\pgncont\pgndec&#x0A;\plain\hich\f1\loch\f1\cf0\fs28\ql Forged resin plastic\par}&#x0A;</rtf>
+<raw>﻿Forged resin plastic</raw>
+<numoflines>1</numoflines>
+<numpubbullets>0</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+</text>
+<radio id="3842" parent="3832" ontop="false" fixed="false" proportional="false">
+<name>Choice 4 button</name>
+<lastupdated>1611857682</lastupdated>
+<respprops>
+<phoneportrait>
+<radio>
+<possize>
+<point>
+<x>42</x>
+<y>240</y>
+</point>
+</possize>
+</radio>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>658</x>
+<y>513</y>
+</point>
+<size>
+<cx>19</cx>
+<cy>19</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<label></label>
+</radio>
+</objquestion>
+</page>
+<page id="5136" parent="2959">
+<name>Page 2</name>
+<lastupdated>1611929273</lastupdated>
+<pageduration>60000</pageduration>
+<transitionin>
+<transtype>-1</transtype>
+<delay>0</delay>
+<speed>10</speed>
+<effect>0</effect>
+</transitionin>
+<objquestion id="5122" parent="5136" questiontype="multchoice" idtext="5124" idvar="5123">
+<name>Question 2</name>
+<lastupdated>1611865844</lastupdated>
+<questiontext>The AX Fiberglass enclosure is replacing which previous design?</questiontext>
+<objchoice idtext="5125" idbutton="5126">
+<choicetext>AE</choicetext>
+<feedbackmethod>0</feedbackmethod>
+</objchoice>
+<objchoice idtext="5127" idbutton="5128" correctanswer="true">
+<choicetext>KS</choicetext>
+<feedbackmethod>0</feedbackmethod>
+</objchoice>
+<objchoice idtext="5129" idbutton="5130">
+<choicetext>PK</choicetext>
+<feedbackmethod>0</feedbackmethod>
+</objchoice>
+<objchoice idtext="5131" idbutton="5132">
+<choicetext>TP</choicetext>
+<feedbackmethod>0</feedbackmethod>
+</objchoice>
+<text id="5124" parent="5122" ontop="false" fixed="false" proportional="false" defaulttext="none">
+<name>Question Text</name>
+<lastupdated>1611865653</lastupdated>
+<respprops>
+<phoneportrait>
+<text>
+<possize>
+<size>
+<cx>396</cx>
+<cy>74</cy>
+</size>
+<point>
+<x>42</x>
+<y>60</y>
+</point>
+</possize>
+</text>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>481</x>
+<y>236</y>
+</point>
+<size>
+<cx>636</cx>
+<cy>54</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text5124Font1 { font-size:21px; font-family:&quot;Arial&quot;, sans-serif; color:#010101;}&#x0A;span.text5124Font2 { font-size:16px; font-family:&quot;Arial&quot;, sans-serif; color:#010101;}&#x0A;&lt;p  style=&quot;margin-left:0px;text-indent:0px;margin-top:0px;margin-bottom:0px;text-align:left;&quot; &gt;&#x0A;&lt;span class=&quot;text5124Font1&quot;  &gt;The AX Fiberglass enclosure is replacing which previous design?&lt;/span &gt;&lt;span class=&quot;text5124Font2&quot; style=&quot;background-color:transparent&quot; &gt;&#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;</html>
+<rtf>{\rtf1\ansi\deflang1033\ftnbj\uc1\deff1&#x0A;{\fonttbl{\f0 \froman \fcharset0 Times New Roman;}{\f1 \fswiss Arial;}}&#x0A;{\colortbl\red0\green0\blue0 ;\red255\green255\blue255 ;\red0\green0\blue0 ;}&#x0A;{\stylesheet{\f1\fs24\cf2\cb1\ulc2 Normal;}{\cs1\cf2\cb1\ulc2 Default Paragraph Font;}}&#x0A;{\*\revtbl{Unknown;}}&#x0A;\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\headery720\footery720\deftab360\formshade\aendnotes\aftnnrlc\pgbrdrhead\pgbrdrfoot&#x0A;\sectd\pgwsxn12240\pghsxn15840\marglsxn1800\margrsxn1800\margtsxn1440\margbsxn1440\headery720\footery720\sbkpage\pgncont\pgndec&#x0A;\plain\plain\f1\fs24\ql\fs32 The AX Fiberglass enclosure is replacing which previous design?\plain\f1\fs24\par}&#x0A;</rtf>
+<raw>﻿The AX Fiberglass enclosure is replacing which previous design?</raw>
+<numoflines>1</numoflines>
+<numpubbullets>0</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+</text>
+<text id="5125" parent="5122" ontop="false" fixed="false" proportional="false" labelobject="5126" defaulttext="none">
+<name>Choice 1 text</name>
+<lastupdated>1611865844</lastupdated>
+<respprops>
+<phoneportrait>
+<text>
+<possize>
+<size>
+<cx>369</cx>
+<cy>37</cy>
+</size>
+<point>
+<x>69</x>
+<y>142</y>
+</point>
+</possize>
+</text>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>756</x>
+<y>383</y>
+</point>
+<size>
+<cx>109</cx>
+<cy>37</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text5125Font1 { font-size:16px; font-family:&quot;Arial&quot;, sans-serif; color:#010101;}&#x0A;&lt;p  style=&quot;margin-left:0px;text-indent:0px;margin-top:0px;margin-bottom:0px;text-align:left;&quot; &gt;&#x0A;&lt;span class=&quot;text5125Font1&quot;  &gt;AE&#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;</html>
+<rtf>{\rtf1\ansi\deflang1033\ftnbj\uc1\deff1&#x0A;{\fonttbl{\f0 \froman \fcharset0 Times New Roman;}{\f1 \fswiss Arial;}}&#x0A;{\colortbl\red0\green0\blue0 ;\red255\green255\blue255 ;\red0\green0\blue0 ;}&#x0A;{\stylesheet{\f1\fs24\cf0\cb1\ulc0 Normal;}{\cs1\cf0\cb1\ulc0 Default Paragraph Font;}}&#x0A;{\*\revtbl{Unknown;}}&#x0A;\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\headery720\footery720\deftab360\formshade\aendnotes\aftnnrlc\pgbrdrhead\pgbrdrfoot&#x0A;\sectd\pgwsxn12240\pghsxn15840\marglsxn1800\margrsxn1800\margtsxn1440\margbsxn1440\headery720\footery720\sbkpage\pgncont\pgndec&#x0A;\plain\plain\f1\fs24\ql\lang1033\hich\f1\loch\f1 AE\plain\f1\fs24\par}&#x0A;</rtf>
+<raw>﻿AE</raw>
+<numoflines>1</numoflines>
+<numpubbullets>0</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+</text>
+<radio id="5126" parent="5122" ontop="false" fixed="false" proportional="false">
+<name>Choice 1 button</name>
+<lastupdated>1611865844</lastupdated>
+<respprops>
+<phoneportrait>
+<radio>
+<possize>
+<point>
+<x>42</x>
+<y>142</y>
+</point>
+</possize>
+</radio>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>729</x>
+<y>383</y>
+</point>
+<size>
+<cx>19</cx>
+<cy>19</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<label></label>
+</radio>
+<text id="5127" parent="5122" ontop="false" fixed="false" proportional="false" labelobject="5128" defaulttext="none">
+<name>Choice 2 text</name>
+<lastupdated>1611865844</lastupdated>
+<respprops>
+<phoneportrait>
+<text>
+<possize>
+<size>
+<cx>369</cx>
+<cy>37</cy>
+</size>
+<point>
+<x>69</x>
+<y>187</y>
+</point>
+</possize>
+</text>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>756</x>
+<y>428</y>
+</point>
+<size>
+<cx>84</cx>
+<cy>37</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text5127Font1 { font-size:16px; font-family:&quot;Arial&quot;, sans-serif; color:#010101;}&#x0A;&lt;p  style=&quot;margin-left:0px;text-indent:0px;margin-top:0px;margin-bottom:0px;text-align:left;&quot; &gt;&#x0A;&lt;span class=&quot;text5127Font1&quot;  &gt;KS&#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;</html>
+<rtf>{\rtf1\ansi\deflang1033\ftnbj\uc1\deff1&#x0A;{\fonttbl{\f0 \froman \fcharset0 Times New Roman;}{\f1 \fswiss Arial;}}&#x0A;{\colortbl\red0\green0\blue0 ;\red255\green255\blue255 ;\red0\green0\blue0 ;}&#x0A;{\stylesheet{\f1\fs24\cf0\cb1\ulc0 Normal;}{\cs1\cf0\cb1\ulc0 Default Paragraph Font;}}&#x0A;{\*\revtbl{Unknown;}}&#x0A;\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\headery720\footery720\deftab360\formshade\aendnotes\aftnnrlc\pgbrdrhead\pgbrdrfoot&#x0A;\sectd\pgwsxn12240\pghsxn15840\marglsxn1800\margrsxn1800\margtsxn1440\margbsxn1440\headery720\footery720\sbkpage\pgncont\pgndec&#x0A;\plain\plain\f1\fs24\ql\lang1033\hich\f1\loch\f1 KS\plain\f1\fs24\par}&#x0A;</rtf>
+<raw>﻿KS</raw>
+<numoflines>1</numoflines>
+<numpubbullets>0</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+</text>
+<radio id="5128" parent="5122" ontop="false" fixed="false" proportional="false">
+<name>Choice 2 button</name>
+<lastupdated>1611865844</lastupdated>
+<respprops>
+<phoneportrait>
+<radio>
+<possize>
+<point>
+<x>42</x>
+<y>187</y>
+</point>
+</possize>
+</radio>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>729</x>
+<y>428</y>
+</point>
+<size>
+<cx>19</cx>
+<cy>19</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<label></label>
+</radio>
+<text id="5129" parent="5122" ontop="false" fixed="false" proportional="false" labelobject="5130" defaulttext="none">
+<name>Choice 3 text</name>
+<lastupdated>1611865844</lastupdated>
+<respprops>
+<phoneportrait>
+<text>
+<possize>
+<size>
+<cx>369</cx>
+<cy>37</cy>
+</size>
+<point>
+<x>69</x>
+<y>232</y>
+</point>
+</possize>
+</text>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>756</x>
+<y>473</y>
+</point>
+<size>
+<cx>69</cx>
+<cy>37</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text5129Font1 { font-size:16px; font-family:&quot;Arial&quot;, sans-serif; color:#010101;}&#x0A;&lt;p  style=&quot;margin-left:0px;text-indent:0px;margin-top:0px;margin-bottom:0px;text-align:left;&quot; &gt;&#x0A;&lt;span class=&quot;text5129Font1&quot;  &gt;PK&#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;</html>
+<rtf>{\rtf1\ansi\deflang1033\ftnbj\uc1\deff1&#x0A;{\fonttbl{\f0 \froman \fcharset0 Times New Roman;}{\f1 \fswiss Arial;}}&#x0A;{\colortbl\red0\green0\blue0 ;\red255\green255\blue255 ;\red0\green0\blue0 ;}&#x0A;{\stylesheet{\f1\fs24\cf0\cb1\ulc0 Normal;}{\cs1\cf0\cb1\ulc0 Default Paragraph Font;}}&#x0A;{\*\revtbl{Unknown;}}&#x0A;\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\headery720\footery720\deftab360\formshade\aendnotes\aftnnrlc\pgbrdrhead\pgbrdrfoot&#x0A;\sectd\pgwsxn12240\pghsxn15840\marglsxn1800\margrsxn1800\margtsxn1440\margbsxn1440\headery720\footery720\sbkpage\pgncont\pgndec&#x0A;\plain\plain\f1\fs24\ql\lang1033\hich\f1\loch\f1 PK\plain\f1\fs24\par}&#x0A;</rtf>
+<raw>﻿PK</raw>
+<numoflines>1</numoflines>
+<numpubbullets>0</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+</text>
+<radio id="5130" parent="5122" ontop="false" fixed="false" proportional="false">
+<name>Choice 3 button</name>
+<lastupdated>1611865844</lastupdated>
+<respprops>
+<phoneportrait>
+<radio>
+<possize>
+<point>
+<x>42</x>
+<y>232</y>
+</point>
+</possize>
+</radio>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>729</x>
+<y>473</y>
+</point>
+<size>
+<cx>19</cx>
+<cy>19</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<label></label>
+</radio>
+<text id="5131" parent="5122" ontop="false" fixed="false" proportional="false" labelobject="5132" defaulttext="none">
+<name>Choice 4 text</name>
+<lastupdated>1611865844</lastupdated>
+<respprops>
+<phoneportrait>
+<text>
+<possize>
+<size>
+<cx>369</cx>
+<cy>37</cy>
+</size>
+<point>
+<x>69</x>
+<y>277</y>
+</point>
+</possize>
+</text>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>756</x>
+<y>518</y>
+</point>
+<size>
+<cx>61</cx>
+<cy>37</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text5131Font1 { font-size:16px; font-family:&quot;Arial&quot;, sans-serif; color:#010101;}&#x0A;&lt;p  style=&quot;margin-left:0px;text-indent:0px;margin-top:0px;margin-bottom:0px;text-align:left;&quot; &gt;&#x0A;&lt;span class=&quot;text5131Font1&quot;  &gt;TP&#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;</html>
+<rtf>{\rtf1\ansi\deflang1033\ftnbj\uc1\deff1&#x0A;{\fonttbl{\f0 \froman \fcharset0 Times New Roman;}{\f1 \fswiss Arial;}}&#x0A;{\colortbl\red0\green0\blue0 ;\red255\green255\blue255 ;\red0\green0\blue0 ;}&#x0A;{\stylesheet{\f1\fs24\cf0\cb1\ulc0 Normal;}{\cs1\cf0\cb1\ulc0 Default Paragraph Font;}}&#x0A;{\*\revtbl{Unknown;}}&#x0A;\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\headery720\footery720\deftab360\formshade\aendnotes\aftnnrlc\pgbrdrhead\pgbrdrfoot&#x0A;\sectd\pgwsxn12240\pghsxn15840\marglsxn1800\margrsxn1800\margtsxn1440\margbsxn1440\headery720\footery720\sbkpage\pgncont\pgndec&#x0A;\plain\plain\f1\fs24\ql\lang1033\hich\f1\loch\f1 TP\plain\f1\fs24\par}&#x0A;</rtf>
+<raw>﻿TP</raw>
+<numoflines>1</numoflines>
+<numpubbullets>0</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+</text>
+<radio id="5132" parent="5122" ontop="false" fixed="false" proportional="false">
+<name>Choice 4 button</name>
+<lastupdated>1611865844</lastupdated>
+<respprops>
+<phoneportrait>
+<radio>
+<possize>
+<point>
+<x>42</x>
+<y>277</y>
+</point>
+</possize>
+</radio>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>729</x>
+<y>518</y>
+</point>
+<size>
+<cx>19</cx>
+<cy>19</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<label></label>
+</radio>
+</objquestion>
+</page>
+<page id="5591" parent="2959">
+<name>Page 3</name>
+<lastupdated>1611929273</lastupdated>
+<pageduration>60000</pageduration>
+<transitionin>
+<transtype>-1</transtype>
+<delay>0</delay>
+<speed>10</speed>
+<effect>0</effect>
+</transitionin>
+<objquestion id="5592" parent="5591" questiontype="truefalse" idtext="5594" idvar="5593">
+<name>Question 3</name>
+<lastupdated>1611866581</lastupdated>
+<questiontext>The new AX Fiberglass has a higher list price than the KS Fiberglass enclosure.</questiontext>
+<objchoice idtext="5595" idbutton="5596">
+<choicetext>True</choicetext>
+<feedbackmethod>0</feedbackmethod>
+</objchoice>
+<objchoice idtext="5597" idbutton="5598" correctanswer="true">
+<choicetext>False</choicetext>
+<feedbackmethod>0</feedbackmethod>
+</objchoice>
+<text id="5594" parent="5592" ontop="false" fixed="false" proportional="false" defaulttext="none">
+<name>Question Text</name>
+<lastupdated>1611866541</lastupdated>
+<respprops>
+<phoneportrait>
+<text>
+<possize>
+<size>
+<cx>396</cx>
+<cy>74</cy>
+</size>
+<point>
+<x>42</x>
+<y>60</y>
+</point>
+</possize>
+</text>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>410</x>
+<y>235</y>
+</point>
+<size>
+<cx>784</cx>
+<cy>54</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text5594Font1 { font-size:21px; font-family:&quot;Arial&quot;, sans-serif; color:#010101;}&#x0A;span.text5594Font2 { font-size:16px; font-family:&quot;Arial&quot;, sans-serif; color:#010101;}&#x0A;&lt;p  style=&quot;margin-left:0px;text-indent:0px;margin-top:0px;margin-bottom:0px;text-align:left;&quot; &gt;&#x0A;&lt;span class=&quot;text5594Font1&quot;  &gt;The new AX Fiberglass has a higher list price than the KS Fiberglass enclosure&lt;/span &gt;&lt;span class=&quot;text5594Font2&quot;  &gt;.&#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;</html>
+<rtf>{\rtf1\ansi\deflang1033\ftnbj\uc1\deff1&#x0A;{\fonttbl{\f0 \froman \fcharset0 Times New Roman;}{\f1 \fswiss Arial;}}&#x0A;{\colortbl\red0\green0\blue0 ;\red255\green255\blue255 ;\red0\green0\blue0 ;}&#x0A;{\stylesheet{\f1\fs24\cf2\cb1\ulc2 Normal;}{\cs1\cf2\cb1\ulc2 Default Paragraph Font;}}&#x0A;{\*\revtbl{Unknown;}}&#x0A;\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\headery720\footery720\deftab360\formshade\aendnotes\aftnnrlc\pgbrdrhead\pgbrdrfoot&#x0A;\sectd\pgwsxn12240\pghsxn15840\marglsxn1800\margrsxn1800\margtsxn1440\margbsxn1440\headery720\footery720\sbkpage\pgncont\pgndec&#x0A;\plain\plain\f1\fs24\ql\fs32 The new AX Fiberglass has a higher list price than the KS Fiberglass enclosure\plain\f1\fs24 .\par}&#x0A;</rtf>
+<raw>﻿The new AX Fiberglass has a higher list price than the KS Fiberglass enclosure.</raw>
+<numoflines>1</numoflines>
+<numpubbullets>0</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+</text>
+<text id="5595" parent="5592" ontop="false" fixed="false" proportional="false" labelobject="5596" defaulttext="none">
+<name>Choice 1 text</name>
+<lastupdated>1611866581</lastupdated>
+<respprops>
+<phoneportrait>
+<text>
+<possize>
+<size>
+<cx>369</cx>
+<cy>37</cy>
+</size>
+<point>
+<x>69</x>
+<y>142</y>
+</point>
+</possize>
+</text>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>784</x>
+<y>427</y>
+</point>
+<size>
+<cx>129</cx>
+<cy>37</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text5595Font1 { font-size:16px; font-family:&quot;Arial&quot;, sans-serif; color:#010101;}&#x0A;&lt;p  style=&quot;margin-left:0px;text-indent:0px;margin-top:0px;margin-bottom:0px;text-align:left;&quot; &gt;&#x0A;&lt;span class=&quot;text5595Font1&quot;  &gt;True&#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;</html>
+<rtf>{\rtf1\ansi\deflang1033\ftnbj\uc1\deff1&#x0A;{\fonttbl{\f0 \froman \fcharset0 Times New Roman;}{\f1 \fswiss Arial;}}&#x0A;{\colortbl\red0\green0\blue0 ;\red255\green255\blue255 ;\red0\green0\blue0 ;}&#x0A;{\stylesheet{\f1\fs24\cf0\cb1\ulc0 Normal;}{\cs1\cf0\cb1\ulc0 Default Paragraph Font;}}&#x0A;{\*\revtbl{Unknown;}}&#x0A;\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\headery720\footery720\deftab360\formshade\aendnotes\aftnnrlc\pgbrdrhead\pgbrdrfoot&#x0A;\sectd\pgwsxn12240\pghsxn15840\marglsxn1800\margrsxn1800\margtsxn1440\margbsxn1440\headery720\footery720\sbkpage\pgncont\pgndec&#x0A;\plain\plain\f1\fs24\ql\lang1033\hich\f1\loch\f1 True\plain\f1\fs24\par}&#x0A;</rtf>
+<raw>﻿True</raw>
+<numoflines>1</numoflines>
+<numpubbullets>0</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+</text>
+<radio id="5596" parent="5592" ontop="false" fixed="false" proportional="false">
+<name>True button</name>
+<lastupdated>1611866581</lastupdated>
+<respprops>
+<phoneportrait>
+<radio>
+<possize>
+<point>
+<x>42</x>
+<y>142</y>
+</point>
+</possize>
+</radio>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>757</x>
+<y>427</y>
+</point>
+<size>
+<cx>19</cx>
+<cy>19</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<label></label>
+</radio>
+<text id="5597" parent="5592" ontop="false" fixed="false" proportional="false" labelobject="5598" defaulttext="none">
+<name>Choice 2 text</name>
+<lastupdated>1611866581</lastupdated>
+<respprops>
+<phoneportrait>
+<text>
+<possize>
+<size>
+<cx>369</cx>
+<cy>37</cy>
+</size>
+<point>
+<x>69</x>
+<y>187</y>
+</point>
+</possize>
+</text>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>784</x>
+<y>472</y>
+</point>
+<size>
+<cx>75</cx>
+<cy>37</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text5597Font1 { font-size:16px; font-family:&quot;Arial&quot;, sans-serif; color:#010101;}&#x0A;&lt;p  style=&quot;margin-left:0px;text-indent:0px;margin-top:0px;margin-bottom:0px;text-align:left;&quot; &gt;&#x0A;&lt;span class=&quot;text5597Font1&quot;  &gt;False&#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;</html>
+<rtf>{\rtf1\ansi\deflang1033\ftnbj\uc1\deff1&#x0A;{\fonttbl{\f0 \froman \fcharset0 Times New Roman;}{\f1 \fswiss Arial;}}&#x0A;{\colortbl\red0\green0\blue0 ;\red255\green255\blue255 ;\red0\green0\blue0 ;}&#x0A;{\stylesheet{\f1\fs24\cf0\cb1\ulc0 Normal;}{\cs1\cf0\cb1\ulc0 Default Paragraph Font;}}&#x0A;{\*\revtbl{Unknown;}}&#x0A;\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\headery720\footery720\deftab360\formshade\aendnotes\aftnnrlc\pgbrdrhead\pgbrdrfoot&#x0A;\sectd\pgwsxn12240\pghsxn15840\marglsxn1800\margrsxn1800\margtsxn1440\margbsxn1440\headery720\footery720\sbkpage\pgncont\pgndec&#x0A;\plain\plain\f1\fs24\ql\lang1033\hich\f1\loch\f1 False\plain\f1\fs24\par}&#x0A;</rtf>
+<raw>﻿False</raw>
+<numoflines>1</numoflines>
+<numpubbullets>0</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+</text>
+<radio id="5598" parent="5592" ontop="false" fixed="false" proportional="false">
+<name>False button</name>
+<lastupdated>1611866581</lastupdated>
+<respprops>
+<phoneportrait>
+<radio>
+<possize>
+<point>
+<x>42</x>
+<y>187</y>
+</point>
+</possize>
+</radio>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>757</x>
+<y>472</y>
+</point>
+<size>
+<cx>19</cx>
+<cy>19</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<label></label>
+</radio>
+</objquestion>
+</page>
+<page id="5723" parent="2959">
+<name>Page 4</name>
+<lastupdated>1611929273</lastupdated>
+<pageduration>60000</pageduration>
+<transitionin>
+<transtype>-1</transtype>
+<delay>0</delay>
+<speed>10</speed>
+<effect>0</effect>
+</transitionin>
+<objquestion id="5724" parent="5723" questiontype="truefalse" idtext="5726" idvar="5725">
+<name>Question 4</name>
+<lastupdated>1611866874</lastupdated>
+<questiontext>AX FRP enclosures are UL approved.</questiontext>
+<objchoice idtext="5727" idbutton="5728" correctanswer="true">
+<choicetext>True</choicetext>
+<feedbackmethod>0</feedbackmethod>
+</objchoice>
+<objchoice idtext="5729" idbutton="5730">
+<choicetext>False</choicetext>
+<feedbackmethod>0</feedbackmethod>
+</objchoice>
+<text id="5726" parent="5724" ontop="false" fixed="false" proportional="false" defaulttext="none">
+<name>Question Text</name>
+<lastupdated>1611866835</lastupdated>
+<respprops>
+<phoneportrait>
+<text>
+<possize>
+<size>
+<cx>396</cx>
+<cy>37</cy>
+</size>
+<point>
+<x>42</x>
+<y>60</y>
+</point>
+</possize>
+</text>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>601</x>
+<y>237</y>
+</point>
+<size>
+<cx>388</cx>
+<cy>37</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text5726Font1 { font-size:21px; font-family:&quot;Arial&quot;, sans-serif; color:#000000;}&#x0A;&lt;p  style=&quot;margin-left:0px;text-indent:0px;margin-top:0px;margin-bottom:0px;text-align:left;&quot; &gt;&#x0A;&lt;span class=&quot;text5726Font1&quot;  &gt;AX FRP enclosures are UL approved.&#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;</html>
+<rtf>{\rtf1\ansi\deflang1033\ftnbj\uc1\deff1&#x0A;{\fonttbl{\f0 \froman \fcharset0 Times New Roman;}{\f1 \fswiss Arial;}}&#x0A;{\colortbl\red0\green0\blue0 ;\red255\green255\blue255 ;\red0\green0\blue0 ;}&#x0A;{\stylesheet{\f1\fs24\cf0\cb1\ulc0 Normal;}{\cs1\cf0\cb1\ulc0 Default Paragraph Font;}}&#x0A;{\*\revtbl{Unknown;}}&#x0A;\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\headery720\footery720\deftab360\formshade\aendnotes\aftnnrlc\pgbrdrhead\pgbrdrfoot&#x0A;\sectd\pgwsxn12240\pghsxn15840\marglsxn1800\margrsxn1800\margtsxn1440\margbsxn1440\headery720\footery720\sbkpage\pgncont\pgndec&#x0A;\plain\hich\f1\loch\f1\cf0\fs32\ql AX FRP enclosures are UL approved.\par}&#x0A;</rtf>
+<raw>﻿AX FRP enclosures are UL approved.</raw>
+<numoflines>1</numoflines>
+<numpubbullets>0</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+</text>
+<text id="5727" parent="5724" ontop="false" fixed="false" proportional="false" labelobject="5728" defaulttext="none">
+<name>Choice 1 text</name>
+<lastupdated>1611866874</lastupdated>
+<respprops>
+<phoneportrait>
+<text>
+<possize>
+<size>
+<cx>369</cx>
+<cy>37</cy>
+</size>
+<point>
+<x>69</x>
+<y>105</y>
+</point>
+</possize>
+</text>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>789</x>
+<y>419</y>
+</point>
+<size>
+<cx>160</cx>
+<cy>37</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text5727Font1 { font-size:21px; font-family:&quot;Arial&quot;, sans-serif; color:#000000;}&#x0A;&lt;p  style=&quot;margin-left:0px;text-indent:0px;margin-top:0px;margin-bottom:0px;text-align:left;&quot; &gt;&#x0A;&lt;span class=&quot;text5727Font1&quot;  &gt;True&#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;</html>
+<rtf>{\rtf1\ansi\deflang1033\ftnbj\uc1\deff1&#x0A;{\fonttbl{\f0 \froman \fcharset0 Times New Roman;}{\f1 \fswiss Arial;}}&#x0A;{\colortbl\red0\green0\blue0 ;\red255\green255\blue255 ;\red0\green0\blue0 ;}&#x0A;{\stylesheet{\f1\fs24\cf0\cb1\ulc0 Normal;}{\cs1\cf0\cb1\ulc0 Default Paragraph Font;}}&#x0A;{\*\revtbl{Unknown;}}&#x0A;\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\headery720\footery720\deftab360\formshade\aendnotes\aftnnrlc\pgbrdrhead\pgbrdrfoot&#x0A;\sectd\pgwsxn12240\pghsxn15840\marglsxn1800\margrsxn1800\margtsxn1440\margbsxn1440\headery720\footery720\sbkpage\pgncont\pgndec&#x0A;\plain\hich\f1\loch\f1\cf0\fs32\ql True\par}&#x0A;</rtf>
+<raw>﻿True</raw>
+<numoflines>1</numoflines>
+<numpubbullets>0</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+</text>
+<radio id="5728" parent="5724" ontop="false" fixed="false" proportional="false">
+<name>True button</name>
+<lastupdated>1611866874</lastupdated>
+<respprops>
+<phoneportrait>
+<radio>
+<possize>
+<point>
+<x>42</x>
+<y>105</y>
+</point>
+</possize>
+</radio>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>762</x>
+<y>419</y>
+</point>
+<size>
+<cx>19</cx>
+<cy>19</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<label></label>
+</radio>
+<text id="5729" parent="5724" ontop="false" fixed="false" proportional="false" labelobject="5730" defaulttext="none">
+<name>Choice 2 text</name>
+<lastupdated>1611866874</lastupdated>
+<respprops>
+<phoneportrait>
+<text>
+<possize>
+<size>
+<cx>369</cx>
+<cy>37</cy>
+</size>
+<point>
+<x>69</x>
+<y>150</y>
+</point>
+</possize>
+</text>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>789</x>
+<y>464</y>
+</point>
+<size>
+<cx>124</cx>
+<cy>37</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text5729Font1 { font-size:21px; font-family:&quot;Arial&quot;, sans-serif; color:#000000;}&#x0A;&lt;p  style=&quot;margin-left:0px;text-indent:0px;margin-top:0px;margin-bottom:0px;text-align:left;&quot; &gt;&#x0A;&lt;span class=&quot;text5729Font1&quot;  &gt;False&#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;</html>
+<rtf>{\rtf1\ansi\deflang1033\ftnbj\uc1\deff1&#x0A;{\fonttbl{\f0 \froman \fcharset0 Times New Roman;}{\f1 \fswiss Arial;}}&#x0A;{\colortbl\red0\green0\blue0 ;\red255\green255\blue255 ;\red0\green0\blue0 ;}&#x0A;{\stylesheet{\f1\fs24\cf0\cb1\ulc0 Normal;}{\cs1\cf0\cb1\ulc0 Default Paragraph Font;}}&#x0A;{\*\revtbl{Unknown;}}&#x0A;\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\headery720\footery720\deftab360\formshade\aendnotes\aftnnrlc\pgbrdrhead\pgbrdrfoot&#x0A;\sectd\pgwsxn12240\pghsxn15840\marglsxn1800\margrsxn1800\margtsxn1440\margbsxn1440\headery720\footery720\sbkpage\pgncont\pgndec&#x0A;\plain\hich\f1\loch\f1\cf0\fs32\ql False\par}&#x0A;</rtf>
+<raw>﻿False</raw>
+<numoflines>1</numoflines>
+<numpubbullets>0</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+</text>
+<radio id="5730" parent="5724" ontop="false" fixed="false" proportional="false">
+<name>False button</name>
+<lastupdated>1611866874</lastupdated>
+<respprops>
+<phoneportrait>
+<radio>
+<possize>
+<point>
+<x>42</x>
+<y>150</y>
+</point>
+</possize>
+</radio>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>762</x>
+<y>464</y>
+</point>
+<size>
+<cx>19</cx>
+<cy>19</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<label></label>
+</radio>
+</objquestion>
+</page>
+<page id="5884" parent="2959">
+<name>Page 5</name>
+<lastupdated>1611929273</lastupdated>
+<pageduration>60000</pageduration>
+<transitionin>
+<transtype>-1</transtype>
+<delay>0</delay>
+<speed>10</speed>
+<effect>0</effect>
+</transitionin>
+<objquestion id="5885" parent="5884" questiontype="truefalse" idtext="5887" idvar="5886">
+<name>Question 5</name>
+<lastupdated>1611867162</lastupdated>
+<questiontext>The pink weather strips on the enclosure opening are available in black on request (optional).</questiontext>
+<objchoice idtext="5888" idbutton="5889" correctanswer="true">
+<choicetext>True</choicetext>
+<feedbackmethod>0</feedbackmethod>
+</objchoice>
+<objchoice idtext="5890" idbutton="5891">
+<choicetext>False</choicetext>
+<feedbackmethod>0</feedbackmethod>
+</objchoice>
+<text id="5887" parent="5885" ontop="false" fixed="false" proportional="false" defaulttext="none">
+<name>Question Text</name>
+<lastupdated>1611867078</lastupdated>
+<respprops>
+<phoneportrait>
+<text>
+<possize>
+<size>
+<cx>396</cx>
+<cy>74</cy>
+</size>
+<point>
+<x>42</x>
+<y>60</y>
+</point>
+</possize>
+</text>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>352</x>
+<y>233</y>
+</point>
+<size>
+<cx>896</cx>
+<cy>37</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text5887Font1 { font-size:21px; font-family:&quot;Arial&quot;, sans-serif; color:#000000;}&#x0A;&lt;p  style=&quot;margin-left:0px;text-indent:0px;margin-top:0px;margin-bottom:0px;text-align:left;&quot; &gt;&#x0A;&lt;span class=&quot;text5887Font1&quot;  &gt;The pink weather strips on the enclosure opening are available in black on request (optional).&#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;</html>
+<rtf>{\rtf1\ansi\deflang1033\ftnbj\uc1\deff1&#x0A;{\fonttbl{\f0 \froman \fcharset0 Times New Roman;}{\f1 \fswiss Arial;}}&#x0A;{\colortbl\red0\green0\blue0 ;\red255\green255\blue255 ;\red0\green0\blue0 ;}&#x0A;{\stylesheet{\f1\fs24\cf0\cb1\ulc0 Normal;}{\cs1\cf0\cb1\ulc0 Default Paragraph Font;}}&#x0A;{\*\revtbl{Unknown;}}&#x0A;\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\headery720\footery720\deftab360\formshade\aendnotes\aftnnrlc\pgbrdrhead\pgbrdrfoot&#x0A;\sectd\pgwsxn12240\pghsxn15840\marglsxn1800\margrsxn1800\margtsxn1440\margbsxn1440\headery720\footery720\sbkpage\pgncont\pgndec&#x0A;\plain\hich\f1\loch\f1\cf0\fs32\ql The pink weather strips on the enclosure opening are available in black on request (optional).\par}&#x0A;</rtf>
+<raw>﻿The pink weather strips on the enclosure opening are available in black on request (optional).</raw>
+<numoflines>1</numoflines>
+<numpubbullets>0</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+</text>
+<text id="5888" parent="5885" ontop="false" fixed="false" proportional="false" labelobject="5889" defaulttext="none">
+<name>Choice 1 text</name>
+<lastupdated>1611867162</lastupdated>
+<respprops>
+<phoneportrait>
+<text>
+<possize>
+<size>
+<cx>369</cx>
+<cy>37</cy>
+</size>
+<point>
+<x>69</x>
+<y>142</y>
+</point>
+</possize>
+</text>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>799</x>
+<y>419</y>
+</point>
+<size>
+<cx>142</cx>
+<cy>37</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text5888Font1 { font-size:21px; font-family:&quot;Arial&quot;, sans-serif; color:#000000;}&#x0A;&lt;p  style=&quot;margin-left:0px;text-indent:0px;margin-top:0px;margin-bottom:0px;text-align:left;&quot; &gt;&#x0A;&lt;span class=&quot;text5888Font1&quot;  &gt;True&#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;</html>
+<rtf>{\rtf1\ansi\deflang1033\ftnbj\uc1\deff1&#x0A;{\fonttbl{\f0 \froman \fcharset0 Times New Roman;}{\f1 \fswiss Arial;}}&#x0A;{\colortbl\red0\green0\blue0 ;\red255\green255\blue255 ;\red0\green0\blue0 ;}&#x0A;{\stylesheet{\f1\fs24\cf0\cb1\ulc0 Normal;}{\cs1\cf0\cb1\ulc0 Default Paragraph Font;}}&#x0A;{\*\revtbl{Unknown;}}&#x0A;\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\headery720\footery720\deftab360\formshade\aendnotes\aftnnrlc\pgbrdrhead\pgbrdrfoot&#x0A;\sectd\pgwsxn12240\pghsxn15840\marglsxn1800\margrsxn1800\margtsxn1440\margbsxn1440\headery720\footery720\sbkpage\pgncont\pgndec&#x0A;\plain\hich\f1\loch\f1\cf0\fs32\ql True\par}&#x0A;</rtf>
+<raw>﻿True</raw>
+<numoflines>1</numoflines>
+<numpubbullets>0</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+</text>
+<radio id="5889" parent="5885" ontop="false" fixed="false" proportional="false">
+<name>True button</name>
+<lastupdated>1611867162</lastupdated>
+<respprops>
+<phoneportrait>
+<radio>
+<possize>
+<point>
+<x>42</x>
+<y>142</y>
+</point>
+</possize>
+</radio>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>772</x>
+<y>419</y>
+</point>
+<size>
+<cx>19</cx>
+<cy>19</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<label></label>
+</radio>
+<text id="5890" parent="5885" ontop="false" fixed="false" proportional="false" labelobject="5891" defaulttext="none">
+<name>Choice 2 text</name>
+<lastupdated>1611867162</lastupdated>
+<respprops>
+<phoneportrait>
+<text>
+<possize>
+<size>
+<cx>369</cx>
+<cy>37</cy>
+</size>
+<point>
+<x>69</x>
+<y>187</y>
+</point>
+</possize>
+</text>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>799</x>
+<y>464</y>
+</point>
+<size>
+<cx>112</cx>
+<cy>37</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text5890Font1 { font-size:21px; font-family:&quot;Arial&quot;, sans-serif; color:#000000;}&#x0A;&lt;p  style=&quot;margin-left:0px;text-indent:0px;margin-top:0px;margin-bottom:0px;text-align:left;&quot; &gt;&#x0A;&lt;span class=&quot;text5890Font1&quot;  &gt;False&#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;</html>
+<rtf>{\rtf1\ansi\deflang1033\ftnbj\uc1\deff1&#x0A;{\fonttbl{\f0 \froman \fcharset0 Times New Roman;}{\f1 \fswiss Arial;}}&#x0A;{\colortbl\red0\green0\blue0 ;\red255\green255\blue255 ;\red0\green0\blue0 ;}&#x0A;{\stylesheet{\f1\fs24\cf0\cb1\ulc0 Normal;}{\cs1\cf0\cb1\ulc0 Default Paragraph Font;}}&#x0A;{\*\revtbl{Unknown;}}&#x0A;\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\headery720\footery720\deftab360\formshade\aendnotes\aftnnrlc\pgbrdrhead\pgbrdrfoot&#x0A;\sectd\pgwsxn12240\pghsxn15840\marglsxn1800\margrsxn1800\margtsxn1440\margbsxn1440\headery720\footery720\sbkpage\pgncont\pgndec&#x0A;\plain\hich\f1\loch\f1\cf0\fs32\ql False\par}&#x0A;</rtf>
+<raw>﻿False</raw>
+<numoflines>1</numoflines>
+<numpubbullets>0</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+</text>
+<radio id="5891" parent="5885" ontop="false" fixed="false" proportional="false">
+<name>False button</name>
+<lastupdated>1611867162</lastupdated>
+<respprops>
+<phoneportrait>
+<radio>
+<possize>
+<point>
+<x>42</x>
+<y>187</y>
+</point>
+</possize>
+</radio>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>772</x>
+<y>464</y>
+</point>
+<size>
+<cx>19</cx>
+<cy>19</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<label></label>
+</radio>
+</objquestion>
+</page>
+<page id="6014" parent="2959">
+<name>Page 6</name>
+<lastupdated>1611929273</lastupdated>
+<pageduration>60000</pageduration>
+<transitionin>
+<transtype>-1</transtype>
+<delay>0</delay>
+<speed>10</speed>
+<effect>0</effect>
+</transitionin>
+<objquestion id="6015" parent="6014" questiontype="truefalse" idtext="6017" idvar="6016">
+<name>Question 6</name>
+<lastupdated>1611869868</lastupdated>
+<questiontext>The AX FRP enclosure has high UV resistance and impact resistance ratings.</questiontext>
+<objchoice idtext="6018" idbutton="6019" correctanswer="true">
+<choicetext>True</choicetext>
+<feedbackmethod>0</feedbackmethod>
+</objchoice>
+<objchoice idtext="6020" idbutton="6021">
+<choicetext>False</choicetext>
+<feedbackmethod>0</feedbackmethod>
+</objchoice>
+<text id="6017" parent="6015" ontop="false" fixed="false" proportional="false" defaulttext="none">
+<name>Question Text</name>
+<lastupdated>1611869809</lastupdated>
+<respprops>
+<phoneportrait>
+<text>
+<possize>
+<size>
+<cx>396</cx>
+<cy>74</cy>
+</size>
+<point>
+<x>42</x>
+<y>60</y>
+</point>
+</possize>
+</text>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>432</x>
+<y>226</y>
+</point>
+<size>
+<cx>741</cx>
+<cy>37</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text6017Font1 { font-size:21px; font-family:&quot;Arial&quot;, sans-serif; color:#000000;}&#x0A;&lt;p  style=&quot;margin-left:0px;text-indent:0px;margin-top:0px;margin-bottom:0px;text-align:left;&quot; &gt;&#x0A;&lt;span class=&quot;text6017Font1&quot;  &gt;The AX FRP enclosure has high UV resistance and impact resistance ratings.&#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;</html>
+<rtf>{\rtf1\ansi\deflang1033\ftnbj\uc1\deff1&#x0A;{\fonttbl{\f0 \froman \fcharset0 Times New Roman;}{\f1 \fswiss Arial;}}&#x0A;{\colortbl\red0\green0\blue0 ;\red255\green255\blue255 ;\red0\green0\blue0 ;}&#x0A;{\stylesheet{\f1\fs24\cf0\cb1\ulc0 Normal;}{\cs1\cf0\cb1\ulc0 Default Paragraph Font;}}&#x0A;{\*\revtbl{Unknown;}}&#x0A;\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\headery720\footery720\deftab360\formshade\aendnotes\aftnnrlc\pgbrdrhead\pgbrdrfoot&#x0A;\sectd\pgwsxn12240\pghsxn15840\marglsxn1800\margrsxn1800\margtsxn1440\margbsxn1440\headery720\footery720\sbkpage\pgncont\pgndec&#x0A;\plain\hich\f1\loch\f1\cf0\fs32\ql The AX FRP enclosure has high UV resistance and impact resistance ratings.\par}&#x0A;</rtf>
+<raw>﻿The AX FRP enclosure has high UV resistance and impact resistance ratings.</raw>
+<numoflines>1</numoflines>
+<numpubbullets>0</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+</text>
+<text id="6018" parent="6015" ontop="false" fixed="false" proportional="false" labelobject="6019" defaulttext="none">
+<name>Choice 1 text</name>
+<lastupdated>1611869868</lastupdated>
+<respprops>
+<phoneportrait>
+<text>
+<possize>
+<size>
+<cx>369</cx>
+<cy>37</cy>
+</size>
+<point>
+<x>69</x>
+<y>142</y>
+</point>
+</possize>
+</text>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>796</x>
+<y>426</y>
+</point>
+<size>
+<cx>149</cx>
+<cy>37</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text6018Font1 { font-size:21px; font-family:&quot;Arial&quot;, sans-serif; color:#000000;}&#x0A;&lt;p  style=&quot;margin-left:0px;text-indent:0px;margin-top:0px;margin-bottom:0px;text-align:left;&quot; &gt;&#x0A;&lt;span class=&quot;text6018Font1&quot;  &gt;True&#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;</html>
+<rtf>{\rtf1\ansi\deflang1033\ftnbj\uc1\deff1&#x0A;{\fonttbl{\f0 \froman \fcharset0 Times New Roman;}{\f1 \fswiss Arial;}}&#x0A;{\colortbl\red0\green0\blue0 ;\red255\green255\blue255 ;\red0\green0\blue0 ;}&#x0A;{\stylesheet{\f1\fs24\cf0\cb1\ulc0 Normal;}{\cs1\cf0\cb1\ulc0 Default Paragraph Font;}}&#x0A;{\*\revtbl{Unknown;}}&#x0A;\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\headery720\footery720\deftab360\formshade\aendnotes\aftnnrlc\pgbrdrhead\pgbrdrfoot&#x0A;\sectd\pgwsxn12240\pghsxn15840\marglsxn1800\margrsxn1800\margtsxn1440\margbsxn1440\headery720\footery720\sbkpage\pgncont\pgndec&#x0A;\plain\hich\f1\loch\f1\cf0\fs32\ql True\par}&#x0A;</rtf>
+<raw>﻿True</raw>
+<numoflines>1</numoflines>
+<numpubbullets>0</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+</text>
+<radio id="6019" parent="6015" ontop="false" fixed="false" proportional="false">
+<name>True button</name>
+<lastupdated>1611869868</lastupdated>
+<respprops>
+<phoneportrait>
+<radio>
+<possize>
+<point>
+<x>42</x>
+<y>142</y>
+</point>
+</possize>
+</radio>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>769</x>
+<y>426</y>
+</point>
+<size>
+<cx>19</cx>
+<cy>19</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<label></label>
+</radio>
+<text id="6020" parent="6015" ontop="false" fixed="false" proportional="false" labelobject="6021" defaulttext="none">
+<name>Choice 2 text</name>
+<lastupdated>1611869868</lastupdated>
+<respprops>
+<phoneportrait>
+<text>
+<possize>
+<size>
+<cx>369</cx>
+<cy>37</cy>
+</size>
+<point>
+<x>69</x>
+<y>187</y>
+</point>
+</possize>
+</text>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>796</x>
+<y>471</y>
+</point>
+<size>
+<cx>85</cx>
+<cy>37</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text6020Font1 { font-size:21px; font-family:&quot;Arial&quot;, sans-serif; color:#000000;}&#x0A;&lt;p  style=&quot;margin-left:0px;text-indent:0px;margin-top:0px;margin-bottom:0px;text-align:left;&quot; &gt;&#x0A;&lt;span class=&quot;text6020Font1&quot;  &gt;False&#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;</html>
+<rtf>{\rtf1\ansi\deflang1033\ftnbj\uc1\deff1&#x0A;{\fonttbl{\f0 \froman \fcharset0 Times New Roman;}{\f1 \fswiss Arial;}}&#x0A;{\colortbl\red0\green0\blue0 ;\red255\green255\blue255 ;\red0\green0\blue0 ;}&#x0A;{\stylesheet{\f1\fs24\cf0\cb1\ulc0 Normal;}{\cs1\cf0\cb1\ulc0 Default Paragraph Font;}}&#x0A;{\*\revtbl{Unknown;}}&#x0A;\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\headery720\footery720\deftab360\formshade\aendnotes\aftnnrlc\pgbrdrhead\pgbrdrfoot&#x0A;\sectd\pgwsxn12240\pghsxn15840\marglsxn1800\margrsxn1800\margtsxn1440\margbsxn1440\headery720\footery720\sbkpage\pgncont\pgndec&#x0A;\plain\hich\f1\loch\f1\cf0\fs32\ql False\par}&#x0A;</rtf>
+<raw>﻿False</raw>
+<numoflines>1</numoflines>
+<numpubbullets>0</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+</text>
+<radio id="6021" parent="6015" ontop="false" fixed="false" proportional="false">
+<name>False button</name>
+<lastupdated>1611869868</lastupdated>
+<respprops>
+<phoneportrait>
+<radio>
+<possize>
+<point>
+<x>42</x>
+<y>187</y>
+</point>
+</possize>
+</radio>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>769</x>
+<y>471</y>
+</point>
+<size>
+<cx>19</cx>
+<cy>19</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<label></label>
+</radio>
+</objquestion>
+</page>
+<page id="6113" parent="2959">
+<name>Page 7</name>
+<lastupdated>1611929273</lastupdated>
+<pageduration>60000</pageduration>
+<transitionin>
+<transtype>-1</transtype>
+<delay>0</delay>
+<speed>10</speed>
+<effect>0</effect>
+</transitionin>
+<objquestion id="6114" parent="6113" questiontype="truefalse" idtext="6116" idvar="6115">
+<name>Question 7</name>
+<lastupdated>1611870397</lastupdated>
+<questiontext>With the AX Fiberglass enclosure, the mounting panel is not included and must be ordered as an accessory. </questiontext>
+<objchoice idtext="6117" idbutton="6118">
+<choicetext>True</choicetext>
+<feedbackmethod>0</feedbackmethod>
+</objchoice>
+<objchoice idtext="6119" idbutton="6120" correctanswer="true">
+<choicetext>False</choicetext>
+<feedbackmethod>0</feedbackmethod>
+</objchoice>
+<text id="6116" parent="6114" ontop="false" fixed="false" proportional="false" defaulttext="none">
+<name>Question Text</name>
+<lastupdated>1611870369</lastupdated>
+<respprops>
+<phoneportrait>
+<text>
+<possize>
+<size>
+<cx>396</cx>
+<cy>74</cy>
+</size>
+<point>
+<x>42</x>
+<y>60</y>
+</point>
+</possize>
+</text>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>287</x>
+<y>234</y>
+</point>
+<size>
+<cx>1028</cx>
+<cy>37</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text6116Font1 { font-size:21px; font-family:&quot;Arial&quot;, sans-serif; color:#000000;}&#x0A;&lt;p  style=&quot;margin-left:0px;text-indent:0px;margin-top:0px;margin-bottom:0px;text-align:left;&quot; &gt;&#x0A;&lt;span class=&quot;text6116Font1&quot;  &gt;With the AX Fiberglass enclosure, the mounting panel is not included and must be ordered as an accessory. &#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;</html>
+<rtf>{\rtf1\ansi\deflang1033\ftnbj\uc1\deff1&#x0A;{\fonttbl{\f0 \froman \fcharset0 Times New Roman;}{\f1 \fswiss Arial;}}&#x0A;{\colortbl\red0\green0\blue0 ;\red255\green255\blue255 ;\red0\green0\blue0 ;}&#x0A;{\stylesheet{\f1\fs24\cf0\cb1\ulc0 Normal;}{\cs1\cf0\cb1\ulc0 Default Paragraph Font;}}&#x0A;{\*\revtbl{Unknown;}}&#x0A;\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\headery720\footery720\deftab360\formshade\aendnotes\aftnnrlc\pgbrdrhead\pgbrdrfoot&#x0A;\sectd\pgwsxn12240\pghsxn15840\marglsxn1800\margrsxn1800\margtsxn1440\margbsxn1440\headery720\footery720\sbkpage\pgncont\pgndec&#x0A;\plain\hich\f1\loch\f1\cf0\fs32\ql With the AX Fiberglass enclosure, the mounting panel is not included and must be ordered as an accessory. \par}&#x0A;</rtf>
+<raw>﻿With the AX Fiberglass enclosure, the mounting panel is not included and must be ordered as an accessory. </raw>
+<numoflines>1</numoflines>
+<numpubbullets>0</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+</text>
+<text id="6117" parent="6114" ontop="false" fixed="false" proportional="false" labelobject="6118" defaulttext="none">
+<name>Choice 1 text</name>
+<lastupdated>1611870397</lastupdated>
+<respprops>
+<phoneportrait>
+<text>
+<possize>
+<size>
+<cx>369</cx>
+<cy>37</cy>
+</size>
+<point>
+<x>69</x>
+<y>142</y>
+</point>
+</possize>
+</text>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>803</x>
+<y>418</y>
+</point>
+<size>
+<cx>106</cx>
+<cy>37</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text6117Font1 { font-size:21px; font-family:&quot;Arial&quot;, sans-serif; color:#000000;}&#x0A;&lt;p  style=&quot;margin-left:0px;text-indent:0px;margin-top:0px;margin-bottom:0px;text-align:left;&quot; &gt;&#x0A;&lt;span class=&quot;text6117Font1&quot;  &gt;True&#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;</html>
+<rtf>{\rtf1\ansi\deflang1033\ftnbj\uc1\deff1&#x0A;{\fonttbl{\f0 \froman \fcharset0 Times New Roman;}{\f1 \fswiss Arial;}}&#x0A;{\colortbl\red0\green0\blue0 ;\red255\green255\blue255 ;\red0\green0\blue0 ;}&#x0A;{\stylesheet{\f1\fs24\cf0\cb1\ulc0 Normal;}{\cs1\cf0\cb1\ulc0 Default Paragraph Font;}}&#x0A;{\*\revtbl{Unknown;}}&#x0A;\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\headery720\footery720\deftab360\formshade\aendnotes\aftnnrlc\pgbrdrhead\pgbrdrfoot&#x0A;\sectd\pgwsxn12240\pghsxn15840\marglsxn1800\margrsxn1800\margtsxn1440\margbsxn1440\headery720\footery720\sbkpage\pgncont\pgndec&#x0A;\plain\hich\f1\loch\f1\cf0\fs32\ql True\par}&#x0A;</rtf>
+<raw>﻿True</raw>
+<numoflines>1</numoflines>
+<numpubbullets>0</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+</text>
+<radio id="6118" parent="6114" ontop="false" fixed="false" proportional="false">
+<name>True button</name>
+<lastupdated>1611870397</lastupdated>
+<respprops>
+<phoneportrait>
+<radio>
+<possize>
+<point>
+<x>42</x>
+<y>142</y>
+</point>
+</possize>
+</radio>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>776</x>
+<y>418</y>
+</point>
+<size>
+<cx>19</cx>
+<cy>19</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<label></label>
+</radio>
+<text id="6119" parent="6114" ontop="false" fixed="false" proportional="false" labelobject="6120" defaulttext="none">
+<name>Choice 2 text</name>
+<lastupdated>1611870397</lastupdated>
+<respprops>
+<phoneportrait>
+<text>
+<possize>
+<size>
+<cx>369</cx>
+<cy>37</cy>
+</size>
+<point>
+<x>69</x>
+<y>187</y>
+</point>
+</possize>
+</text>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>803</x>
+<y>463</y>
+</point>
+<size>
+<cx>88</cx>
+<cy>37</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text6119Font1 { font-size:21px; font-family:&quot;Arial&quot;, sans-serif; color:#000000;}&#x0A;&lt;p  style=&quot;margin-left:0px;text-indent:0px;margin-top:0px;margin-bottom:0px;text-align:left;&quot; &gt;&#x0A;&lt;span class=&quot;text6119Font1&quot;  &gt;False&#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;</html>
+<rtf>{\rtf1\ansi\deflang1033\ftnbj\uc1\deff1&#x0A;{\fonttbl{\f0 \froman \fcharset0 Times New Roman;}{\f1 \fswiss Arial;}}&#x0A;{\colortbl\red0\green0\blue0 ;\red255\green255\blue255 ;\red0\green0\blue0 ;}&#x0A;{\stylesheet{\f1\fs24\cf0\cb1\ulc0 Normal;}{\cs1\cf0\cb1\ulc0 Default Paragraph Font;}}&#x0A;{\*\revtbl{Unknown;}}&#x0A;\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\headery720\footery720\deftab360\formshade\aendnotes\aftnnrlc\pgbrdrhead\pgbrdrfoot&#x0A;\sectd\pgwsxn12240\pghsxn15840\marglsxn1800\margrsxn1800\margtsxn1440\margbsxn1440\headery720\footery720\sbkpage\pgncont\pgndec&#x0A;\plain\hich\f1\loch\f1\cf0\fs32\ql False\par}&#x0A;</rtf>
+<raw>﻿False</raw>
+<numoflines>1</numoflines>
+<numpubbullets>0</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+</text>
+<radio id="6120" parent="6114" ontop="false" fixed="false" proportional="false">
+<name>False button</name>
+<lastupdated>1611870397</lastupdated>
+<respprops>
+<phoneportrait>
+<radio>
+<possize>
+<point>
+<x>42</x>
+<y>187</y>
+</point>
+</possize>
+</radio>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>776</x>
+<y>463</y>
+</point>
+<size>
+<cx>19</cx>
+<cy>19</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<label></label>
+</radio>
+</objquestion>
+</page>
+<page id="6164" parent="2959">
+<name>Page 8</name>
+<lastupdated>1611929273</lastupdated>
+<pageduration>60000</pageduration>
+<transitionin>
+<transtype>-1</transtype>
+<delay>0</delay>
+<speed>10</speed>
+<effect>0</effect>
+</transitionin>
+<objquestion id="6165" parent="6164" questiontype="multchoice" idtext="6167" idvar="6166">
+<name>Question 8</name>
+<lastupdated>1611870565</lastupdated>
+<questiontext>The door hinges are: </questiontext>
+<objchoice idtext="6168" idbutton="6169">
+<choicetext>Aluminum</choicetext>
+<feedbackmethod>0</feedbackmethod>
+</objchoice>
+<objchoice idtext="6170" idbutton="6171">
+<choicetext>Carbon steel</choicetext>
+<feedbackmethod>0</feedbackmethod>
+</objchoice>
+<objchoice idtext="6172" idbutton="6173" correctanswer="true">
+<choicetext>Stainless Steel</choicetext>
+<feedbackmethod>0</feedbackmethod>
+</objchoice>
+<text id="6167" parent="6165" ontop="false" fixed="false" proportional="false" defaulttext="none">
+<name>Question Text</name>
+<lastupdated>1611870496</lastupdated>
+<respprops>
+<phoneportrait>
+<text>
+<possize>
+<size>
+<cx>396</cx>
+<cy>37</cy>
+</size>
+<point>
+<x>42</x>
+<y>60</y>
+</point>
+</possize>
+</text>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>700</x>
+<y>238</y>
+</point>
+<size>
+<cx>251</cx>
+<cy>37</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text6167Font1 { font-size:21px; font-family:&quot;Arial&quot;, sans-serif; color:#000000;}&#x0A;&lt;p  style=&quot;margin-left:0px;text-indent:0px;margin-top:0px;margin-bottom:0px;text-align:left;&quot; &gt;&#x0A;&lt;span class=&quot;text6167Font1&quot;  &gt;The door hinges are: &#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;</html>
+<rtf>{\rtf1\ansi\deflang1033\ftnbj\uc1\deff1&#x0A;{\fonttbl{\f0 \froman \fcharset0 Times New Roman;}{\f1 \fswiss Arial;}}&#x0A;{\colortbl\red0\green0\blue0 ;\red255\green255\blue255 ;\red0\green0\blue0 ;}&#x0A;{\stylesheet{\f1\fs24\cf0\cb1\ulc0 Normal;}{\cs1\cf0\cb1\ulc0 Default Paragraph Font;}}&#x0A;{\*\revtbl{Unknown;}}&#x0A;\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\headery720\footery720\deftab360\formshade\aendnotes\aftnnrlc\pgbrdrhead\pgbrdrfoot&#x0A;\sectd\pgwsxn12240\pghsxn15840\marglsxn1800\margrsxn1800\margtsxn1440\margbsxn1440\headery720\footery720\sbkpage\pgncont\pgndec&#x0A;\plain\hich\f1\loch\f1\cf0\fs32\ql The door hinges are: \par}&#x0A;</rtf>
+<raw>﻿The door hinges are: </raw>
+<numoflines>1</numoflines>
+<numpubbullets>0</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+</text>
+<text id="6168" parent="6165" ontop="false" fixed="false" proportional="false" labelobject="6169" defaulttext="none">
+<name>Choice 1 text</name>
+<lastupdated>1611870565</lastupdated>
+<respprops>
+<phoneportrait>
+<text>
+<possize>
+<size>
+<cx>369</cx>
+<cy>37</cy>
+</size>
+<point>
+<x>69</x>
+<y>105</y>
+</point>
+</possize>
+</text>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>744</x>
+<y>403</y>
+</point>
+<size>
+<cx>173</cx>
+<cy>37</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text6168Font1 { font-size:21px; font-family:&quot;Arial&quot;, sans-serif; color:#000000;}&#x0A;&lt;p  style=&quot;margin-left:0px;text-indent:0px;margin-top:0px;margin-bottom:0px;text-align:left;&quot; &gt;&#x0A;&lt;span class=&quot;text6168Font1&quot;  &gt;Aluminum&#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;</html>
+<rtf>{\rtf1\ansi\deflang1033\ftnbj\uc1\deff1&#x0A;{\fonttbl{\f0 \froman \fcharset0 Times New Roman;}{\f1 \fswiss Arial;}}&#x0A;{\colortbl\red0\green0\blue0 ;\red255\green255\blue255 ;\red0\green0\blue0 ;}&#x0A;{\stylesheet{\f1\fs24\cf0\cb1\ulc0 Normal;}{\cs1\cf0\cb1\ulc0 Default Paragraph Font;}}&#x0A;{\*\revtbl{Unknown;}}&#x0A;\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\headery720\footery720\deftab360\formshade\aendnotes\aftnnrlc\pgbrdrhead\pgbrdrfoot&#x0A;\sectd\pgwsxn12240\pghsxn15840\marglsxn1800\margrsxn1800\margtsxn1440\margbsxn1440\headery720\footery720\sbkpage\pgncont\pgndec&#x0A;\plain\hich\f1\loch\f1\cf0\fs32\ql Aluminum\par}&#x0A;</rtf>
+<raw>﻿Aluminum</raw>
+<numoflines>1</numoflines>
+<numpubbullets>0</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+</text>
+<radio id="6169" parent="6165" ontop="false" fixed="false" proportional="false">
+<name>Choice 1 button</name>
+<lastupdated>1611870565</lastupdated>
+<respprops>
+<phoneportrait>
+<radio>
+<possize>
+<point>
+<x>42</x>
+<y>105</y>
+</point>
+</possize>
+</radio>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>717</x>
+<y>403</y>
+</point>
+<size>
+<cx>19</cx>
+<cy>19</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<label></label>
+</radio>
+<text id="6170" parent="6165" ontop="false" fixed="false" proportional="false" labelobject="6171" defaulttext="none">
+<name>Choice 2 text</name>
+<lastupdated>1611870565</lastupdated>
+<respprops>
+<phoneportrait>
+<text>
+<possize>
+<size>
+<cx>369</cx>
+<cy>37</cy>
+</size>
+<point>
+<x>69</x>
+<y>150</y>
+</point>
+</possize>
+</text>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>744</x>
+<y>448</y>
+</point>
+<size>
+<cx>177</cx>
+<cy>37</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text6170Font1 { font-size:21px; font-family:&quot;Arial&quot;, sans-serif; color:#000000;}&#x0A;&lt;p  style=&quot;margin-left:0px;text-indent:0px;margin-top:0px;margin-bottom:0px;text-align:left;&quot; &gt;&#x0A;&lt;span class=&quot;text6170Font1&quot;  &gt;Carbon steel&#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;</html>
+<rtf>{\rtf1\ansi\deflang1033\ftnbj\uc1\deff1&#x0A;{\fonttbl{\f0 \froman \fcharset0 Times New Roman;}{\f1 \fswiss Arial;}}&#x0A;{\colortbl\red0\green0\blue0 ;\red255\green255\blue255 ;\red0\green0\blue0 ;}&#x0A;{\stylesheet{\f1\fs24\cf0\cb1\ulc0 Normal;}{\cs1\cf0\cb1\ulc0 Default Paragraph Font;}}&#x0A;{\*\revtbl{Unknown;}}&#x0A;\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\headery720\footery720\deftab360\formshade\aendnotes\aftnnrlc\pgbrdrhead\pgbrdrfoot&#x0A;\sectd\pgwsxn12240\pghsxn15840\marglsxn1800\margrsxn1800\margtsxn1440\margbsxn1440\headery720\footery720\sbkpage\pgncont\pgndec&#x0A;\plain\hich\f1\loch\f1\cf0\fs32\ql Carbon steel\par}&#x0A;</rtf>
+<raw>﻿Carbon steel</raw>
+<numoflines>1</numoflines>
+<numpubbullets>0</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+</text>
+<radio id="6171" parent="6165" ontop="false" fixed="false" proportional="false">
+<name>Choice 2 button</name>
+<lastupdated>1611870565</lastupdated>
+<respprops>
+<phoneportrait>
+<radio>
+<possize>
+<point>
+<x>42</x>
+<y>150</y>
+</point>
+</possize>
+</radio>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>717</x>
+<y>448</y>
+</point>
+<size>
+<cx>19</cx>
+<cy>19</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<label></label>
+</radio>
+<text id="6172" parent="6165" ontop="false" fixed="false" proportional="false" labelobject="6173" defaulttext="none">
+<name>Choice 3 text</name>
+<lastupdated>1611870565</lastupdated>
+<respprops>
+<phoneportrait>
+<text>
+<possize>
+<size>
+<cx>369</cx>
+<cy>37</cy>
+</size>
+<point>
+<x>69</x>
+<y>195</y>
+</point>
+</possize>
+</text>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>744</x>
+<y>493</y>
+</point>
+<size>
+<cx>174</cx>
+<cy>37</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text6172Font1 { font-size:21px; font-family:&quot;Arial&quot;, sans-serif; color:#000000;}&#x0A;&lt;p  style=&quot;margin-left:0px;text-indent:0px;margin-top:0px;margin-bottom:0px;text-align:left;&quot; &gt;&#x0A;&lt;span class=&quot;text6172Font1&quot;  &gt;Stainless Steel&#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;</html>
+<rtf>{\rtf1\ansi\deflang1033\ftnbj\uc1\deff1&#x0A;{\fonttbl{\f0 \froman \fcharset0 Times New Roman;}{\f1 \fswiss Arial;}}&#x0A;{\colortbl\red0\green0\blue0 ;\red255\green255\blue255 ;\red0\green0\blue0 ;}&#x0A;{\stylesheet{\f1\fs24\cf0\cb1\ulc0 Normal;}{\cs1\cf0\cb1\ulc0 Default Paragraph Font;}}&#x0A;{\*\revtbl{Unknown;}}&#x0A;\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\headery720\footery720\deftab360\formshade\aendnotes\aftnnrlc\pgbrdrhead\pgbrdrfoot&#x0A;\sectd\pgwsxn12240\pghsxn15840\marglsxn1800\margrsxn1800\margtsxn1440\margbsxn1440\headery720\footery720\sbkpage\pgncont\pgndec&#x0A;\plain\hich\f1\loch\f1\cf0\fs32\ql Stainless Steel\par}&#x0A;</rtf>
+<raw>﻿Stainless Steel</raw>
+<numoflines>1</numoflines>
+<numpubbullets>0</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+</text>
+<radio id="6173" parent="6165" ontop="false" fixed="false" proportional="false">
+<name>Choice 3 button</name>
+<lastupdated>1611870565</lastupdated>
+<respprops>
+<phoneportrait>
+<radio>
+<possize>
+<point>
+<x>42</x>
+<y>195</y>
+</point>
+</possize>
+</radio>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>717</x>
+<y>493</y>
+</point>
+<size>
+<cx>19</cx>
+<cy>19</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<label></label>
+</radio>
+</objquestion>
+</page>
+<page id="6298" parent="2959">
+<name>Page 9</name>
+<lastupdated>1611929273</lastupdated>
+<pageduration>60000</pageduration>
+<transitionin>
+<transtype>-1</transtype>
+<delay>0</delay>
+<speed>10</speed>
+<effect>0</effect>
+</transitionin>
+<objquestion id="6299" parent="6298" questiontype="truefalse" idtext="6301" idvar="6300">
+<name>Question 9</name>
+<lastupdated>1611870883</lastupdated>
+<questiontext>The standard double bit locks can be changed with various inserts and the new mini-Comfort Handle. </questiontext>
+<objchoice idtext="6302" idbutton="6303" correctanswer="true">
+<choicetext>True</choicetext>
+<feedbackmethod>0</feedbackmethod>
+</objchoice>
+<objchoice idtext="6304" idbutton="6305">
+<choicetext>False</choicetext>
+<feedbackmethod>0</feedbackmethod>
+</objchoice>
+<text id="6301" parent="6299" ontop="false" fixed="false" proportional="false" defaulttext="none">
+<name>Question Text</name>
+<lastupdated>1611870855</lastupdated>
+<respprops>
+<phoneportrait>
+<text>
+<possize>
+<size>
+<cx>396</cx>
+<cy>74</cy>
+</size>
+<point>
+<x>42</x>
+<y>60</y>
+</point>
+</possize>
+</text>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>326</x>
+<y>235</y>
+</point>
+<size>
+<cx>941</cx>
+<cy>37</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text6301Font1 { font-size:21px; font-family:&quot;Arial&quot;, sans-serif; color:#000000;}&#x0A;&lt;p  style=&quot;margin-left:0px;text-indent:0px;margin-top:0px;margin-bottom:0px;text-align:left;&quot; &gt;&#x0A;&lt;span class=&quot;text6301Font1&quot;  &gt;The standard double bit locks can be changed with various inserts and the new mini-Comfort Handle. &#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;</html>
+<rtf>{\rtf1\ansi\deflang1033\ftnbj\uc1\deff1&#x0A;{\fonttbl{\f0 \froman \fcharset0 Times New Roman;}{\f1 \fswiss Arial;}}&#x0A;{\colortbl\red0\green0\blue0 ;\red255\green255\blue255 ;\red0\green0\blue0 ;}&#x0A;{\stylesheet{\f1\fs24\cf0\cb1\ulc0 Normal;}{\cs1\cf0\cb1\ulc0 Default Paragraph Font;}}&#x0A;{\*\revtbl{Unknown;}}&#x0A;\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\headery720\footery720\deftab360\formshade\aendnotes\aftnnrlc\pgbrdrhead\pgbrdrfoot&#x0A;\sectd\pgwsxn12240\pghsxn15840\marglsxn1800\margrsxn1800\margtsxn1440\margbsxn1440\headery720\footery720\sbkpage\pgncont\pgndec&#x0A;\plain\hich\f1\loch\f1\cf0\fs32\ql The standard double bit locks can be changed with various inserts and the new mini-Comfort Handle. \par}&#x0A;</rtf>
+<raw>﻿The standard double bit locks can be changed with various inserts and the new mini-Comfort Handle. </raw>
+<numoflines>1</numoflines>
+<numpubbullets>0</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+</text>
+<text id="6302" parent="6299" ontop="false" fixed="false" proportional="false" labelobject="6303" defaulttext="none">
+<name>Choice 1 text</name>
+<lastupdated>1611870883</lastupdated>
+<respprops>
+<phoneportrait>
+<text>
+<possize>
+<size>
+<cx>369</cx>
+<cy>37</cy>
+</size>
+<point>
+<x>69</x>
+<y>142</y>
+</point>
+</possize>
+</text>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>792</x>
+<y>425</y>
+</point>
+<size>
+<cx>90</cx>
+<cy>37</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text6302Font1 { font-size:21px; font-family:&quot;Arial&quot;, sans-serif; color:#000000;}&#x0A;&lt;p  style=&quot;margin-left:0px;text-indent:0px;margin-top:0px;margin-bottom:0px;text-align:left;&quot; &gt;&#x0A;&lt;span class=&quot;text6302Font1&quot;  &gt;True&#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;</html>
+<rtf>{\rtf1\ansi\deflang1033\ftnbj\uc1\deff1&#x0A;{\fonttbl{\f0 \froman \fcharset0 Times New Roman;}{\f1 \fswiss Arial;}}&#x0A;{\colortbl\red0\green0\blue0 ;\red255\green255\blue255 ;\red0\green0\blue0 ;}&#x0A;{\stylesheet{\f1\fs24\cf0\cb1\ulc0 Normal;}{\cs1\cf0\cb1\ulc0 Default Paragraph Font;}}&#x0A;{\*\revtbl{Unknown;}}&#x0A;\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\headery720\footery720\deftab360\formshade\aendnotes\aftnnrlc\pgbrdrhead\pgbrdrfoot&#x0A;\sectd\pgwsxn12240\pghsxn15840\marglsxn1800\margrsxn1800\margtsxn1440\margbsxn1440\headery720\footery720\sbkpage\pgncont\pgndec&#x0A;\plain\hich\f1\loch\f1\cf0\fs32\ql True\par}&#x0A;</rtf>
+<raw>﻿True</raw>
+<numoflines>1</numoflines>
+<numpubbullets>0</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+</text>
+<radio id="6303" parent="6299" ontop="false" fixed="false" proportional="false">
+<name>True button</name>
+<lastupdated>1611870883</lastupdated>
+<respprops>
+<phoneportrait>
+<radio>
+<possize>
+<point>
+<x>42</x>
+<y>142</y>
+</point>
+</possize>
+</radio>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>765</x>
+<y>425</y>
+</point>
+<size>
+<cx>19</cx>
+<cy>19</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<label></label>
+</radio>
+<text id="6304" parent="6299" ontop="false" fixed="false" proportional="false" labelobject="6305" defaulttext="none">
+<name>Choice 2 text</name>
+<lastupdated>1611870883</lastupdated>
+<respprops>
+<phoneportrait>
+<text>
+<possize>
+<size>
+<cx>369</cx>
+<cy>37</cy>
+</size>
+<point>
+<x>69</x>
+<y>187</y>
+</point>
+</possize>
+</text>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>792</x>
+<y>470</y>
+</point>
+<size>
+<cx>70</cx>
+<cy>37</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text6304Font1 { font-size:21px; font-family:&quot;Arial&quot;, sans-serif; color:#000000;}&#x0A;&lt;p  style=&quot;margin-left:0px;text-indent:0px;margin-top:0px;margin-bottom:0px;text-align:left;&quot; &gt;&#x0A;&lt;span class=&quot;text6304Font1&quot;  &gt;False&#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;</html>
+<rtf>{\rtf1\ansi\deflang1033\ftnbj\uc1\deff1&#x0A;{\fonttbl{\f0 \froman \fcharset0 Times New Roman;}{\f1 \fswiss Arial;}}&#x0A;{\colortbl\red0\green0\blue0 ;\red255\green255\blue255 ;\red0\green0\blue0 ;}&#x0A;{\stylesheet{\f1\fs24\cf0\cb1\ulc0 Normal;}{\cs1\cf0\cb1\ulc0 Default Paragraph Font;}}&#x0A;{\*\revtbl{Unknown;}}&#x0A;\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\headery720\footery720\deftab360\formshade\aendnotes\aftnnrlc\pgbrdrhead\pgbrdrfoot&#x0A;\sectd\pgwsxn12240\pghsxn15840\marglsxn1800\margrsxn1800\margtsxn1440\margbsxn1440\headery720\footery720\sbkpage\pgncont\pgndec&#x0A;\plain\hich\f1\loch\f1\cf0\fs32\ql False\par}&#x0A;</rtf>
+<raw>﻿False</raw>
+<numoflines>1</numoflines>
+<numpubbullets>0</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+</text>
+<radio id="6305" parent="6299" ontop="false" fixed="false" proportional="false">
+<name>False button</name>
+<lastupdated>1611870883</lastupdated>
+<respprops>
+<phoneportrait>
+<radio>
+<possize>
+<point>
+<x>42</x>
+<y>187</y>
+</point>
+</possize>
+</radio>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>765</x>
+<y>470</y>
+</point>
+<size>
+<cx>19</cx>
+<cy>19</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<label></label>
+</radio>
+</objquestion>
+</page>
+<page id="2998" parent="2959" inherit="some">
+<name>Last test page</name>
+<lastupdated>1611929273</lastupdated>
+<pageduration>60000</pageduration>
+<excluded id="2986" />
+<transitionin>
+<transtype>-1</transtype>
+<delay>0</delay>
+<speed>10</speed>
+<effect>0</effect>
+</transitionin>
+<objquestion id="6345" parent="2998" questiontype="multchoice" idtext="6347" idvar="6346">
+<name>Question 10</name>
+<lastupdated>1611871844</lastupdated>
+<questiontext>The protection ratings for the AX Fiberglass enclosures are:</questiontext>
+<objchoice idtext="6348" idbutton="6349" correctanswer="true">
+<choicetext>Solid door NEMA 4X, viewing door NEMA 12</choicetext>
+<feedbackmethod>0</feedbackmethod>
+</objchoice>
+<objchoice idtext="6350" idbutton="6351">
+<choicetext>Solid door NEMA 4X, viewing door NEMA 4X</choicetext>
+<feedbackmethod>0</feedbackmethod>
+</objchoice>
+<objchoice idtext="6352" idbutton="6353">
+<choicetext>Solid door NEMA 12, viewing door NEMA 12</choicetext>
+<feedbackmethod>0</feedbackmethod>
+</objchoice>
+<text id="6347" parent="6345" ontop="false" fixed="false" proportional="false" defaulttext="none">
+<name>Question Text</name>
+<lastupdated>1611871801</lastupdated>
+<respprops>
+<phoneportrait>
+<text>
+<possize>
+<size>
+<cx>396</cx>
+<cy>74</cy>
+</size>
+<point>
+<x>42</x>
+<y>60</y>
+</point>
+</possize>
+</text>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>508</x>
+<y>238</y>
+</point>
+<size>
+<cx>589</cx>
+<cy>37</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text6347Font1 { font-size:21px; font-family:&quot;Arial&quot;, sans-serif; color:#000000;}&#x0A;&lt;p  style=&quot;margin-left:0px;text-indent:0px;margin-top:0px;margin-bottom:0px;text-align:left;&quot; &gt;&#x0A;&lt;span class=&quot;text6347Font1&quot;  &gt;The protection ratings for the AX Fiberglass enclosures are:&#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;</html>
+<rtf>{\rtf1\ansi\deflang1033\ftnbj\uc1\deff1&#x0A;{\fonttbl{\f0 \froman \fcharset0 Times New Roman;}{\f1 \fswiss Arial;}}&#x0A;{\colortbl\red0\green0\blue0 ;\red255\green255\blue255 ;\red0\green0\blue0 ;}&#x0A;{\stylesheet{\f1\fs24\cf0\cb1\ulc0 Normal;}{\cs1\cf0\cb1\ulc0 Default Paragraph Font;}}&#x0A;{\*\revtbl{Unknown;}}&#x0A;\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\headery720\footery720\deftab360\formshade\aendnotes\aftnnrlc\pgbrdrhead\pgbrdrfoot&#x0A;\sectd\pgwsxn12240\pghsxn15840\marglsxn1800\margrsxn1800\margtsxn1440\margbsxn1440\headery720\footery720\sbkpage\pgncont\pgndec&#x0A;\plain\hich\f1\loch\f1\cf0\fs32\ql The protection ratings for the AX Fiberglass enclosures are:\par}&#x0A;</rtf>
+<raw>﻿The protection ratings for the AX Fiberglass enclosures are:</raw>
+<numoflines>1</numoflines>
+<numpubbullets>0</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+</text>
+<text id="6348" parent="6345" ontop="false" fixed="false" proportional="false" labelobject="6349" defaulttext="none">
+<name>Choice 1 text</name>
+<lastupdated>1611871844</lastupdated>
+<respprops>
+<phoneportrait>
+<text>
+<possize>
+<size>
+<cx>369</cx>
+<cy>37</cy>
+</size>
+<point>
+<x>69</x>
+<y>142</y>
+</point>
+</possize>
+</text>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>609</x>
+<y>405</y>
+</point>
+<size>
+<cx>446</cx>
+<cy>37</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text6348Font1 { font-size:21px; font-family:&quot;Arial&quot;, sans-serif; color:#000000;}&#x0A;&lt;p  style=&quot;margin-left:0px;text-indent:0px;margin-top:0px;margin-bottom:0px;text-align:left;&quot; &gt;&#x0A;&lt;span class=&quot;text6348Font1&quot;  &gt;Solid door NEMA 4X, viewing door NEMA 12&#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;</html>
+<rtf>{\rtf1\ansi\deflang1033\ftnbj\uc1\deff1&#x0A;{\fonttbl{\f0 \froman \fcharset0 Times New Roman;}{\f1 \fswiss Arial;}}&#x0A;{\colortbl\red0\green0\blue0 ;\red255\green255\blue255 ;\red0\green0\blue0 ;}&#x0A;{\stylesheet{\f1\fs24\cf0\cb1\ulc0 Normal;}{\cs1\cf0\cb1\ulc0 Default Paragraph Font;}}&#x0A;{\*\revtbl{Unknown;}}&#x0A;\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\headery720\footery720\deftab360\formshade\aendnotes\aftnnrlc\pgbrdrhead\pgbrdrfoot&#x0A;\sectd\pgwsxn12240\pghsxn15840\marglsxn1800\margrsxn1800\margtsxn1440\margbsxn1440\headery720\footery720\sbkpage\pgncont\pgndec&#x0A;\plain\hich\f1\loch\f1\cf0\fs32\ql Solid door NEMA 4X, viewing door NEMA 12\par}&#x0A;</rtf>
+<raw>﻿Solid door NEMA 4X, viewing door NEMA 12</raw>
+<numoflines>1</numoflines>
+<numpubbullets>0</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+</text>
+<radio id="6349" parent="6345" ontop="false" fixed="false" proportional="false">
+<name>Choice 1 button</name>
+<lastupdated>1611871844</lastupdated>
+<respprops>
+<phoneportrait>
+<radio>
+<possize>
+<point>
+<x>42</x>
+<y>142</y>
+</point>
+</possize>
+</radio>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>582</x>
+<y>405</y>
+</point>
+<size>
+<cx>19</cx>
+<cy>19</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<label></label>
+</radio>
+<text id="6350" parent="6345" ontop="false" fixed="false" proportional="false" labelobject="6351" defaulttext="none">
+<name>Choice 2 text</name>
+<lastupdated>1611871844</lastupdated>
+<respprops>
+<phoneportrait>
+<text>
+<possize>
+<size>
+<cx>369</cx>
+<cy>37</cy>
+</size>
+<point>
+<x>69</x>
+<y>187</y>
+</point>
+</possize>
+</text>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>609</x>
+<y>450</y>
+</point>
+<size>
+<cx>446</cx>
+<cy>37</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text6350Font1 { font-size:21px; font-family:&quot;Arial&quot;, sans-serif; color:#000000;}&#x0A;&lt;p  style=&quot;margin-left:0px;text-indent:0px;margin-top:0px;margin-bottom:0px;text-align:left;&quot; &gt;&#x0A;&lt;span class=&quot;text6350Font1&quot;  &gt;Solid door NEMA 4X, viewing door NEMA 4X&#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;</html>
+<rtf>{\rtf1\ansi\deflang1033\ftnbj\uc1\deff1&#x0A;{\fonttbl{\f0 \froman \fcharset0 Times New Roman;}{\f1 \fswiss Arial;}}&#x0A;{\colortbl\red0\green0\blue0 ;\red255\green255\blue255 ;\red0\green0\blue0 ;}&#x0A;{\stylesheet{\f1\fs24\cf0\cb1\ulc0 Normal;}{\cs1\cf0\cb1\ulc0 Default Paragraph Font;}}&#x0A;{\*\revtbl{Unknown;}}&#x0A;\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\headery720\footery720\deftab360\formshade\aendnotes\aftnnrlc\pgbrdrhead\pgbrdrfoot&#x0A;\sectd\pgwsxn12240\pghsxn15840\marglsxn1800\margrsxn1800\margtsxn1440\margbsxn1440\headery720\footery720\sbkpage\pgncont\pgndec&#x0A;\plain\hich\f1\loch\f1\cf0\fs32\ql Solid door NEMA 4X, viewing door NEMA 4X\par}&#x0A;</rtf>
+<raw>﻿Solid door NEMA 4X, viewing door NEMA 4X</raw>
+<numoflines>1</numoflines>
+<numpubbullets>0</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+</text>
+<radio id="6351" parent="6345" ontop="false" fixed="false" proportional="false">
+<name>Choice 2 button</name>
+<lastupdated>1611871844</lastupdated>
+<respprops>
+<phoneportrait>
+<radio>
+<possize>
+<point>
+<x>42</x>
+<y>187</y>
+</point>
+</possize>
+</radio>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>582</x>
+<y>450</y>
+</point>
+<size>
+<cx>19</cx>
+<cy>19</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<label></label>
+</radio>
+<text id="6352" parent="6345" ontop="false" fixed="false" proportional="false" labelobject="6353" defaulttext="none">
+<name>Choice 3 text</name>
+<lastupdated>1611871844</lastupdated>
+<respprops>
+<phoneportrait>
+<text>
+<possize>
+<size>
+<cx>369</cx>
+<cy>37</cy>
+</size>
+<point>
+<x>69</x>
+<y>232</y>
+</point>
+</possize>
+</text>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>609</x>
+<y>495</y>
+</point>
+<size>
+<cx>429</cx>
+<cy>37</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text6352Font1 { font-size:21px; font-family:&quot;Arial&quot;, sans-serif; color:#000000;}&#x0A;&lt;p  style=&quot;margin-left:0px;text-indent:0px;margin-top:0px;margin-bottom:0px;text-align:left;&quot; &gt;&#x0A;&lt;span class=&quot;text6352Font1&quot;  &gt;Solid door NEMA 12, viewing door NEMA 12&#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;</html>
+<rtf>{\rtf1\ansi\deflang1033\ftnbj\uc1\deff1&#x0A;{\fonttbl{\f0 \froman \fcharset0 Times New Roman;}{\f1 \fswiss Arial;}}&#x0A;{\colortbl\red0\green0\blue0 ;\red255\green255\blue255 ;\red0\green0\blue0 ;}&#x0A;{\stylesheet{\f1\fs24\cf0\cb1\ulc0 Normal;}{\cs1\cf0\cb1\ulc0 Default Paragraph Font;}}&#x0A;{\*\revtbl{Unknown;}}&#x0A;\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\headery720\footery720\deftab360\formshade\aendnotes\aftnnrlc\pgbrdrhead\pgbrdrfoot&#x0A;\sectd\pgwsxn12240\pghsxn15840\marglsxn1800\margrsxn1800\margtsxn1440\margbsxn1440\headery720\footery720\sbkpage\pgncont\pgndec&#x0A;\plain\hich\f1\loch\f1\cf0\fs32\ql Solid door NEMA 12, viewing door NEMA 12\par}&#x0A;</rtf>
+<raw>﻿Solid door NEMA 12, viewing door NEMA 12</raw>
+<numoflines>1</numoflines>
+<numpubbullets>0</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+</text>
+<radio id="6353" parent="6345" ontop="false" fixed="false" proportional="false">
+<name>Choice 3 button</name>
+<lastupdated>1611871844</lastupdated>
+<respprops>
+<phoneportrait>
+<radio>
+<possize>
+<point>
+<x>42</x>
+<y>232</y>
+</point>
+</possize>
+</radio>
+</phoneportrait>
+</respprops>
+<possize>
+<point>
+<x>582</x>
+<y>495</y>
+</point>
+<size>
+<cx>19</cx>
+<cy>19</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<label></label>
+</radio>
+</objquestion>
+<textbutton id="2999" parent="2998" resource="3006" ontop="true" fixed="false" proportional="false" posfromright="true" posfrombottom="true" initdisabled="false" enablevisited="false" enableselected="false">
+<name>Done</name>
+<lastupdated>1611859555</lastupdated>
+<possize>
+<point>
+<x>746</x>
+<y>185</y>
+</point>
+<size>
+<cx>60</cx>
+<cy>40</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<autosize>0</autosize>
+<type>20000</type>
+<linestyle>0</linestyle>
+<strokewidth>0</strokewidth>
+<strokecolor>0963B1</strokecolor>
+<text></text>
+<textcolor>FFFFFF</textcolor>
+<fontsize>-16</fontsize>
+<fontheight>12</fontheight>
+<fontstyle>0</fontstyle>
+<textalignment>1</textalignment>
+<fontfamily>Lucida Sans Unicode</fontfamily>
+<handledata />
+<shapefillinfo fillstyle="17" gradientangle="315" bevelheight="0" color="transparent" />
+<action id="3009" parent="2999" on="mouseclick">
+<name>OnMClkProcTestSurv</name>
+<lastupdated>1611846238</lastupdated>
+<actionitem actiontaken="submittest" target="object" targetobject="2959">
+<browserWnd />
+</actionitem>
+</action>
+<type>20000</type>
+<initialstate>0</initialstate>
+<overstate id="2999" resource="3008" ontop="false" fixed="false" proportional="true">
+<name>Done</name>
+<lastupdated>0</lastupdated>
+<possize>
+<point>
+<x>0</x>
+<y>0</y>
+</point>
+<size>
+<cx>-1</cx>
+<cy>-1</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<autosize>0</autosize>
+<type>0</type>
+<linestyle>0</linestyle>
+<strokewidth>0</strokewidth>
+<strokecolor>0963B1</strokecolor>
+<text></text>
+<textcolor>FFFFFF</textcolor>
+<fontsize>-16</fontsize>
+<fontheight>12</fontheight>
+<fontstyle>0</fontstyle>
+<textalignment>1</textalignment>
+<fontfamily>Lucida Sans Unicode</fontfamily>
+<handledata />
+<shapefillinfo fillstyle="17" gradientangle="315" bevelheight="0" color="transparent" />
+</overstate>
+<downstate id="2999" resource="3007" ontop="false" fixed="false" proportional="true">
+<name>Done</name>
+<lastupdated>0</lastupdated>
+<possize>
+<point>
+<x>0</x>
+<y>0</y>
+</point>
+<size>
+<cx>-1</cx>
+<cy>-1</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<autosize>0</autosize>
+<type>0</type>
+<linestyle>0</linestyle>
+<strokewidth>0</strokewidth>
+<strokecolor>0963B1</strokecolor>
+<text></text>
+<textcolor>FFFFFF</textcolor>
+<fontsize>-16</fontsize>
+<fontheight>12</fontheight>
+<fontstyle>0</fontstyle>
+<textalignment>1</textalignment>
+<fontfamily>Lucida Sans Unicode</fontfamily>
+<handledata />
+<shapefillinfo fillstyle="17" gradientangle="315" bevelheight="0" color="transparent" />
+</downstate>
+</textbutton>
+</page>
+<page id="6451" parent="2959" inherit="some">
+<name>Test Results</name>
+<lastupdated>1611929273</lastupdated>
+<pageduration>60000</pageduration>
+<width>1009</width>
+<height>800</height>
+<excluded id="2975" />
+<excluded id="2964" />
+<excluded id="86" />
+<excluded id="2986" />
+<transitionin>
+<transtype>-1</transtype>
+<delay>0</delay>
+<speed>10</speed>
+<effect>0</effect>
+</transitionin>
+<textbutton id="6452" parent="6451" resource="3006" ontop="true" fixed="false" proportional="false" posfromright="true" posfrombottom="true" initdisabled="false" enablevisited="false" enableselected="false">
+<name>OK</name>
+<lastupdated>1611872547</lastupdated>
+<possize>
+<point>
+<x>100</x>
+<y>60</y>
+</point>
+<size>
+<cx>60</cx>
+<cy>40</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<autosize>0</autosize>
+<type>20000</type>
+<linestyle>0</linestyle>
+<strokewidth>0</strokewidth>
+<strokecolor>0963B1</strokecolor>
+<text></text>
+<textcolor>FFFFFF</textcolor>
+<fontsize>-16</fontsize>
+<fontheight>12</fontheight>
+<fontstyle>0</fontstyle>
+<textalignment>1</textalignment>
+<fontfamily>Lucida Sans Unicode</fontfamily>
+<handledata />
+<shapefillinfo fillstyle="17" gradientangle="315" bevelheight="0" color="transparent" />
+<action id="6469" parent="6452" on="mouseclick">
+<name>OnMClkGoTo</name>
+<lastupdated>0</lastupdated>
+<actionitem actiontaken="goto" target="nextpage">
+<browserWnd />
+</actionitem>
+</action>
+<type>20000</type>
+<initialstate>0</initialstate>
+<overstate id="6452" resource="3008" ontop="false" fixed="false" proportional="true">
+<name>OK</name>
+<lastupdated>0</lastupdated>
+<possize>
+<point>
+<x>0</x>
+<y>0</y>
+</point>
+<size>
+<cx>-1</cx>
+<cy>-1</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<autosize>0</autosize>
+<type>0</type>
+<linestyle>0</linestyle>
+<strokewidth>0</strokewidth>
+<strokecolor>0963B1</strokecolor>
+<text></text>
+<textcolor>FFFFFF</textcolor>
+<fontsize>-16</fontsize>
+<fontheight>12</fontheight>
+<fontstyle>0</fontstyle>
+<textalignment>1</textalignment>
+<fontfamily>Lucida Sans Unicode</fontfamily>
+<handledata />
+<shapefillinfo fillstyle="17" gradientangle="315" bevelheight="0" color="transparent" />
+</overstate>
+<downstate id="6452" resource="3007" ontop="false" fixed="false" proportional="true">
+<name>OK</name>
+<lastupdated>0</lastupdated>
+<possize>
+<point>
+<x>0</x>
+<y>0</y>
+</point>
+<size>
+<cx>-1</cx>
+<cy>-1</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<autosize>0</autosize>
+<type>0</type>
+<linestyle>0</linestyle>
+<strokewidth>0</strokewidth>
+<strokecolor>0963B1</strokecolor>
+<text></text>
+<textcolor>FFFFFF</textcolor>
+<fontsize>-16</fontsize>
+<fontheight>12</fontheight>
+<fontstyle>0</fontstyle>
+<textalignment>1</textalignment>
+<fontfamily>Lucida Sans Unicode</fontfamily>
+<handledata />
+<shapefillinfo fillstyle="17" gradientangle="315" bevelheight="0" color="transparent" />
+</downstate>
+</textbutton>
+<textbutton id="6459" parent="6451" resource="6466" ontop="true" fixed="false" proportional="false" posfrombottom="true" initdisabled="false" enablevisited="false" enableselected="false">
+<name>Print</name>
+<lastupdated>1611872547</lastupdated>
+<possize>
+<point>
+<x>40</x>
+<y>60</y>
+</point>
+<size>
+<cx>60</cx>
+<cy>40</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<autosize>0</autosize>
+<type>20000</type>
+<linestyle>0</linestyle>
+<strokewidth>0</strokewidth>
+<strokecolor>0963B1</strokecolor>
+<text></text>
+<textcolor>FFFFFF</textcolor>
+<fontsize>-16</fontsize>
+<fontheight>12</fontheight>
+<fontstyle>0</fontstyle>
+<textalignment>1</textalignment>
+<fontfamily>Lucida Sans Unicode</fontfamily>
+<handledata />
+<shapefillinfo fillstyle="17" gradientangle="315" bevelheight="0" color="transparent" />
+<action id="6470" parent="6459" on="mouseclick">
+<name>OnMClkPrintPage</name>
+<lastupdated>0</lastupdated>
+<actionitem actiontaken="print">
+<browserWnd />
+</actionitem>
+</action>
+<type>20000</type>
+<initialstate>0</initialstate>
+<overstate id="6459" resource="6468" ontop="false" fixed="false" proportional="true">
+<name>Print</name>
+<lastupdated>0</lastupdated>
+<possize>
+<point>
+<x>0</x>
+<y>0</y>
+</point>
+<size>
+<cx>-1</cx>
+<cy>-1</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<autosize>0</autosize>
+<type>0</type>
+<linestyle>0</linestyle>
+<strokewidth>0</strokewidth>
+<strokecolor>0963B1</strokecolor>
+<text></text>
+<textcolor>FFFFFF</textcolor>
+<fontsize>-16</fontsize>
+<fontheight>12</fontheight>
+<fontstyle>0</fontstyle>
+<textalignment>1</textalignment>
+<fontfamily>Lucida Sans Unicode</fontfamily>
+<handledata />
+<shapefillinfo fillstyle="17" gradientangle="315" bevelheight="0" color="transparent" />
+</overstate>
+<downstate id="6459" resource="6467" ontop="false" fixed="false" proportional="true">
+<name>Print</name>
+<lastupdated>0</lastupdated>
+<possize>
+<point>
+<x>0</x>
+<y>0</y>
+</point>
+<size>
+<cx>-1</cx>
+<cy>-1</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<autosize>0</autosize>
+<type>0</type>
+<linestyle>0</linestyle>
+<strokewidth>0</strokewidth>
+<strokecolor>0963B1</strokecolor>
+<text></text>
+<textcolor>FFFFFF</textcolor>
+<fontsize>-16</fontsize>
+<fontheight>12</fontheight>
+<fontstyle>0</fontstyle>
+<textalignment>1</textalignment>
+<fontfamily>Lucida Sans Unicode</fontfamily>
+<handledata />
+<shapefillinfo fillstyle="17" gradientangle="315" bevelheight="0" color="transparent" />
+</downstate>
+</textbutton>
+<results id="6471" parent="6451" ontop="false" fixed="false" proportional="false" openinpopup="FALSE" vertscroll="FALSE">
+<name>Results</name>
+<lastupdated>1611872548</lastupdated>
+<rect>
+<left>50</left>
+<top>150</top>
+<right>950</right>
+<bottom>700</bottom>
+</rect>
+<possize>
+<point>
+<x>50</x>
+<y>150</y>
+</point>
+<size>
+<cx>900</cx>
+<cy>550</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<horizontalseparator betweenallquestions="TRUE" betweentestsection="FALSE">
+<separatorcolor>CCCCCC</separatorcolor>
+<separatorwidth>1</separatorwidth>
+</horizontalseparator>
+<generalsetting>
+<resultitem type="testname" />
+<resultitem type="testscore" />
+<resultitem type="pass" />
+<resultitem type="fail" />
+<resultitem type="questionplacement" />
+</generalsetting>
+<correctsetting>
+<resultitem type="questionnumber" />
+<resultitem type="questionstatus" />
+<resultitem type="questiontext" />
+<resultitem type="studentanswer" />
+</correctsetting>
+<incorrectsetting>
+<resultitem type="questionnumber" />
+<resultitem type="questionstatus" />
+<resultitem type="questiontext" />
+<resultitem type="studentanswer" />
+<resultitem type="correctanswer" />
+</incorrectsetting>
+<unansweredsetting>
+<resultitem type="questionnumber" />
+<resultitem type="questionstatus" />
+<resultitem type="questiontext" />
+</unansweredsetting>
+</results>
+</page>
+</test>
+<page id="1571" parent="1" inherit="some">
+<name>Name for Certificate</name>
+<lastupdated>1611872547</lastupdated>
+<pageduration>60000</pageduration>
+<bgcolor>FFFFFF</bgcolor>
+<width>500</width>
+<height>400</height>
+<excluded id="59" />
+<transitionin>
+<transtype>-1</transtype>
+<delay>0</delay>
+<speed>10</speed>
+<effect>0</effect>
+</transitionin>
+<text id="1572" parent="1571" ontop="true" fixed="false" proportional="false" defaulttext="none">
+<name>Print Instruction</name>
+<lastupdated>1611857849</lastupdated>
+<possize>
+<point>
+<x>111</x>
+<y>195</y>
+</point>
+<size>
+<cx>294</cx>
+<cy>39</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text1572Font1 { font-size:13px; font-family:&quot;Trebuchet MS&quot;, sans-serif; color:#000000;}&#x0A;&lt;p  legLH=&quot;1.387&quot; style=&quot;margin-left:0px;text-indent:0px;line-height:1.150;margin-top:0px;margin-bottom:0px;text-align:center;&quot; &gt;&#x0A;&lt;span class=&quot;text1572Font1&quot;  &gt;Once the certificate has been generated,&#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;&lt;p  style=&quot;margin-left:0px;text-indent:0px;margin-top:0px;margin-bottom:0px;text-align:center;&quot; &gt;&#x0A;&lt;span class=&quot;text1572Font1&quot;  &gt;click on the Rittal logo to print it.&#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;</html>
+<rtf>{\rtf1\ansi\deflang1033\ftnbj\uc1\deff1&#x0A;{\fonttbl{\f0 \froman \fcharset0 Times New Roman;}{\f1 \fswiss Arial;}{\f2 \fswiss Trebuchet MS;}}&#x0A;{\colortbl\red0\green0\blue0 ;\red255\green255\blue255 ;\red0\green0\blue0 ;}&#x0A;{\stylesheet{\f2\fs20\cf1\cb1\ulc2 Normal;}{\cs1\cf2\cb1\ulc2 Default Paragraph Font;}}&#x0A;{\*\revtbl{Unknown;}}&#x0A;\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\headery720\footery720\deftab360\formshade\aendnotes\aftnnrlc\pgbrdrhead\pgbrdrfoot&#x0A;\sectd\pgwsxn12240\pghsxn15840\marglsxn1800\margrsxn1800\margtsxn1440\margbsxn1440\headery720\footery720\sbkpage\pgncont\pgndec&#x0A;\plain\plain\f1\fs20\qc\hich\f2\loch\f2\cf2 Once the certificate has been generated,\par click on the \lang1033\hich\f2\loch\f2 Rittal \lang1033\hich\f2\loch\f2 logo to print it.\par}&#x0A;</rtf>
+<raw>﻿Once the certificate has been generated,&#x0A;click on the Rittal logo to print it.</raw>
+<numoflines>2</numoflines>
+<numpubbullets>0</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+</text>
+<textbutton id="1579" parent="1571" resource="1608" ontop="true" fixed="false" proportional="true" initdisabled="false" enablevisited="false" enableselected="false">
+<name>view_and_print_certificate</name>
+<lastupdated>1611857849</lastupdated>
+<possize>
+<point>
+<x>177</x>
+<y>277</y>
+</point>
+<size>
+<cx>164</cx>
+<cy>25</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<autosize>0</autosize>
+<type>20000</type>
+<linestyle>0</linestyle>
+<strokewidth>0</strokewidth>
+<strokecolor>0963B1</strokecolor>
+<text></text>
+<textcolor>FFFFFF</textcolor>
+<fontsize>-16</fontsize>
+<fontheight>12</fontheight>
+<fontstyle>0</fontstyle>
+<textalignment>1</textalignment>
+<fontfamily>Lucida Sans Unicode</fontfamily>
+<handledata />
+<shapefillinfo fillstyle="17" gradientangle="315" bevelheight="0" color="transparent" />
+<action id="1580" parent="1579" on="mouseclick">
+<name>OnMClkGoTo</name>
+<lastupdated>1611844779</lastupdated>
+<actionitem actiontaken="goto" target="chapsectpage" targetobject="1553">
+<conditionlist>
+<condition varcondition="1581" comparecondition="isnotempty" />
+</conditionlist>
+<browserWnd />
+</actionitem>
+<elseactionitem actiontaken="none">
+<browserWnd />
+</elseactionitem>
+</action>
+<type>20000</type>
+<initialstate>0</initialstate>
+<overstate resource="1610" ontop="false" fixed="false" proportional="true">
+<name></name>
+<lastupdated>0</lastupdated>
+<possize>
+<point>
+<x>0</x>
+<y>0</y>
+</point>
+<size>
+<cx>-1</cx>
+<cy>-1</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<autosize>0</autosize>
+<type>0</type>
+<linestyle>0</linestyle>
+<strokewidth>0</strokewidth>
+<strokecolor>010000</strokecolor>
+<text></text>
+<textcolor>FFFFFF</textcolor>
+<fontsize>-16</fontsize>
+<fontheight>12</fontheight>
+<fontstyle>0</fontstyle>
+<textalignment>1</textalignment>
+<fontfamily>Lucida Sans Unicode</fontfamily>
+<handledata />
+<shapefillinfo fillstyle="17" gradientangle="315" bevelheight="0" color="transparent" />
+</overstate>
+<downstate resource="1609" ontop="false" fixed="false" proportional="true">
+<name></name>
+<lastupdated>0</lastupdated>
+<possize>
+<point>
+<x>0</x>
+<y>0</y>
+</point>
+<size>
+<cx>-1</cx>
+<cy>-1</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<autosize>0</autosize>
+<type>0</type>
+<linestyle>0</linestyle>
+<strokewidth>0</strokewidth>
+<strokecolor>010000</strokecolor>
+<text></text>
+<textcolor>FFFFFF</textcolor>
+<fontsize>-16</fontsize>
+<fontheight>12</fontheight>
+<fontstyle>0</fontstyle>
+<textalignment>1</textalignment>
+<fontfamily>Lucida Sans Unicode</fontfamily>
+<handledata />
+<shapefillinfo fillstyle="17" gradientangle="315" bevelheight="0" color="transparent" />
+</downstate>
+</textbutton>
+<entryfield id="1582" parent="1571" ontop="true" fixed="false" proportional="false" formvar="1581">
+<name>StudentName</name>
+<lastupdated>1611857888</lastupdated>
+<possize>
+<point>
+<x>136</x>
+<y>138</y>
+</point>
+<size>
+<cx>235</cx>
+<cy>23</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<numchars>40</numchars>
+<default></default>
+<bgcolor>transparent</bgcolor>
+</entryfield>
+<text id="1583" parent="1571" ontop="false" fixed="false" proportional="false" defaulttext="none">
+<name>Instructions</name>
+<lastupdated>1611857849</lastupdated>
+<possize>
+<point>
+<x>135</x>
+<y>62</y>
+</point>
+<size>
+<cx>251</cx>
+<cy>47</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text1583Font1 { font-size:16px; font-family:&quot;Arial&quot;, sans-serif; color:#010101;}&#x0A;span.text1583Font2 { font-size:13px; font-family:&quot;Arial&quot;, sans-serif; color:#010101;}&#x0A;&lt;p  legLH=&quot;1.127&quot; style=&quot;margin-left:0px;text-indent:0px;line-height:1.080;margin-top:0px;margin-bottom:0px;text-align:center;&quot; &gt;&#x0A;&lt;span class=&quot;text1583Font1&quot;  &gt;Enter your name as you would&#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;&lt;p  style=&quot;margin-left:0px;text-indent:0px;margin-top:0px;margin-bottom:0px;text-align:center;&quot; &gt;&#x0A;&lt;span class=&quot;text1583Font1&quot;  &gt;like it to appear on your certificate&lt;/span &gt;&lt;span class=&quot;text1583Font2&quot;  &gt;.&#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;</html>
+<rtf>{\rtf1\ansi\deflang1033\ftnbj\uc1\deff1&#x0A;{\fonttbl{\f0 \froman \fcharset0 Times New Roman;}{\f1 \fswiss Arial;}}&#x0A;{\colortbl\red0\green0\blue0 ;\red255\green255\blue255 ;\red0\green0\blue0 ;}&#x0A;{\stylesheet{\f1\fs20\cf2\cb1\ulc2 Normal;}{\cs1\cf2\cb1\ulc2 Default Paragraph Font;}}&#x0A;{\*\revtbl{Unknown;}}&#x0A;\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\headery720\footery720\deftab360\formshade\aendnotes\aftnnrlc\pgbrdrhead\pgbrdrfoot&#x0A;\sectd\pgwsxn12240\pghsxn15840\marglsxn1800\margrsxn1800\margtsxn1440\margbsxn1440\headery720\footery720\sbkpage\pgncont\pgndec&#x0A;\plain\plain\f1\fs20\qc\fs24 Enter your name as you would\par like it to appear on your certificate\plain\f1\fs20 .\par}&#x0A;</rtf>
+<raw>﻿Enter your name as you would&#x0A;like it to appear on your certificate.</raw>
+<numoflines>2</numoflines>
+<numpubbullets>0</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+</text>
+</page>
+<page id="1553" parent="1">
+<name>Certificate of Completion</name>
+<lastupdated>1611851335</lastupdated>
+<pageduration>60000</pageduration>
+<bgcolor>FFFFFF</bgcolor>
+<transitionin>
+<transtype>-1</transtype>
+<delay>0</delay>
+<speed>10</speed>
+<effect>0</effect>
+</transitionin>
+<action id="1554" parent="1553" on="show">
+<name>Display CurrentTitleName</name>
+<lastupdated>1611844779</lastupdated>
+<actionitem actiontaken="changecontents" target="object" targetobject="1569" targetvariable="-260" modvariable="set">
+<browserWnd />
+</actionitem>
+</action>
+<action id="1555" parent="1553" on="show">
+<name>Display CurrentDate</name>
+<lastupdated>1611844779</lastupdated>
+<actionitem actiontaken="changecontents" target="object" targetobject="1568" targetvariable="-264" modvariable="set">
+<browserWnd />
+</actionitem>
+</action>
+<action id="1556" parent="1553" on="show">
+<name>Display StudentName</name>
+<lastupdated>1611844779</lastupdated>
+<actionitem actiontaken="changecontents" target="object" targetobject="1570" targetvariable="1581" modvariable="set">
+<browserWnd />
+</actionitem>
+</action>
+<image id="1558" parent="1553" resource="1607" ontop="false" fixed="false" proportional="true">
+<name>Screen Capture</name>
+<lastupdated>1611845673</lastupdated>
+<possize>
+<point>
+<x>409</x>
+<y>93</y>
+</point>
+<size>
+<cx>780</cx>
+<cy>585</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+</image>
+<textbutton id="1565" parent="1553" ontop="true" fixed="false" proportional="true" initdisabled="false" enablevisited="false" enableselected="false">
+<name>Print</name>
+<lastupdated>1611930086</lastupdated>
+<possize>
+<point>
+<x>1008</x>
+<y>93</y>
+</point>
+<size>
+<cx>229</cx>
+<cy>137</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<autosize>1</autosize>
+<type>20000</type>
+<linestyle>0</linestyle>
+<strokewidth>1</strokewidth>
+<strokecolor>FFFFFF</strokecolor>
+<text></text>
+<textcolor>000000</textcolor>
+<fontsize>-12</fontsize>
+<fontheight>9</fontheight>
+<fontstyle>1</fontstyle>
+<textalignment>1</textalignment>
+<fontfamily>Arial</fontfamily>
+<handledata />
+<shapefillinfo fillstyle="1" gradientangle="0" bevelheight="5" color="transparent" />
+<action id="1566" parent="1565" on="mouseclick">
+<name>OnMClkPrintPage</name>
+<lastupdated>1611844779</lastupdated>
+<actionitem actiontaken="print">
+<browserWnd />
+</actionitem>
+</action>
+<action id="1567" parent="1565" on="mouseclick">
+<name>Close Window</name>
+<lastupdated>1611844779</lastupdated>
+<actionitem actiontaken="goto" target="chapsectpage" targetobject="1549">
+<browserWnd />
+</actionitem>
+</action>
+<type>20000</type>
+<initialstate>0</initialstate>
+<overstate ontop="false" fixed="false" proportional="true">
+<name></name>
+<lastupdated>0</lastupdated>
+<possize>
+<point>
+<x>0</x>
+<y>0</y>
+</point>
+<size>
+<cx>-1</cx>
+<cy>-1</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<autosize>0</autosize>
+<type>0</type>
+<linestyle>0</linestyle>
+<strokewidth>1</strokewidth>
+<strokecolor>000000</strokecolor>
+<text></text>
+<textcolor>FFFFFF</textcolor>
+<fontsize>-12</fontsize>
+<fontheight>9</fontheight>
+<fontstyle>1</fontstyle>
+<textalignment>1</textalignment>
+<fontfamily>Arial</fontfamily>
+<handledata />
+<shapefillinfo fillstyle="1" gradientangle="0" bevelheight="5" color="transparent" />
+</overstate>
+<downstate ontop="false" fixed="false" proportional="true">
+<name></name>
+<lastupdated>0</lastupdated>
+<possize>
+<point>
+<x>0</x>
+<y>0</y>
+</point>
+<size>
+<cx>-1</cx>
+<cy>-1</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<autosize>0</autosize>
+<type>0</type>
+<linestyle>0</linestyle>
+<strokewidth>1</strokewidth>
+<strokecolor>000000</strokecolor>
+<text></text>
+<textcolor>FFFFFF</textcolor>
+<fontsize>-12</fontsize>
+<fontheight>9</fontheight>
+<fontstyle>1</fontstyle>
+<textalignment>1</textalignment>
+<fontfamily>Arial</fontfamily>
+<handledata />
+<shapefillinfo fillstyle="1" gradientangle="0" bevelheight="5" color="000000" />
+</downstate>
+</textbutton>
+<text id="1568" parent="1553" ontop="true" fixed="false" proportional="false" defaulttext="normal">
+<name>x-CurrentDate</name>
+<lastupdated>1611929441</lastupdated>
+<possize>
+<point>
+<x>721</x>
+<y>470</y>
+</point>
+<size>
+<cx>200</cx>
+<cy>42</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text68Font0 { font-size:13px; font-family:&quot;Arial&quot;, sans-serif; color:#000000;}&#x0A;&lt;p  style=&quot;margin-left:0px;text-indent:0px;margin-top:0px;margin-bottom:0px;text-align:left;&quot; &gt;&#x0A;&lt;span class=&quot;text68Font0&quot;  &gt;&amp;nbsp;&#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;</html>
+<rtf></rtf>
+<raw>﻿</raw>
+<numoflines>1</numoflines>
+<numpubbullets>0</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+</text>
+<text id="1569" parent="1553" ontop="true" fixed="false" proportional="false" defaulttext="none">
+<name>x-CurrentTitleName</name>
+<lastupdated>1611930330</lastupdated>
+<possize>
+<point>
+<x>873</x>
+<y>411</y>
+</point>
+<size>
+<cx>188</cx>
+<cy>43</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text1569Font1 { font-size:13px; font-family:&quot;Arial&quot;, sans-serif; color:#010101;}&#x0A;&lt;p  style=&quot;margin-left:0px;text-indent:0px;margin-top:0px;margin-bottom:0px;text-align:left;&quot; &gt;&#x0A;&lt;span class=&quot;text1569Font1&quot; style=&quot;background-color:transparent&quot; &gt;&#x0A;&amp;nbsp;&lt;/span &gt;&lt;/p &gt;&#x0A;</html>
+<rtf>{\rtf1\ansi\deflang1033\ftnbj\uc1\deff1&#x0A;{\fonttbl{\f0 \froman \fcharset0 Times New Roman;}{\f1 \fswiss Arial;}}&#x0A;{\colortbl\red0\green0\blue0 ;\red255\green255\blue255 ;\red0\green0\blue0 ;}&#x0A;{\stylesheet{\f1\fs20\cf0\cb1\ulc0 Normal;}{\cs1\cf0\cb1\ulc0 Default Paragraph Font;}}&#x0A;{\*\revtbl{Unknown;}}&#x0A;\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\headery720\footery720\deftab360\formshade\aendnotes\aftnnrlc\pgbrdrhead\pgbrdrfoot&#x0A;\sectd\pgwsxn12240\pghsxn15840\marglsxn1800\margrsxn1800\margtsxn1440\margbsxn1440\headery720\footery720\sbkpage\pgncont\pgndec&#x0A;\plain\plain\f1\fs20\ql\par}&#x0A;</rtf>
+<raw>﻿</raw>
+<numoflines>1</numoflines>
+<numpubbullets>0</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+</text>
+<text id="1570" parent="1553" ontop="true" fixed="false" proportional="false" defaulttext="normal">
+<name>x-StudentName</name>
+<lastupdated>1611930323</lastupdated>
+<possize>
+<point>
+<x>756</x>
+<y>365</y>
+</point>
+<size>
+<cx>255</cx>
+<cy>24</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text70Font0 { font-size:13px; font-family:&quot;Arial&quot;, sans-serif; color:#000000;}&#x0A;&lt;p  style=&quot;margin-left:0px;text-indent:0px;margin-top:0px;margin-bottom:0px;text-align:left;&quot; &gt;&#x0A;&lt;span class=&quot;text70Font0&quot;  &gt;&amp;nbsp;&#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;</html>
+<rtf></rtf>
+<raw>﻿</raw>
+<numoflines>1</numoflines>
+<numpubbullets>0</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+</text>
+</page>
+<page id="1549" parent="1" inherit="some">
+<name>Thank You</name>
+<lastupdated>1612206732</lastupdated>
+<pageduration>60000</pageduration>
+<excluded id="67" />
+<excluded id="83" />
+<transitionin>
+<transtype>-1</transtype>
+<delay>0</delay>
+<speed>10</speed>
+<effect>0</effect>
+</transitionin>
+<image id="2565" parent="1549" resource="2564" ontop="false" fixed="false" proportional="true">
+<name>Image</name>
+<lastupdated>1611845898</lastupdated>
+<possize>
+<point>
+<x>139</x>
+<y>168</y>
+</point>
+<size>
+<cx>1331</cx>
+<cy>544</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+</image>
+<text id="1552" parent="1549" ontop="true" fixed="false" proportional="false" defaulttext="none">
+<name>Thank You</name>
+<lastupdated>1611930286</lastupdated>
+<possize>
+<point>
+<x>261</x>
+<y>70</y>
+</point>
+<size>
+<cx>1078</cx>
+<cy>76</cy>
+</size>
+</possize>
+<cssclasses></cssclasses>
+<opacity>100</opacity>
+<html>span.text1552Font1 { font-size:37px; font-family:&quot;Arial&quot;, sans-serif; color:#ffffff;}&#x0A;span.text1552Font2 { font-size:29px; font-family:&quot;Trebuchet MS&quot;, sans-serif; color:#ffffff;}&#x0A;&lt;p  style=&quot;margin-left:0px;text-indent:0px;margin-top:0px;margin-bottom:0px;text-align:center;&quot; &gt;&#x0A;&lt;span class=&quot;text1552Font1&quot;  &gt;Thank you for completing the AX Fiberglass Wallmount Course&lt;/span &gt;&lt;span class=&quot;text1552Font2&quot; style=&quot;background-color:transparent&quot; &gt;&#x0A;&lt;/span &gt;&lt;/p &gt;&#x0A;</html>
+<rtf>{\rtf1\ansi\deflang1033\ftnbj\uc1\deff1&#x0A;{\fonttbl{\f0 \froman \fcharset0 Times New Roman;}{\f1 \fswiss Arial;}{\f2 \fswiss Trebuchet MS;}}&#x0A;{\colortbl\red0\green0\blue0 ;\red255\green255\blue255 ;\red0\green0\blue0 ;}&#x0A;{\stylesheet{\f2\fs20\cf1\cb1\ulc2 Normal;}{\cs1\cf2\cb1\ulc2 Default Paragraph Font;}}&#x0A;{\*\revtbl{Unknown;}}&#x0A;\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\headery720\footery720\deftab360\formshade\aendnotes\aftnnrlc\pgbrdrhead\pgbrdrfoot&#x0A;\sectd\pgwsxn12240\pghsxn15840\marglsxn1800\margrsxn1800\margtsxn1440\margbsxn1440\headery720\footery720\sbkpage\pgncont\pgndec&#x0A;\plain\plain\f1\fs24\qc\cf1\fs56 Thank you for completing the AX Fiberglass Wallmount Course\hich\f2\loch\f2\fs44\par}&#x0A;</rtf>
+<raw>﻿Thank you for completing the AX Fiberglass Wallmount Course</raw>
+<numoflines>1</numoflines>
+<numpubbullets>0</numpubbullets>
+<textpublishlang>Inherit</textpublishlang>
+<marginsize>0</marginsize>
+</text>
+</page>
+</title>
+</objectdata>
+</lectoratitle>

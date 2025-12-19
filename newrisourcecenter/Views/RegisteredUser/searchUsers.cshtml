@@ -1,0 +1,51 @@
+﻿@model IEnumerable<newrisourcecenter.Models.UserViewModel>
+@{
+    Layout = null;
+    long companyId = Convert.ToInt64(Session["companyId"]);
+}
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>User ID</th>
+            <th>
+                @Html.DisplayNameFor(model => model.usr_fName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.usr_lName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.usr_email)
+            </th>
+            <td></td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td> @item.usr_ID</td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.usr_fName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.usr_lName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.usr_email)
+                </td>
+                <td>
+                    @if (User.IsInRole("Super Admin") || User.IsInRole("Global Admin"))
+                    {
+                        @Html.ActionLink("Approve", "UserStatus", new { status = "approve", id = item.usr_ID, n1_name = Request.QueryString["n1_name"] }, htmlAttributes: new { id = "approve", @class = "btn btn-success approve-user", @style = "color:#fff;" })
+                        <span>&nbsp;</span>
+                        @Html.ActionLink("Deny", "UserStatus", new { status = "deny", id = item.usr_ID, n1_name = Request.QueryString["n1_name"] }, htmlAttributes: new { id = "deny", @class = "btn btn-danger deny-user", @style = "color:#fff;" })
+                        <span>&nbsp;</span>
+                        @Html.ActionLink("Delete", "Delete", new { id = item.usr_ID, n1_name = Request.QueryString["n1_name"] }, htmlAttributes: new { id = "delete", @class = "btn btn-info delete-user", onclick = "deletef(this.href);return false", @style = "color:red;" })
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

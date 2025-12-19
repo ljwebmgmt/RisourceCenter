@@ -1,0 +1,282 @@
+﻿@model newrisourcecenter.Models.MDFViewModel
+
+@{
+    ViewBag.Title = "Ap";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    long? companyType = Convert.ToInt32(Session["companyType"]);
+    long userId = Convert.ToInt64(Session["userId"]);
+}
+
+<script type="text/javascript">
+jQuery(document).ready(function($){
+	var title = $('#mdf_title');
+	var desc = $('#mdf_desc');
+	var mdf_date = $('#mdf_date');
+	var mdf_totalCost = $('#mdf_totalCost');
+	var mdf_mdfCost = $('#mdf_mdfCost');
+	var prod_type1 = $('#prod_type1');
+    var prod_type2 = $('#prod_type2');
+    var prod_type3 = $('#prod_type3');
+    var prod_type4 = $('#prod_type4');
+	var displayOther = $("#displayOther");
+	var displayProd = $("#displayProd");
+
+    madeSelection = function (selObj) {
+        var selectedValue = selObj.options[selObj.selectedIndex].value;
+        var selectedText = selObj.options[selObj.selectedIndex].text;
+
+		if (selectedValue == "5" ) {
+			$("#displayOther").css("display","none");
+			$("#displayProd").css("display","block");
+		}else{
+			$("#displayOther").css("display","block");
+			$("#displayProd").css("display","none");
+		}
+    }
+
+    $('#apform').submit(function (event) {
+
+        var fileupload = $('input[name="fileupload"]').val();
+        if (fileupload.indexOf("#")!==-1) {
+            alert("You cannot submit a file with # in the name");
+            event.preventDefault();
+        } else if (fileupload.indexOf("%") !== -1) {
+            alert("You cannot submit a file with % in the name");
+            event.preventDefault();
+        }
+
+        var mdf_type_val = $('select[name="mdf_type"] option:selected').val();
+        var title = $('#mdf_title:visible');
+        var desc = $('#mdf_desc');
+        var mdf_date = $('#mdf_date');
+        var mdf_totalCost = $('#mdf_totalCost');
+        var mdf_mdfCost = $('#mdf_mdfCost');
+        /*if (mdf_type_val == "5") {
+            title = $('#displayProd #mdf_title');
+            desc = $('#displayProd #mdf_desc');
+            mdf_totalCost = $('#displayProd #mdf_totalCost');
+            mdf_mdfCost = $('#displayProd #mdf_mdfCost');
+        } */
+        /*    if (mdf_date.val() != "" && prod_type1.is(':checked') || prod_type2.is(':checked') || prod_type3.is(':checked') || prod_type4.is(':checked') ){
+
+			} else {
+				if(mdf_date.val() == ""){
+					alert("complete date and choose a product type");
+				}
+				event.preventDefault();
+				return;
+			}
+		}else if(mdf_type_val != "5" && mdf_type_val != ""){*/
+        //if (mdf_type_val != "") {
+            if (mdf_type_val == "" || mdf_date.val() == "" || title.val() == "" || desc.val() == "" || mdf_totalCost.val() == "" || mdf_mdfCost.val() == "" ){
+				alert("complete the form");
+				event.preventDefault();
+				return
+			}else{
+
+			}
+		//}
+	});
+});
+//-->
+</script>
+<style type="text/css">
+    .pink {
+        color: #e21785;
+    }
+
+    .gray {
+        color: #999999;
+    }
+
+    .head1 {
+        color: #999999;
+        font-weight: bold;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 20px;
+    }
+
+    .tableMain {
+        border: solid 1px #999999;
+        padding: 0;
+        margin: 0;
+    }
+
+    .results {
+        border: solid 1px #e21785;
+    }
+
+        .results th {
+            text-align: left;
+        }
+
+    .pinkGrade {
+        color: #fff;
+        background: #ed1e79;
+        text-align: center;
+        text-shadow: 0 1px 1px #808080;
+        font-size: 20px;
+        padding: 5px;
+        background-image: -webkit-gradient(linear, left top, left bottom, from( #ed1e79 ), to( #4d4d4d ));
+        background-image: -webkit-linear-gradient( #ed1e79, #4d4d4d );
+        background-image: -moz-linear-gradient( #ed1e79, #4d4d4d );
+        background-image: -ms-linear-gradient( #ed1e79, #4d4d4d );
+        background-image: -o-linear-gradient( #ed1e79, #4d4d4d );
+        background-image: linear-gradient( #ed1e79, #4d4d4d );
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ed1e79', endColorstr='#4d4d4d',GradientType=0 );
+    }
+</style>
+
+<div class="main_content">
+    <section>
+        @*<h2 style="padding:0;margin:0;">@Request.QueryString["msg"]</h2>*@
+        <div style="font-weight:bolder;font-size:20px;margin:0px 60px 0px 60px;" >Submit requests for MDF activities listed in your distributor handbook.</div>
+        <form name="insertAP" id="apform" action="/MDFView/ap?aA=@Request.QueryString["aA"]" method="post" enctype="multipart/form-data" class="pure-form pure-form-aligned">
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model=>model.mdf_ID)
+            <div class="form-group">
+                @Html.LabelFor(model => model.mdf_comp, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                  @Html.DisplayFor(model => model.company, new { htmlAttributes = new { @class = "form-control" } })
+                  @Html.ValidationMessageFor(model => model.mdf_comp, "", new { @class = "text-danger" })
+                </div>
+            </div>           
+            
+            <div class="form-group">
+                <label class="control-label col-md-2" for="n1order">
+                    Expected Activity Date:<span class="req">*</span>
+                </label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.mdf_date, new { htmlAttributes = new { @class = "form-control date-picker" } })
+                    @Html.ValidationMessageFor(model => model.mdf_date, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            @Html.HiddenFor(model => model.mdf_comp, new { htmlAttributes = new { @class = "form-control" } })
+
+            @if (companyType == 5)
+            {
+                <input type="hidden" name="mdf_sap" value="0">
+            }
+            else
+            {
+                <div class="form-group">
+                    <label class="control-label col-md-2" for="n1order">
+                        SAP Account:<span class="req">*</span>
+                    </label>
+                    <div class="col-md-10">
+                        <select name="mdf_sap" id="mdf_sap" message="SAP is required before proceeding." class="form-control">
+                            <option value="">SELECT SAP Account</option>
+                            @if (Model.partner_loc.Count() > 0)
+                            {
+                                foreach (var item in Model.partner_loc)
+                                {
+                                    if (!string.IsNullOrEmpty(item.loc_name))
+                                    {
+                                        <option value="@item.loc_SAP_account">@item.loc_name - @item.loc_SAP_account</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.loc_SAP_account">@Model.company - @item.loc_city - @item.loc_SAP_account</option>
+                                    }
+                                }
+                                <option value="0">none</option>
+                            }
+                            else
+                            {
+                                <option value="0">none</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            }
+
+            <br clear="all" />
+            <div class="form-group">
+                <label class="control-label col-md-2" for="n1order">
+                    Type of Activity: <span class="req">*</span>
+                </label>
+                <div class="col-md-10">
+                    <select name="mdf_type" id="mdf_type" class="form-control" onchange="madeSelection(this);">
+                        <option value="">SELECT</option>
+                        <option value="3">Promotional Activity (up to 100% of Total MDF)</option>
+                        <option value="7">Rittal Automation Systems (up to 100% of Total MDF)</option>
+                        <option value="8">Tradeshow & Events (up to 50% of Total MDF)</option>
+                        <option value="1">Rittal Training (up to 50% of Total MDF)</option>
+                        <option value="10">Sales Performance Incentive Fund (up to 25% of Total MDF)</option>
+                        <option value="5">Display Product (up to 10% of Total MDF)</option>
+                        <option value="4">Merchandise (up to 10% of Total MDF, not to exceed $5,000)</option>
+                    </select>
+                </div>
+            </div>
+            <br>
+            <br>
+            <div id="displayProd" style="display:none;">
+                <p>
+                    Please add the part number and description of the display product (or products) you are interested in using towards your MDF amount.<br />
+                    NOTE - Once your request has been approved, you will need to order the part through normal channels and then provide supporting documentation here verifying purchase.
+                </p>
+            </div>
+            <div>
+                <div class="form-group">
+                    <label class="control-label col-md-2" for="n1order">
+                        Activity Title:<span class="req">*</span>
+                    </label>
+                     <div class="col-md-10">
+                        @Html.EditorFor(model => model.mdf_title, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.mdf_title, "", new { @class = "text-danger" })
+                    </div>
+                </div>              
+
+                <div class="form-group">
+                    <label class="control-label col-md-2" for="n1order">
+                        Activity Description:<span class="req">*</span>
+                    </label>
+                    <div class="col-md-10">
+                        @Html.TextAreaFor(model => model.mdf_desc, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.mdf_desc, "", new { @class = "text-danger" })
+                    </div>
+                </div>           
+                
+                <div class="form-group">
+                    <label class="control-label col-md-2" for="n1order">
+                        Estimated Cost of Activity:<span class="req">*</span>
+                    </label>
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.mdf_totalCost, new { htmlAttributes = new { @class = "form-control" } })<span>Do not enter $ or , in the text box. Enter only numbers eg. 19.99</span>
+                        @Html.ValidationMessageFor(model => model.mdf_totalCost, "", new { @class = "text-danger" })
+                    </div>
+                </div>             
+                <br clear="all" />
+                <div class="form-group">
+                    <label class="control-label col-md-2" for="n1order">
+                        MDF Amount Requested:<span class="req">*</span>
+                    </label>
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.mdf_mdfCost, new { htmlAttributes = new { @class = "form-control" } })<span>Do not enter $ or , in the text box. Enter only numbers eg. 10.99</span>
+                        @Html.ValidationMessageFor(model => model.mdf_mdfCost, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <br clear="all" />
+
+            <div class="pure-control-group" style="border:solid silver 1px;width:90%;padding:10px;">
+                <strong>Upload Supporting documents: </strong>
+                <input type="file" name="fileupload" multiple id="1" onchange="getID(this.id);" style="height:50px;">
+            </div>
+            <input type="hidden" name="mdf_validatedAmt" value="0">
+            <input type="hidden" name="mdf_approvedAmt" value="0">
+            <input type="hidden" name="mdf_file_type" value="1">
+            <input type="hidden" name="mdf_user" value="@userId">
+            <input type="hidden" name="mdf_status" value="1">
+            <hr color="#ed1e79">
+            <input type="hidden" value="@Request.QueryString["n1_name"]" name="n1_name" />
+            <input type="hidden" value="@Request.QueryString["n2_name"]" name="n2_name" />
+            <div data-role="controlgroup" data-type="horizontal" align="center">
+                <a href="/MDFView/?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]" class="btn btn-primary">&nbsp;&nbsp;Back&nbsp;&nbsp;&nbsp;</a>
+                <input name="submit" type="submit" value="Submit" id="submit" class="btn btn-success" data-icon="arrow-r" data-iconpos="right" />
+            </div>
+        </form>
+
+    </section>
+</div>
+

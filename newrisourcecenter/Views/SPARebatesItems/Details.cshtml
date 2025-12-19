@@ -1,0 +1,147 @@
+﻿@model newrisourcecenter.Models.SPARebatesItemsViewModel
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>SPARebatesItemsViewModel</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.rebate_ID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.rebate_ID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.contract_ID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.contract_ID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.sku)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.sku)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.last_price)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.last_price)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.spa_price)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.spa_price)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.quantity_rebated)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.quantity_rebated)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.quantity_requested)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.quantity_requested)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.capping_status)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.capping_status)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.current_rebate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.current_rebate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.distributor_requests)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.distributor_requests)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.original_difference)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.original_difference)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.invoice_date)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.invoice_date)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.invoice_number)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.invoice_number)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.rebate_amount)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.rebate_amount)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.reason)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.reason)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.status)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.status)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.rebateItem_ID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

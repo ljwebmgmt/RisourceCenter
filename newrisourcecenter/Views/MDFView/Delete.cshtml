@@ -1,0 +1,209 @@
+﻿@model newrisourcecenter.Models.MDFViewModel
+
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>MDFViewModel</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.mdf_user)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.mdf_user)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.mdf_SAP)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.mdf_SAP)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.mdf_comp)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.mdf_comp)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.mdf_title)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.mdf_title)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.mdf_desc)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.mdf_desc)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.mdf_loc)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.mdf_loc)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.mdf_totalCost)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.mdf_totalCost)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.mdf_mdfCost)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.mdf_mdfCost)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.mdf_date)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.mdf_date)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.mdf_type)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.mdf_type)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.mdf_status)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.mdf_status)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.mdf_comments)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.mdf_comments)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.mdf_comments2)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.mdf_comments2)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.mdf_comments3)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.mdf_comments3)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.mdf_requestDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.mdf_requestDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.mdf_reviewDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.mdf_reviewDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.mdf_validationDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.mdf_validationDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.mdf_creditIssueDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.mdf_creditIssueDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.mdf_approvedAmt)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.mdf_approvedAmt)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.mdf_validatedAmt)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.mdf_validatedAmt)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.mdf_creditMemoNum)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.mdf_creditMemoNum)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.mdf_accountingInstruct)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.mdf_accountingInstruct)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.archive_year)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.archive_year)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    }
+</div>

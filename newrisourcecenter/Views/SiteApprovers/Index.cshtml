@@ -1,0 +1,52 @@
+﻿@model IEnumerable<newrisourcecenter.Models.SiteApprovers>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<p>
+    @Html.ActionLink("Add An Approver", "Create", new { n1_name = @Request.QueryString["n1_name"], msg = "Add An Approver" }, htmlAttributes: new { @class = "btn btn-primary" })
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.CompType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CountryId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FullName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+            <td></td>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.CompType)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CountryId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.FullName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Email)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id = item.Id, parentid = Request.QueryString["parentid"], n1_name = Request.QueryString["n1_name"],msg=item.Email }, new { @class = "btn btn-info" }) 
+            <span>|</span>
+            @Html.ActionLink("Delete", "Delete", new { id = item.Id, parentid = Request.QueryString["parentid"], n1_name = Request.QueryString["n1_name"] }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false", @class = "btn btn-info" })       
+        </td>
+    </tr>
+}
+    </tbody>
+</table>

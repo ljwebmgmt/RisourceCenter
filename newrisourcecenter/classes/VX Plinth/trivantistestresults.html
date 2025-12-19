@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+<head>
+<title>Results</title>
+
+<style text="text/css">
+    body { background-color:#ffffff; }
+</style>
+
+<script language = "JavaScript" src="trivantis.js"></script>
+<script language = "JavaScript" src="trivantis-cookie.js"></script>
+<script language = "JavaScript" src="trivantis-strings.js"></script>
+<script language = "JavaScript">
+
+var tmp = document.location.search.indexOf('=')
+var tname = document.location.search.substring( tmp+1 )
+var testResults = ''
+
+var titleMgr = getTitleMgrHandle()
+if( titleMgr ) {
+  testResults = UniUnescape( titleMgr.getStudentResults( tname ).replace( /\\r/g, '<br />') )
+  document.title = UniUnescape( titleMgr.getTestName( tname ) )
+}
+saveVariable('TrivantisResWind',1)
+
+onload = init
+onunload = finish
+
+function init() {
+}
+
+function finish() {
+  if( opener != null )
+    opener.document.resWind = null
+}
+
+function doSubmit() {
+    window.top.close()
+    return false;
+}
+
+function doPrint() {
+    window.print()
+    return false;
+}
+
+</script>
+</head>
+<body>
+  <br />
+  <script>document.write(testResults)</script>
+  <center>
+    <form name="resultsform" id="resultsform" onSubmit="return doSubmit();">
+      <script>
+	    document.write('<input type="button" name="OK"    value="' + trivstrOK + '" onclick=doSubmit()>&nbsp;&nbsp;&nbsp;&nbsp;');
+	    document.write('<input type="button" name="Print" value="' + trivstrPrint + '" onclick=doPrint()>');
+	  </script>
+    </form>
+  </center>
+</body>
+</html>

@@ -1,0 +1,665 @@
+﻿@model newrisourcecenter.Models.SRPViewModel
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    long userId = Convert.ToInt64(Session["userId"]);
+}
+<style>
+    .showlogs {
+        display: none;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        var status = "@Model.status"; user = "@userId";statustext = $("#statustext");procurement = $("#procurement");supervisor = $("#supervisor");accounting = $("#accounting"),paymentMethod=$("#paymentMethod"),supplier=$("#supplier"),shipTo=$("#shipTo"),shiptoAttn=$("#shiptoAttn");
+        $("form").submit(function (e) {
+            if ($("#uploadinvo").is(":visible"))
+            {
+                if("@Model.status"==="Invoice Needed"){
+                    if ($('input[name="InvoiceAmountIsEqual"]').is(":checked")==false) {
+                        alert("Is the invoice amount the same as the estimated cost? Check one of the boxes before you submit the invoice.");
+                        e.preventDefault();
+                    }else if ($("#uploadinvo").val() == "" ) {
+                        alert("Upload an invoice");
+                        e.preventDefault();
+                    }
+                }
+            }
+
+            if (paymentMethod.val() == "1") {
+                if (supplier.val()=="") {
+                    alert("The supplier field is required");
+                    e.preventDefault();
+                } else if (shipTo.val()=="") {
+                    alert("The ship to field is required");
+                    e.preventDefault();
+                } else if (shiptoAttn.val() == "") {
+                    alert("The ship to attention field is required");
+                    e.preventDefault();
+                }
+            }
+        });
+
+        additem = function () {
+            var id = $("#add_items tr:last").attr('id');
+            if (!id) {
+                var newid = 0;
+            } else {
+                var newid = parseInt(id) + 1;
+            }
+            $("#add_items").append('<tr id="' + newid + '" class="item_list_' + newid + '" >' +
+            '<td>' +
+                newid +
+            '</td>'+
+            '<td>' +
+                '<textarea class="form-control" id="partNumberOrdescription" name="partNumberOrdescription" style="width:200px;"></textarea>'+
+                '<span class="field-validation-valid text-danger" data-valmsg-for="partNumberOrdescription" data-valmsg-replace="true"></span>'+
+            '</td>'+
+            '<td>' +
+                '<input class="form-control text-box single-line" id="quantity_' + newid + '" name="quantity" onkeyup="calculatePrice(' + newid + ');"  type="text" value="">' +
+                '<span class="field-validation-valid text-danger" data-valmsg-for="quantity" data-valmsg-replace="true"></span>'+
+            '</td>' +
+            '<td>' +
+                '<input class="form-control text-box single-line date-picker" id="deliveryDate" name="deliveryDate" type="text" value="">' +
+                '<span class="field-validation-valid text-danger" data-valmsg-for="deliveryDate" data-valmsg-replace="true"></span>' +
+            '</td>' +
+            '<td>' +
+                '<input class="form-control text-box single-line" id="unitPrice_' + newid + '" name="unitPrice" onkeyup="calculatePrice(' + newid + ');"  type="text" value="">' +
+                '<span class="field-validation-valid text-danger" data-valmsg-for="unitPrice" data-valmsg-replace="true"></span>'+
+            '</td>'+
+            '<td>' +
+                '<input class="form-control text-box single-line" id="totalPrice_' + newid + '" name="totalPrice" type="text" value="">' +
+                '<span class="field-validation-valid text-danger" data-valmsg-for="totalPrice" data-valmsg-replace="true"></span>'+
+            '</td>'+
+            '<td id="actitemDropdownPlace_' + newid + '" ></td>' +
+            '<td id="cccitemDropdownPlace_' + newid + '" ></td>' +
+            '<td><div onclick="deleteitem(' + newid + '); return false;" class="btn btn-primary">-</div></td>' +
+            '</tr>');
+            //implement data picker
+            $(".date-picker").datepicker();
+            $("#actitemDropdownPlace_" + newid).html($("#actitemDropdown").html());
+            $("#cccitemDropdownPlace_" + newid).html($("#cccitemDropdown").html());
+        }
+        deleteitem = function (id) {
+            $(".item_list_" + id).remove();
+        }
+        showlogs = function(){
+            $("#tablelogs").toggleClass("showlogs");
+            var link = "/SRPView/LogTable/?id=" +@Model.FormID;
+            $("#tablelogs").html("loading...");
+
+            $.post(link, function (logs) {
+                $("#tablelogs").html(logs);
+            });
+        }
+
+        ///Actions taken by supervisor
+        if (status === "Pending" && "@ViewBag.isbuyer" == 0 || status=="Amount Updated" && "@ViewBag.isbuyer" == 0)
+        {
+            $("#managestatusSupervisor").html("<select class=\"form-control\" onChange=\"changeStatusSupervisor(this.value);\" >" +
+                                    "<option value=\"supervisor\">Change the Status</option>" +
+                                    "<option value=\"Approved\">Approve</option>" +
+                                    "<option value=\"Additional Information\">Additional Information</option>" +
+                                    "<option value=\"Denied\">Denied</option>" +
+                                    "</select>");
+
+        }
+        changeStatusSupervisor = function (value) {
+            $("#managestatusSupervisor").hide("slow");
+            if (value === "Approved")
+            {
+                $("#statustext").html("<span style=\"color:blue;\">chaning the status...</span>");
+                $.post("/SRPView/StatusSupervisor/?formid=" +@Model.FormID +"&status=Approved&department=" +@Model.department +"&postComment=false", function (result) {
+                    statustext.html("The status has been changed to approved");
+                });
+                supervisor.remove();
+            }
+            else if (value === "Denied")
+            {
+                $("#statustext").html("<span style=\"color:blue;\">chaning the status...</span>");
+                $.post("/SRPView/StatusSupervisor/?formid=" +@Model.FormID +"&status=Denied&department=" +@Model.department +"&postComment=false", function (result) {
+                    statustext.html("The status has been changed to denied");
+                });
+                supervisor.remove();
+            }
+            else if (value === "Additional Information")
+            {
+                $("#managestatusAdditionalSupervisor").html(
+                    "<br /><br /><span id=\"supervisor\" ><textarea name=\"comment\" id=\"commentSupervisor\" style=\"width:300px;\" rows=\"10\" placeholder=\"You may type in the additional information in a list. For instance" +
+                    "1) provide images"+
+                    "2) proved a receipt"+
+                    "3) or other related documents...\"></textarea>"+
+                    "<br />"+
+                    "<input type=\"button\" value=\"Update Status\" onClick=\"submitAdditionalSupervisor();\" /></span>"
+                    );
+            }
+        }
+        submitAdditionalSupervisor = function () {
+            statustext.html("<span style=\"color:blue;\">chaning the status...</span>");
+            $("#managestatusAdditionalSupervisor").hide();
+
+            var commentSupervisor = $("#commentSupervisor").val();
+            $.post("/SRPView/StatusSupervisor/update_status?formid=" +@Model.FormID +"&status=Additional+Information&department=" +@Model.department +"&postComment=true&comment="+commentSupervisor, function (result) {
+                statustext.html("The status has been changed to provide additional information");
+                supervisor.remove();
+            });
+        }
+        ///End supervisor actions
+
+        //Start action procurement
+        if ("@ViewBag.isbuyer" == 1 || user === "18127") {
+            if (status === "Approved" || status === "Additional Information-Procurement") {
+                $("#managestatusProcurement").html("<select class=\"form-control\" onChange=\"changeStatusProcurement(this.value);\" >" +
+                                        "<option value=\"supervisor\">Assign a PO to the request</option>" +
+                                        "<option value=\"Approved\">Approve</option>" +
+                                        "<option value=\"Additional Information\">Additional Information</option>" +
+                                        "<option value=\"Denied\">Denied</option>" +
+                                        "</select>");
+
+            }
+        }
+        changeStatusProcurement = function (value) {
+            $("#managestatusProcurement").hide("slow");
+
+            if (value === "Approved")
+            {
+                $("#managestatusAdditionalProcurement").html(
+                    "<br /><span id=\"procurement\" >"+
+                    "<input name=\"comment\" id=\"commentProcurement\" type=\"text\" style=\"width:500px;height:30px;\" rows=\"2\" placeholder=\"Enter PO number\" />" +
+                    "<br />" +
+                    "<input type=\"button\" value=\"Update Status\" onClick=\"submitPOProcurement();\" /></span>");
+            }
+            else if (value === "Denied")
+            {
+                statustext.html("<span style=\"color:blue;\">chaning the status...</span>");
+
+                $.post("/SRPView/StatusProcurment/?formid=" +@Model.FormID +"&status=Denied&department=" +@Model.department +"&postComment=false", function (result) {
+                    statustext.html("The status has been changed to denied");
+                });
+                procurement.remove();
+            }
+            else if (value === "Additional Information")
+            {
+                $("#managestatusAdditionalProcurement").html(
+                    "<br /><br /><span id=\"procurement\" ><textarea name=\"comment\" id=\"commentProcurement\" style=\"width:300px;\" rows=\"10\" placeholder=\"You may type in the additional information in a list. For instance" +
+                    "1) provide images" +
+                    "2) proved a receipt" +
+                    "3) or other related documents...\"></textarea>" +
+                    "<br />" +
+                    "<input type=\"button\" value=\"Update Status\" onClick=\"submitAdditionalProcurement();\" /></span>"
+                    );
+            }
+        }
+        submitPOProcurement = function () {
+            statustext.html("<span style=\"color:blue;\">chaning the status...</span>");
+            $("#managestatusAdditionalProcurement").hide();
+            var commentProcurement = $("#commentProcurement").val();
+
+            $.post("/SRPView/StatusProcurment?formid=" +@Model.FormID +"&status=Approved&postComment=true&comment=" + commentProcurement, function (result) {
+                statustext.html("The status has been changed to approved");
+                procurement.remove();
+            });
+        }
+        submitAdditionalProcurement = function () {
+            statustext.html("<span style=\"color:blue;\">chaning the status...</span>");
+            $("#managestatusAdditionalProcurement").hide();
+            var commentProcurement = $("#commentProcurement").val();
+            $.post("/SRPView/StatusProcurment?formid=" +@Model.FormID +"&status=Additional+Information&department=" +@Model.department +"&postComment=true&comment=" + commentProcurement, function (result) {
+                statustext.html("The status has been changed to provide additional information");
+                procurement.remove();
+            });
+        }
+        //End action procurement
+
+        //Start action Accounting
+        if (status === "PO Assigned" || status === "Invoice Submitted" || status === "Additional Information-Accounting")
+        {
+            $("#managestatusAccounting").html("<select class=\"form-control\" onChange=\"changeStatusAccounting(this.value);\" >" +
+                                    "<option value=\"accounting\">Change the Status</option>" +
+                                    "<option value=\"Completed\">Complete</option>" +
+                                    "<option value=\"Additional Information\">Additional Information</option>" +
+                                    "<option value=\"Denied\">Denied</option>" +
+                                    "</select>");
+
+        }
+        changeStatusAccounting = function (value) {
+            $("#managestatusAccounting").hide("slow");
+
+            if (value === "Completed")
+            {
+                statustext.html("<span style=\"color:blue;\">chaning the status...</span>");
+
+                $.post("/SRPView/StatusAccounting/?formid=" +@Model.FormID +"&status=Completed&department=" +@Model.department +"&postComment=false", function (result) {
+                    statustext.html("The status has been changed to completed");
+                });
+                accounting.remove();
+            }
+            else if (value === "Denied")
+            {
+                statustext.html("<span style=\"color:blue;\">chaning the status...</span>");
+
+                $.post("/SRPView/StatusAccounting/?formid=" +@Model.FormID +"&status=Denied&department=" +@Model.department +"&postComment=false", function (result) {
+                    statustext.html("The status has been changed to denied");
+                });
+                accounting.remove();
+            }
+            else if (value === "Additional Information")
+            {
+                $("#managestatusAdditionalAccounting").html(
+                    "<br /><br /><span id=\"accounting\" ><textarea name=\"comment\" id=\"commentAccounting\" style=\"width:300px;\" rows=\"10\" placeholder=\"You may type in the additional information in a list. For instance" +
+                    "1) provide images"+
+                    "2) proved a receipt"+
+                    "3) or other related documents...\"></textarea>"+
+                    "<br />"+
+                    "<input type=\"button\" value=\"Update Status\" onClick=\"submitAdditionalAccounting();\" /></span>"
+                    );
+            }
+        }
+        submitAdditionalAccounting = function () {
+            statustext.html("<span style=\"color:blue;\">chaning the status...</span>");
+            $("#managestatusAdditionalAccounting").hide();
+
+            var commentAccounting = $("#commentAccounting").val();
+            $.post("/SRPView/StatusAccounting/update_status?formid=" +@Model.FormID +"&status=Additional+Information&department=" +@Model.department +"&postComment=true&comment=" + commentAccounting, function (result) {
+                statustext.html("The status has been changed to provide additional information");
+                accounting.remove();
+            });
+        }
+        //End action Accounting
+
+        calculatePrice = function (id) {
+            var unitPrice = $("#unitPrice_" + id).val();
+            var quantity = $("#quantity_" + id).val();
+            var total = parseInt(quantity) * parseInt(unitPrice);
+            if($.isNumeric(parseInt(total))){
+                $("#totalPrice_" + id).val(total);
+            }else{
+                $("#totalPrice_" + id).val(0);
+            }
+        }
+        $('select[name="department"]').change(function () {
+            $("#region").empty();
+            var selectedval = $("#department").val();
+            var getloc = "/SRPView/GetRigionalManager/?id=" + selectedval;
+            $.post(getloc, function (data) {
+                $.each(data, function (key, value) {
+                    if (value.ID == "@Model.region") {
+                        $("#region").append("<option value=\"" + value.ID + "\" Selected >" + value.RegionName + "</option>");
+                    }else{
+                        $("#region").append("<option value=\"" + value.ID + "\">" + value.RegionName + "</option>");
+                    }
+                });
+            });
+        }).change();
+        $('select[name="paymentMethod"]').change(function () {
+            if ($(this).val() == "0") {
+                $('#purchaseRequest').hide();
+            } else {
+                $('#purchaseRequest').show();
+            }
+        }).change();
+    });
+</script>
+
+@if (!string.IsNullOrEmpty(Request.QueryString["success"]))
+{
+    <h4 style="color:green;">@Request.QueryString["success"]</h4>
+}
+@using (Html.BeginForm("Edit", "SRPView", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="form-horizontal">
+        <div style="display:inline-block;">
+            @Html.ActionLink("Default Page", "Index", new { n1_name = Request.QueryString["n1_name"], n2_name = Request.QueryString["n2_name"] }, htmlAttributes: new { @class = "btn btn-primary" })
+        </div>
+        @Html.ActionLink("Manage Request", "Manage", new { n1_name = Request.QueryString["n1_name"], n2_name = Request.QueryString["n2_name"] }, htmlAttributes: new { @class = "btn btn-primary", @style = "float:right;clear:all;" })
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.FormID)
+        @Html.HiddenFor(model => model.SalesRepID)
+        @Html.HiddenFor(model => model.dateCreated)
+        @Html.HiddenFor(model => model.status)
+        <div style="background:#cccccc;padding:20px;">
+            @if (!string.IsNullOrEmpty(Model.ponumber))
+            {
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ponumber, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.DisplayFor(model => model.ponumber)
+                    </div>
+                </div>
+            }
+            <div class="form-group">
+                @Html.LabelFor(model => model.status, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    <span id="statustext">@Model.status</span>
+                    <a href="#" onclick="showlogs(); return false;" style="color:red;margin-left:40px;">show action logs</a>
+                    <br /><br />
+                    @Html.ValidationMessageFor(model => model.status, "", new { @class = "text-danger" })
+                    @if (ViewBag.approver == 1 && ViewBag.isaccountspayables == 0 || User.IsInRole("Super Admin"))
+                    {
+                        <span id="managestatusSupervisor"></span>
+                        <span id="managestatusAdditionalSupervisor"></span>
+                    }
+                    @if (Model.paymentMethod == "1")
+                    {
+                        if (User.IsInRole("Super Admin") || ViewBag.isbuyer == 1)
+                        {
+                            <span id="managestatusProcurement"></span>
+                            <span id="managestatusAdditionalProcurement"></span>
+                        }
+                        if (User.IsInRole("Super Admin") || ViewBag.isaccountspayables == 1)
+                        {
+                            <span id="managestatusAccounting"></span>
+                            <span id="managestatusAdditionalAccounting"></span>
+                        }
+                    }
+                </div>
+            </div>
+
+            <table style="background:#ccc;" cellpadding="15" class="table showlogs" id="tablelogs"></table>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.SalesRepID, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.fullname, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.SalesRepID, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.department, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.department, Model.list_departments, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.department, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.requestType, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.requestType, Model.list_requestType, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.requestType, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.paymentMethod, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.paymentMethod, Model.list_paymentMethod, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.paymentMethod, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.region, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <select class="form-control" id="region" name="region"></select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.title, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.title, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.title, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="title">Description: </label>
+            <textarea class="form-control" name="description" id="description" style="height:300px;width:70%;text-align:left;" placeholder="Be Detailed in your explanation: This activity will take place on 05/07/16, we will take out engineers from XYZ Pharmaceuticals to dinner at Ruth Chris Steakhouse then to a Bulls game.
+
+Would like to request $800 for dinner and $1000 for the Bulls game that will include suite tickets, food, and drinks.
+
+Total $1,800.
+
+Potential enclosure and climate business could be the result as they build a new location in Rockford, IL.
+
+Rittal attendees include: John Smith and Jane Jones.
+
+Distributors attending will include (2) reps from Chicago Electrical.">
+                @Model.description
+</textarea>
+</div>
+
+<div class="form-group">
+    @Html.LabelFor(model => model.estimatedCost, htmlAttributes: new { @class = "control-label col-md-2" })
+    <div class="input-group col-md-10">
+        <div class="input-group-addon">$</div>
+        @Html.EditorFor(model => model.estimatedCost, new { htmlAttributes = new { @style = "width:150px;", @placeholder = "Amount" } })
+        @Html.ValidationMessageFor(model => model.estimatedCost, "", new { @class = "text-danger" })
+    </div>
+</div>
+
+<div class="form-group">
+    @Html.LabelFor(model => model.activitydate, htmlAttributes: new { @class = "control-label col-md-2" })
+    <div class="col-md-10">
+        @Html.EditorFor(model => model.activitydate, new { htmlAttributes = new { @class = "form-control date-picker" } })
+        @Html.ValidationMessageFor(model => model.activitydate, "", new { @class = "text-danger" })
+    </div>
+</div>
+
+<div class="form-group" style="border:solid silver 1px;width:100%;padding:40px;margin-left:5px;">
+    @Html.LabelFor(model => model.fileupload, htmlAttributes: new { @class = "control-label col-md-12" })
+    <div class="col-md-10">
+        <input type="file" multiple name="fileupload" />
+    </div>
+    <br clear="all" />
+    <br clear="all" />
+    <br clear="all" />
+
+    @if (Model.list_srp_files != null)
+    {
+        <ul>
+            @foreach (var items in Model.list_srp_files)
+                    {
+                <li style="display:inline-block;">
+                    <a href="~/attachments/srp/files/@items.FileName" target="_blank">@items.FileName</a>
+                    @Html.ActionLink("Delete", "DeleteFile", new { id = @items.ID, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"] }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false", @class = "btn btn-info" })
+                </li>
+            }
+        </ul>
+    }
+</div>
+
+<div id="purchaseRequest" style="display:none;">
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.supplier, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.supplier, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.supplier, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.supplierNumber, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.supplierNumber, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.supplierNumber, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.shipTo, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.shipTo, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.shipTo, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.shiptoAttn, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.shiptoAttn, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.shiptoAttn, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <hr style="background:red !important;" />
+
+    <div style="background-color:silver;padding:20px;">
+        <table class="table">
+            <tr><td colspan="8" align="right"><div onclick="additem(); return false;" class="btn btn-primary">+ Add a row</div></td></tr>
+            <tr>
+                <th>
+                    Item
+                </th>
+                <th>
+                    Description
+                </th>
+                <th>
+                    Quantity
+                </th>
+                <th>
+                    Delivery Date
+                </th>
+                <th>
+                    Unit Price
+                </th>
+                <th>
+                    Total Price
+                </th>
+                <th>
+                    Chart of Accounts
+                </th>
+                <th>
+                    Cost Center
+                </th>
+                <td></td>
+            </tr>
+            <tbody id="add_items">
+                @if (Model.list_additional_info != null && Model.list_additional_info.Count() > 0)
+                {
+                    int m = 0;
+                    foreach (var item in Model.list_additional_info.FirstOrDefault().partNumberOrdescription.Split(','))
+                    {
+                        <tr id="@m" class="item_list_@m">
+                            <td>
+                                @m
+                            </td>
+                            <td>
+                                <textarea class="form-control" id="partNumberOrdescription" name="partNumberOrdescription" style="width:200px;">@Model.list_additional_info.FirstOrDefault().partNumberOrdescription.Split(',')[m]</textarea>
+                                <span class="field-validation-valid text-danger" data-valmsg-for="partNumberOrdescription" data-valmsg-replace="true"></span>
+                            </td>
+                            <td>
+                                <input class="form-control text-box single-line" id="quantity_@m" name="quantity" onKeyup="calculatePrice(@m);" type="text" value="@Model.list_additional_info.FirstOrDefault().quantity.Split(',')[m]" />
+                                <span class="field-validation-valid text-danger" data-valmsg-for="quantity" data-valmsg-replace="true"></span>
+                            </td>
+                            <td>
+                                <input class="form-control text-box single-line date-picker" id="deliveryDate" name="deliveryDate" type="text" value="@Model.list_additional_info.FirstOrDefault().deliveryDate.Split(',')[m]">
+                                <span class="field-validation-valid text-danger" data-valmsg-for="deliveryDate" data-valmsg-replace="true"></span>
+                            </td>
+                            <td>
+                                <input class="form-control text-box single-line" id="unitPrice_@m" onKeyup="calculatePrice(@m);" name="unitPrice" type="text" value="@Model.list_additional_info.FirstOrDefault().unitPrice.Split(',')[m]">
+                                <span class="field-validation-valid text-danger" data-valmsg-for="unitPrice" data-valmsg-replace="true"></span>
+                            </td>
+                            <td>
+                                <input class="form-control text-box single-line" id="totalPrice_@m" name="totalPrice" type="text" value="@Model.list_additional_info.FirstOrDefault().totalPrice.Split(',')[m]">
+                                <span class="field-validation-valid text-danger" data-valmsg-for="totalPrice" data-valmsg-replace="true"></span>
+                            </td>
+                            <td>
+                                <select name="achType" class="form-control">
+                                    @foreach (var values in @Model.list_achType)
+                                    {
+                                        if (@Model.list_additional_info.FirstOrDefault().achType.Split(',')[m] == @values.Value)
+                                        {
+                                            <option value="@values.Value" selected>@values.Text @values.Value</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@values.Value">@values.Text</option>
+                                        }
+                                    }
+                                </select>
+                            </td>
+                            <td>
+                                <select name="cccType" class="form-control">
+                                    @foreach (var values in @Model.list_cccType)
+                                    {
+                                        if (@Model.list_additional_info.FirstOrDefault().cccType.Split(',')[m] == @values.Value)
+                                        {
+                                            <option selected value="@values.Value">@values.Text</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@values.Value">@values.Text</option>
+                                        }
+                                    }
+                                </select>
+                            </td>
+                            <td><div onclick="deleteitem(@m); return false;" class="btn btn-primary">-</div></td>
+                        </tr>
+                        m++;
+                    }
+                }
+            </tbody>
+        </table>
+
+        <div class="form-group" style="border:solid silver 1px;width:100%;padding:20px;margin-left:5px;">
+            <font color="red">IMPORTANT! Is the invoice total you’re submitting the same as the original estimate cost you provided?</font>
+            <br />
+            <input type="radio" name="InvoiceAmountIsEqual" value="1" /> Yes, please send to Accounting
+            <br />
+            <input type="radio" name="InvoiceAmountIsEqual" value="0" />  No, please resubmit to my supervisor and then procurement before sending to Accounting.
+            <br />
+
+            @Html.LabelFor(model => model.uploadinvoice, htmlAttributes: new { @class = "control-label col-md-12" })
+            <div class="col-md-10">
+                <input type="file" multiple name="uploadinvoice" id="uploadinvo" />
+            </div>
+            <br clear="all" />
+            <br clear="all" />
+            <br clear="all" />
+
+            @if (Model.list_srp_invoice != null)
+                {
+                <ul>
+                    @foreach (var items in Model.list_srp_invoice)
+                    {
+                        <li style="display:inline-block;">
+                            <a href="~/attachments/srp/files/@items.FileName" target="_blank">@items.FileName</a>
+                            @Html.ActionLink("Delete", "DeleteFile", new { id = @items.ID, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"] }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false", @class = "btn btn-info" })
+                        </li>
+                    }
+                </ul>
+            }
+        </div>
+    </div>
+</div>
+
+<br clear="all" />
+<hr style="background:red !important;" />
+
+<input name="n1_name" type="hidden" value="@Request.QueryString["n1_name"]" />
+<input name="n2_name" type="hidden" value="@Request.QueryString["n2_name"]" />
+<input name="ponumber" type="hidden" value="@Model.ponumber" />
+<input name="compID" type="hidden" value="@Model.compID" />
+
+<div class="form-group">
+    <div class="col-md-offset-2 col-md-10">
+        @if (Model.SalesRepID == Convert.ToInt32(@Session["userId"]))
+        {
+            <input id="SalesRepID" name="SalesRepID" type="hidden" value="@Session["userId"]" />
+                <input type="submit" name="save" value="Save Draft" class="btn btn-primary" />
+                <input type="submit" name="send" value="Submit Request" class="btn btn-success" />
+        }
+        @Html.ActionLink("Cancel", "Index", new { n1_name = Request.QueryString["n1_name"], n2_name = Request.QueryString["n2_name"] }, htmlAttributes: new { @class = "btn btn-primary" })
+    </div>
+</div>
+</div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+<div id="actitemDropdown" hidden="hidden">
+    @Html.DropDownListFor(model => model.achType, Model.list_achType, new { @class = "form-control" })
+</div>
+
+<div id="cccitemDropdown" hidden="hidden">
+    @Html.DropDownListFor(model => model.cccType, Model.list_cccType, new { @class = "form-control" })
+</div>

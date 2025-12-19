@@ -1,0 +1,127 @@
+﻿@model IEnumerable<newrisourcecenter.Models.SPAViewModels>
+
+@{
+    ViewBag.Title = "Manageassign";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    $(document).ready(function () {
+        $("#salecontracts").change(function () {
+            location.href = "/SPA/manageassign?n1_name=Support%20Tools&n2_name=SPA%20Tool&usr_email=" + $("#salecontracts").val()+"&msg=@Request.QueryString["msg"]&isAdmin=yes";
+        });
+
+        $('#checkall').click(function () {
+            if ($('#checkall').is(":checked")) {
+                $(".checkit").prop("checked",true);
+            } else {
+                $(".checkit").prop("checked", false);
+            }
+        });
+    });
+</script>
+
+<div class="main_content">
+    <div style="float:right;margin:0px 10px 0px 0px;">
+        @if (Request.QueryString["isAdmin"] == "yes")
+        {
+            <a class="btn btn-info" href="/SPA/SPAadmin/@Request.QueryString["details"]?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&isAdmin=@Request.QueryString["isAdmin"]&submenu=yes">Back</a>
+        }
+        else
+        {
+            <a class="btn btn-info" href="/SPA?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&isAdmin=@Request.QueryString["isAdmin"]&submenu=yes">Back</a>
+        }
+    </div>
+    <form action="/SPA/Manageassign/" method="post">
+        <div style="width:100%;padding:20px;">
+            <div>
+                Select a user whose contracts you would like to re-assign on the left and assign it to the user on the right
+            </div>
+
+            <div style="width:30%;padding:20px;display:inline-block;vertical-align:top;">
+                Select contracts by sales rep:
+                <select name="salecontracts" id="salecontracts" class="form-control">
+                    <option value="" selected>Select Sales Rep</option>
+
+                    @foreach (var items in @ViewBag.salesreps)
+                    {
+                        if (!string.IsNullOrEmpty(@Request.QueryString["usr_email"]) && @Request.QueryString["usr_email"] == @items.email)
+                        {
+                            if (items.count != "0")
+                            {
+                                <option value="@items.email" style="background-color:#ff0000;" selected >@items.contact_name (@items.count) </option>
+                            }
+                            else
+                            {
+                                <option value="@items.email" selected >@items.contact_name </option>
+                            }
+                        }
+                        else
+                        {
+                            if (items.count != "0")
+                            {
+                                <option value="@items.email" style="background-color:#ff0000;" >@items.contact_name (@items.count) </option>
+                            }
+                            else
+                            {
+                                <option value="@items.email">@items.contact_name </option>
+                            }
+                        }
+                    }
+                </select>
+            </div>
+
+        @if (!string.IsNullOrEmpty(Request.QueryString["usr_email"]))
+        {
+            <div style="width:400px;padding:20px;display:inline-block;vertical-align:top;">
+                Select sales rep to assign contracts:
+                <select name="selectUser" id="selectUser" class="form-control">
+                    <option value="" selected >Select Sales Rep</option>
+                    @foreach (var items in @ViewBag.salesrepsAssign)
+                    {
+                        <option value="@items.email">@items.contact_name </option>
+                    }
+                </select>
+            </div>
+        }
+        </div>
+
+        <div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="checkall" name="checkall" value="1" /> @Html.DisplayNameFor(model => model.FirstOrDefault().Spa_id)
+                        </td>
+                        <td>
+                            @Html.DisplayNameFor(model => model.FirstOrDefault().UserName)
+                        </td>
+                        <td>
+                            @Html.DisplayNameFor(model => model.FirstOrDefault().CompanyName)
+                        </td>
+                        <td>
+                            @Html.DisplayNameFor(model => model.FirstOrDefault().Customer_name)
+                        </td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var items in Model)
+                    {
+                        <tr><td><input type="checkbox" class="checkit" name="spa_ids" value="@items.Spa_id" /> @items.Spa_id</td><td>@items.Sales_rep_user_name</td><td>@items.CompanyName</td><td>@items.Customer_name</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <input type="hidden" value="@Request.QueryString["n1_name"]" name="n1_name" />
+        <input type="hidden" value="@Request.QueryString["n2_name"]" name="n2_name" />
+        <input type="hidden" value="@Request.QueryString["msg"]" name="msg" />
+
+        @if (!string.IsNullOrEmpty(Request.QueryString["usr_email"]))
+        {
+            <input type="submit" value="Assign" />
+        }
+
+    </form>       
+</div>
+
+

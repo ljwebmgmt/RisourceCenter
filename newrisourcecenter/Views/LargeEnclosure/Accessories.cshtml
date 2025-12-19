@@ -1,0 +1,498 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "";
+}
+<script>
+    lightingtext = $(".lightingtext");
+    $(".newtip").click(function () {
+        $(this).find("ol").eq(0).toggleClass("newtiptext");
+    });
+    //disable the height when baying is yes
+    if (baying == 1) {
+        lightingtext.html("Note:<br />Connection accessories are automatically added in the Selector.<br>When baying, through-wiring is atuomatically supplied loose.<br>");
+    }
+    else
+    {
+        lightingtext.html("Note:<br />Connection accessories are automatically added in the Selector.<br>An adaptor bracket for securing in the width is added to the bill of materials.<br>");
+    }
+</script>
+<style>
+ol.newtiptext{display:none;}
+ol#newtiptext {width:90%;background-color:#ccc;color: #000;padding: 20px;text-align: left;line-height: 30px;border-radius: 6px;margin-left:auto;margin-right:auto;}
+#table1 {padding:5px;margin:5px;background-color:#fff;color:#000;margin-left:auto;margin-right:auto;width:100%;}
+#table1 div> div {display:inline-block;width:18%;margin-right:5px;vertical-align: top;}
+
+@@media only screen and (min-width: 990px) and (max-width: 1200px) {
+.slider_1, .slider_2, .slider_3 {display: none;float: right;width:55%;}
+.content_slider_txt{width:40%;}
+}
+@@media only screen and (min-width: 828px) and (max-width: 990px) {
+.flexslider{height:auto;display:block;}
+.slider_1, .slider_2, .slider_3 {display: none;float: none;width:100%;text-align:center;}
+.content_slider_txt{width:100%;position:relative;top:0px;}
+}
+@@media only screen and (min-width: 740px) and (max-width: 828px) {
+.flexslider{height:auto;display:block;}
+.slider_1, .slider_2, .slider_3 {display: none;float: none;width:100%;text-align:center;}
+.content_slider_txt{width:100%;position:relative;top:0px;}
+}
+@@media only screen and (min-width: 580px) and (max-width: 740px) {
+#table1 div> div {width:100%;}
+.flexslider{height:auto;display:block;}
+.slider_1, .slider_2, .slider_3 {display: none;float: none;width:100%;text-align:center;}
+.content_slider_txt{width:100%;position:relative;top:0px;}
+}
+@@media only screen and (min-width: 424px) and (max-width: 580px) {
+#table1 div> div {width:100%;}
+.flexslider{height:auto;display:block;}
+.slider_1, .slider_2, .slider_3 {display: none;float: none;width:100%;text-align:center;}
+.slider_1 img, .slider_2 img, .slider_3 img {width:100%;}
+.content_slider_txt{width:90%;position:relative;top:0px;}
+}
+@@media only screen and (min-width: 350px) and (max-width: 424px) {
+#table1 div> div {width:100%;}
+.flexslider{height:auto;display:block;}
+.slider_1, .slider_2, .slider_3 {display: none;float: none;width:100%;text-align:center;}
+.slider_1 img, .slider_2 img, .slider_3 img {width:100%;}
+.content_slider_txt{width:90%;position:relative;top:0px;}
+}
+@@media only screen and (max-width: 350px) {
+#table1 div> div {width:100%;}
+span#newtiptext{width:99%;}
+.flexslider{height:auto;display:block;}
+.slider_1, .slider_2, .slider_3 {display: none;float: none;width:100%;text-align:center;}
+.slider_1 img, .slider_2 img, .slider_3 img {width:100%;}
+.content_slider_txt{width:90%;position:relative;top:0px;}
+}
+</style>
+
+<div id="table1" cellspacing="0" cellpadding="0" border="0">
+    <br />
+    <!-- Sockel -Add base/plinth system Flex-Block?-->
+    <div>
+        <b>Add base/plinth system Flex-Block?</b>
+        <span class="newtip">
+            <span class="glyphicon glyphicon-question-sign"></span>
+            <ol class="newtiptext" id="newtiptext">
+                <span style="float:right;" class="glyphicon glyphicon-remove-circle"></span>
+                <span>
+                    The Flex-Block is a base/plinth system which allows fast, tool-free installation of all base/plinth components and accessories. The enclosure load rests on the corner pieces, so that the trim panels can be attached or removed at any time using clips.
+                    <br><br>The benefits to you<br>
+                    <ul>
+                        <li>Fast assembly, thanks to simple interplay between the base/plinth components <br></li>
+                        <li>Easily bayed with a tool-free baying clip<br></li>
+                        <li>Space-saving cable routing in the base/plinth creates more space for enclosure configuration<br></li>
+                        <li>Easy transportation of the enclosure in its bayed and configured state by removing the base/plinth trim<p></p></li>
+                    </ul>
+                    <a href="https://www.rittal.com/us-en/product/list.action?categoryPath=/PG0001/PG0900ZUBEHOER1/PG0899ZUBEHOER1/PG11096ZUBEHOER1" class="ButtonLink2" target="_blank"><span style="color:#a3006e;" class="glyphicon glyphicon-play"></span> More info on rittal.com</a>
+                </span>
+            </ol>
+        </span>
+    </div>
+    <div>
+        <div>
+            <img src="/attachments/LargeEnclosure/images/fri141315800.jpg" width="100" height="70" />&nbsp;
+        </div>
+        <div>
+            <input name="base" value="Base 100 mm" type="Radio"> Height: <!--100 mm-->4in (100mm)
+        </div>
+        <div>
+            <input name="base" value="Base 200 mm" type="Radio"> Height: <!--200 mm-->8in (200mm)
+        </div>
+        <div></div>
+        <div></div>
+    </div>
+    <!-- Sockel TS-Add base/plinth TS?-->
+    <hr />
+    <div>
+        <b>Add base/plinth TS?</b>
+        <span class="newtip">
+            <span class="glyphicon glyphicon-question-sign"></span>
+            <ol class="newtiptext" id="newtiptext">
+                <div style="float:right;" class="glyphicon glyphicon-remove-circle"></div>
+                <div>
+                    <p>
+                        The modular base/plinth concept offers major functional benefits. Mounting on the enclosure is achieved very comfortably from the outside. The base/plinth interior offers a wide range of mounting level options for cable management.
+                        <br>If the sheet steel base/plinth is selected, 4 inches high trim panels will be added to the parts list automatically – irrespective of the specified height – in order to provide for additional stabilisation between the enclosures.
+                        <br><br>The benefits to you: <br>
+                    </p>
+                    <ul>
+                        <li>Easier assembly <br></li>
+                        <li>Diverse cable entry options<br></li>
+                        <li>Option of stabilising baying connection.<p></p></li>
+                    </ul>
+                    <a href="https://www.rittal.com/us-en/product/list.action?categoryPath=/PG0001/PG0900ZUBEHOER1/PG0899ZUBEHOER1/PG1034ZUBEHOER1" class="ButtonLink2" target="_blank"><span style="color:#a3006e;" class="glyphicon glyphicon-play"></span> More info on rittal.com</a>
+                </div>
+            </ol>
+        </span>
+    </div>
+    <div>
+        <div>
+            <img src="/attachments/LargeEnclosure/images/fri141316300.jpg" width="100" width="50" height="70" />
+        </div>
+        <div>
+            <input name="base" value="Base TS 100 mm" type="Radio"> Height: <!--100 mm-->4in (100mm)
+        </div>
+        <div>
+            <input name="base" value="Base TS 200 mm" type="Radio"> Height: <!--200 mm-->8in (200mm)
+        </div>
+        <div></div>
+        <div>
+            <input name="base" value="" type="Radio" checked="" id="base"> Not required
+        </div>
+    </div>
+    <hr />
+    <!-- Systemleuchten- Lighting system-->
+    <div>
+        <b>Add system lights?</b>
+        <span class="newtip">
+            <span class="glyphicon glyphicon-question-sign"></span>
+            <ol class="newtiptext" id="newtiptext">
+                <div style="float:right;" class="glyphicon glyphicon-remove-circle"></div>
+                <div>
+                    <span class="newtiptext" id="newtiptext">
+                        <span class="lightingtext"></span>
+                        <a href="http://www.rittal.com/us-en/product/list.action?categoryPath=/PG0001/PG0900ZUBEHOER1/PG0917ZUBEHOER1/PG1376ZUBEHOER1" class="ButtonLink2" target="_blank"><span style="color:#a3006e;" class="glyphicon glyphicon-play"></span> More info on rittal.com</a>
+                    </span>
+                </div>
+            </ol>
+        </span>
+    </div>
+    <div>
+        <div>
+            <img src="/attachments/LargeEnclosure/images/fri160406295.jpg" width="100" height="70" />
+        </div>
+        <div>
+            <input name="light" value="Comfortlight" type="Radio"> LED system light with socket and door-operated switch
+            <span class="newtip">
+                <span class="glyphicon glyphicon-question-sign"></span>
+                <ol class="newtiptext" id="newtiptext">
+                    <div style="float:right;" class="glyphicon glyphicon-remove-circle"></div>
+                    <p>LED system light with socket, separate door-operated switch and required connection accessories.
+                        <br />The LED system light has a rated voltage of 100 – 240 V, 50 – 60 Hz.
+                     </p>
+                    <a href="https://www.rittal.com/us-en/product/show/variantdetail.action;jsessionid=7A7F7CF85308F591B800FFB3B6C3ED8D?c=/Systemausbau/Innenausbau/Systemleuchten&categoryPath=/PG0001/PG0900ZUBEHOER1/PG0917ZUBEHOER1/PG1376ZUBEHOER1/PRO64749ZUBEHOER&productID=2500210" class="ButtonLink2" target="_blank"><span style="color:#a3006e;" class="glyphicon glyphicon-play"></span> More info on rittal.com</a>
+                </ol>
+            </span>
+        </div>
+        <div>
+            <input name="light" value="Universallamp" type="Radio"> LED system light with socket and motion sensor
+            <span class="newtip">
+                <span class="glyphicon glyphicon-question-sign"></span>
+                <ol class="newtiptext" id="newtiptext">
+                    <div style="float:right;" class="glyphicon glyphicon-remove-circle"></div>
+                    <p>LED system light with socket, separate door-operated switch and required connection accessories.
+                        <br />The LED system light has a rated voltage of 110 – 240 V, 50 – 60 Hz.
+                    </p>
+                    <a href="https://www.rittal.com/us-en/product/show/variantdetail.action;jsessionid=7A7F7CF85308F591B800FFB3B6C3ED8D?c=/Systemausbau/Innenausbau/Systemleuchten&categoryPath=/PG0001/PG0900ZUBEHOER1/PG0917ZUBEHOER1/PG1376ZUBEHOER1/PRO64749ZUBEHOER&productID=2500310" class="ButtonLink2" target="_blank"><span style="color:#a3006e;" class="glyphicon glyphicon-play"></span> More info on rittal.com</a>
+                </ol>
+            </span>
+        </div>
+        <div>
+            <input name="light" value="LED" type="Radio">
+            LED system light with 24 V DC
+            <span class="newtip">
+                <span class="glyphicon glyphicon-question-sign"></span>
+                <ol class="newtiptext" id="newtiptext">
+                    <div style="float:right;" class="glyphicon glyphicon-remove-circle"></div>
+                    <p>LED light with the required connection accessories.<br>The LED light has a rated voltage of 24 V (DC) (± 10%).</p>
+                    <a href="http://www.rittal.com/us-en/product/list/variations.action?categoryPath=/PG0001/PG0900ZUBEHOER1/PG0917ZUBEHOER1/PG1376ZUBEHOER1/PRO14329ZUBEHOER1&amp;productID=PRO14329" class="ButtonLink2" target="_blank"><span style="color:#a3006e;" class="glyphicon glyphicon-play"></span> More info on rittal.com</a>
+                </ol>
+            </span>
+        </div>
+        <div>
+            <input name="light" value="" type="Radio" checked="" id="light"> Not required</nobr>
+        </div>
+    </div>
+    <hr />
+    <!-- Side panels - show side pannel if baying TS8  -->
+    <div>
+        <b>Add side panels?</b>
+        <span class="newtip">
+            <span class="glyphicon glyphicon-question-sign"></span>
+            <ol class="newtiptext" id="newtiptext">
+                <div style="float:right;" class="glyphicon glyphicon-remove-circle"></div>
+                <div>
+                    <p>
+                        Side panels are screw-fastened to the TS 8 section to finish off a single TS 8 or a bayed TS 8 suite at the side.
+                        <br><br>The benefits to you:<br>
+                    </p>
+                    <li>Automatic potential equalisation and superior EMC protection, thanks to enclosure panel fasteners with earthing insert <br></li>
+                    <li>The side panels are easily positioned using a location aid<br></li>
+                    <li>Integral earthing bolt with contact surface<p></p></li>
+                    <a href="http://www.rittal.com/us-en/product/list/variations.action?categoryPath=/PG0001/PG0900ZUBEHOER1/PG0905ZUBEHOER1/PG0971ZUBEHOER1/PRO11917ZUBEHOER1&amp;productID=PRO11917" class="ButtonLink2" target="_blank"><span style="color:#a3006e;" class="glyphicon glyphicon-play"></span> More info on rittal.com</a>
+                </div>
+            </ol>
+        </span>
+    </div>
+    <div>
+        <div>
+            <img src="/attachments/LargeEnclosure/images/fri100504295.jpg" width="100" height="70" />
+        </div>
+        <div>
+            <input name="sidepanel" value="Sidepanel" type="Radio"> yes
+        </div>
+        <div>
+        </div>
+        <div></div>
+        <div>
+            <input name="sidepanel" value="" type="Radio" checked="" id="sidepanel"> Not required
+        </div>
+    </div>
+    <hr />
+
+    @if (Request.Form["bayingType"] == "1")
+    {
+    <!--Mounting plate Show mounting plate if baying and height is greater than 16000mm-->
+    <div>
+        <b>Add mounting plate infills?</b>
+        <span class="newtip">
+            <span class="glyphicon glyphicon-question-sign"></span>
+            <ol class="newtiptext" id="newtiptext">
+                <div style="float:right;" class="glyphicon glyphicon-remove-circle"></div>
+                <p>For a continuous mounting surface in bayed suites where the mounting plate is set forward.</p>
+                <a href="http://www.rittal.com/us-en/product/list/variations.action?categoryPath=/PG0001/PG0900ZUBEHOER1/PG0917ZUBEHOER1/PG1311ZUBEHOER1/PRO14006ZUBEHOER1&amp;productID=PRO14006" class="ButtonLink2" target="_blank"><span style="color:#a3006e;" class="glyphicon glyphicon-play"></span> More info on rittal.com</a>
+            </ol>
+        </span>
+    </div>
+    <div>
+        <div>
+            <img src="/attachments/LargeEnclosure/images/fri101201995.jpg" width="100" width="50" height="70" />&nbsp;
+        </div>
+        <div>
+            <input name="mountingplate" value="Mountingplate-interm" type="Radio"> yes
+        </div>
+        <div>
+        </div>
+        <div></div>
+        <div>
+            <input name="mountingplate" value="" checked="" type="Radio" id="mountingplate"> Not required
+        </div>
+    </div>
+    <hr />
+    }
+    <!-- Erdungsmaterial-Earthing material-->
+    <div>
+        <b>Add earthing/grounding straps?</b>
+        <span class="newtip">
+            <span class="glyphicon glyphicon-question-sign"></span>
+            <ol class="newtiptext" id="newtiptext">
+                <div style="float:right;" class="glyphicon glyphicon-remove-circle"></div>
+                <p>
+                    For configuration of a safe earthing connection with perfect contact.<br><br>
+                    The benefits to you:<br>
+                </p>
+                <li>Earthing straps counteract the current displacement effect at high frequencies, whilst at the same time offering highly flexible connection opportunities<p></p></li>
+                <a href="http://www.rittal.com/us-en/product/show/variantdetail.action?categoryPath=/PG0001/PG0900ZUBEHOER1/PG0917ZUBEHOER1/PG0997ZUBEHOER1/PGR3663ZUBEHOER1/PRO12074ZUBEHOER1&amp;productID=2412316" class="ButtonLink2" target="_blank"><span style="color:#a3006e;" class="glyphicon glyphicon-play"></span> More info on rittal.com</a>
+            </ol>
+        </span>
+    </div>
+    <div>
+        <div>
+            <img src="/attachments/LargeEnclosure/images/fri101224495.jpg" width="100" width="50" height="70" />
+        </div>
+        <div>
+            <input name="earthing" value="Earthing" type="Radio"> yes
+        </div>
+        <div>
+        </div>
+        <div></div>
+        <div>
+            <input name="earthing" value="" type="Radio" checked="" id="earthing"> Not required
+        </div>
+    </div>
+    <hr />
+    <!-- Griffsystem- Handle System -->
+    <div>
+        <b>Add alternative handle system?</b>
+        <span class="newtip">
+            <span class="glyphicon glyphicon-question-sign"></span>
+            <ol class="newtiptext" id="newtiptext">
+                <div style="float:right;" class="glyphicon glyphicon-remove-circle"></div>
+                <p>Simply remove the double-bit lock supplied as standard and replace with the comfort handle.<br>Once unlocked, the handle will fold down forwards. As the folding system does not utilise any swivel space, the door surface is ideal for the installation of components. <br>Lock insert, lock no. 3524 E</p>
+                <a href="http://www.rittal.com/us-en/product/show/variantdetail.action?categoryPath=/PG0001/PG0900ZUBEHOER1/PG0907ZUBEHOER1/PG1416ZUBEHOER1" class="ButtonLink2" target="_blank"><span style="color:#a3006e;" class="glyphicon glyphicon-play"></span> More info on rittal.com</a>
+            </ol>
+        </span>
+    </div>
+    <div>
+        <div>
+            <img src="/attachments/LargeEnclosure/images/fri100548495.jpg" width="100" width="50" height="70" />
+        </div>
+        <div>
+            <input name="handle" value="SecurityApplication" type="Radio"> Comfort handle with lock insert
+        </div>
+        <div>
+            <input name="handle" value="Safety insert and push button" type="Radio"> Comfort handle with lock and push-button insert
+        </div>
+        <div></div>
+        <div>
+            <input name="handle" value="" type="Radio" checked="" id="handle"> Not required
+        </div>
+    </div>
+    <hr />
+    <!-- System-Chassis -->
+    <div>
+        <b>Add system chassis with mounting flange 0.7 x 2.9 in for installation?</b>
+        <span class="newtip">
+            <span class="glyphicon glyphicon-question-sign"></span>
+            <ol class="newtiptext" id="newtiptext">
+                <div style="float:right;" class="glyphicon glyphicon-remove-circle"></div>
+                <p>Simply locate into the depth and secure.<br>Optionally available for the inner or outer mounting level.</p>
+                <a href="http://www.rittal.com/us-en/product/list/variations.action?productID=PRO14078" class="ButtonLink2" target="_blank"><span style="color:#a3006e;" class="glyphicon glyphicon-play"></span> More info on rittal.com</a>
+            </ol>
+        </span>
+    </div>
+    <div>
+        <div>
+            <img src="/attachments/LargeEnclosure/images/fri101205895.jpg" width="100" width="50" height="70" />
+        </div>
+        <div>
+            <input name="chassis" value="Innen" type="Radio"> Inner mounting level
+        </div>
+        <div>
+            <input name="chassis" value="Outside" type="Radio"> ﻿Outer mounting level
+        </div>
+        <div></div>
+        <div>
+            <input name="chassis" value="" type="Radio" checked="" id="chassis"> Not required
+        </div>
+    </div>
+    <hr />
+    <!-- Schaltplantasche-wiring print pocket? -->
+    <div>
+        <b>Add wiring print pocket?</b>
+        <span class="newtip">
+            <span class="glyphicon glyphicon-question-sign"></span>
+            <ol class="newtiptext" id="newtiptext">
+                <div style="float:right;" class="glyphicon glyphicon-remove-circle"></div>
+                <p>The sheet steel wiring plan pocket is easily screw-fastened to the tubular door frame at any preferred height.</p>
+                <a href="http://www.rittal.com/us-en/product/list/variations.action?productID=PRO14795" class="ButtonLink2" target="_blank"><span style="color:#a3006e;" class="glyphicon glyphicon-play"></span> More info on rittal.com</a>
+            </ol>
+        </span>
+    </div>
+    <div>
+        <div>
+            <img src="/attachments/LargeEnclosure/images/fri100556595.jpg" width="100" width="50" height="70" />
+        </div>
+        <div>
+            <input name="printpacket" value="Printpacket" type="Radio"> yes
+        </div>
+        <div>
+        </div>
+        <div></div>
+        <div>
+            <input name="printpacket" value="" type="Radio" checked="" id="printpacket"> Not required
+        </div>
+    </div>
+    <hr />
+    <!-- 180 Grad Scharnier- Hinge degrees -->
+    <div>
+        <b>Add 180﻿° hinge?</b>
+        <span class="newtip">
+            <span class="glyphicon glyphicon-question-sign"></span>
+            <ol class="newtiptext" id="newtiptext">
+                <div style="float:right;" class="glyphicon glyphicon-remove-circle"></div>
+                <p>Simply remove the 130° hinge supplied as standard and replace with the 180° hinge. Supports a door opening of up to 180°, depending on the baying combination. </p>
+                <a href="http://www.rittal.com/us-en/product/show/variantdetail.action?productID=8800190" class="ButtonLink2" target="_blank"><span style="color:#a3006e;" class="glyphicon glyphicon-play"></span> More info on rittal.com</a>
+            </ol>
+        </span>
+    </div>
+    <div>
+        <div>
+            <img src="/attachments/LargeEnclosure/images/fri100554295.jpg" width="100" width="50" height="70" />
+        </div>
+        <div>
+            <input name="hingedegrees" value="HingeDegrees" type="Radio"> yes
+        </div>
+        <div>
+        </div>
+        <div></div>
+        <div>
+            <input name="hingedegrees" value="" type="Radio" checked="" id="hingedegrees"> Not required
+        </div>
+    </div>
+    <!--Transportoesen- Eyebolts Show eyebolts if baying with FMD -->
+    <span class="eyebolts">
+        <hr />
+        <div>
+            <b>Add eyebolts?</b>
+            <span class="newtip">
+                <span class="glyphicon glyphicon-question-sign"></span>
+                <ol class="newtiptext" id="newtiptext">
+                    <div style="float:right;" class="glyphicon glyphicon-remove-circle"></div>
+                    <p>Allows the enclosure to be transported by crane.</p>
+                    <a href="http://www.rittal.com/us-en/product/show/variantdetail.action?productID=4568000" class="ButtonLink2" target="_blank"><span style="color:#a3006e;" class="glyphicon glyphicon-play"></span> More info on rittal.com</a>
+                </ol>
+            </span>
+        </div>
+        <div>
+            <div>
+                <img src="/attachments/LargeEnclosure/images/fri100511295.jpg" width="100" width="50" height="70" />
+            </div>
+            <div>
+                <input name="eyebolts" value="Eyebolts" type="Radio"> yes
+            </div>
+            <div>
+            </div>
+            <div></div>
+            <div>
+                <input name="eyebolts" value="" checked="" type="Radio" id="eyebolts"> Not required
+            </div>
+        </div>
+    </span>
+    <hr />
+    <!-- NEWLY ADDED QUESTIONS -->
+    <!-- Holes and cutouts -->
+    <div>
+        <b>Add Holes and/or Cutouts?</b>
+        <span class="newtip">
+            <span class="glyphicon glyphicon-question-sign"></span>
+            <ol class="newtiptext" id="newtiptext">
+                <div style="float:right;" class="glyphicon glyphicon-remove-circle"></div>
+                <p>Our state-of-the-art Rittal Automated System Perforex machine can modify stainless steel or carbon steel enclosures and junction boxes per your specifications. We’ll install standard holes, taps, and cutouts for both enclosures and mounting panels as well as modifications for climate control products.<br>Orders must be accompanied with a fully dimensioned, 1-to-1 scaled, Rittal drawing(s) based on drawings downloaded from www.rittal.us or provided by Rittal at time of quote. Products ordered will require DWG or DFX file type.</p>
+                <a href="http://www.rittal.com/us-en/content/eng/support_1/rittalxpress/mod_program/mod_program_1.jsp" class="ButtonLink2" target="_blank"><span style="color:#a3006e;" class="glyphicon glyphicon-play"></span> More info on rittal.com</a>
+            </ol>
+        </span>
+    </div>
+    <div>
+        <div>
+            <img src="/attachments/LargeEnclosure/images/holes-cutouts.jpg" width="100" width="50" height="70" />
+        </div>
+        <div>
+            <input name="holes" value="Holes" type="Radio"> yes
+        </div>
+        <div>
+        </div>
+        <div></div>
+        <div>
+            <input name="holes" value="" type="Radio" checked="" id="holes"> Not required
+        </div>
+    </div>
+    <hr />
+    <!-- Colors -->
+    <div>
+        <b>Add alternate paint color from our 28 available options?</b>
+        <span class="newtip">
+            <span class="glyphicon glyphicon-question-sign"></span>
+            <ol class="newtiptext" id="newtiptext">
+                <div style="float:right;" class="glyphicon glyphicon-remove-circle"></div>
+                <ul><li>RAL 7035 - Light Gray</li><li>RAL 9005 - Jet Black</li><li>RAL 9003 - Signal White</li><li>RAL 9010 - Pure White</li><li>RAL 9002 - Gray White</li><li>RAL 7032 - Pebble Gray</li><li>ANSI 61 - Gray</li><li>RAL 7012 - Basalt Gray</li><li>RAL 7022 - Umbra Gray</li><li>RAL 9001 - Cream</li><li>RAL 1015 - Light Ivory</li><li>RAL 1023 - Traffic Yellow</li><li>RAL 1033 - Dahlia Yellow</li><li>RAL 2000 - Yellow Orange</li><li>RAL 2004 - Pure Orange</li><li>RAL 2002 - Vermilion</li><li>RAL 3020 - Traffic Red</li><li>RAL 3001 - Signal Red</li><li>RAL 3005 - Wine Red</li><li>RAL 6011 - Reseda Green</li><li>RAL 6003 - Olive Green</li><li>RAL 6002 - Leaf Green</li><li>RAL 5018 - Turquoise Blue</li><li>RAL 5012 - Light Blue</li><li>RAL 5015 - Sky Blue</li><li>RAL 5017 - Traffic Blue</li><li>RAL 5010 - Gentian Blue</li><li>RAL 5005 - Signal Blue</li></ul>
+                <a href="http://www.rittal.com/us-en/content/eng/support_1/rittalxpress/paint_program/paint_program_1.jsp" class="ButtonLink2" target="_blank"><span style="color:#a3006e;" class="glyphicon glyphicon-play"></span> More info on rittal.com</a>
+            </ol>
+        </span>
+    </div>
+    <div>
+        <div>
+            <img src="/attachments/LargeEnclosure/images/paint-program.jpg" width="100" width="50" height="70" />
+        </div>
+        <div>
+            <input name="paint" value="Paint" type="Radio"> yes
+        </div>
+        <div>
+        </div>
+        <div></div>
+        <div>
+            <input name="paint" value="" type="Radio" checked="" id="paint"> Not required
+        </div>
+    </div>
+</div>

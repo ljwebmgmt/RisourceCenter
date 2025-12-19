@@ -1,0 +1,163 @@
+﻿@model newrisourcecenter.Models.MDFViewModel
+
+@{
+    ViewBag.Title = "Merch";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    long? companyType = Convert.ToInt32(Session["companyType"]);
+    long? companyId = Convert.ToInt32(Session["companyId"]);
+}
+@if (!string.IsNullOrEmpty(Request.QueryString["agree"]) && Request.QueryString["agree"] == "yes")
+{
+    var proformaURL = String.Format("https://www.mpgstore.com/rittal/signin_external.aspx?Email={0}&group={1}&fname={2}&lname={3}&phone={4}&address={5}&city={6}&state={7}&zip={8}", @Model.usr_email, companyType, @Model.usr_fName, @Model.usr_lName, @Model.usr_phone, Model.usr_add1, Model.usr_city, Model.usr_state, Model.usr_zip);
+    Response.Redirect(proformaURL);  
+}
+
+<style type="text/css">
+    .pink {
+        color: #e21785;
+    }
+
+    .gray {
+        color: #999999;
+    }
+
+    .head1 {
+        color: #999999;
+        font-weight: bold;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 20px;
+    }
+
+    .tableMain {
+        border: solid 1px #999999;
+        padding: 0;
+        margin: 0;
+    }
+
+    .results {
+        border: solid 1px #e21785;
+    }
+
+        .results th {
+            text-align: left;
+        }
+
+    .pinkGrade {
+        color: #fff;
+        background: #ed1e79;
+        text-align: center;
+        text-shadow: 0 1px 1px #808080;
+        font-size: 20px;
+        padding: 5px;
+        background-image: -webkit-gradient(linear, left top, left bottom, from( #ed1e79 ), to( #4d4d4d ));
+        background-image: -webkit-linear-gradient( #ed1e79, #4d4d4d );
+        background-image: -moz-linear-gradient( #ed1e79, #4d4d4d );
+        background-image: -ms-linear-gradient( #ed1e79, #4d4d4d );
+        background-image: -o-linear-gradient( #ed1e79, #4d4d4d );
+        background-image: linear-gradient( #ed1e79, #4d4d4d );
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ed1e79', endColorstr='#4d4d4d',GradientType=0 );
+    }
+</style> 
+
+@if (!string.IsNullOrEmpty(Request.QueryString["success"]))
+{
+    <h4 style="color:red;">@Request.QueryString["success"]</h4>
+}
+<div class="main_content">
+    <section>
+        <h2 align="center" style="padding:0;margin:0;">Merchandise</h2>
+        <p>
+
+        </p>
+            @if (companyId == 312)
+            {
+                <p style="font-size:14px;">You are now going to be redirected to the Rittal Corporation Brand Central merchandise store.  Orders placed through the store require payment via your company Visa, Mastercard or American Express upon checkout.</p>
+                <p style="font-size:14px;">Please check the box below as your acknowledgment of these terms, then click the Continue button to be redirected to the Brand Central store.</p>
+                <p style="font-size:14px;">Sales collateral, while ordered through the Brand Central store, is supplied free of charge and is not subject to freight or handling fees.  Orders placed strictly for collateral will not require payment or reimbursement of any kind.</p>
+            }
+            <form name="insertTraining" id="insertTraining" action="/MDFView/merch?mA=0" method="post" data-ajax="false" class="pure-form pure-form-aligned" onsubmit="return _CF_checkinsertTraining(this)">      
+                @Html.AntiForgeryToken()
+                <fieldset>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.mdf_comp, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.DisplayFor(model => model.company, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.mdf_comp, "", new { @class = "text-danger" })
+                    </div>
+                </div>  
+
+                <br>
+                @if (companyType == 5)
+                {
+                    @Html.HiddenFor(model => model.mdf_SAP)
+                }
+                else
+                {
+                    <div class="form-group">
+                        <label class="control-label col-md-2" for="n1order">
+                            SAP Account:<span class="req">*</span>
+                        </label>
+                        <div class="col-md-10">
+                            <select name="mdf_sap" id="mdf_sap" message="SAP is required before proceeding." class="form-control">
+                                <option value="">SELECT SAP Account</option>
+                                @if (Model.partner_loc.Count() > 0)
+                                {
+                                    foreach (var item in Model.partner_loc)
+                                    {
+                                        if (!string.IsNullOrEmpty(item.loc_name))
+                                        {
+                                            <option value="@item.loc_SAP_account">@item.loc_name - @item.loc_SAP_account</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.loc_SAP_account">@Model.company - @item.loc_city - @item.loc_SAP_account</option>
+                                        }
+                                    }
+                                    <option value="0">none</option>
+                                }
+                                else
+                                {
+                                    <option value="0">none</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                }
+
+                <input type="hidden" name="mdf_title" value="-">
+                <input type="hidden" name="mdf_desc" value="-">
+                <input type="hidden" name="mdf_date" value="17-Nov-16">
+                <input type="hidden" name="mdf_totalCost" value="0">
+                <input type="hidden" name="mdf_mdfCost" value="0">
+                <br>
+                <div class="form-group">
+                    <label class="control-label col-md-2" for="mdf_comp"><b>I Agree to the Terms &amp; Conditions</b><span class="req">*</span> </label>
+                    <div class="col-md-10">
+                        <input name="agree" type="checkbox" value="yes" data-mini="true" id="agree" class="custom">
+                    </div>
+                </div>
+
+                <input type="hidden" name="mdf_user" value="57139">
+                <input type="hidden" name="mdf_status" value="1">
+                <input type="hidden" name="mdf_ID" value="">
+                <br>
+                <input type="hidden" value="@Request.QueryString["n1_name"]" name="n1_name" />
+                <input type="hidden" value="@Request.QueryString["n2_name"]" name="n2_name" />
+                <br />
+                <div class="form-group">
+                    <label class="control-label col-md-2" for="mdf_comp"></label>
+                    <div class="col-md-10">
+                        <a href="/MDFView/?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]" data-role="button" data-icon="arrow-l" data-iconpos="left" class="btn btn-primary" >&nbsp;&nbsp;Back&nbsp;&nbsp;&nbsp;</a>
+                        <input name="submit" id="submit" type="submit" value="Continue" class="btn btn-success" data-icon="arrow-r" data-iconpos="right">
+                    </div>
+                </div>
+
+                <input type="hidden" name="mdf_type" value="4">
+                </fieldset>
+            </form>
+        
+        <hr color="#ed1e79">
+
+
+    </section>
+</div>

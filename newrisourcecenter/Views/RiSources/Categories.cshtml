@@ -1,0 +1,87 @@
+﻿@model IEnumerable<newrisourcecenter.Models.RiSourcesModel>
+
+@{
+    ViewBag.Title = "RiSources";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string userProducts = Convert.ToString(Session["userProducts"]);
+    string userIndustry = Convert.ToString(Session["userIndustry"]);
+}
+<script>
+    $(document).ready(function () {
+        $("a").click(function (event) {
+            $("#sc_body_" + event.target.id).toggleClass("show_sales_comm");
+            $("#sc_teaser_" + event.target.id).toggleClass("show_sales_comm");
+
+            if ($("#sc_teaser_" + event.target.id).hasClass("show_sales_comm")) {
+                $("#" + event.target.id).css("color", "#fff");
+                $("#sc_body_" + event.target.id).css("border", "solid 1px #fff", "padding", "10px");
+                $("#sc_body_" + event.target.id).css("padding", "10px");
+
+            } else {
+                $("#" + event.target.id).css("color", "#e21785");
+            }
+        });
+
+    });
+</script>
+
+<div class="main_content">
+    @{Html.RenderPartial("_risourceMenu");}
+    <h3 align="center"><u>@ViewBag.cat_name</u></h3>
+    <section class="comms">
+        @foreach (var risource in Model)
+        {
+            if (userProducts != null)
+            {
+                foreach (var products in userProducts.ToArray())
+                {
+                    if (risource.ris_products.Contains(products))
+                    {
+                        <div>
+                            @{
+                                Uri uriResult;
+                                bool result = Uri.TryCreate(@risource.ris_link, UriKind.Absolute, out uriResult)
+                                && (uriResult.Scheme == Uri.UriSchemeHttp
+                                || uriResult.Scheme == Uri.UriSchemeHttps);
+
+                                if (result)
+                                {
+                                    <h4><img src="~/images/glyphicons/png/@risource.n2_headerImg" id="header_img" alt="@risource.nav2_longName" title="@risource.nav2_longName" /><a style="cursor:pointer;" id="@risource.ris_ID" target="_blank" href="@risource.ris_link">@risource.ris_headline</a></h4>
+                                }
+                                else
+                                {
+                                    <h4><img src="~/images/glyphicons/png/@risource.n2_headerImg" id="header_img" alt="@risource.nav2_longName" title="@risource.nav2_longName" /><a style="cursor:pointer;" id="@risource.ris_ID" href="~/attachments/risources/@risource.ris_link">@risource.ris_headline</a></h4>
+                                }
+                            } 
+                            <br />
+                        </div>
+
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                <div>
+                    @{
+                        Uri uriResult;
+                        bool result = Uri.TryCreate(@risource.ris_link, UriKind.Absolute, out uriResult)
+                        && (uriResult.Scheme == Uri.UriSchemeHttp
+                        || uriResult.Scheme == Uri.UriSchemeHttps);
+
+                        if (result)
+                        {
+                            <h4><img src="~/images/glyphicons/png/@risource.n2_headerImg" id="header_img" alt="@risource.nav2_longName" title="@risource.nav2_longName" /><a style="cursor:pointer;" id="@risource.ris_ID" target="_blank" href="@risource.ris_link">@risource.ris_headline</a></h4>
+                        }
+                        else
+                        {
+                            <h4><img src="~/images/glyphicons/png/@risource.n2_headerImg" id="header_img" alt="@risource.nav2_longName" title="@risource.nav2_longName" /><a style="cursor:pointer;" id="@risource.ris_ID" href="~/attachments/risources/@risource.ris_link">@risource.ris_headline</a></h4>
+                        }
+                    } 
+                    <br />
+                </div>
+            }
+        }
+    </section>
+    <br />
+</div>

@@ -1,0 +1,152 @@
+﻿@model newrisourcecenter.Models.Nav3ViewModel
+
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Deleting Level 3 Menu Item</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.n2ID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.n2ID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.n3order)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.n3order)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.n3_nameShort)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.n3_nameShort)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.n3_nameLong)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.n3_nameLong)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.n3_descShort)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.n3_descShort)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.n3_descLong)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.n3_descLong)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.n3_active)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.n3_active)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.n3_products)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.n3_products)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.n3_usrTypes)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.n3_usrTypes)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.n3_editBy)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.n3_editBy)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.n3_editDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.n3_editDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.n3_redirect)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.n3_redirect)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.n3_keywords)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.n3_keywords)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.n3_industry)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.n3_industry)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.old_n3id)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.old_n3id)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.old_n2id)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.old_n2id)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    }
+</div>

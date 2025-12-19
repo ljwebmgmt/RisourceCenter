@@ -1,0 +1,258 @@
+﻿@model List<newrisourcecenter.Models.RittalUniversityViewModels>
+@{
+    ViewBag.Title = "Classes Taken";
+}
+<script>
+    jQuery(document).ready(function($){
+        rittalUniversityty = function (id) {
+            $("#div_"+id).toggle(
+                function () {
+                    if ($("#div_" + id + ":visible").length == 0) {
+                        $("#" + id).css("-o-transform: rotate", "rotate(180deg)");
+                        $("#" + id).css("-khtml-transform", "rotate(180deg)");
+                        $("#" + id).css("-webkit-transform", "rotate(180deg)");
+                        $(".classes_" + id).css("-moz-transform", "rotate(180deg)");
+                    } else {
+                        $("#" + id).css("-o-transform: rotate", "rotate(45deg)");
+                        $("#" + id).css("-khtml-transform", "rotate(45deg)");
+                        $("#" + id).css("-webkit-transform", "rotate(45deg)");
+                        $("#" + id).css("-moz-transform", "rotate(45deg)");
+                    }
+                }
+             );  
+        }
+
+        announcements = function (id) {
+            $("#an_" + id).toggle(
+                function () {
+                    if ($("#an_" + id + ":visible").length == 0) {
+                        $("#" + id).css("-o-transform: rotate", "rotate(180deg)");
+                        $("#" + id).css("-khtml-transform", "rotate(180deg)");
+                        $("#" + id).css("-webkit-transform", "rotate(180deg)");
+                        $("#" + id).css("-moz-transform", "rotate(180deg)");
+                    } else {
+                        $("#" + id).css("-o-transform: rotate", "rotate(45deg)");
+                        $("#" + id).css("-khtml-transform", "rotate(45deg)");
+                        $("#" + id).css("-webkit-transform", "rotate(45deg)");
+                        $("#" + id).css("-moz-transform", "rotate(45deg)");
+                    }
+                }
+             );
+        }
+    });
+</script>
+
+<article class="main_content">
+    <h1 style="text-align: center;">New Training Platform Coming Soon</h1>
+    @*<section>
+        <div id="page_text">
+            <div> @ViewBag.page_desc</div>
+        </div>
+        <hr id="header_bar" />
+        <div class="home-jumbotron">
+            <div>
+                <strong>
+                    My Tests and  Results
+                </strong>
+                <br />
+                <div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Class Name</th>
+                                <th>My Score</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <strong style="font-weight:bold;">@item.tr_module</strong>
+                                </td>
+                                <td>
+                                    @if (Convert.ToInt32(@item.tr_score) >= 80)
+                                    {
+                                        <strong style="color:green;" >@item.tr_score</strong>
+                                    }
+                                    else
+                                    {
+                                        <strong style="color:red;" >@item.tr_score</strong>
+                                    }
+                                </td>
+                                <td>
+                                    <a href="" id="@item.trid" onclick="getid(this.id);return false;">Details</a> 
+                                    <div style="display:none;" id="modalcontent_@item.trid">
+                                        <div style="text-align:center;margin:50px;">
+                                            Class Name: <strong>@item.tr_module</strong>
+                                            <br />
+                                            <br />
+                                            Number of Questions: <strong>@item.tr_NumQuestions</strong>
+                                            <br />
+                                            <br />
+                                            Passing Grade: <strong>@item.tr_PassGrade</strong>
+                                            <br />
+                                            <br />
+                                            Date Taken: <strong>@string.Format("{0:MM/dd/yyyy}", item.tr_date) </strong>
+                                            <br />
+                                            <br />
+                                            @if (Convert.ToInt32(@item.tr_score) >= 80)
+                                            {
+                                                <span style="color:green;font-weight:bold;letter-spacing:2px;font-size:18px;"> My Score: <strong>@item.tr_score</strong></span>
+                                                using (Html.BeginForm("printCert", "RittalUniversity", FormMethod.Post, new { id = "printcert" }))
+                                                {
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="tr_module" value="@item.tr_module" />
+                                                    <input type="hidden" name="tr_score" value="@item.tr_score" />
+                                                    <input type="hidden" name="tr_date" value="@item.tr_date" />
+                                                    <br />
+                                                    <input type="submit" value="View Certificate" />
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span style="color:red;"> My Score: <strong>@item.tr_score</strong></span>
+                                            }
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div>
+                <strong>
+                   Take a class
+                </strong>
+                <br />
+                <div id="inside_home" >
+                    <ul style="list-style:none;">
+                        <li>
+                        @foreach (var courses in Model.FirstOrDefault().list_courses)
+                        {
+                            <div style="width:100%;margin-bottom:20px;" >@courses.n2_nameLong  <a href="javascript:void(null);" class="glyphicon glyphicon-menu-down" id="tag_@courses.n2ID" onclick="rittalUniversityty(this.id);">+</a></div>
+                            <ul style="display:none;width:100%;list-style:none;" id="div_tag_@courses.n2ID" >
+                                @foreach (var classes in Model.FirstOrDefault().list_classes)
+                                {
+                                    if (courses.n2ID == classes.n2ID)
+                                    {
+                                        <li><a href="~/RittalUniversity/test?dir_name=@classes.file_name" >@classes.n3_nameLong</a> <br /></li>
+                                    }
+                                }
+                            </ul>
+                        }
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <br clear="all" />
+        <div id="inside_home">
+            <h3>Announcements</h3>
+            <ul style="list-style:none;">
+                <li>
+                @foreach (var courses in Model.FirstOrDefault().list_courses)
+                {
+                    var salesCommData = Model.FirstOrDefault().list_announcements.Where(a => a.n2ID == courses.n2ID);
+                    if ( salesCommData.Count() != 0 ) {
+                        <div style="width:100%;margin-bottom:20px;" ><span style="float:right;width:25px;height:30px;font-weight:bolder;font-size:20px;" id="countResults" >@salesCommData.Count()</span>@courses.n2_nameLong   <a href="javascript:void(null);" class="glyphicon glyphicon-menu-down" id="an_@courses.n2ID" onclick="announcements(this.id);">+</a></div>
+                        
+                        <ul style="display:none;width:100%;list-style:none;" id="an_an_@courses.n2ID" >
+                            @foreach (var salesComm in Model.FirstOrDefault().list_announcements.OrderByDescending(a=>a.sc_startDate))
+                            {
+                                if (courses.n2ID == salesComm.n2ID)
+                                {
+                                    <li>
+                                        <strong><a href="~/SalesComm/getSaleComById?scID=@salesComm.scID&n3ID=1&n1_name=Rittal University&msg=Announcements">@salesComm.sc_headline</a></strong><br />
+                                        <div style="color: #E50043">@string.Format("{0:MM/dd/yyyy}", salesComm.sc_startDate) </div>
+                                        <div>@Html.Raw(salesComm.sc_teaser)</div>
+                                        <a href="~/SalesComm/getSaleComById?scID=@salesComm.scID&n3ID=1&n1_name=Rittal University&msg=Announcements">more ...</a><br />
+                                        <hr style="width:98%;margin-left:0px;" />
+                                    </li>
+                                }
+                            }
+                        </ul>
+                    }
+                }
+                </li>
+            </ul>
+        </div>
+    </section>*@
+</article>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+
+		$('#close').click(function(){
+		    $('#modal').hide();
+         });
+    });
+
+	//get the form id and asign it to the modal done button class id
+	function getid(id){
+		$('#modal').show();
+		var modalcontent = $('#modalcontent_' + id).html();
+		$('#content').html(modalcontent);
+		//alert(modalcontent);
+	};
+
+	//now assign all the different parameters that would be passed to the new_manage_manually.cfm page
+	function assign(id){
+
+		var new_assigned = $('#'+id).text();
+
+		$('.done').attr('title', id);// create attr title on done class
+		$('.done').attr('name', new_assigned);// create attr name on done class
+
+		// change display title on modal by showing the name of
+		$('#assigned').html('You are assigning this quote to <b style="color:red">'+new_assigned+'</b>');
+
+	}
+
+</script>
+<style>
+/* style the modal */
+#modal {
+    background: #CCC;
+    width: 60%;
+    height: 50%;
+    min-height: 50%;
+    position: fixed;
+    top: 20%;
+    left: 20%;
+    right: 20%;
+    display: none;
+}
+
+#modal > div:first-child {
+    margin-top: 20px;
+    padding: 20px;
+    background: white;
+    width: 90%;
+    height: 70%;
+    position: relative;
+    top: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    color: black;
+    overflow: auto;
+}
+
+#close {
+    top: 30px;
+    position: relative;
+    text-align:center;
+}
+
+</style>
+<div id="modal">
+    <div align="left">
+        <span id="content"></span>
+    </div>
+    <div style="text-align:center;" >
+        <button id="close" >Close</button>
+    </div>
+</div><!-- modals-->

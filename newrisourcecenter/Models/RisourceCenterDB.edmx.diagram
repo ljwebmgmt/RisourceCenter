@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="34aa36a4316a46a69a30d33f94156439" Name="Diagram1" ZoomLevel="73">
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.Announcement1" Width="1.5" PointX="0.75" PointY="18.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.C__MigrationHistory" Width="1.5" PointX="0.75" PointY="3.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.adminPerm" Width="1.5" PointX="2.75" PointY="3.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.Announcement_logs" Width="1.5" PointX="4.75" PointY="3.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.Announcement" Width="1.5" PointX="6.75" PointY="0.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.AspNetRole" Width="1.5" PointX="0.75" PointY="0.875" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.AspNetUserClaim" Width="1.5" PointX="6.75" PointY="4.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.AspNetUserLogin" Width="1.5" PointX="4.75" PointY="7.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.AspNetUser" Width="1.5" PointX="6.75" PointY="7.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.CountLoggedin" Width="1.5" PointX="8.75" PointY="0.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.country" Width="1.5" PointX="0.75" PointY="8.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.data_state" Width="1.5" PointX="8.75" PointY="3.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.email_tracker" Width="1.5" PointX="8.75" PointY="6.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.Label" Width="1.5" PointX="10.75" PointY="0.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.Large_enclosure_fmd" Width="1.5" PointX="2.75" PointY="10.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.Large_enclosure_myaccessories" Width="1.5" PointX="10.75" PointY="4.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.Large_enclosure_myconfig" Width="1.5" PointX="8.75" PointY="10.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.Large_enclosure_pricing" Width="1.5" PointX="10.75" PointY="9.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.Large_enclosure_ts8" Width="1.5" PointX="12.75" PointY="0.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.literature" Width="1.5" PointX="4.75" PointY="12.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.Localization" Width="1.5" PointX="12.75" PointY="5.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.mdf_file" Width="1.5" PointX="12.75" PointY="9.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.mdf_main" Width="1.5" PointX="12.75" PointY="12.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.mdf_type" Width="1.5" PointX="6.75" PointY="13.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.nav1" Width="1.5" PointX="8.75" PointY="13.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.nav2" Width="1.5" PointX="14.75" PointY="0.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.PartnerApplication" Width="1.5" PointX="14.75" PointY="7.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.partnerCompany_Archive" Width="1.5" PointX="0.75" PointY="15.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.partnerIndustry" Width="1.5" PointX="16.75" PointY="0.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.partnerLocation" Width="1.5" PointX="2.75" PointY="16.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.partnerType" Width="1.5" PointX="4.75" PointY="16.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.ReturnToolExtention" Width="1.5" PointX="16.75" PointY="6.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.ReturnToolFile" Width="1.5" PointX="16.75" PointY="10.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.RFQ_Action_Log" Width="1.5" PointX="16.75" PointY="13.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.RFQ_Data_Extend" Width="1.5" PointX="16.75" PointY="17.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.RFQ_Files" Width="1.5" PointX="18.75" PointY="0.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.RFQ_Parts_Shipped" Width="1.5" PointX="18.75" PointY="3.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.RiSource" Width="1.5" PointX="18.75" PointY="7.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.risourcesCategory" Width="1.5" PointX="18.75" PointY="14.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.risourcesType_image" Width="1.5" PointX="18.75" PointY="17.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.salesComm" Width="1.5" PointX="10.75" PointY="19.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.salesRequest" Width="1.5" PointX="20.75" PointY="0.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.salesRequest_Action_Log" Width="1.5" PointX="20.75" PointY="7.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.salesRequest_Additional_Info" Width="1.5" PointX="20.75" PointY="10.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.salesRequest_Approvers" Width="1.5" PointX="20.75" PointY="14.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.salesRequest_File" Width="1.5" PointX="20.75" PointY="17.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.SiteActionLogModel" Width="1.5" PointX="18.75" PointY="20.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.SiteApprover" Width="1.5" PointX="20.75" PointY="20.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.SPA_Account_Manager" Width="1.5" PointX="4.75" PointY="21.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.SPA_FIles" Width="1.5" PointX="6.75" PointY="21.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.SPA_Intostock_Multiplier" Width="1.5" PointX="22.75" PointY="0.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.SPA_Material_Master" Width="1.5" PointX="22.75" PointY="3.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.SPA_Notes" Width="1.5" PointX="22.75" PointY="7.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.SPA_Rebates" Width="1.5" PointX="22.75" PointY="11.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.SPA_RebatesItems" Width="1.5" PointX="22.75" PointY="15.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.SPA_SalesReps" Width="1.5" PointX="22.75" PointY="21.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.SPA_Territory_Codes" Width="1.5" PointX="0.75" PointY="23.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.SPAItem" Width="1.5" PointX="24.75" PointY="0.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.SPA" Width="1.5" PointX="24.75" PointY="5.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.SPASku" Width="1.5" PointX="6.75" PointY="24.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.stats_training" Width="1.5" PointX="24.75" PointY="13.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.theme" Width="1.5" PointX="24.75" PointY="17.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.usr_user" Width="1.5" PointX="18.75" PointY="24.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.usr_user_temp" Width="1.5" PointX="24.75" PointY="20.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.usr_user_test" Width="1.5" PointX="20.75" PointY="24.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.Webshop_connect" Width="1.5" PointX="2.75" PointY="25.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.partnerCompany" Width="1.5" PointX="9.375" PointY="25.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.partnerStockCheck" Width="1.5" PointX="11.375" PointY="25.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.ChangeCommission" Width="1.5" PointX="27.375" PointY="0.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.ChangeCommissionPart" Width="1.5" PointX="27.375" PointY="7.5" />
+        <AssociationConnector Association="RisourceCenterMexicoModel.FK_ChangeCommission" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.ChangeCommissionHistory" Width="1.5" PointX="27.375" PointY="9.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.CommissionAdmin" Width="1.5" PointX="27.375" PointY="13.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.RFQ_RAS_Data" Width="1.5" PointX="27.375" PointY="16.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.RFQ_Data" Width="1.5" PointX="13.375" PointY="19.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.RCMContact" Width="1.5" PointX="3.375" PointY="0.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.BidRegistration" Width="1.5" PointX="27.375" PointY="22.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.PMQuote" Width="1.5" PointX="0.75" PointY="28.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.product" Width="1.5" PointX="3.375" PointY="28.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.product_accessories" Width="1.5" PointX="7.375" PointY="18.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.mdf_pinnacle_file" Width="1.5" PointX="5.375" PointY="28.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.mdf_pinnacle_main" Width="1.5" PointX="29.375" PointY="0.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.RegionApprover" Width="1.5" PointX="5.375" PointY="28.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.ac_products" Width="1.5" PointX="29.375" PointY="7.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.fan_filters" Width="1.5" PointX="29.375" PointY="11.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.fan_products" Width="1.5" PointX="29.375" PointY="14.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.heat_exchangers" Width="1.5" PointX="29.375" PointY="18.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.accessory" Width="1.5" PointX="29.375" PointY="22.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.RFQ_New_Action_Log" Width="1.5" PointX="29.375" PointY="27.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.RFQ_New_Data" Width="1.5" PointX="31.375" PointY="0.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.RFQ_New_Data_Extend" Width="1.5" PointX="5.375" PointY="31.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.RFQ_New_Files" Width="1.5" PointX="23.375" PointY="31.75" />
+        <AssociationConnector Association="RisourceCenterMexicoModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" />
+        <AssociationConnector Association="RisourceCenterMexicoModel.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" />
+        <AssociationConnector Association="RisourceCenterMexicoModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" />
+        <AssociationConnector Association="RisourceCenterMexicoModel.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.trainingClass" Width="1.5" PointX="25.375" PointY="31.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.trainingTrack" Width="1.5" PointX="27.375" PointY="31.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.usrClass" Width="1.5" PointX="33.375" PointY="0.75" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

@@ -1,0 +1,199 @@
+<lectoratest>
+<survey>0</survey>
+<grade>1</grade>
+<showresults>10</showresults>
+<scoreonly>0</scoreonly>
+<get>0</get>
+<incvar>0</incvar>
+<promptsuccess>1</promptsuccess>
+<persist>0</persist>
+<name>vx plinth</name>
+<submitto>/sales/rittal_university/score.cfm</submitto>
+<subject>Test Results</subject>
+<testtime>0</testtime>
+<numrandom>0</numrandom>
+<passinggrade>80</passinggrade>
+<cancelfail>thank_you.html</cancelfail>
+<passdone>name_for_certificate.html</passdone>
+<prevpage>ready_.html</prevpage>
+<page>
+<index>0</index>
+<name>vx_plinth_page_1.html</name>
+<question>
+<id>227</id>
+<type>1</type>
+<weight>1</weight>
+<name>Question 1</name>
+<var>VarQuestion_0001</var>
+<text>The VX plinth replaces Flex-Block and the TS base/plinth system.</text>
+<correctans>True</correctans>
+<choices>True|False</choices>
+<allowmult>0</allowmult>
+<persist>0</persist>
+<gradeindividual>0</gradeindividual>
+<surveyquestion>0</surveyquestion>
+</question>
+</page>
+<page>
+<index>1</index>
+<name>vx_plinth_page_2.html</name>
+<question>
+<id>234</id>
+<type>1</type>
+<weight>1</weight>
+<name>Question 2</name>
+<var>VarQuestion_0002</var>
+<text>The VX plinth fits all the same enclosure platforms as the TS plinth.</text>
+<correctans>True</correctans>
+<choices>True|False</choices>
+<allowmult>0</allowmult>
+<persist>0</persist>
+<gradeindividual>0</gradeindividual>
+<surveyquestion>0</surveyquestion>
+</question>
+</page>
+<page>
+<index>2</index>
+<name>vx_plinth_page_3.html</name>
+<question>
+<id>242</id>
+<type>2</type>
+<weight>1</weight>
+<name>Question 3</name>
+<var>VarQuestion_0003</var>
+<text>Trim panel options include (check all that apply):</text>
+<correctans>solid,vented,brush insert</correctans>
+<choices>solid|vented|brush insert|transparent</choices>
+<allowmult>1</allowmult>
+<persist>0</persist>
+<gradeindividual>0</gradeindividual>
+<surveyquestion>0</surveyquestion>
+</question>
+</page>
+<page>
+<index>3</index>
+<name>vx_plinth_page_4.html</name>
+<question>
+<id>254</id>
+<type>1</type>
+<weight>1</weight>
+<name>Question 4</name>
+<var>VarQuestion_0004</var>
+<text>VX plinths are stackable.</text>
+<correctans>True</correctans>
+<choices>True|False</choices>
+<allowmult>0</allowmult>
+<persist>0</persist>
+<gradeindividual>0</gradeindividual>
+<surveyquestion>0</surveyquestion>
+</question>
+</page>
+<page>
+<index>4</index>
+<name>vx_plinth_page_5.html</name>
+<question>
+<id>262</id>
+<type>2</type>
+<weight>1</weight>
+<name>Question 5</name>
+<var>VarQuestion_0005</var>
+<text>Which stacking configuration is not permitted?</text>
+<correctans>200mm base and 200mm base</correctans>
+<choices>100mm base and 100mm base|100mm base and 200mm base|200mm base and 200mm base</choices>
+<allowmult>0</allowmult>
+<persist>0</persist>
+<gradeindividual>0</gradeindividual>
+<surveyquestion>0</surveyquestion>
+</question>
+</page>
+<page>
+<index>5</index>
+<name>vx_plinth_page_6.html</name>
+<question>
+<id>272</id>
+<type>1</type>
+<weight>1</weight>
+<name>Question 6</name>
+<var>VarQuestion_0006</var>
+<text>The maximum load for the VX plinth is 1,500 kg (~3,300 lbs.).</text>
+<correctans>True</correctans>
+<choices>True|False</choices>
+<allowmult>0</allowmult>
+<persist>0</persist>
+<gradeindividual>0</gradeindividual>
+<surveyquestion>0</surveyquestion>
+</question>
+</page>
+<page>
+<index>6</index>
+<name>vx_plinth_page_7.html</name>
+<question>
+<id>280</id>
+<type>2</type>
+<weight>1</weight>
+<name>Question 7</name>
+<var>VarQuestion_0007</var>
+<text>What should the orientation of the plastic slide block be when installing\r a VX plinth on a TS8 enclosure?</text>
+<correctans>upside-down</correctans>
+<choices>same as with the VX|upside-down|you don't use it </choices>
+<allowmult>0</allowmult>
+<persist>0</persist>
+<gradeindividual>0</gradeindividual>
+<surveyquestion>0</surveyquestion>
+</question>
+</page>
+<page>
+<index>7</index>
+<name>vx_plinth_page_8.html</name>
+<question>
+<id>290</id>
+<type>1</type>
+<weight>1</weight>
+<name>Question 8</name>
+<var>VarQuestion_0008</var>
+<text>VX plinths are not bayable to one another.</text>
+<correctans>False</correctans>
+<choices>True|False</choices>
+<allowmult>0</allowmult>
+<persist>0</persist>
+<gradeindividual>0</gradeindividual>
+<surveyquestion>0</surveyquestion>
+</question>
+</page>
+<page>
+<index>8</index>
+<name>vx_plinth_page_9.html</name>
+<question>
+<id>298</id>
+<type>2</type>
+<weight>1</weight>
+<name>Question 9</name>
+<var>VarQuestion_0009</var>
+<text>The VX plinth is made from which material?</text>
+<correctans>steel</correctans>
+<choices>aluminum|fiberglass-reinforced plastic|steel</choices>
+<allowmult>0</allowmult>
+<persist>0</persist>
+<gradeindividual>0</gradeindividual>
+<surveyquestion>0</surveyquestion>
+</question>
+</page>
+<page>
+<index>9</index>
+<name>vx_plinth_last_test_page.html</name>
+<question>
+<id>308</id>
+<type>1</type>
+<weight>1</weight>
+<name>Question 10</name>
+<var>VarQuestion_0010</var>
+<text>There are TS to VX plinth cross-over tools availalbe.</text>
+<correctans>True</correctans>
+<choices>True|False</choices>
+<allowmult>0</allowmult>
+<persist>0</persist>
+<gradeindividual>0</gradeindividual>
+<surveyquestion>0</surveyquestion>
+</question>
+</page>
+</lectoratest>

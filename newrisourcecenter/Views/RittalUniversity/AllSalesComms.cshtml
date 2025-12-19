@@ -1,0 +1,71 @@
+﻿@model IEnumerable<newrisourcecenter.Models.SalesCommViewModel>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="dropdown" style="display:inline-block;">
+    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+        Filter Level 3 Menu
+        <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu">
+        @foreach (var item in @ViewBag.list_n1ID)
+        {
+            <li><a href="?parentid=@item.id&childId=@item.n2id&n1_name=@Request.QueryString["n1_name"]&n2_name=@item.name&rarr;@item.n2name">@item.name - @item.n2name</a></li>
+        }
+    </ul>
+</div>
+<div class="dropdown" style="display:inline-block;">
+    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+        Add Sales Communication
+        <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu">
+        @foreach (var item in @ViewBag.list_n1ID)
+        {
+            <li><a href="/SalesComm/Create?n2id=@item.n2id&img=@item.img&n3id=1&n1_name=@Request.QueryString["n1_name"]&n2_name=@item.n2name&n3_name=Announcements">@item.name - @item.n2name</a></li>
+        }
+    </ul>
+</div>
+<br clear="all" />
+<br clear="all" />
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.sc_headline)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.sc_startDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.sc_endDate)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.sc_headline)
+                </td>
+                <td>
+                    @string.Format("{0:d}", @item.sc_startDate)
+                </td>
+                <td>
+                    @string.Format("{0:d}", @item.sc_endDate)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", "SalesComm", new { id = item.scID, n3id = item.n3ID, n2id = Request.QueryString["n2id"], n1_name = Request.QueryString["n1_name"], n2_name = Request.QueryString["n2_name"], n3_name = Request.QueryString["n3_name"] }, new { @class = "btn btn-info" })
+                    @Html.ActionLink("Delete", "Delete", "SalesComm", new { id = item.scID, n3id = item.n3ID, n2id = Request.QueryString["n2id"], n1_name = Request.QueryString["n1_name"], n2_name = Request.QueryString["n2_name"], n3_name = Request.QueryString["n3_name"] }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false", @class = "btn btn-info" })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+

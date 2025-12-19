@@ -1,0 +1,249 @@
+﻿@model newrisourcecenter.Models.ChangeCommission
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@section Scripts {
+
+    <link href="~/Content/css/select2.min.css" rel="stylesheet" />
+    <script src="~/Scripts/select2.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
+    <script src="~/Scripts/Pages/ChangeCommssion.js"></script>
+    
+    <script>
+        $(document).ready(function () {
+            $('.select2').select2();
+        })
+
+        $("form").submit(function (e) {
+            $("[readonly='readonly']").prop("disabled", false);
+            if (!validateUser()) {
+                alert("Assigned Rep, Assigned Manager, Requesting Manager must not be the same");
+                e.preventDefault();
+            }
+
+        });
+    </script>
+}
+
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+
+        @{
+            List<SelectListItem> Req_Mang = (List<SelectListItem>)ViewBag.Req_Mang;
+            List<SelectListItem> Ass_Mang = (List<SelectListItem>)ViewBag.Ass_Manag;
+            List<SelectListItem> Reps = (List<SelectListItem>)ViewBag.Reps;
+        }
+        <h3>
+            Commission Change Request Form
+        </h3>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <h4>
+            Changes Requested : *
+        </h4>
+
+        <div class="form-group">
+            <div class="col-md-9">
+                <input type="radio" name="credit" id="credit100" value="0" onchange="setCreditSale(this)">
+                <label for="credit100">
+                    Request For Full Credit of the Sale (100%)
+                </label>
+            </div>
+            <div class="col-md-9">
+                <input type="radio" name="credit" id="credit" value="1" onchange="setCreditSale(this)">
+                <label for="credit">
+                    Request For
+                </label>
+                @Html.DropDownList("CreditOption", (SelectList)ViewBag.creditOptions, "Select ", new { @class = "form-control", style = "width: 80px;display:inline;", onchange = "creditOptionChange(this)" })
+                <label for="credit">
+                    % of the Sale
+                </label>
+
+            </div>
+            <div class="clear col-md-2">
+                @Html.ValidationMessageFor(model => model.credit_sale, "", new { @class = "text-danger" })
+            </div>
+            @* Hidden Attribute *@
+            @Html.EditorFor(model => model.credit_sale, new { htmlAttributes = new { @style = "position: absolute;left: -1000px;" } })
+
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.to_representive, "To Representative : *", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.to_representive, new { htmlAttributes = new { @class = "form-control" } })
+                @*@Html.DropDownList("to_representive", ToRep, new { @required = "required", @class = "form-control" })*@
+                @Html.ValidationMessageFor(model => model.to_representive, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.from_representive, "From Representative : *", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.from_representive, new { htmlAttributes = new { @class = "form-control" } })
+                @*@Html.DropDownList("from_representive", FromRep, new { @required = "required", @class = "form-control" })*@
+                @Html.ValidationMessageFor(model => model.from_representive, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.account_number, "Account # : * 	", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.account_number, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.account_number, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.account_name, "Account Name : *", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.account_name, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.account_name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.sales_doc_number, "Sales Document # : *		", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.sales_doc_number, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.sales_doc_number, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.po_number, "PO # : *", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.po_number, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.po_number, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+
+            <div class="col-md-6">
+                <h4>
+                    Parts # :
+                </h4>
+                <table class="table">
+                    <tr><td colspan="3" align="right"><div onclick="addparts()" class="btn btn-primary">+ Add a part</div></td></tr>
+                    <tr>
+                        <td>Part No.</td>
+                        <td>Qty</td>
+                        <td></td>
+                    </tr>
+                    <tbody id="parts">
+                        @{
+                            List<string> qty = (ViewBag.qty as List<string>), part_number = (ViewBag.qty as List<string>);
+                            for (int i = 0; i < qty.Count; i++)
+                            {
+                                <tr>
+                                    <td>
+                                        <input class="form-control text-box single-line" id="part_number" name="part_number" type="number" required value="@part_number[i]" data-val-required="This is required field">
+                                        <span class="field-validation-valid text-danger" data-valmsg-for="part_number" data-valmsg-replace="true"></span>
+                                    </td>
+                                    <td>
+                                        <input class="form-control text-box single-line" id="qty" name="qty" type="number" value="@qty[i]" required data-val-required="This is required field">
+                                        <span class="field-validation-valid text-danger" data-valmsg-for="qty" data-valmsg-replace="true"> </span>
+                                    </td>
+
+                                    <td><div onclick="deleteRow(this)" class="btn btn-primary">-</div></td>
+                                </tr>
+                            }
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.invoice_date, "Invoice Date : * 	", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.invoice_date, new { htmlAttributes = new { @class = "form-control", @type = "date" } })
+                @Html.ValidationMessageFor(model => model.invoice_date, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.amount, "Amount : *	", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.amount, new { htmlAttributes = new { @class = "form-control", @type = "number", @step = "0.01", @placeholder = "0.00", @value = "" } })
+                @Html.ValidationMessageFor(model => model.amount, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.reason, "Reason For Request (Please be Specific) : ", htmlAttributes: new { @class = "control-label col-md-10" })
+            <div class="col-md-6">
+                @Html.TextAreaFor(model => model.reason, new { })
+                @Html.ValidationMessageFor(model => model.reason, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.request_representive, "Requesting Rep :		", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @*@Html.DropDownList("TempRep", Reps, new { @required = "required", @multiple = "multiple", @class = "select2 form-control" })*@
+                @*@Html.EditorFor(model => model.request_representive, new { htmlAttributes = new { @class = "form-control" } })*@
+                @Html.DropDownListFor(model => model.request_representive, Reps, "--Select Option--", new { @required = "required", @class = "form-control select2" })
+                @Html.ValidationMessageFor(model => model.request_representive, "", new { @class = "text-danger" })
+
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("Date : ", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @DateTime.Now.ToShortDateString()
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.assigned_rep, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @Html.DropDownListFor(model => model.assigned_rep, Reps, "--Select Option--", new { @required = "required", @class = "form-control select2" })
+                @Html.ValidationMessageFor(model => model.assigned_rep, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.request_manager, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @Html.DropDownListFor(model => model.request_manager, Req_Mang, "--Select Option--", new { @required = "required", @class = "form-control select2" })
+                @Html.ValidationMessageFor(model => model.request_manager, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.assigned_manager, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @Html.DropDownListFor(model => model.assigned_manager, Ass_Mang, "--Select Option--", new { @required = "required", @class = "form-control select2" })
+                @Html.ValidationMessageFor(model => model.assigned_manager, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-3 col-md-9">
+                <input type="submit" value="Create" class="btn btn-default" />
+                @Html.ActionLink("BACK TO LIST", "Index", new { n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"] }, new { @class = "btn btn-default" })
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+
+</div>

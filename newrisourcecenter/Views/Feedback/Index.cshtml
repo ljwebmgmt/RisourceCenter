@@ -1,0 +1,64 @@
+﻿
+@{
+    Layout = "";
+}
+<script src="~/Scripts/jquery-3.1.0.min.js"></script>
+<script>
+    var sendmessage = {
+        start: function() {
+        },
+        send: function () {
+            var email_body = $("#email_body").val();
+            if (email_body == "") {
+                alert("The message can't be empty");
+                return false;
+            }
+            $.post("/Feedback/SubmitFeedback?email_body=" + email_body, function (response) {
+                var result = JSON.parse(response);
+                $("#messagebox").html("<h1 style=\"text-align:center;color: green;\" >" + result.message + "</h1>");
+            });    
+        }
+    }
+    jQuery(document).ready(sendmessage.start());
+
+</script>
+<style>
+    body {
+        font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
+    }
+
+    #main {
+        width: 100%;
+    }
+
+    #controls label {
+        color: #333 !important;
+        font-weight: 600 !important;
+        font-size: 14px;
+    }
+
+    .button {
+        background-color: #E50043; /* Green */
+        border: none;
+        color: white;
+        padding: 10px 10px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        border-collapse: 0px;
+        box-shadow: -3px 3px 2px rgba(9,9,9,0.1), 3px 3px 2px rgba(0,0,0,0.24);
+        margin-top: 10px;
+    }
+
+    .button:hover {
+        color: #FFFFFF;
+        background-color: #008E4F;
+        box-shadow: -3px 3px 30px rgba(9,9,9,0.1), -3px 3px 20px rgba(0,0,0,0.24);
+    }
+</style>
+<div id="messagebox" >
+    <h1>@ViewBag.Message</h1>
+    <textarea name="email_body" id="email_body" style="width:100%;height:200px;"></textarea>
+    <button type="submit" class="button" onclick="sendmessage.send(); return false;">Send Message</button>
+</div>

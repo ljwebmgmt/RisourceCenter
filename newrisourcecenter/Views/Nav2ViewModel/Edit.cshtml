@@ -1,0 +1,372 @@
+﻿@model newrisourcecenter.Models.Nav2ViewModel
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.model=Model.n2_nameLong;
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.n2ID)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.n1ID, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(m => m.n1ID, Model.list_n1ID, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.n1ID, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.n2order, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.n2order, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.n2order, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.n2_nameShort, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.n2_nameShort, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.n2_nameShort, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.n2_nameLong, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.n2_nameLong, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.n2_nameLong, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.n2_descShort, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.n2_descShort, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.n2_descShort, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.n2_descLong, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextAreaFor(model => model.n2_descLong, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.n2_descLong, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.n2_descLongAlt, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextAreaFor(model => model.n2_descLongAlt, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.n2_descLongAlt, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.n2_active, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <select name="n2_active" class="form-control">
+                    @if (Model.n2_active == 1)
+                    {
+                        <option value="1" selected>Active</option>
+                    }
+                    else
+                    {
+                        <option value="0" selected>Not Active</option>
+                    }
+                    <option value="1">Active</option>
+                    <option value="0">Not Acitive</option>
+                </select>
+                @Html.ValidationMessageFor(model => model.n2_active, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.n2_products, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @{
+                    if (Model.n2_products != null)
+                    {
+                        char[] prod = Model.n2_products.ToArray();
+                        string prods = new string(prod);
+                        foreach (var items in Model.list_products)
+                        {
+                            if (prods.Contains(Convert.ToString(items.pp_ID)))
+                            {
+                                <input type="checkbox" name="n2_products" id="n2_products" value="@items.pp_ID" checked />@items.pp_product<br />
+                            }
+                            else
+                            {
+                                <input type="checkbox" name="n2_products" id="n2_products" value="@items.pp_ID" />@items.pp_product<br />
+                            }
+                        }
+                    }
+                    else
+                    {
+
+                        foreach (var items in Model.list_products)
+                        {
+                            <input type="checkbox" name="n2_products" id="n2_products" value="@items.pp_ID" />@items.pp_product<br />
+                        }
+
+                    }
+                }
+
+                @Html.ValidationMessageFor(model => model.n2_products, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.n2_usrTypes, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @{
+                    if (Model.n2_usrTypes != null)
+                    {
+                        char[] typ = Model.n2_usrTypes.ToArray();
+                        string typs = new string(typ);
+
+                        foreach (var items in Model.list_Type)
+                        {
+                            if (typs.Contains(Convert.ToString(items.pt_ID)))
+                            {
+                                <input type="checkbox" name="n2_usrTypes" id="n2_usrTypes" value="@items.pt_ID" checked />@items.pt_type<br />
+                            }
+                            else
+                            {
+                                <input type="checkbox" name="n2_usrTypes" id="n2_usrTypes" value="@items.pt_ID" />@items.pt_type<br />
+                            }
+                        }
+
+                    }
+                    else
+                    {
+
+                        foreach (var items in Model.list_Type)
+                        {
+                            <input type="checkbox" name="n2_usrTypes" id="n2_usrTypes" value="@items.pt_ID" />@items.pt_type<br />
+                        }
+
+                    }
+                }
+
+                @Html.ValidationMessageFor(model => model.n2_usrTypes, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.n2_redirect, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.n2_redirect, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.n2_redirect, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.n2_headerImg, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @if (@Request.QueryString["img"] != null)
+                {
+                    if (@Request.QueryString["img"] != "")
+                    {
+                        <img src="~/attachments/risources/displayImage/@Model.n2_headerImg" style="width:50px;height:50px;" />
+                    }
+                }
+                <select name="n2_headerImg" id="n2_headerImg" class="form-control" style="width:200px;" >
+                    @foreach (var item in Model.risource_icon)
+                    {
+                        if (item.type_link==Model.n2_headerImg)
+                        {
+                            <option value="@item.type_link" selected>@item.type_name</option>
+                        }
+                        <option value="@item.type_link">@item.type_name</option>
+                    }
+                </select>
+                @Html.ValidationMessageFor(model => model.n2_headerImg, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        
+        <div class="form-group">
+            @Html.LabelFor(model => model.n2_redirectJS, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.n2_redirectJS, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.n2_redirectJS, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        @*
+            <div class="form-group">
+                @Html.LabelFor(model => model.n2_keywords, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.n2_keywords, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.n2_keywords, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.old_n3id, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.old_n3id, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.old_n3id, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.old_n2id, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.old_n2id, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.old_n2id, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        *@
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.n2_industry, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @{
+                    if (Model.n2_industry != null)
+                    {
+                        char[] ind = Model.n2_industry.ToArray();
+                        string inds = new string(ind);
+                        <select name="n2_industry" class="form-control" >
+                            @foreach (var items in Model.list_industry)
+                            {
+                                if (inds.Contains(Convert.ToString(items.pi_ID)))
+                                {
+                                    <option value="@items.pi_ID" selected >@items.pi_industry</option>
+                                }
+                                else
+                                {
+                                    <option value="@items.pi_ID">@items.pi_industry</option>
+                                }
+                            }
+                        </select>
+
+                    }
+                    else
+                    {
+                        <select name="n2_industry" class="form-control" >
+                            @foreach (var items in Model.list_industry)
+                            {
+                                <option value="@items.pi_ID" selected>@items.pi_industry</option>
+                            }
+                        </select>
+                    }
+                }
+
+                @Html.ValidationMessageFor(model => model.n2_industry, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.n2_IT_approver, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <select name="n2_IT_approver" onchange="madeSelection(this);" class="form-control text-box single-line">
+                    <option value="">Select a User</option>
+                    @foreach (var item in Model.list_user)
+                    {
+                        if (@item.usr_ID == Model.n2_IT_approver)
+                        {
+                            <option value="@item.usr_ID" selected>@item.usr_fName @item.usr_lName</option>
+                        }
+                        else
+                        {
+                            <option value="@item.usr_ID">@item.usr_fName @item.usr_lName</option>
+                        }
+                    }
+                </select>
+                @Html.ValidationMessageFor(model => model.n2_IT_approver, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.n2_IE_approver, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <select name="n2_IE_approver" onchange="madeSelection(this);" class="form-control text-box single-line">
+                    <option value="">Select a User</option>
+                    @foreach (var item in Model.list_user)
+                    {
+                        if (@item.usr_ID == Model.n2_IE_approver)
+                        {
+                            <option value="@item.usr_ID" selected>@item.usr_fName @item.usr_lName</option>
+                        }
+                        else
+                        {
+                            <option value="@item.usr_ID">@item.usr_fName @item.usr_lName</option>
+                        }
+                    }
+                </select>
+                @Html.ValidationMessageFor(model => model.n2_IE_approver, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.PageName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.PageName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.PageName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Controller, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Controller, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Controller, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.usr_group, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @{
+                    if (Model.usr_group != null)
+                    {
+                        char[] role = Model.usr_group.ToArray();
+                        string roles = new string(role);
+                        foreach (var items in Model.user_roles)
+                        {
+                            if (roles.Contains(Convert.ToString(items.id)))
+                            {
+                                <input type="checkbox" name="usr_group" id="usr_group" value="@items.id" checked />@items.name[0]<br />
+                            }
+                            else
+                            {
+                                <input type="checkbox" name="usr_group" id="usr_group" value="@items.id[0]" />@items.name[0]<br />
+                            }
+                        }
+                    }
+                    else
+                    {
+
+                        foreach (var items in Model.user_roles)
+                        {
+                            <input type="checkbox" name="usr_group" id="usr_group" value="@items.id[0]" />@items.name[0]<br />
+                        }
+
+                    }
+                }
+
+                @Html.ValidationMessageFor(model => model.usr_group, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <input name="n2_editDate" id="n2_editDate" type="hidden" value=@DateTime.Now />
+        <input name="n2_editBy" id="n2_editBy" type="hidden" value=@Session["userId"] />
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+                    }
+
+<div>
+    @Html.ActionLink("Back to List", "Index", new { parentid=Request.QueryString["parentid"], n1_name = Request.QueryString["n1_name"], msg = Request.QueryString["msg"]  })
+</div>

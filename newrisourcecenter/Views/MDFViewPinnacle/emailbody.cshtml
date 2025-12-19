@@ -1,0 +1,308 @@
+﻿@model newrisourcecenter.Models.MDFPinnacleViewModel
+
+@{
+    ViewBag.Title = "emailbody";
+    Layout = "";
+    string link_to_mdf = string.Format("{0}/MDFViewPinnacle/Details/{1}/?&n1_name=Support Tools&n2_name=Brand Central&msg=Details for {2}", @ViewBag.host, @Model.mdf_ID, @Model.mdf_ID);
+}
+<h2 align="center">Brand Central</h2>
+<p>The status of your Brand Central request has been updated. See below for details or click <a href="@link_to_mdf" target="_blank">HERE</a> to view/manage your request.</p>
+<table cellpadding="5" style="width:100%;border:solid #000 1px;border-collapse:collapse;">
+    <tbody>
+        <tr>
+            <th width="50%" align="right" style="border-top:1px solid #666;background:gray;">Request Status:</th>
+            <td width="50%" align="left" style="border-bottom:1px solid #666;">
+                @{ Dictionary<string, string> list_mdf_status = new Dictionary<string, string>();
+                    list_mdf_status.Add("1", "Pending");
+                    list_mdf_status.Add("2", "Denied");
+                    list_mdf_status.Add("3", "Approved");
+                    list_mdf_status.Add("4", "Completed");
+                    list_mdf_status.Add("5", "Credit Issued");
+                    list_mdf_status.Add("6", "Canceled");
+                }
+                @foreach (var item in list_mdf_status)
+                {
+                    if (Model.mdf_status == Convert.ToInt32(@item.Key))
+                    {
+                        <span>@item.Value</span>
+                    }
+                }
+            </td>
+        </tr>
+        <tr>
+            <th width="50%" align="right" style="border-top:1px solid #666;background:gray;">Request Type:</th>
+            <td width="50%" align="left" style="border-bottom:1px solid #666;">
+                @foreach (var type in ViewBag.type)
+                {
+                    if (Model.mdf_type == type.mdf_type_ID)
+                    {
+                        <span>@type.mdf_subType_name</span>
+                    }
+                }
+            </td>
+        </tr>
+        <tr>
+            <th align="right" style="border-top:1px solid #666;background:gray;">Request Number:</th>
+            <td align="left" style="border-bottom:1px solid #666;">@Html.DisplayFor(model => model.mdf_ID)</td>
+        </tr>
+        <tr>
+            <th align="right" style="border-top:1px solid #666;background:gray;">Request Date:</th>
+            <td align="left" style="border-bottom:1px solid #666;">@String.Format("{0:d}", @Model.mdf_requestDate)</td>
+        </tr>
+        <tr>
+            <th align="right" style="border-top:1px solid #666;background:gray;">Submitter:</th>
+            <td align="left" style="border-bottom:1px solid #666;">@Html.DisplayFor(model => model.requester)</td>
+        </tr>
+        <tr>
+            <th align="right" style="border-top:1px solid #666;background:gray;">SAP:</th>
+            <td align="left" style="border-bottom:1px solid #666;">
+                    @if (@Model.partner_loc.Count() > 0)
+                    {
+                        foreach (var item in Model.partner_loc)
+                        {
+                            if (item.loc_SAP_account == Model.mdf_SAP)
+                            {
+                                if (!string.IsNullOrEmpty(item.loc_name))
+                                {
+                                    <span>@item.loc_name - @item.loc_SAP_account</span>
+                                }
+                                else
+                                {
+                                    <span>@Model.company - @item.loc_city - @item.loc_SAP_account</span>
+                                }
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        <span value="0">none</span>
+                    }
+            </td>
+        </tr>
+        <tr>
+            <th align="right" style="border-top:1px solid #666;background:gray;">Company:</th>
+            <td align="left" style="border-bottom:1px solid #666;">@Model.company</td>
+        </tr>
+        <tr>
+            <th align="right" style="border-top:1px solid #666;background:gray;">Title:</th>
+            <td align="left" style="border-bottom:1px solid #666;">@Html.DisplayFor(model => model.mdf_title)</td>
+        </tr>
+        <tr>
+            <th align="right" style="border-top:1px solid #666;background:gray;">Description:</th>
+            <td align="left" style="border-bottom:1px solid #666;">@Html.DisplayFor(model => model.mdf_desc)</td>
+        </tr>
+        <tr>
+            <th align="right" style="border-top:1px solid #666;background:gray;">Total Cost:</th>
+            <td align="left" style="border-bottom:1px solid #666;">
+                @String.Format("{0:C}", @Model.mdf_totalCost)
+            </td>
+        </tr>
+        <tr>
+            <th align="right" style="border-top:1px solid #666;background:gray;">MDF Amount:</th>
+            <td align="left" style="border-bottom:1px solid #666;">
+                @String.Format("{0:C}", @Model.mdf_mdfCost)
+            </td>
+        </tr>
+        <tr>
+            <th align="right" style="border-top:1px solid #666;background:gray;">Expected Date:</th>
+            <td align="left" style="border-bottom:1px solid #666;">@String.Format("{0:d}", @Model.mdf_date)</td>
+        </tr>
+        <tr>
+            <th align="right" style="border-top:1px solid #666;background:gray;">Review Date:</th>
+            <td align="left" style="border-bottom:1px solid #666;">@String.Format("{0:d}", @Model.mdf_reviewDate)</td>
+        </tr>
+        <tr>
+            <th align="right" style="border-top:1px solid #666;background:gray;">Validation Date:</th>
+            <td align="left" style="border-bottom:1px solid #666;">@String.Format("{0:d}", @Model.mdf_validationDate)</td>
+        </tr>
+        <tr>
+            <th align="right" style="border-top:1px solid #666;background:gray;">Credit Issue Date:</th>
+            <td align="left" style="border-bottom:1px solid #666;">@String.Format("{0:d}", @Model.mdf_creditIssueDate)</td>
+        </tr>
+        <tr>
+            <th align="right" style="border-top:1px solid #666;background:gray;">User Comments:</th>
+            <td align="left" style="border-bottom:1px solid #666;">@Html.DisplayFor(model => model.mdf_comments3)</td>
+        </tr>
+        <tr>
+            <th align="right" style="border-top:1px solid #666;background:gray;">Approved Amount:</th>
+            <td align="left" style="border-bottom:1px solid #666;">@String.Format("{0:C}", @Model.mdf_approvedAmt)</td>
+        </tr>
+        <tr>
+            <th align="right" style="border-top:1px solid #666;background:gray;">Approval Comments:</th>
+            <td align="left" style="border-bottom:1px solid #666;">@Html.DisplayFor(model => model.mdf_comments)</td>
+        </tr>
+        <tr>
+            <th align="right" style="border-top:1px solid #666;background:gray;">Validated Amount:</th>
+            <td align="left" style="border-bottom:1px solid #666;">@String.Format("{0:C}", @Model.mdf_validatedAmt)</td>
+        </tr>
+        <tr>
+            <th align="right" style="border-top:1px solid #666;background:gray;">Validation Comments:</th>
+            <td align="left" style="border-bottom:1px solid #666;">@Html.DisplayFor(model => model.mdf_comments2)</td>
+        </tr>
+        <tr>
+            <th align="right" style="border-top:1px solid #666;background:gray;">Credit Memo Number:</th>
+            <td align="left" style="border-bottom:1px solid #666;">@Model.mdf_creditMemoNum</td>
+        </tr>
+        <tr>
+            <th align="right" style="border-top:1px solid #666;background:gray;">Validation Comments:</th>
+            <td align="left" style="border-bottom:1px solid #666;">@Html.DisplayFor(model => model.mdf_comments2)</td>
+        </tr>
+        <tr>
+            <th align="right" style="border-top:1px solid #666;background:gray;"> Supporting documents:</th>
+            <td align="left" style="border-bottom:1px solid #666;">
+                @foreach (var item in Model.list_mdf_files.Where(a => a.mdf_file_type == 1))
+                {
+                    string link_to_file1 = string.Format("{0}/attachments/mdf_pinnacle/images/{1}", @ViewBag.host, @item.mdf_file_name);
+                    <span><a href="@link_to_file1" target="_blank">@item.mdf_file_name</a> || </span>
+                }
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<h3 align="center">MDF Request Status</h3>
+<table width="100%" cellpadding="5px" class="table">
+    <thead style="background:gray;">
+        <tr>
+            <th width="10%" class="header">&nbsp;</th>
+            <th width="10%" class="header">Promotional Activities</th>
+            <th width="10%" class="header">Other Activity</th>
+            <th width="10%" class="header">Promotional Event</th>
+            <th width="10%" class="header">Training</th>
+            <th width="10%" class="header">Merchandise</th>
+            <th width="10%" class="header">Display Product</th>
+            <td width="4%" style="border-bottom:none;border-top:none;background:#292929;">&nbsp;</td>
+            <th class="header">Totals</th>
+        </tr>
+    </thead>
+    <thead>
+    </thead>
+    <tbody>
+        <tr>
+            <th align="right">Pct Used</th>
+            @if (@Model.company_metrics.FirstOrDefault().PercentagePromotionalActivityUsed < 100)
+            {
+                <td align="center">@String.Format("{0:P}", @Model.company_metrics.FirstOrDefault().PercentagePromotionalActivityUsed / 100) </td>
+            }
+            else
+            {
+                <td align="center" style="color:red;font-weight:bold;">@String.Format("{0:P}", @Model.company_metrics.FirstOrDefault().PercentagePromotionalActivityUsed / 100) </td>
+            }
+
+            @if (@Model.company_metrics.FirstOrDefault().PercentageOtherProductsUsed < 100)
+            {
+                <td align="center">@String.Format("{0:P}", @Model.company_metrics.FirstOrDefault().PercentageOtherProductsUsed / 100) </td>
+            }
+            else
+            {
+                <td align="center" style="color:red;font-weight:bold;">@String.Format("{0:P}", @Model.company_metrics.FirstOrDefault().PercentageOtherProductsUsed / 100) </td>
+            }
+
+            @if (@Model.company_metrics.FirstOrDefault().PercentagePromotionalEventUsed < 100)
+            {
+                <td align="center">@String.Format("{0:P}", @Model.company_metrics.FirstOrDefault().PercentagePromotionalEventUsed / 100) </td>
+            }
+            else
+            {
+                <td align="center" style="color:red;font-weight:bold;">@String.Format("{0:P}", @Model.company_metrics.FirstOrDefault().PercentagePromotionalEventUsed / 100) </td>
+            }
+
+            @if (@Model.company_metrics.FirstOrDefault().PercentageTrainingUsed < 100)
+            {
+                <td align="center">@String.Format("{0:P}", @Model.company_metrics.FirstOrDefault().PercentageTrainingUsed / 100) </td>
+            }
+            else
+            {
+                <td align="center" style="color:red;font-weight:bold;">@String.Format("{0:P}", @Model.company_metrics.FirstOrDefault().PercentageTrainingUsed / 100) </td>
+            }
+
+            @if (@Model.company_metrics.FirstOrDefault().PercentageMerchandiseUsed < 100)
+            {
+                <td align="center">@String.Format("{0:P}", @Model.company_metrics.FirstOrDefault().PercentageMerchandiseUsed / 100) </td>
+            }
+            else
+            {
+                <td align="center" style="color:red;font-weight:bold;">@String.Format("{0:P}", @Model.company_metrics.FirstOrDefault().PercentageMerchandiseUsed / 100) </td>
+            }
+
+            @if (@Model.company_metrics.FirstOrDefault().PercentageDisplayProductsUsed < 100)
+            {
+                <td align="center">@String.Format("{0:P}", @Model.company_metrics.FirstOrDefault().PercentageDisplayProductsUsed / 100) </td>
+            }
+            else
+            {
+                <td align="center" style="color:red;font-weight:bold;">@String.Format("{0:P}", @Model.company_metrics.FirstOrDefault().PercentageDisplayProductsUsed / 100) </td>
+            }
+            <td width="4%" style="border-bottom:none;border-top:none;background:#292929;">&nbsp;</td>
+            <td align="center">
+                @String.Format("{0:P}", @Model.company_metrics.FirstOrDefault().PercentageUtilized / 100)
+            </td>
+        </tr>
+        <tr>
+            <th align="right">Pending</th>
+            <td align="center">@String.Format("{0:C}", @Model.company_metrics.FirstOrDefault().Pending_PromoAc_total)</td>
+            <td align="center">@String.Format("{0:C}", @Model.company_metrics.FirstOrDefault().Pending_OP_total)</td>
+            <td align="center">@String.Format("{0:C}", @Model.company_metrics.FirstOrDefault().Pending_PromoEv_total)</td>
+            <td align="center">@String.Format("{0:C}", @Model.company_metrics.FirstOrDefault().Pending_Training_total)</td>
+            <td align="center">@String.Format("{0:C}", @Model.company_metrics.FirstOrDefault().Pending_Merchandise_total)</td>
+            <td align="center">@String.Format("{0:C}", @Model.company_metrics.FirstOrDefault().Pending_DP_total)</td>
+            <td width="4%" style="border-bottom:none;border-top:none;background:#292929;">&nbsp;</td>
+            <td align="center">@String.Format("{0:C}", @Model.company_metrics.FirstOrDefault().totalPending)</td>
+        </tr>
+        <tr>
+            <th align="right">Approved</th>
+            <td align="center">@String.Format("{0:C}", @Model.company_metrics.FirstOrDefault().Approved_PromoAc_total)</td>
+            <td align="center">@String.Format("{0:C}", @Model.company_metrics.FirstOrDefault().Approved_OP_total)</td>
+            <td align="center">@String.Format("{0:C}", @Model.company_metrics.FirstOrDefault().Approved_PromoEv_total)</td>
+            <td align="center">@String.Format("{0:C}", @Model.company_metrics.FirstOrDefault().Approved_Training_total)</td>
+            <td align="center">@String.Format("{0:C}", @Model.company_metrics.FirstOrDefault().Completed_Merchandise_total)</td>
+            <td align="center">@String.Format("{0:C}", @Model.company_metrics.FirstOrDefault().Approved_DP_total)</td>
+            <td width="4%" style="border-bottom:none;border-top:none;background:#292929;">&nbsp;</td>
+            <td align="center">@String.Format("{0:C}", @Model.company_metrics.FirstOrDefault().totalApproved)</td>
+        </tr>
+        <tr>
+            <th align="right">Complete</th>
+            <td align="center">@String.Format("{0:C}", @Model.company_metrics.FirstOrDefault().Completed_PromoAc_total)</td>
+            <td align="center">@String.Format("{0:C}", @Model.company_metrics.FirstOrDefault().Completed_OP_total)</td>
+            <td align="center">@String.Format("{0:C}", @Model.company_metrics.FirstOrDefault().Completed_PromoEv_total)</td>
+            <td align="center">@String.Format("{0:C}", @Model.company_metrics.FirstOrDefault().Completed_Training_total)</td>
+            <td align="center">@String.Format("{0:C}", @Model.company_metrics.FirstOrDefault().Completed_Merchandise_total)</td>
+            <td align="center">@String.Format("{0:C}", @Model.company_metrics.FirstOrDefault().Completed_DP_total)</td>
+            <td width="4%" style="border-bottom:none;border-top:none;background:#292929;">&nbsp;</td>
+            <td align="center">@String.Format("{0:C}", @Model.company_metrics.FirstOrDefault().totalComplete)</td>
+        </tr>
+        <tr>
+            <th align="right">Credit</th>
+            <td align="center">@String.Format("{0:C}", @Model.company_metrics.FirstOrDefault().Credit_PromoAc_total)</td>
+            <td align="center">@String.Format("{0:C}", @Model.company_metrics.FirstOrDefault().Credit_OP_total)</td>
+            <td align="center">@String.Format("{0:C}", @Model.company_metrics.FirstOrDefault().Credit_PromoEv_total)</td>
+            <td align="center">@String.Format("{0:C}", @Model.company_metrics.FirstOrDefault().Credit_Training_total)</td>
+            <td align="center">@String.Format("{0:C}", @Model.company_metrics.FirstOrDefault().Credit_Merchandise_total)</td>
+            <td align="center">@String.Format("{0:C}", @Model.company_metrics.FirstOrDefault().Credit_DP_total)</td>
+            <td width="4%" style="border-bottom:none;border-top:none;background:#292929;">&nbsp;</td>
+            <td align="center">@String.Format("{0:C}", @Model.company_metrics.FirstOrDefault().totalCredit)</td>
+        </tr>
+        <tr>
+            <th align="right" style="border-bottom:none;">Available</th>
+            <td align="center">@String.Format("{0:C}", @Model.company_metrics.FirstOrDefault().totalPromoaAva)</td>
+            <td align="center">@String.Format("{0:C}", @Model.company_metrics.FirstOrDefault().totalOtherAva)</td>
+            <td align="center">@String.Format("{0:C}", @Model.company_metrics.FirstOrDefault().totalPromoeAva)</td>
+            <td align="center">@String.Format("{0:C}", @Model.company_metrics.FirstOrDefault().totalTrainingAva)</td>
+            <td align="center">@String.Format("{0:C}", @Model.company_metrics.FirstOrDefault().totalMerchAva)</td>
+            <td align="center">@String.Format("{0:C}", @Model.company_metrics.FirstOrDefault().totalDpAva)</td>
+            <td width="4%" style="border-bottom:none;border-top:none;background:#292929;">&nbsp;</td>
+            @if (@Model.company_metrics.FirstOrDefault().totalMDFAva > 0)
+            {
+                <td align="center" style="color:GREEN;font-weight:bold;">@String.Format("{0:C}", @Model.company_metrics.FirstOrDefault().totalMDFAva)</td>
+            }
+            else
+            {
+                <td align="center" style="color:red;font-weight:bold;">@String.Format("{0:C}", @Model.company_metrics.FirstOrDefault().totalMDFAva)</td>
+            }
+        </tr>
+    </tbody>
+</table>
+
+
+

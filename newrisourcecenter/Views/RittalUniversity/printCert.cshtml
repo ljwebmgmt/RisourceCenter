@@ -1,0 +1,37 @@
+﻿@model newrisourcecenter.Models.RittalUniversityViewModels
+@{
+    Layout = null;
+}
+<div class="main_content">
+    <a name="button313anc" href="javascript:window.print();" title="Print" style="float:right;margin-right:20px;">
+        Print
+    </a>
+    <a name="button313anc" href="javascript:history.back();" title="Print" style="float:right;margin-right:20px;">
+        Back
+    </a>
+ <div style="text-align:center;" id="cert">
+     <a name="button313anc" href="javascript:window.print();" title="Print">
+     <img name="button313Img" src="/images/logo_rittal.png" alt="Print" border="0" style="cursor:pointer">
+     </a>
+     <h1>Certificate of Completion</h1>
+     <br />
+     <br />
+     <strong>This certifies that</strong>:  @Session["firstName"].ToString() @Session["lastName"].ToString()
+     <br />
+     <br />
+     <strong>has completed</strong>
+     <br />
+     <br />
+     @Model.tr_module
+     <br />
+     <br />
+     <strong>through Rittal University Online</strong>
+     <br />
+     <br />
+     @string.Format("{0:MM/dd/yyyy}", Model.tr_date) 
+     <br />
+     <br />
+ </div>
+
+
+</div>

@@ -1,0 +1,125 @@
+﻿@model IEnumerable<newrisourcecenter.Models.Nav3ViewModel>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<table>
+    <tr>
+        <td>
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                    @Model.LastOrDefault().nav3labels.FirstOrDefault().filter_link_label[0]
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    @foreach (var item in @ViewBag.list_n1ID)
+                    {
+                        <li><a href="?parentid=@item.id&n2Id=@item.n2id&n1_name=@Request.QueryString["n1_name"]&n2_name=@item.name&rarr;@item.n2name">@item.name - @item.n2name</a></li>
+                    }
+                </ul>
+            </div>
+        </td>
+        <td>
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                    @Model.LastOrDefault().nav3labels.FirstOrDefault().add_link_label[0]
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    @foreach (var item in @ViewBag.list_n1ID)
+                    {
+                        <li><a href="~/Nav3ViewModel/Create?n1id=@item.id&n2Id=@item.n2id&n1_name=@Request.QueryString["n1_name"]&n2_name=@item.name&rarr;@item.n2name">@item.name - @item.n2name</a></li>
+                    }
+                </ul>
+            </div>
+        </td>
+    </tr>    
+</table>
+<br />
+@if (@Model!=null){
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Model.LastOrDefault().nav3labels.FirstOrDefault().n3order_label[0]
+                @if (Request.QueryString["translate"] != null)
+                {
+                    @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.LastOrDefault().nav3labels.FirstOrDefault().n3order_label[1], controllerName = "Nav3ViewModel", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                }
+            </th>
+            <th>
+                @Model.LastOrDefault().nav3labels.FirstOrDefault().n3_nameLong_label[0]
+                @if (Request.QueryString["translate"] != null)
+                {
+                    @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.LastOrDefault().nav3labels.FirstOrDefault().n3_nameLong_label[1], controllerName = "Nav3ViewModel", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                }
+            </th>
+            <th>
+                @Model.LastOrDefault().nav3labels.FirstOrDefault().n3_descLong_label[0]
+                @if (Request.QueryString["translate"] != null)
+                {
+                    @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.LastOrDefault().nav3labels.FirstOrDefault().n3_descLong_label[1], controllerName = "Nav3ViewModel", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                }
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.n3order)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.n3_nameLong)
+                    @if (Request.QueryString["translate"] != null)
+                    {
+                        @Html.ActionLink("T", "Create", "Localization", new { parent_id = @item.n3ID, tableName = "nav3", columnName = "n3_nameLong", message = @item.n3_nameLong, n1_name = "Translate Page Content", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                    }
+                </td>
+                <td>
+                    @Html.Raw(item.n3_descLong)
+                    @if (Request.QueryString["translate"] != null)
+                    {
+                        @Html.ActionLink("T", "Create", "Localization", new { parent_id = @item.n3ID, tableName = "nav3", columnName = "n3_descLong", message = @item.n3_descLong, n1_name = "Translate Page Content", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                    }
+                </td>
+                @if (Request.QueryString["n2Id"] == null)
+                {
+                    <td>
+                        @Html.ActionLink(@Model.LastOrDefault().nav3labels.FirstOrDefault().edit_label[0], "Edit", new { id = item.n3ID, n1_name = Request.QueryString["n1_name"], msg = item.n3_nameLong }, new { @class = "btn btn-info" })
+                        @if (Request.QueryString["translate"] != null)
+                        {
+                            @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.LastOrDefault().nav3labels.FirstOrDefault().edit_label[1], controllerName = "Nav3ViewModel", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                        }
+                        @Html.ActionLink(@Model.LastOrDefault().nav3labels.FirstOrDefault().delete_label[0], "Delete", new { id = item.n3ID, n2Id = Request.QueryString["n2Id"], n1_name = Request.QueryString["n1_name"], msg = item.n3_nameLong }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false", @class = "btn btn-info" })
+                        @if (Request.QueryString["translate"] != null)
+                        {
+                            @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.LastOrDefault().nav3labels.FirstOrDefault().delete_label[1], controllerName = "Nav3ViewModel", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                        }
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        @Html.ActionLink(@Model.LastOrDefault().nav3labels.FirstOrDefault().edit_label[0], "Edit", new { id = item.n3ID, n1_name = Request.QueryString["n1_name"], n2_name = Request.QueryString["n2_name"], msg = item.n3_nameLong }, new { @class = "btn btn-info" })
+                        @if (Request.QueryString["translate"] != null)
+                        {
+                            @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.LastOrDefault().nav3labels.FirstOrDefault().edit_label[1], controllerName = "Nav3ViewModel", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                        }
+                        @Html.ActionLink(@Model.LastOrDefault().nav3labels.FirstOrDefault().delete_label[0], "Delete", new { id = item.n3ID, n2Id = Request.QueryString["n2Id"], n1_name = Request.QueryString["n1_name"], n2_name = Request.QueryString["n2_name"], msg = item.n3_nameLong }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false", @class = "btn btn-info" })
+                        @if (Request.QueryString["translate"] != null)
+                        {
+                            @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.LastOrDefault().nav3labels.FirstOrDefault().delete_label[1], controllerName = "Nav3ViewModel", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                        }
+                    </td>
+                }
+            </tr>
+            
+        }
+    </tbody>
+</table>
+}

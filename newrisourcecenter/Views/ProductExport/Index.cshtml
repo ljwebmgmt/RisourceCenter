@@ -1,0 +1,109 @@
+﻿@model newrisourcecenter.ViewModels.ProductExportModel
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script type="text/javascript">
+    $(document).on('change', 'select[name="category"]', function (e) {
+        $('.subcategory-wrapper,button[type="submit"]').addClass('hide');
+        $('input[name="subcategory"]').val('');
+        var code = $(this).val();
+        if (code == '')
+            return;
+        $('.subcategory-wrapper[data-category="' + code + '"],button[type="submit"]').removeClass('hide');
+    });
+
+    $(document).on('change', 'select.subcategory', function (e) {
+        $('input[name="subcategory"]').val('');
+        if ($(this).val() != '')
+            $('input[name="subcategory"]').val($(this).val());
+    });
+
+    $(document).on('click', 'button[type="submit"]', function (e) {
+        e.preventDefault();
+        var obj = $(this);
+        var form = obj.parents('form');
+        $.ajax({
+            url: form.attr('action'),
+            type: 'POST',
+            data: form.serializeArray(),
+            dataType: 'json',
+            beforeSend: function () {
+                obj.val('Loading....').attr('disabled', true);
+                $('.download-link').remove();
+            },
+            success: function (res) {
+                if (res.error != '') {
+                    $('.row').before('<div class="alert alert-danger">' + res.error + '</div>');
+                    setTimeout(function () { $('.alert.alert-danger').remove(); }, 5000);
+                    return false;
+                }
+                obj.after('<a href="' + res.fileUrl + '" download="' + res.fileName + '" class="download-link hide"></a>');
+                $('.download-link')[0].click();
+            },
+            complete: function () {
+                obj.val('Download').attr('disabled', false);
+            }
+        })
+        return false;
+    });
+</script>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="main_content">
+        <div class="container">
+            <h3>Welcome to the Product Data Export Tool</h3>
+            <br />
+            <h4>How it works: </h4>
+            <p>Using the  dropdown below, you can either select the master data, which will provide product specifications for all products in the family you choose (ex. Enclosures), or you can select one or more sub-categories under the master data for that product family (ex. Wall-mounted Enclosures).</p>
+            <h4>What you'll receive: </h4>
+            <p>All attributes for every part number in a given product family or category under that family along with the product image. Note that are product images are representative images. We do not have unique product images for each part number at this time.</p>
+            <h4>How to use: </h4>
+            <p>The export will be provided as a CSV file that includes all product specification data as well as the hyperlink for the product image. The data can be used to update and/or enhance the Rittal product data that exists on your websites, backend systems, etc.</p>
+            <hr />
+            <div class="row">
+                <div class="col-md-3">
+                    <h3>Choose a Category:</h3>
+                    <div>
+                        <select name="category" id="category" class="form-control">
+                            <option value="">Select Option</option>
+                            @{
+                                foreach (var category in Model.categories)
+                                {
+                                    <option value="@category.code">@category.name</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-7">
+                    @{
+                        foreach (var category in Model.categories)
+                        {
+                            <div class="subcategory-wrapper hide" data-category="@category.code">
+                                <h3>Choose Export options:</h3>
+                                <div>
+                                    <select class="subcategory form-control" style="max-width:100%;">
+                                        <option value="">Master Data (All Parts)</option>
+                                        @{
+                                            foreach (var subcategory in category.subcategories)
+                                            {
+                                                <option value="@subcategory.code">@subcategory.name</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        }
+                    }
+                    <input type="hidden" name="subcategory" value="" />
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary btn-block hide" style="position:absolute;top:38px;text-align:center;">Download</button>
+                </div>
+            </div>
+            <br /><br />
+        </div>
+    </div>
+}

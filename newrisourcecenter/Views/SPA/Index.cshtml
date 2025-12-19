@@ -1,0 +1,228 @@
+﻿@model newrisourcecenter.Models.SPAbreakdown
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int usr_SPA = Convert.ToInt32(Session["usr_SPA"]);//Regional Manager
+    int usr_POS = Convert.ToInt32(Session["usr_POS"]);//Account Manager
+    int companyType = Convert.ToInt32(Session["companyType"]);
+}
+<div class="main_content">
+    <p>
+        <div style="display:inline-block;">
+            @if (companyType==1) {
+                @Html.ActionLink("Create SPA Contract >>", "Create", new { n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], msg = "Create SPA" }, htmlAttributes: new { @class = "btn btn-primary" })
+           <span>&nbsp;&nbsp;&nbsp;</span> }
+        </div>    
+        <div style="display:inline-block;">
+            @Html.ActionLink("SPA Rebates", "Index", "SPARebates", new { n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], msg = "SPA Rebates" }, htmlAttributes: new { @class = "btn btn-primary" })           
+        </div>
+        @if (usr_SPA == 1 && User.IsInRole("Local Admin") || usr_POS == 1 && User.IsInRole("Local Admin") || User.IsInRole("Global Admin") || User.IsInRole("Super Admin"))
+        {
+            <div style="display:inline-block;float:right;">
+                @Html.ActionLink("SPA Admin >>", "SPAadmin", new { n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], msg = "SPA Admin" }, htmlAttributes: new { @class = "btn btn-primary" })
+            </div>
+        }
+    </p>
+    @if (!string.IsNullOrEmpty(Request.QueryString["success"]))
+    {
+        <h3 style="color:green;">@Request.QueryString["success"]</h3>
+    }
+    <table class="table">
+        <thead>
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.SPACurrent.FirstOrDefault().Spa_id)
+                </td>
+                <td>
+                    @Html.DisplayNameFor(model => model.SPACurrent.FirstOrDefault().UserName)
+                </td>
+                <td>
+                    @Html.DisplayNameFor(model => model.SPACurrent.FirstOrDefault().Customer_name)
+                </td>
+                <td></td>
+            </tr>
+        </thead>
+        <tr>
+            <td colspan="5" id="currentcontrol">
+                <a href="#">Active/Approved (@Model.SPACurrent.Count())</a>
+                <span class="caret"></span>
+            </td>
+        </tr>
+        <tbody id="current" class="current">
+            @foreach (var item in Model.SPACurrent)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Spa_id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UserName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Customer_name)
+                    </td>
+                    <td>
+                        <a href="/SPA/Create?n1_name=Support%20Tools&n2_name=SPA%20Controls%20Admin&isAdmin=no&msg=Create%20RFQ#!/main/@item.Spa_id/no">Edit</a><span> |</span>                       
+                        @Html.ActionLink("Review", "Details", new { id = item.Spa_id, n1_name = Request.QueryString["n1_name"], n2_name = Request.QueryString["n2_name"], isAdmin = "no" }) |
+                        @Html.ActionLink("Delete", "Delete", new { id = item.Spa_id, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], msg = @Request.QueryString["msg"], isAdmin = "yes" }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false" })
+                        
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tr>
+            <td colspan="5" id="expiredcontrol">
+                <a href="#">Expired (@Model.SPAExpired.Count())</a>
+                <span class="caret"></span>
+            </td>
+        </tr>
+        <tbody id="expired" class="expired">
+            @foreach (var item in Model.SPAExpired)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Spa_id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UserName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Customer_name)
+                    </td>
+                    <td>
+
+                        <a href="/SPA/Create?n1_name=Support%20Tools&n2_name=SPA%20Controls%20Admin&isAdmin=no&msg=Create%20RFQ#!/main/@item.Spa_id/no">Edit</a><span> |</span>      
+                        @Html.ActionLink("Review", "Details", new { id = item.Spa_id, n1_name = Request.QueryString["n1_name"], n2_name = Request.QueryString["n2_name"], isAdmin = "no" }) |
+                        @Html.ActionLink("Delete", "Delete", new { id = item.Spa_id, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], msg = @Request.QueryString["msg"], isAdmin = "yes" }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false" })
+                        
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tr>
+            <td colspan="5" id="awaitingcontrol">
+                <a href="#">Awaiting Approval (@Model.SPAAwaitingApproval.Count())</a>
+                <span class="caret"></span>
+            </td>
+        </tr>
+        <tbody id="awaiting" class="awaiting">
+            @foreach (var item in Model.SPAAwaitingApproval)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Spa_id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UserName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Customer_name)
+                    </td>
+                    <td>
+
+                        <a href="/SPA/Create?n1_name=Support%20Tools&n2_name=SPA%20Controls%20Admin&isAdmin=no&msg=Create%20RFQ#!/main/@item.Spa_id/no">Edit</a><span> |</span>
+                        @Html.ActionLink("Review", "Details", new { id = item.Spa_id, n1_name = Request.QueryString["n1_name"], n2_name = Request.QueryString["n2_name"], isAdmin = "no" }) |
+                        @Html.ActionLink("Delete", "Delete", new { id = item.Spa_id, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], msg = @Request.QueryString["msg"], isAdmin = "yes" }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false" })
+                    
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tr>
+            <td colspan="5" id="upcomingcontrol">
+                <a href="#">Upcoming (@Model.SPAUpcoming.Count())</a>
+                <span class="caret"></span>
+            </td>
+        </tr>
+        <tbody id="upcoming" class="upcoming">
+            @foreach (var item in Model.SPAUpcoming)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Spa_id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UserName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Customer_name)
+                    </td>
+                    <td>
+
+                        <a href="/SPA/Create?n1_name=Support%20Tools&n2_name=SPA%20Controls%20Admin&isAdmin=no&msg=Create%20RFQ#!/main/@item.Spa_id/no">Edit</a><span> |</span>
+                        @Html.ActionLink("Review", "Details", new { id = item.Spa_id, n1_name = Request.QueryString["n1_name"], n2_name = Request.QueryString["n2_name"], isAdmin = "no" }) |
+                        @Html.ActionLink("Delete", "Delete", new { id = item.Spa_id, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], msg = @Request.QueryString["msg"], isAdmin = "yes" }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false" })
+
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tr>
+            <td colspan="5" id="declinedcontrol">
+                <a href="#">Declined (@Model.SPADeclined.Count())</a>
+                <span class="caret"></span>
+            </td>
+        </tr>
+        <tbody id="declined" class="declined">
+            @foreach (var item in Model.SPADeclined)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Spa_id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UserName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Customer_name)
+                    </td>
+                    <td>
+                        
+                        <a href="/SPA/Create?n1_name=Support%20Tools&n2_name=SPA%20Controls%20Admin&isAdmin=no&msg=Create%20RFQ#!/main/@item.Spa_id/no">Edit</a><span> |</span>
+                        @Html.ActionLink("Review", "Details", new { id = item.Spa_id, n1_name = Request.QueryString["n1_name"], n2_name = Request.QueryString["n2_name"], isAdmin = "no" }) |
+                        @Html.ActionLink("Delete", "Delete", new { id = item.Spa_id, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], msg = @Request.QueryString["msg"], isAdmin = "yes" }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false" })
+
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tr>
+            <td colspan="5" id="draftcontrol">
+                <a href="#">Draft (@Model.SPADraft.Count())</a>
+                <span class="caret"></span>
+            </td>
+        </tr>
+        <tbody id="draft" class="draft">
+            @foreach (var item in Model.SPADraft)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Spa_id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UserName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Customer_name)
+                    </td>
+                    <td>
+
+                        <a href="/SPA/Create?n1_name=Support%20Tools&n2_name=SPA%20Controls%20Admin&isAdmin=no&msg=Create%20RFQ#!/main/@item.Spa_id/no">Edit</a><span> |</span>
+                        @Html.ActionLink("Review", "Details", new { id = item.Spa_id, n1_name = Request.QueryString["n1_name"], n2_name = Request.QueryString["n2_name"], isAdmin = "no" }) |
+                       @Html.ActionLink("Delete", "Delete", new { id = item.Spa_id, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], msg = @Request.QueryString["msg"], isAdmin = "no" }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false" })
+
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @Html.ActionLink("Reset Table", "SPAadmin", new { n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], msg = "SPA Admin" }, htmlAttributes: new { @class = "btn-primary btn-sm" })
+
+    <div style="background-color:#FAF0C0;padding:20px;">
+        The list below is a breakdown of the contracts. The current accordion shows active contracts. The expired accordion shows contracts that have ended.
+        The awaiting approval accordion shows contracts that have been submitted to an admin but not yet approved.
+        The upcoming accordion holds contracts that have not started but have been approved by an admin.
+        The declined accordion holds contracts that have been rejected. And the draft accordion displays any contracts that you have started but not submitted to an admin.
+    </div>
+</div>

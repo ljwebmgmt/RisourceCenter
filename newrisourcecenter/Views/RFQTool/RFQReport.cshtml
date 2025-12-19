@@ -1,0 +1,275 @@
+﻿@model newrisourcecenter.Models.RFQViewModelReport
+
+@{
+    ViewBag.Title = "RFQReport";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string pages = Convert.ToString(Session["userPages"]);
+    string[] userpages = { };
+    if (pages != null)
+    {
+        userpages = pages.Split(',');
+    }
+}
+
+@using (Html.BeginForm("RFQReport", "RFQTool", FormMethod.Get, new { enctype = "multipart/form-data" }))
+{
+    <input type="hidden" name="n1_name" value="@Request.QueryString["n1_name"]" />
+    <input type="hidden" name="n2_name" value="@Request.QueryString["n2_name"]" />
+    <input type="hidden" name="msg" value="@Request.QueryString["msg"]" />
+    <table class="table">
+        <tr>
+            <td colspan="1">
+            @Html.ActionLink("RFQ Admin >>", "RfqAdmin", new { n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], msg = "RFQ Admin" }, htmlAttributes: new { @class = "btn btn-primary" })
+            </td>
+        </tr>
+        <tr style="background:#fff;">
+            <th>Enter RFQ ID </th>
+            <td colspan="6"><input name="form_ID" id="form_ID" type="text" class="form-control" value="@Request.QueryString["form_ID"]" ></td>
+        </tr>
+        <tr>
+            <th>User Type:</th>
+            <td colspan="6">
+                @{ Dictionary<string, string> list_user_type = new Dictionary<string, string>();
+                    list_user_type.Add("all", "All");
+                    list_user_type.Add("rittal", "Rittal Sales");
+                    list_user_type.Add("distro", "Distributor");
+                }
+                @foreach (var item in list_user_type)
+                {
+                    if (Request.QueryString["user_type"] == @item.Key)
+                    {
+                        <input name="user_type" id="user_type" type="radio" value="@item.Key" checked="checked">@item.Value<br>
+                    }
+                    else
+                    {
+                        <input name="user_type" id="user_type" type="radio" value="@item.Key">@item.Value<br>
+                    }
+                }
+            </td>
+        </tr>
+        <tr style="background:#fff;">
+            <th>Company Name:</th>
+            <td colspan="6">
+                @Html.DropDownListFor(m => m.company, Model.list_comps, htmlAttributes: new { @class = "form-control" })
+            </td>
+        </tr>
+        <tr>
+            <th>Submitter Name:</th>
+            <td colspan="6">
+                @Html.DropDownListFor(m => m.users, Model.list_users, htmlAttributes: new { @class = "form-control" })
+            </td>
+        </tr>
+        <tr style="background:#fff;">
+            <th>Choose Date Type</th>
+            <td>
+                <select name="date_type" class="form-control">
+                    <option value="complete_date" selected >Completion Date</option>
+                    <option value="submission_date">Submission Date</option>
+                </select>
+            </td>
+            <th>Start Date:</th>
+            <td>
+                <input name="sDate" type="text" class="form-control date-picker" value="@Request.QueryString["sDate"]">
+            </td>
+
+            <th>End Date:</th>
+            <td>
+                <input name="eDate"  type="text" class="form-control date-picker" value="@Request.QueryString["eDate"]">
+            </td>
+        </tr>
+        <tr>
+            <th>Status Filter:</th>
+            <td colspan="6">
+                @{ Dictionary<string, string> list_filters = new Dictionary<string, string>();
+                    list_filters.Add("none", "--None--");
+                    list_filters.Add("Not Assigned", "Waiting to be assigned");
+                    list_filters.Add("Assigned", "Assigned");
+                    list_filters.Add("Completed", "Completed");
+                    list_filters.Add("Returned", "Returned");
+                    list_filters.Add("Waiting on Vendor", "Waiting on Vendor");
+                    list_filters.Add("Pending Approval", "Pending Approval");
+                    list_filters.Add("Waiting on Requestor", "Waiting on Requestor");
+                }
+                <select name="status_type" class="form-control" >
+                    @foreach (var item in list_filters)
+                    {
+                        if (Request.QueryString["status_type"] == @item.Key)
+                        {
+                            <option value="@item.Key" selected="selected">@item.Value</option>
+                        }
+                        else
+                        {
+                            <option value="@item.Key">@item.Value</option>
+                        }
+                    }
+                </select>
+            </td>
+        </tr>
+        <tr style="background:#fff;">
+            <td colspan="6" >
+                <input name="submit" id="submit" type="submit" value="Process" class="btn btn-default" />
+            </td>
+        </tr>       
+        @if (!string.IsNullOrEmpty(Request.QueryString["submit"]))
+        {
+        <tr>
+            <td colspan="6">
+                <a style="float:right;margin-right:20px;" class="btn-sm btn-success" href="/RFQTool/RFQReport?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=@Request.QueryString["msg"]&form_ID=@Request.QueryString["form_ID"]&user_type=@Request.QueryString["user_type"]&company=@Request.QueryString["company"]&users=@Request.QueryString["users"]&date_type=@Request.QueryString["date_type"]&sDate=@Request.QueryString["sDate"]&eDate=@Request.QueryString["eDate"]&status_type=@Request.QueryString["status_type"]&submit=@Request.QueryString["submit"]&export=true">Export</a>
+            </td>
+        </tr>
+        <tr style="background:#fff;">
+            <td colspan="12">
+                <table cellpadding="5" border="1" align="center" class="tablesorter table">
+                    <thead>
+                        <tr>
+                            <td align="center" colspan="1">% of "Returned" forms</td>
+                            <td align="center" colspan="1">Completed Average Cycle Times (wait time excl.)</td>
+                            <td align="center" colspan="1">Completed Average Cycle Times</td>
+                            <td align="center" colspan="1">Completed Average Under 24 hours (wait time excl.)</td>
+                            <td align="center" colspan="1">Completed Average Under 24 hours</td>
+                            <td align="center">Total Forms Completed Under 24 hours</td>
+                            <td align="center">Total Forms Completed Under 48 hours</td>
+                            <td align="center" colspan="1">Total Results</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td align="center"><h2>@Model.totalReturnedforms.00%</h2></td>
+                            <td align="center">
+                                <h2>@Model.averageHoursCalc Hours</h2>
+                            </td>
+                            <td align="center"><h2>@Model.averageHoursCalcWithoutWait Hours</h2></td>
+                            <td align="center">
+                                <h2>@Model.averageUnder24HoursCalc Hours</h2>
+                            </td>
+                            <td align="center">
+                                <h2>@Model.averageUnder24HoursCalcWithoutWait Hours</h2>
+                            </td>
+                            <td align="center"><h2>@Model.totalUnder24</h2></td>
+                            <td align="center"><h2>@Model.totalUnder48</h2></td>
+                            <td align="center"><h2>@Model.totalForms</h2></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td colspan="2">
+                                @foreach (var item in Model.waitStatusTimes)
+                                {
+                                    if (item.Value == 0) { continue; }
+                                    string str = item.Key + ": " +  string.Format("{0:F2}",item.Value) + " hours";
+                                    @str<br />
+                                }
+                            </td>
+                            <td align="center">
+                                @Model.hoursUnder24.ToString("#.00#;(#.00#)") hours
+                                <br>
+                                @Model.countUnder24 forms
+                                <br>
+                                @Model.percUnder24HoursCalc% of total forms
+                                <br>
+                            </td>
+                            <td align="center">
+                                @Model.hoursUnder24WithoutWait.ToString("#.00#;(#.00#)") hours
+                                <br>
+                                @Model.totalUnder24 forms
+                                <br>
+                                @Model.percUnder24HoursCalcWithoutWait% of total forms
+                                <br>
+                            </td>
+                            <td colspan="3"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="12">
+                <table class="tablesorter table">
+                    <thead>
+                        <tr>
+                            <th width="60px" align="left" class="header">Form ID</th>
+                            <th width="60px" align="left" class="header">Qte Num</th>
+                            <th width="100px" align="center" class="header">Requester</th>
+                            <th width="150px" align="left" class="header">Company Name</th>
+                            <th width="150px" align="left" class="header">Project Name</th>
+                            <th width="150px" align="left" class="header">End User</th>
+                            <th width="150px" align="center" class="header">Submission/Start Date</th>
+                            <th width="150px" align="center" class="header">Completion Date</th>
+                            <th width="100px" align="center" class="header">Total Time</th>
+                            <th width="100px" align="center" class="header">Start - End Time</th>
+                            <th width="100px" align="center" class="header">Current Status</th>
+                            <th width="60px" align="center" class="header">Project?</th>
+                            <th width="100px" align="center" class="header">Admin Notes</th>
+                            <th width="250px" align="center" class="header">Return Check</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.list_reports_model != null)
+                        {
+                            foreach (var reprots in Model.list_reports_model)
+                            {
+                        <tr>
+                            <td>
+                                @reprots.form_id
+                                @Html.ActionLink("View", "Edit", new { id = @reprots.form_id, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], ext_form = "no", admin = "yes" }, new { })
+                            </td>
+                            <td>
+                                @reprots.quote_num
+                            </td>
+                            <td align="center">
+                                @reprots.requestor
+                            </td>
+                            <td align="center">
+                                @reprots.comp_name
+                            </td>
+                            <td align="center">@reprots.qte_ref</td>
+                            <td align="center">@Html.Raw(reprots.end_user)</td>
+                            <td align="center">
+                                @String.Format("{0:d}", @reprots.submission_date)
+                            </td>
+                            <td align="center">
+                                @String.Format("{0:d}", @reprots.completion_date)
+                            </td>
+                            <td align="center">@reprots.total_time</td>
+                            <td align="center">@reprots.completion_time</td>
+                            @if (!string.IsNullOrEmpty(reprots.adminfullName))
+                            {
+                                <td align="center">@reprots.action - @reprots.adminfullName</td>
+                            }
+                            else
+                            {
+                                <td align="center">@reprots.action</td>
+                            }
+                            <td align="center">
+                                @if (reprots.check_project == 1)
+                                {
+                                    <span>Yes</span>
+                                }
+                                else
+                                {
+                                    <span>No</span>
+                                }
+                            </td>
+                            <td align="center">
+                                @reprots.admin_notes
+                            </td>
+                            <td align="center">
+                                @if (reprots.IsCloned)
+                                {
+                                    <span style="color:green;">Cloned</span><br />
+                                }
+                                @if (reprots.IsReturned)
+                                {
+                                    <span style="color:red;">Returned</span>
+                                }
+                            </td>
+                        </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        }
+    </table>
+}
+

@@ -1,0 +1,208 @@
+﻿@model newrisourcecenter.Models.partnerCompanyViewModel
+
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.comp_name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.comp_name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.comp_industry)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.comp_industry)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.comp_type)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.comp_type)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.comp_level)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.comp_level)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.comp_products)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.comp_products)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.comp_SAP)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.comp_SAP)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.comp_POS)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.comp_POS)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.comp_SPA)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.comp_SPA)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.comp_project_reg)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.comp_project_reg)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.comp_MDF)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.comp_MDF)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.comp_MDF_amount)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.comp_MDF_amount)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.comp_MDF_tLimit)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.comp_MDF_tLimit)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.comp_MDF_aLimit)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.comp_MDF_aLimit)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.comp_MDF_mLimit)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.comp_MDF_mLimit)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.comp_FX)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.comp_FX)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.comp_active)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.comp_active)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.comp_dateCreated)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.comp_dateCreated)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.comp_dateUpdated)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.comp_dateUpdated)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.comp_createdBy)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.comp_createdBy)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.comp_updatedBy)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.comp_updatedBy)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.old_ID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.old_ID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.comp_RiCRM)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.comp_RiCRM)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.comp_region)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.comp_region)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    }
+</div>

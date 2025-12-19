@@ -1,0 +1,54 @@
+﻿@model IEnumerable<newrisourcecenter.Models.LabelsModel>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<p>
+    @Html.ActionLink("Translate A Page Label", "Create", new { n1_name = Request.QueryString["n1_name"], msg = "Translate A Page Label" }, htmlAttributes: new { @class = "btn btn-primary" })
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.label_name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.controller_name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.page_name)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.label_name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.controller_name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.page_name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.translated_label)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.language)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.label_id }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.label_id }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.label_id })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

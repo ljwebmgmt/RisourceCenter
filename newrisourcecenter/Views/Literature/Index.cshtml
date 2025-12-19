@@ -1,0 +1,56 @@
+﻿@model IEnumerable<newrisourcecenter.Models.LiteratureViewModel>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<p>
+    @Html.ActionLink("Add a Literature", "Create", null, htmlAttributes: new { @class = "btn btn-primary" })
+</p>
+<br />
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.lit_name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.created_by)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.date_created)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.date_updated)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.updated_by)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.lit_name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.created_by)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.date_created)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.date_updated)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.updated_by)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.lit_ID }, new { @class = "btn btn-info" })
+            @Html.ActionLink("Delete", "Delete", new { id=item.lit_ID }, new { @class = "btn btn-info" })
+        </td>
+    </tr>
+}
+
+</table>

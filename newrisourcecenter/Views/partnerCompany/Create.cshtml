@@ -1,0 +1,245 @@
+﻿@model newrisourcecenter.Models.partnerCompanyViewModel
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    $(document).ready(function () {
+
+    $("#form").submit(function (e) {
+        e.preventDefault;
+        console.log($("#comp_active").val());
+        if ($('input[name="comp_name"]').val() == "") {
+
+            alert("Enter Company Name");
+
+            return false;
+        }
+        if ($("#comp_industry").val() == "Select an Industry") {
+
+            alert("Select a Industry");
+
+            return false;
+        }
+
+        if ($("#comp_type").val() == "Select Company Type") {
+
+            alert("Select Company Type");
+
+            return false;
+        }
+
+        if ($("#comp_active").val() == "Select a Status") {
+
+            alert("Select a Status");
+
+            return false;
+        }
+
+        return true;
+    });
+
+});
+</script>
+@using (Html.BeginForm("Create", "partnerCompany", FormMethod.Post, new { enctype = "multipart/form-data", @id = "form" }))
+{
+    @Html.AntiForgeryToken()
+<div class="form-horizontal">
+    <a href="javascript:history.back();" style="float:right;">back</a>
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    <h3>Company Overview</h3>
+    <div class="form-group">
+        @Html.LabelFor(model => model.comp_name, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.comp_name, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.comp_name, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.comp_region, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DropDownListFor(m => m.comp_region, Model.list_regions, htmlAttributes: new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.comp_region, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.comp_active, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <select name="comp_active" id="comp_active" class="form-control">
+                <option selected>Select a Status</option>
+                <option value="1">Active</option>
+                <option value="0">Not Acitive</option>
+            </select>
+            @Html.ValidationMessageFor(model => model.comp_active, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.comp_industry, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <select name="comp_industry" id="comp_industry" class="form-control">
+                <option selected>Select an Industry</option>
+                @foreach (var items in Model.list_industry)
+                {
+                    <option value="@items.pi_ID">@items.pi_industry</option>
+                }
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.comp_type, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <select name="comp_type" id="comp_type" class="form-control">
+                <option selected>Select Company Type</option>
+                @foreach (var items in Model.list_Type)
+                {
+                    <option value="@items.pt_ID">@items.pt_type</option>
+                }
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.comp_level, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.comp_level, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.comp_level, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.comp_products, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @foreach (var items in Model.list_products)
+            {
+                <input type="checkbox" name="comp_products" id="comp_products" value="@items.pp_ID" />@items.pp_product<br />
+            }
+            @Html.ValidationMessageFor(model => model.comp_products, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.comp_MDF_amount, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.comp_MDF_amount, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.comp_MDF_amount, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.comp_MKT_Limit, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.comp_MKT_Limit, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.comp_MKT_Limit, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <h3>Company Permissions</h3>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.comp_MDF, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <input name="comp_MDF" type="radio" value="1">Yes
+            <input name="comp_MDF" type="radio" value="0">No
+            @Html.ValidationMessageFor(model => model.comp_MDF, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.comp_SAP, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <input name="comp_SAP" type="radio" value="1">Yes
+            <input name="comp_SAP" type="radio" value="0">No
+            @Html.ValidationMessageFor(model => model.comp_SAP, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.comp_POS, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <input name="comp_POS" type="radio" value="1">Yes
+            <input name="comp_POS" type="radio" value="0">No
+            @Html.ValidationMessageFor(model => model.comp_POS, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.comp_SPA, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <input name="comp_SPA" type="radio" value="1">Yes
+            <input name="comp_SPA" type="radio" value="0">No
+            @Html.ValidationMessageFor(model => model.comp_SPA, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.comp_project_reg, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <input name="comp_project_reg" type="radio" value="1">Yes
+            <input name="comp_project_reg" type="radio" value="0">No
+            @Html.ValidationMessageFor(model => model.comp_project_reg, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.comp_FX, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <input name="comp_FX" type="radio" value="1">Yes
+            <input name="comp_FX" type="radio" value="0">No
+            @Html.ValidationMessageFor(model => model.comp_FX, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.comp_RiCRM, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <input name="comp_RiCRM" type="radio" value="1">Yes
+            <input name="comp_RiCRM" type="radio" value="0">No
+            @Html.ValidationMessageFor(model => model.comp_RiCRM, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <h3>Deal Registration</h3>
+    <div class="form-group">
+        @Html.LabelFor(model => model.bid_registration, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <input name="bid_registration" type="radio" value="1">Yes
+            <input name="bid_registration" type="radio" value="0">No
+            @Html.ValidationMessageFor(model => model.bid_registration, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.it_territory_manager, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.it_territory_manager, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.it_territory_manager, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.general_manager, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.general_manager, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.general_manager, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <input type="hidden" value="@Request.QueryString["n1_name"]" name="n1_name" />
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Save" class="btn btn-default" />
+        </div>
+    </div>
+</div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index", new { n1_name = Request.QueryString["n1_name"] })
+</div>

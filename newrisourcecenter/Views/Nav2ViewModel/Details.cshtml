@@ -1,0 +1,217 @@
+﻿@model newrisourcecenter.Models.Nav2ViewModel
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Level 2 Menu Information</h2>
+
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.n1ID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.n1ID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.n2order)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.n2order)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.n2_nameShort)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.n2_nameShort)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.n2_nameLong)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.n2_nameLong)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.n2_descShort)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.n2_descShort)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.n2_descLong)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.n2_descLong)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.n2_descLongAlt)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.n2_descLongAlt)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.n2_active)
+        </dt>
+
+        <dd>
+            @if (Model.n2_active == 1)
+            {
+                <div>Active</div>
+            }
+            else
+            {
+                <div>Not Active</div>
+            }
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.n2_products)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.n2_products)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.n2_usrTypes)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.n2_usrTypes)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.n2_editBy)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.n2_editBy)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.n2_editDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.n2_editDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.n2_redirect)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.n2_redirect)
+        </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.n2_headerImg)
+    </dt>
+@*
+    <dd>
+        @Html.DisplayFor(model => model.n2_headerImg)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.n2_redirectJS)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.n2_redirectJS)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.n2_keywords)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.n2_keywords)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.old_n3id)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.old_n3id)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.old_n2id)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.old_n2id)
+    </dd>
+*@
+        <dt>
+            @Html.DisplayNameFor(model => model.n2_industry)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.n2_industry)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.n2_IT_approver)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.n2_IT_approver)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.n2_IE_approver)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.n2_IE_approver)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PageName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PageName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Controller)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Controller)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.usr_group)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.usr_group)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.n2ID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

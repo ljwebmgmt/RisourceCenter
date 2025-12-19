@@ -1,0 +1,298 @@
+﻿@model IEnumerable<newrisourcecenter.Models.RiSourcesModel>
+@{
+    ViewBag.Title = "RiSources";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string userProducts = Convert.ToString(Session["userProducts"]);
+    string userIndustry = Convert.ToString(Session["userIndustry"]);
+}
+@*<style>
+ .ng-enter  { animation: scaleUp 0.5s both ease-in; z-index: 8888; }
+ .ng-leave  { animation: scaleUp 0.5s both ease-in; z-index: 9999; }
+</style>*@
+<script>
+    $(document).ready(function () {
+        $("a").click(function (event) {
+            $("#sc_body_" + event.target.id).toggleClass("show_sales_comm");
+            $("#sc_teaser_" + event.target.id).toggleClass("show_sales_comm");
+
+            if ($("#sc_teaser_" + event.target.id).hasClass("show_sales_comm")) {
+                $("#" + event.target.id).css("color", "#fff");
+                $("#sc_body_" + event.target.id).css("border", "solid 1px #fff", "padding", "10px");
+                $("#sc_body_" + event.target.id).css("padding", "10px");
+
+            } else {
+                $("#" + event.target.id).css("color", "#e21785");
+            }
+        });
+    });
+</script>
+
+<div class="main_content" ng-app="resourcesApp" >
+  <div ng-controller="SearchReSources">
+        <div style="float:left;margin:12px 0px 0px 20px;">
+            <div class="dropdown">
+                <span class="input-group stylish-input-group">
+                    <input type="text" id="form_value" value="" placeholder="search by doc name" class="form-control" ng-model="searchbox" ng-keyup="searchRiSource();" />
+                    <span class="input-group-addon" id="submit_search">
+                        <button type="submit">
+                            <span class="glyphicon glyphicon-search" ng-click="searchRiSource();"></span>
+                        </button>
+                    </span>
+                </span>
+            </div>
+        </div>
+        @{
+        Html.RenderPartial("_risourceMenu");
+        }
+        <div align="center">
+            @{
+                if (Request.QueryString["childid"] != null)
+                {
+                    if (Request.QueryString["childid"] != "")
+                    {
+                        if (@Request.QueryString["grid"] == "1")
+                        {
+                            <span class="btn btn-info btn-sm">@Request.QueryString["n2_name"] <a href="~/RiSources/?grid=@Request.QueryString["grid"]&n1_name=@Request.QueryString["n1_name"]#!/grid=@Request.QueryString["grid"]" style="color:#ff0000;margin-left:10px;"> X </a></span>
+                        }
+                        else
+                        {
+                            if (@Request.QueryString["n2_name"] != "")
+                            {
+                                <span class="btn btn-info btn-sm">@Request.QueryString["n2_name"] <a href="~/RiSources/?grid=@Request.QueryString["grid"]&n1_name=@Request.QueryString["n1_name"]#!/grid=@Request.QueryString["grid"]" style="color:#ff0000;margin-left:10px;"> X </a></span>
+                            }
+                        }
+                        if (@Request.QueryString["n2_name"] != "")
+                        {
+                            <a class="btn btn-info btn-sm" id="reset" href="~/RiSources/?n1_name=@Request.QueryString["n1_name"]">Reset</a>
+                        }
+                    }
+                }
+            }
+        </div>   <!--Angularjs view-->
+        <div ng-view class="page"></div>
+    </div>
+@{
+    if (@Request.QueryString["grid"] == "1")
+    {
+        ViewBag.file_size = "grid_file_size";
+        ViewBag.comms = "comms_grid";
+        ViewBag.viewType= "grid_text";
+    }
+    else
+    {
+        ViewBag.file_size = "list_file_size";
+        ViewBag.comms = "comms_list";
+        ViewBag.viewType= "list_text";
+    }
+}
+    <form method="post" action="/RiSources/getReSourcesFiles" enctype="multipart/form-data" >
+        <input type="hidden" value="@ViewBag.riousrceID" id="countLists"/>
+        <section class="@ViewBag.comms" id="comms_list" ng-controller="homepage">
+            <div style="background:#ccc;padding:20px;" id="cart" >
+                <span class="glyphicon glyphicon-shopping-cart" style="color:#E50043;" ></span>
+                <span style="cursor:pointer;text-decoration:underline;" ng-click="showCart()" ng-bind="showcart" >Show Cart</span>
+                <span ng-bind="countRiSources" ></span>
+                <div style="display:none;" id="hideit" ng-show="download_selected">
+                    <ul ng-repeat="items in risourcesModel" >
+                        <li><span ng-bind="items.get_headlines"></span>&nbsp;&nbsp;<a href="" ng-click="deleteItem(items.ID,items.ris_ID)">x</a></li>
+                    </ul>
+                    <button class="btn btn-success" ng-if="risourcesModel.length>0">
+                        Download Selected
+                    </button>
+                </div>
+            </div>
+            <br />
+            @foreach (var risource in Model.OrderByDescending(a => a.dateCreated))
+            {
+                if (!string.IsNullOrEmpty(userProducts))
+                {
+                    foreach (var products in userProducts.ToArray())
+                    {
+                        if (!string.IsNullOrEmpty(risource.ris_products) && risource.ris_products.Contains(products))
+                        {
+                            <div id="listings">
+                                @{
+                                    Uri uriResult;
+                                    bool result = Uri.TryCreate(@risource.ris_link, UriKind.Absolute, out uriResult)
+                                    && (uriResult.Scheme == Uri.UriSchemeHttp
+                                    || uriResult.Scheme == Uri.UriSchemeHttps);
+
+                                    if (result)
+                                    {
+                                        <a id="grid_title" href="#" ng-click='trackDownload(@risource.ris_ID, "@risource.ris_link")'>
+                                            @if (@risource.ris_headline.Length <= 20 || @Request.QueryString["grid"] == null || @Request.QueryString["grid"] == "")
+                                            {
+                                                @risource.ris_headline
+                                            }
+                                            else if (@Request.QueryString["grid"] == "1")
+                                            {
+                                                @risource.ris_headline.Substring(0, 20) <span>...</span>
+                                            }
+                                        </a>
+                                        if (@risource.displayimage != "default")
+                                        {
+                                            <img src="~/attachments/risources/displayImage/@risource.displayimage" id="header_img" alt="@risource.nav2_longName" title="@risource.nav2_longName" />
+                                        }
+                                        else
+                                        {
+                                            <img src="~/attachments/risources/displayImage/@risource.n2_headerImg" id="header_img" alt="@risource.nav2_longName" title="@risource.nav2_longName" />
+                                        }
+
+                                        <div id="@ViewBag.viewType" style="margin-top:-5px;">
+                                            <span> @String.Format("{0:d}", @risource.dateCreated)</span>
+                                            <a id="@ViewBag.file_size" ng-click='trackDownload(@risource.ris_ID, "@risource.ris_link")' class="btn btn-primary btn-sm glyphicon glyphicon-new-window"> Link</a>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <a id="grid_title" href="#" ng-click='trackDownload(@risource.ris_ID, "attachments/risources/@risource.ris_link")'>
+                                            @if (@risource.ris_headline.Length <= 20 || @Request.QueryString["grid"] == null || @Request.QueryString["grid"] == "")
+                                            {
+                                                @risource.ris_headline
+                                            }
+                                            else
+                                            {
+                                                @risource.ris_headline.Substring(0, 20) <span>...</span>
+                                            }
+                                        </a>
+                                        if (@risource.displayimage != "default")
+                                        {
+                                            <img src="~/attachments/risources/displayImage/@risource.displayimage" id="header_img" alt="@risource.nav2_longName" title="@risource.nav2_longName" />
+                                        }
+                                        else
+                                        {
+                                            <img src="~/attachments/risources/displayImage/@risource.n2_headerImg" id="header_img" alt="@risource.nav2_longName" title="@risource.nav2_longName" />
+                                        }
+                                        <div id="@ViewBag.viewType">
+                                            <span> @risource.file_type</span>
+                                            <span> @String.Format("{0:(0,0)}", Convert.ToDouble(risource.file_size)) KB</span>
+                                            <span> @String.Format("{0:d}", @risource.dateCreated)</span>
+                                            <button type="button" class="btn btn-primary btn-sm glyphicon glyphicon-download-alt" ng-click='trackDownload(@risource.ris_ID,"attachments/risources/@risource.ris_link")'>Download</button>
+                                           @{bool checkings = false;
+
+                                               foreach (var integers in risource.listRisources.ToList())
+                                               {
+                                                   if (integers == risource.ris_ID)
+                                                   {
+                                                    <button type="button" class="addtodownloads btn glyphicon glyphicon-ok" ng-click="showdownloads(@risource.ris_ID)" id="@risource.ris_ID" name="riousrceID">
+                                                        Select
+                                                    </button>
+                                                       checkings = true;
+                                                       break;
+                                                   }
+                                                   
+                                                }
+
+                                                if (!checkings)
+                                                {
+                                                    <button type="button" class="addtodownloads btn glyphicon" ng-click="showdownloads(@risource.ris_ID)" id="@risource.ris_ID" name="riousrceID">
+                                                        Select
+                                                    </button>
+                                                }
+                                            }
+                                        </div>
+                                    }
+                                }
+                            </div>
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    <div>
+                        @{
+                            Uri uriResult;
+                            bool result = Uri.TryCreate(@risource.ris_link, UriKind.Absolute, out uriResult)
+                            && (uriResult.Scheme == Uri.UriSchemeHttp
+                            || uriResult.Scheme == Uri.UriSchemeHttps);
+
+                            if (result)
+                            {
+                                <a id="grid_title" href="#" ng-click='trackDownload(@risource.ris_ID, "@risource.ris_link")'>
+                                    @if (@risource.ris_headline.Length <= 20 || @Request.QueryString["grid"] == null || @Request.QueryString["grid"] == "")
+                                    {
+                                        @risource.ris_headline
+                                    }
+                                    else
+                                    {
+                                        @risource.ris_headline.Substring(0, 20) <span>...</span>
+                                    }
+                                </a>
+                                if (@risource.displayimage != "default")
+                                {
+                                    <img src="~/attachments/risources/displayImage/@risource.displayimage" id="header_img" alt="@risource.nav2_longName" title="@risource.nav2_longName" />
+                                }
+                                else
+                                {
+                                    <img src="~/attachments/risources/displayImage/@risource.n2_headerImg" id="header_img" alt="@risource.nav2_longName" title="@risource.nav2_longName" />
+                                }
+
+                                <div id="@ViewBag.viewType" style="margin-top:-5px;">
+                                    <span> @String.Format("{0:d}", @risource.dateCreated)</span>
+                                    <a id="@ViewBag.file_size" href="#" ng-click='trackDownload(@risource.ris_ID, "@risource.ris_link")' class="btn btn-primary btn-sm glyphicon glyphicon-new-window"> Link</a>
+                                </div>
+                            }
+                            else
+                            {
+                                <a id="grid_title" href="#" ng-click='trackDownload(@risource.ris_ID, "attachments/risources/@risource.ris_link")'>
+                                    @if (@risource.ris_headline.Length <= 20 || @Request.QueryString["grid"] == null || @Request.QueryString["grid"] == "")
+                                    {
+                                        @risource.ris_headline
+                                    }
+                                    else
+                                    {
+                                        @risource.ris_headline.Substring(0, 20) <span>...</span>
+                                    }
+                                </a>
+                                if (@risource.displayimage != "default")
+                                {
+                                    <img src="~/attachments/risources/displayImage/@risource.displayimage" id="header_img" alt="@risource.nav2_longName" title="@risource.nav2_longName" />
+                                }
+                                else
+                                {
+                                    <img src="~/attachments/risources/displayImage/@risource.n2_headerImg" id="header_img" alt="@risource.nav2_longName" title="@risource.nav2_longName" />
+                                }
+                    <div id="@ViewBag.viewType">
+                        <span> @risource.file_type</span>
+                        <span> @risource.file_size KB</span>
+                        <span> @String.Format("{0:d}", @risource.dateCreated)</span>
+                        <button type="button" class="btn btn-primary btn-sm glyphicon glyphicon-download-alt" ng-click='trackDownload(@risource.ris_ID, "attachments/risources/@risource.ris_link")'>Download</button>
+                        @{bool checkings = false;
+
+                            foreach (var integers in risource.listRisources.ToList())
+                            {
+                                if (integers == risource.ris_ID)
+                                {
+                                    <button type="button" class="addtodownloads btn glyphicon glyphicon-ok" ng-click="showdownloads(@risource.ris_ID)" id="@risource.ris_ID" name="riousrceID">
+                                        Select
+                                    </button>
+                                    checkings = true;
+                                    break;
+                                }
+
+                            }
+
+                            if (!checkings)
+                            {
+                                <button type="button" class="addtodownloads btn glyphicon" ng-click="showdownloads(@risource.ris_ID)" id="@risource.ris_ID" name="riousrceID">
+                                    Select
+                                </button>
+                            }
+                        }
+                    </div>
+                            }
+                        }
+                        <br />
+                    </div>
+                    }
+                }
+        </section>
+        <section style="width:30%;">
+            <div>
+
+            </div>
+        </section>
+        <br />
+    </form>
+</div>

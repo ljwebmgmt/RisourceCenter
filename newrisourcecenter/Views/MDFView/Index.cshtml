@@ -1,0 +1,335 @@
+﻿@using System.Globalization;
+@model newrisourcecenter.Models.MDFViewModel
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    long userId = Convert.ToInt64(Session["userId"]);
+}
+<style>
+    .table {
+        border: solid 1px #808080;
+    }
+</style>
+
+<div class="main_content">
+    <section>
+        <div style="background:#fff;color:#000;padding:20px;">
+            @Html.Raw(Model.topdesc)
+        </div>
+        <p style="color:red;padding:0 20px;font-weight:bold;">The last day to submit new MDF requests was November 15th, and the last day to provide supporting documentation for all MDF requests for 2025 was Monday, December 15th. Please contact <a href="mailto:mdfadmin@rittal.us">mdfadmin@rittal.us</a> with any questions/concerns.</p>
+        <hr>
+        <p>
+            <span>
+                @*<a href="/MDFView/ap?aA=@Model.mdf_parts.FirstOrDefault().totalMDFAva&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=Promotional Activity" data-transition="none" target="_self" class="btn btn-primary">Create MDF Request</a>*@
+                @*<a href="/MDFView/manage?&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=Manage MDFs" class="btn btn-info">Manage Requests</a>*@
+            </span>
+        </p>
+        <div style="background:none;padding:1%;display:inline-block;width:98%;">
+            <h3>Account Summary for @Model.company</h3>
+            <br>
+            <table style="background:none;width:50%;border:solid 1px black;padding:0px;">
+                <tbody>
+                    <tr>
+                        <th colspan="2" align="center">Total Starting MDF Amount: </th>
+                        <td colspan="1" align="center">
+                            @if (Model.comp_MDF_amount > 0)
+                            {
+                                <span style="color:GREEN;font-weight:bold;">
+                                    @{
+                                        string comp_MDF_amount = string.Format("{0:C}", Model.comp_MDF_amount);
+                                    }
+                                    @comp_MDF_amount
+                                </span>
+                            }
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <br>
+            <table cellpadding="5px" width="100%" border="1px" class="table">
+                <thead>
+                    <tr>
+                        <th style="background:#000;color:#fff;">Pending</th>
+                        <th style="background:#000;color:#fff;">Approved</th>
+                        <th style="background:#000;color:#fff;">Completed</th>
+                        <th style="background:#000;color:#fff;">Credited</th>
+                        <th style="background:#000;color:#fff;">Total Remaining MDF Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>@string.Format("{0:C}", Model.mdf_parts.FirstOrDefault().totalPending)</td>
+                        <td>@string.Format("{0:C}", Model.mdf_parts.FirstOrDefault().totalApproved)</td>
+                        <td>@string.Format("{0:C}", Model.mdf_parts.FirstOrDefault().totalComplete)</td>
+                        <td>@string.Format("{0:C}", Model.mdf_parts.FirstOrDefault().totalCredit)</td>
+                        @if (Model.mdf_parts.FirstOrDefault().totalMDFAva > 0)
+                        {
+                            <td align="center" style="color:green;font-weight:bold;">
+                                @string.Format("{0:C}", Model.mdf_parts.FirstOrDefault().totalMDFAva)
+                            </td>
+                        }
+                        else
+                        {
+                            <td align="center" style="color:red;font-weight:bold;">
+                                @string.Format("{0:C}", Model.mdf_parts.FirstOrDefault().totalMDFAva)
+                            </td>
+                        }
+                    </tr>
+                </tbody>
+            </table>
+            <br>
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <th colspan="2" align="center" style="background:#000;color:#fff;">
+                            Total MDF Utilized
+                        </th>
+                        <td colspan="1" align="center">
+                            @Model.mdf_parts.FirstOrDefault().PercentageUtilized% of 100% utilized
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <br>
+            <table style="float:left;width:40%;padding:0px;" class="table">
+                <tbody>
+                    <tr>
+                        <th colspan="3" align="center" style="background:#000;color:#fff;">
+                            <strong style="font-size: 16px;">Current MDF Snapshot </strong>
+                        </th>
+                    </tr>
+                    <tr>
+                        <td colspan="2" align="left" style="color:#fff;">
+                            <strong>Maximum Allowable Reimbursement For MDF</strong>
+                        </td>
+                        <td colspan="1" align="center" style="color:#fff;">
+                            <strong>Your Use</strong>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" align="center">
+                            Promotional Activity
+                        </td>
+                        <td colspan="1" align="center">
+                            100%
+                        </td>
+                        <td colspan="1" align="center">
+                            @if (@Model.mdf_parts.FirstOrDefault().PercentagePromotionalActivityUsed < 100)
+                            {
+                                <span>
+                                    @Model.mdf_parts.FirstOrDefault().PercentagePromotionalActivityUsed%
+                                </span>
+                            }
+                            else
+                            {
+                                <span style="color:RED;font-weight:bold;">
+                                    @Model.mdf_parts.FirstOrDefault().PercentagePromotionalActivityUsed%
+                                </span>
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" align="center">
+                            Rittal Automation Systems (RAS)
+                        </td>
+                        <td colspan="1" align="center">
+                            100%
+                        </td>
+                        <td colspan="1" align="center">
+                            @if (@Model.mdf_parts.FirstOrDefault().PercentageRASUsed < 100)
+                            {
+                                <span>
+                                    @Model.mdf_parts.FirstOrDefault().PercentageRASUsed%
+                                </span>
+                            }
+                            else
+                            {
+                                <span style="color:RED;font-weight:bold;">
+                                    @Model.mdf_parts.FirstOrDefault().PercentageRASUsed%
+                                </span>
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" align="center">
+                            Tradeshows & Events
+                        </td>
+                        <td colspan="1" align="center">
+                            50%
+                        </td>
+                        <td colspan="1" align="center">
+                            @if (@Model.mdf_parts.FirstOrDefault().PercentageTradeshowUsed < 100)
+                            {
+                                <span>
+                                    @Model.mdf_parts.FirstOrDefault().PercentageTradeshowUsed%
+                                </span>
+                            }
+                            else
+                            {
+                                <span style="color:RED;font-weight:bold;">
+                                    @Model.mdf_parts.FirstOrDefault().PercentageTradeshowUsed%
+                                </span>
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" align="center">
+                            Rittal Training
+                        </td>
+                        <td colspan="1" align="center">
+                            50%
+                        </td>
+                        <td colspan="1" align="center">
+                            @if (@Model.mdf_parts.FirstOrDefault().PercentageTrainingUsed < 100)
+                            {
+                                <span>
+                                    @Model.mdf_parts.FirstOrDefault().PercentageTrainingUsed%
+                                </span>
+                            }
+                            else
+                            {
+                                <span style="color:RED;font-weight:bold;">
+                                    @Model.mdf_parts.FirstOrDefault().PercentageTrainingUsed%
+                                </span>
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" align="center">
+                            SPIF (Sales Performance Incentive Fund)
+                        </td>
+                        <td colspan="1" align="center">
+                            25%
+                        </td>
+                        <td colspan="1" align="center">
+                            @if (@Model.mdf_parts.FirstOrDefault().PercentageSPIFUsed < 100)
+                            {
+                                <span>
+                                    @Model.mdf_parts.FirstOrDefault().PercentageSPIFUsed%
+                                </span>
+                            }
+                            else
+                            {
+                                <span style="color:RED;font-weight:bold;">
+                                    @Model.mdf_parts.FirstOrDefault().PercentageSPIFUsed%
+                                </span>
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" align="center">
+                            Display Product
+                        </td>
+                        <td colspan="1" align="center">
+                            10%
+                        </td>
+                        <td colspan="1" align="center">
+                            @if (@Model.mdf_parts.FirstOrDefault().PercentageDisplayProductsUsed < 100)
+                            {
+                                <span>
+                                    @Model.mdf_parts.FirstOrDefault().PercentageDisplayProductsUsed%
+                                </span>
+                            }
+                            else
+                            {
+                                <span style="color:RED;font-weight:bold;">
+                                    @Model.mdf_parts.FirstOrDefault().PercentageDisplayProductsUsed%
+                                </span>
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" align="center">
+                            Merchandise
+                        </td>
+                        <td colspan="1" align="center">
+                            10% (not to exceed $5000)
+                        </td>
+                        <td colspan="1" align="center">
+                            @if (@Model.mdf_parts.FirstOrDefault().PercentageMerchandiseUsed < 100)
+                            {
+                                <span>
+                                    @Model.mdf_parts.FirstOrDefault().PercentageMerchandiseUsed%
+                                </span>
+                            }
+                            else
+                            {
+                                <span style="color:RED;font-weight:bold;">
+                                    @Model.mdf_parts.FirstOrDefault().PercentageMerchandiseUsed%
+                                </span>
+                            }
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td colspan="3" style="background:#808080;">
+                            This table shows the current snapshot of the MDFs utilized. It includes the amount prending, completed and credited.
+                            <br />
+                            The pie chart on the right shows the amount spent and Percentages credited.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table style="float:left;width:50%;margin-left:5%;height:200px;">
+                <tr>
+                    <td>
+                        <script src="~/Scripts/highcharts.js"></script>
+                        <script src="~/Scripts/highcharts-3d.js"></script>
+                        <script src="~/Scripts/exporting.js"></script>
+                        <style>
+                            .highcharts-credits {
+                                display: none;
+                            }
+                        </style>
+                        <script>
+                            $(function () {
+                                Highcharts.chart('containerser', {
+                                    chart: {
+                                        type: 'pie',
+                                        options3d: {
+                                            enabled: true,
+                                            alpha: 45
+                                        }
+                                    },
+                                    title: {
+                                        text: 'MDF Amount Spent And Percentage Credited'
+                                    },
+                                    subtitle: {
+                                        text: 'MDF Percentage Spent'
+                                    },
+                                    plotOptions: {
+                                        pie: {
+                                            innerSize: 100,
+                                            depth: 45
+                                        }
+                                    },
+                                    series: [{
+                                        name: 'Amount Credited',
+                                        data: [
+                                            ['Promotional Activity @Model.mdf_parts.FirstOrDefault().PercentagePromotionalActivityValid.ToString()%', @Model.mdf_parts.FirstOrDefault().SpentPromoAc.ToString()],
+                                            ['Rittal Automation Systems (RAS) @Model.mdf_parts.FirstOrDefault().PercentageRASValid.ToString()%', @Model.mdf_parts.FirstOrDefault().SpentRAS.ToString()],
+                                            ['Tradeshows & Events @Model.mdf_parts.FirstOrDefault().PercentageTradeshowValid.ToString()%', @Model.mdf_parts.FirstOrDefault().SpentTradeshow.ToString()],
+                                            ['Rittal Training @Model.mdf_parts.FirstOrDefault().PercentageTrainingValid.ToString()%',@Model.mdf_parts.FirstOrDefault().SpentTraining.ToString()],
+                                            ['SPIF (Sales Performance Incentive Fund) @Model.mdf_parts.FirstOrDefault().PercentageSPIFValid.ToString()%',@Model.mdf_parts.FirstOrDefault().SpentSPIF.ToString()],
+                                            ['Display Product @Model.mdf_parts.FirstOrDefault().PercentageDisplayProductsValid%',@Model.mdf_parts.FirstOrDefault().SpentDP.ToString()],
+                                            ['Merchandise @Model.mdf_parts.FirstOrDefault().PercentageMerchandiseValid.ToString()%',@Model.mdf_parts.FirstOrDefault().SpentMerchandise.ToString()],
+
+                                        ]
+                                    }]
+                                });
+                            });
+                        </script>
+                        <div id="containerser" style="height: 400px"></div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <p></p>
+        <br>
+        <p>
+            <b>Pending Status:</b> Request is in review.<br>
+            <b>Approved Status:</b> Request has been approved, amount will be validated once supporting documents are submitted.<br>
+            <b>Completed Status:</b> Amount is validated and has been sent for credit processing.
+        </p>
+    </section>
+</div>

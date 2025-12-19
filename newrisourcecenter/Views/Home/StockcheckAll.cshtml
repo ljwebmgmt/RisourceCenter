@@ -1,0 +1,75 @@
+﻿@model newrisourcecenter.Models.ListStockChecks
+
+@{
+    ViewBag.Title = "All Stock Check";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    table {
+        font-family: "Helvetica Neue",Arial,sans-serif;
+        background:#efefef;
+        border-spacing: 0;
+        margin:5px 5px 15px 5px;
+        max-width: 100%;
+        display: table;
+        width:98%;
+        font-size: 12px;
+    }
+    .table thead > tr > th {
+        vertical-align: bottom;
+    }
+    .table thead > tr > th, .table tbody > tr > th, .table tfoot > tr > th, .table thead > tr > td, .table tbody > tr > td, .table tfoot > tr > td {
+        padding: 8px;
+        line-height: 1.428571429;
+        vertical-align: top;
+    }
+    #login {
+        text-decoration:none;
+        color:#008BD0;
+        font-family: "Helvetica Neue",Arial,sans-serif;
+    }
+    #login:hover {
+        text-decoration:none;
+        color:#E50043;
+    }
+
+</style>
+@if (@Model != null)
+{
+    <table>     
+        @foreach (var item in @Model.Distinct_stockPrice.GroupBy(ac => new { ac.ps_account, ac.sap_password, ac.comp_name, ac.usr_fullName,ac.loc_city }).OrderBy(a => a.Key.comp_name))
+        {
+            <thead>
+                <tr style="background:#999;"><th colspan="6" class="header"  style="color:#000;">@item.Key.comp_name</th></tr>
+                <tr style="background:#CCC;">
+                    <th width="20%" class="header">User</th>
+                    <th width="20%" class="header">Company</th>
+                    <th width="20%" class="header">City</th>
+                    <th width="10%" class="header">Account</th>
+                    <th width="10%" class="header">Password</th>
+                    <th width="10%" class="header">&nbsp;</th>
+                </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td align="center">@item.Key.usr_fullName</td>
+                <td align="center">@item.Key.comp_name</td>
+                <td align="center">@item.Key.loc_city</td>
+                <td align="center">@item.Key.ps_account</td>
+                <td align="center">@item.Key.sap_password</td>
+                <td align="center">
+                    @{
+                        var login = String.Format("https://webas01.loh-group.com/ext/rittal/infosys?sap-client=201&sap-language=EN&userid={0}&passwd={1}&DropDownVkorg=0201&oninputprocessing=LOGIN", @item.Key.ps_account, @item.Key.sap_password);
+                        <a href="@login" target="_blank" id="login">&nbsp;&nbsp;Login</a>
+                    }
+                </td>
+           </tr>
+           </tbody>
+        }
+    </table>
+}
+else
+{
+    <div>You do not have any SAP Accounts assigned to you</div>
+}
+

@@ -1,0 +1,61 @@
+﻿<div id="bread_cram">
+    <h4>
+        <span>@Request.QueryString["n1_name"]</span>
+        @if (Request.RawUrl.Contains("Edit"))
+            {
+            <span>&rarr;Edit</span>
+        }
+        @if (@Request.QueryString["img"] != null)
+            {
+                if (@Request.QueryString["img"] != "")
+                {
+                <img src="~/attachments/risources/displayImage/@Request.QueryString["img"]" style="width:50px;height:50px;" />
+            }
+        }
+        @if (Request.QueryString["n2_name"] != null)
+        {
+            if (Request.QueryString["n2_name"] != "")
+            {
+                <span style="color:lightblue;">&rarr;@Request.QueryString["n2_name"]</span>
+            }
+        }
+        @if (Request.QueryString["cat_name"] != null)
+        {
+            if (Request.QueryString["cat_name"] != "")
+            {
+                <span style="color:lightblue;">&rarr;@Request.QueryString["cat_name"]</span>
+            }
+        }
+        @if (Request.QueryString["prod_name"] != null)
+        {
+            if (Request.QueryString["prod_name"] != "")
+            {
+                <span style="color:lightblue;">&rarr;@Request.QueryString["prod_name"]</span>
+            }
+        }
+        @if (Request.QueryString["ind_name"] != null)
+        {
+            if (Request.QueryString["ind_name"] != "")
+            {
+                <span style="color:lightblue;">&rarr;@Request.QueryString["ind_name"]</span>
+            }
+        }
+        @if (Request.QueryString["n3_name"] != null)
+            {
+            <span style="color:lightblue;">&rarr;@Request.QueryString["n3_name"]</span>
+        }
+        @if (Request.QueryString["msg"] != null)
+            {
+            <span style="color:lightblue;">&rarr;@Request.QueryString["msg"]</span>
+        }
+        @if (@ViewBag.model != null)
+            {
+            <span style="color:lightblue;">&rarr;@ViewBag.model</span>
+        }
+        @if (Request.RawUrl.Contains("search"))
+            {
+            <a class="btn btn-info btn-sm" style="float:right" id="reset" href="~/search/index?onlySalesComm=&onlyRiSource=&onlyUsers=&onlyPartComp=&onlyPartLoc=&msg=&n1_name=You+Searched+for&all=">Reset</a>
+                <br clear="all" />
+        }
+    </h4>
+</div><!--End of bread crams-->

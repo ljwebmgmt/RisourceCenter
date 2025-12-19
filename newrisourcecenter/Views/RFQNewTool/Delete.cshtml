@@ -1,0 +1,995 @@
+﻿@model newrisourcecenter.Models.RFQNewViewModel
+
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>RFQViewModel</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.sales_engineer)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.sales_engineer)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.regional_director)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.regional_director)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.cell_phone)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.cell_phone)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.email)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.email)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.submission_date)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.submission_date)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.updated_quote)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.updated_quote)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.sold_to_party)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.sold_to_party)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.qte_num)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.qte_num)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.sap_account_num)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.sap_account_num)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.location)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.location)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.end_contact)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.end_contact)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.opportunity_num)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.opportunity_num)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.qte_ref)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.qte_ref)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.qte_description)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.qte_description)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.draw_num)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.draw_num)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.total_qty)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.total_qty)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.release_qty)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.release_qty)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.competition)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.competition)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.target_price)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.target_price)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.scale_volume)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.scale_volume)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.spa_contract_num)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.spa_contract_num)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.spa_mult)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.spa_mult)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.drawing_approval)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.drawing_approval)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.check_project)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.check_project)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.product_category)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.product_category)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.xpress_mod_data)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.xpress_mod_data)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.xpress_mod_non_data)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.xpress_mod_non_data)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.enclosure_type_it)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.enclosure_type_it)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.part_num_it)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.part_num_it)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.size_hxwxd_it)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.size_hxwxd_it)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.color_it)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.color_it)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.sidewall_style_it)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.sidewall_style_it)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.sidewall_location_it)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.sidewall_location_it)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.castors_it)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.castors_it)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Leveling_feet_it)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Leveling_feet_it)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.front_it)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.front_it)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.rear_it)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.rear_it)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.cable_it)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.cable_it)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.handles_it)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.handles_it)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.inserts_it)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.inserts_it)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.partition_wall_it)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.partition_wall_it)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.baffles_it)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.baffles_it)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.bsaying_brackets_it)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.bsaying_brackets_it)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.additional_info_datacenter)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.additional_info_datacenter)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.intell_data)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.intell_data)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.voltage_data)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.voltage_data)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.amp_data)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.amp_data)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.outlet_it)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.outlet_it)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.quantity_type_data)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.quantity_type_data)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.input_cord_it)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.input_cord_it)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.expansion_it)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.expansion_it)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.part_num_ie)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.part_num_ie)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.size_hxwxd_ie)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.size_hxwxd_ie)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.material_ie)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.material_ie)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.mpl_ie)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.mpl_ie)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.sidewall_ie)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.sidewall_ie)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.front_ie)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.front_ie)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.rear_ie)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.rear_ie)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.plinths_ie)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.plinths_ie)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.cable_ie)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.cable_ie)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.handles_ie)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.handles_ie)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.inserts_ie)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.inserts_ie)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Rails)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Rails)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Suited)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Suited)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.suited_bay_ie)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.suited_bay_ie)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.door_ie)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.door_ie)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.roof_ie)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.roof_ie)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.rear_wall_ie)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.rear_wall_ie)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.sidewall_mod_ie)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.sidewall_mod_ie)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.mpl_mod_ie)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.mpl_mod_ie)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.special_paint_ie)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.special_paint_ie)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.color_mod_ie)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.color_mod_ie)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ul_nema_other_ie)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ul_nema_other_ie)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.rating_ie)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.rating_ie)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.part_num_WM_AE_JB)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.part_num_WM_AE_JB)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.size_hxwxd_WM_AE_JB)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.size_hxwxd_WM_AE_JB)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.material_WM_AE_JB)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.material_WM_AE_JB)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.mpl_WM_AE_JB)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.mpl_WM_AE_JB)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.latching_wm)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.latching_wm)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.body_modified_wm)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.body_modified_wm)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.door_modified_wm)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.door_modified_wm)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.mpl_modified_wm)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.mpl_modified_wm)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.special_paint_wm)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.special_paint_wm)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.color_WM_AE_JB)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.color_WM_AE_JB)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ul_nema_WM_AE_JB)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ul_nema_WM_AE_JB)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.rating_WM_AE_JB)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.rating_WM_AE_JB)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.part_num_other_1)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.part_num_other_1)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.size_hxwxd_other_1)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.size_hxwxd_other_1)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.producttype_other_1)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.producttype_other_1)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.material_other_1)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.material_other_1)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.body_modified_other_1)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.body_modified_other_1)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.door_modified_other_1)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.door_modified_other_1)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.mpl_modified_other_1)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.mpl_modified_other_1)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.specialpaint_other_1)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.specialpaint_other_1)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ul_nema_other_1)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ul_nema_other_1)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.rating_other_1)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.rating_other_1)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.additional_info_footer)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.additional_info_footer)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.qty_installed_1)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.qty_installed_1)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.part_number_installed_1)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.part_number_installed_1)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.description_installeed_1)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.description_installeed_1)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.qty_installed_2)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.qty_installed_2)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.part_number_installed_2)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.part_number_installed_2)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.description_installeed_2)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.description_installeed_2)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.qty_installed_3)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.qty_installed_3)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.part_number_installed_3)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.part_number_installed_3)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.description_installeed_3)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.description_installeed_3)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.qty_shipped_1)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.qty_shipped_1)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.part_number_shipped_1)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.part_number_shipped_1)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.description_shipped_1)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.description_shipped_1)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.qty_shipped_2)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.qty_shipped_2)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.part_number_shipped_2)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.part_number_shipped_2)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.description_shipped_2)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.description_shipped_2)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.qty_shipped_3)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.qty_shipped_3)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.part_number_shipped_3)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.part_number_shipped_3)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.description_shipped_3)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.description_shipped_3)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.send)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.send)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.fileupload)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.fileupload)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.user_id)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.user_id)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.save)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.save)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.distro_name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.distro_name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.distro_company)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.distro_company)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    }
+</div>
+

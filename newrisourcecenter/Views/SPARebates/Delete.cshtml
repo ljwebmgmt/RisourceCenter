@@ -1,0 +1,73 @@
+﻿@model newrisourcecenter.Models.SPARebatesViewModel
+
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>SPARebatesViewModel</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.contract_ID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.contract_ID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.rebate_total_amount)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.rebate_total_amount)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.credit_mome)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.credit_mome)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.status)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.status)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.submit_date)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.submit_date)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.memo_date)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.memo_date)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    }
+</div>

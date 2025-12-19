@@ -1,0 +1,57 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@*@if (ViewBag.userEmail != null)
+{
+    <div class="main_content">
+        <div class="container">
+            <p>If you’re seeing this page, it means your browser blocked our attempt to direct you to our store via a new tab. Locate the browser you’re using below and follow the link for instructions on how to manage popups. You’ll want to allow popups for RiSource Center. Once you’ve made that change in your browser, try to access the store again. You may need to log out and back in to see the change.</p>
+            <ul>
+                <li><a href="https://support.google.com/chrome/answer/95472?hl=en&co=GENIE.Platform%3DDesktop#zippy=" target="_blank">Chrome Instructions</a></li>
+                <li><a href="https://support.microsoft.com/en-us/microsoft-edge/block-pop-ups-in-microsoft-edge-1d8ba4f8-f385-9a0b-e944-aa47339b6bb5#:~:text=In%20Edge%2C%20go%20to%20Settings,select%20Pop%2Dups%20and%20redirects." target="_blank">Microsoft Edge Instructions</a></li>
+                <li><a href="https://support.mozilla.org/en-US/kb/pop-blocker-settings-exceptions-troubleshooting" target="_blank">Firefox Instructions</a></li>
+                <li><a href="https://support.apple.com/guide/safari/block-pop-ups-sfri40696/mac#:~:text=Allow%20or%20block%20pop%2Dups%20on%20one%20website&text=Choose%20Safari%20%3E%20Settings%2C%20then%20click,the%20bottom%20of%20the%20list." target="_blank">Safari Instructions</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <form id="Form1" action="https://rittal.visoexpress.com/DSF/signin.aspx?SITEGUID=68053679-1243-4f2f-9e97-de36c754a5b6" method="post" target="_blank">
+        <input type="hidden" name="token" id="token" value="@ViewBag.userEmail" />
+        <input type="hidden" name="pwd" id="pwd" value="@ViewBag.userEmail" />
+    </form>
+
+    <script>
+        document.getElementById("Form1").submit();
+    </script>
+}
+else
+{*@
+    <div class="main_content">
+        <div class="container">
+            <h3>Welcome to the Rittal Storefront portal! We have moved to a new vendor and as a result there have been changes to the process in placing orders. Please read below for important details.</h3>
+            <div class="col-md-6">
+                <h3>Distributors:</h3>
+                <p style="min-height: 200px;">If this is your first time accessing the storefront, please click the <b>Distributor New User</b> button below to create an account. You'll be asked to create a user ID and Password along with all contact information (email, phone, address). Upon completing that step, scroll down and click "Add New User". You will be redirected to a screen to enter your user ID/password to gain entry to the storefront. <b>If you've already gone through the above process and have a user ID/Password and are revisiting the site for future orders, please click the Returning Access button below.</b></p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <a href="https://print1step.presswise.com/account/edit_profile.php?token=VWVGdrG_zDhCdILGy6HJBlTDGS1UjNGs7a_dJbOO9Tg.b65ed14c4a3526554beec1890d0d115e784b1b6c6934a7d0bdfd5a68184b4e2b" class="btn btn-primary btn-block btn-lg" style="text-align:center;" target="_blank">Distributor New User</a>
+                    </div>
+                    <br class="visible-xs visible-sm" />
+                    <div class="col-md-6">
+                        <a href="https://print1step.presswise.com/login.php" class="btn btn-primary btn-block btn-lg" style="text-align:center;" target="_blank">Distributor Returning User</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h3>Rittal Employees and Man Reps:</h3>
+                <p style="min-height: 200px;">All Marketing, Sales, Service, and Channel teams at Rittal and select Manufacturer's Rep team members can login to the Rittal storefront using their RiSource Center login credentials.<br/>If you do not recall your login credentials or experience any issues logging into the store, please contact Rick Henderson at&nbsp;<a href="mailto:henderson.r@rittal.us">henderson.r@rittal.us</a>&nbsp;for support.</p>
+                <div class="row">
+                    <div class="col-md-6 col-md-offset-3">
+                        <a href="https://www.rittalsalesshop.com" class="btn btn-primary btn-block btn-lg" style="text-align:center;" target="_blank">Rittal Employee Portal</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+@*}*@

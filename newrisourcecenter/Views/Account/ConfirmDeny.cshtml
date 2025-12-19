@@ -1,0 +1,32 @@
+﻿
+@{
+    ViewBag.Title = "ConfirmDeny";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script type="text/javascript">
+    $(document).on('click', '.deny-email', function (e) {
+        e.preventDefault();
+        if (!window.confirm('Are you sure you want to deny this user account?')) {
+            return false;
+        }
+        window.location.href = $(this).attr('href');
+        return false;
+    });
+</script>
+<article id="main_content" align="center">
+    <div class="row" align="center">
+        <h2 style="color:#E50043;">@ViewBag.heading</h2>
+
+        <section id="confirmationForm" align="center">
+            <div>
+                <p>
+                    <br />
+                    Please confirm the account by @Html.ActionLink("clicking here", "ConfirmEmail", new { userId = ViewBag.userId, code = ViewBag.code }, htmlAttributes: new { @class = "btn btn-link btn-sm" })<br/><br/> OR <br/><br/>Deny the account by @Html.ActionLink("clicking here", "DenyEmail", new { userId = ViewBag.userId, code = ViewBag.code }, htmlAttributes: new { @class = "btn btn-link btn-sm deny-email" })
+                    <br />
+                    <br />
+                </p>
+            </div>
+        </section>
+    </div>
+</article>
+

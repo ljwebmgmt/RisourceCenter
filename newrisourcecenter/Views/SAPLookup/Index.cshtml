@@ -1,0 +1,67 @@
+﻿@{
+    ViewBag.Title = "SAP Account Finder";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="main_content">
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="control-label col-md-2" for="ps_account">Enter SAP Number</label>
+            <div class="col-md-12">
+                <input type="text" class="sap-number" list="sapNumbers" />
+                <datalist id="sapNumbers">
+                    @foreach(long sapNumber in ViewBag.sapNumbers)
+                    {
+                        <option value="@sapNumber" />
+                    }
+                </datalist>
+                <button type="button" class="btn btn-primary btn-sap-lookup">Lookup</button>
+            </div>
+        </div>
+        <div>
+            <div class="sap-data" style="display:none;position:relative;margin-top:20px;"></div>
+        </div>
+    </div>
+</div>
+<script>
+    function SAPLookup() {
+        var sap = $('.sap-number').val();
+        if (sap == '')
+            return false;
+        $.ajax({
+            url: 'SAPLookup/lookup?sap=' + sap,
+            type: 'GET',
+            dataType: 'json',
+            beforeSend: function () {
+                $('.sap-data').html('<img src="/images/lightbox-ico-loading.gif" class="loader_img" style="left:0;top:-15px;">').show();
+                $('.btn-sap-lookup').attr('disabled', true);
+            },
+            success: function (res) {
+                if (res.locations.length === 0) {
+                    $('.sap-data').html('No records found for the given SAP number!!');
+                } else {
+                    var html = '<h4>Company: ' + res.company_names + '</h4><h5>Locations: </h5><ul>';
+                    jQuery.each(res.locations, function (k, v) {
+                        html += '<li>' + (v.loc_name != null && v.loc_name != '' ? v.loc_name + ' - ' : '') + v.loc_city + '</li>';
+                    });
+                    html += '</ul>';
+                    jQuery('.sap-data').html(html);
+                }
+            },
+            complete: function () {
+                $('.btn-sap-lookup').attr('disabled', false);
+            }
+        });
+    }
+
+    $(document).on('click', '.btn-sap-lookup', function (e) {
+        e.preventDefault();
+        SAPLookup();
+        return false;
+    });
+
+    $(document).on('keyup', '.sap-number', function (e) {
+        if (e.keyCode == 13)
+            SAPLookup();
+    });
+</script>
+

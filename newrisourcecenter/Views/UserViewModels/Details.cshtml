@@ -1,0 +1,115 @@
+﻿@model newrisourcecenter.Models.UserViewModel
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>UserViewModel</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.usr_fName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.usr_fName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.usr_lName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.usr_lName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.usr_email)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.usr_email)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.usr_add1)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.usr_add1)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.usr_add2)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.usr_add2)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.usr_city)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.usr_city)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.usr_state)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.usr_state)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.usr_zip)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.usr_zip)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.usr_phone)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.usr_phone)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.usr_fax)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.usr_fax)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.usr_web)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.usr_web)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.admin_theme)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.admin_theme)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.usr_ID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

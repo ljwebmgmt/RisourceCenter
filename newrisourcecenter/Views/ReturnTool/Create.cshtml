@@ -1,0 +1,458 @@
+﻿@model newrisourcecenter.Models.ReturnToolViewModel
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int userId = Convert.ToInt32(Session["userId"]);
+    Model.user_id = userId;
+    Model.request_date = DateTime.Now;
+}
+<script src="~/scripts/tinymce/tinymce.min.js"></script>
+<script>
+    var select_ReturnType = {
+        init: function () {
+            select_ReturnType.addparts(id = 0);
+
+            $("#txtUploadFileUL").change(function () {
+                var files = $(this)[0].files;
+                $("#showULs").html("");
+                for (var i = 0; i < files.length; i++) {
+                    $("#showULs").append("<li>" + files[i].name + "</li>");
+                }
+            });
+
+            $("#txtUploadFileLading").change(function () {
+                var files = $(this)[0].files;
+                $("#showLading").html("");
+                for (var i = 0; i < files.length; i++) {
+                    $("#showLading").append("<li>" + files[i].name + "</li>");
+                }
+            });
+
+            //handle Warranty and form submission
+            $('#warranty').click(function () {
+                if (!$('#warranty').is(":checked")) {
+                    $('#warranty').attr("checked", false);
+                } else {
+                    getid("warranty");
+                    $('#warranty').attr("checked", true);
+                }
+            });
+
+            $("#returnsforms").submit(function (e) {
+                //e.preventDefault();
+                if ($("#return_type").val() == "select") {
+                    alert("Choose the return type");
+                    return false;
+                }
+
+                if ($("#return_type").val() == 2){
+                    if ($('.warranty').is(":checked")) {
+                        return true;
+                    } else {
+                        alert("Check the warranty box to acknowledge you read it");
+                        return false;
+                    }
+                } else  {
+                    return true;
+                }
+
+                return true;
+            });
+
+        },
+        returnType: function () {
+            var ul_and_serial_number = $("#ul_and_serial_number"), sotckreturninfo = $("#sotckreturninfo"), nonOthers=$(".nonOthers"),return_type = $("#return_type");
+            var value = return_type.val();
+
+            nonOthers.hide();
+            $("#ul_and_serial_number").hide();
+            $("#bill_of_laiden").hide();
+            $("#stock_rotation").hide();
+            $('.warranty').hide();
+            $(".reasontext").html(" ");
+            sotckreturninfo.html(" ");
+
+            $("#parts_data").css("background-color", "#974343");
+            $('label[for="po_num"]').text("Purchase Order");
+            $('.other-block').show();
+            if (value == 1) {
+                nonOthers.show();  
+                $("#parts_data").show();
+                $(".reasontext").html("<br />Tell us the reason why you are returning this part.");
+                $("#productinfo").html("");
+                sotckreturninfo.html("For <u><b>PRODUCT RETURNS</b></u> complete below. 20% restock fee applies. ");
+            } else if (value == 2) {
+                $("#ul_and_serial_number").show();
+                $("#parts_data").show();
+                $('.warranty').show();
+                $("#parts_data, #ul_and_serial_number").css("background-color", "#6FA29C");
+                $(".reasontext").html("<br />Describe defect and location");
+                $("#productinfo").html("");
+            } else if (value == 3) {
+                $("#bill_of_laiden").show();
+                $("#parts_data").show();
+                $("#parts_data, #bill_of_laiden").css("background-color", "rgb(28, 54, 64)");
+                $('.other-block').hide();
+                $("#productinfo").html("");
+            } else if (value == 4) {
+                $("#stock_rotation").show();
+                $("#parts_data").hide();
+                $("#productinfo").html("");
+                $('label[for="po_num"]').text("Offsetting PO"); 
+            }
+        },
+        addparts: function (id) {
+            newid = parseInt(id) + 1;
+
+            $("#parts_data").append(
+                '<div item_' + newid + '" id="' + newid + '" >' +
+                '<a href="javascript:void(null);" id="' + newid + '" onclick="select_ReturnType.addparts(this.id);" style="float:right;" class="btn btn-primary add_' + id + '" >+</a>' +
+                '<div style="display:inline-block;vertical-align:top;">' +
+                '<label for="part_num">Part Number</label>&nbsp;' +
+                '<input class="form-control text-box single-line" id="part_num" name="part_num_' + newid + '" type="text" placeholder="Enter a part number"  value="">' +
+                '</div>' +
+                '&nbsp;<div style="display:inline-block;vertical-align:top;">' +
+                '<label for="partpo_num">Purchase Order</label>&nbsp;' +
+                '<input class="form-control text-box single-line" id="partpo_num" name="partpo_num_' + newid + '" type="text" placeholder="Enter a part number" value="">' +
+                '</div>' +
+                '&nbsp;<div style="display:inline-block;vertical-align:top;" >' +
+                '<label for="quantity">Quantity</label>&nbsp;' +
+                '<input class="form-control text-box single-line" data-val="true" data-val-number="The field Quantity must be a number." id="quantity" name="quantity_' + newid + '" type="number" placeholder="Enter quantity" value="0">' +
+                '</div>' +
+                '&nbsp;<div style="display:inline-block;width:50%;" class="other-block" >' +
+                '<label for="return_reason">Reason</label><span class="reasontext" ></span><br />' +
+                '<div class="nonOthers" style="display:none;" >'+
+                '<input type="checkbox" name="reasoncheckbox_' + newid + '" value="1" > Over Ordered&nbsp;' +
+                '<input type="checkbox" name="reasoncheckbox_' + newid + '" value="2" > Wrong Product Ordered&nbsp;' +
+                '<input type="checkbox" name="reasoncheckbox_' + newid + '" value="3" > Job Cancelled&nbsp;'+
+                '</div>' +
+                '<div style="background-color:#303030;">&nbsp;Others <textarea id="n_' + newid + 'descLong" name="return_reason_' + newid + '" rows="1" style="height:100px;" ></textarea>' +
+                '</div>' +
+                '</div>' +
+                '<br />' +
+                '<br /><hr />');
+
+            $("#count").val(newid);
+
+            $("a.add_" + id).click(function () {
+                $("a.add_" + id).hide();
+            });
+            select_ReturnType.returnType();
+        }
+    }
+    jQuery(document).ready(select_ReturnType.init);
+</script>
+<div class="main_content">
+    <span>
+        @Html.ActionLink("<< Back", "Index", new { n1_name = @Request.QueryString["n1_name"], msg = "" }, htmlAttributes: new { @class = "btn btn-primary", @style = "float:right;", @onclick = "javascript:history.back();return false;" })
+    </span>
+    @using (Html.BeginForm("Create", "ReturnTool", FormMethod.Post, new { enctype = "multipart/form-data", @id="returnsforms" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.user_id)
+        <div class="form-horizontal">
+            @*Return Type is a drop down*@
+            <div class="form-group">
+                @Html.LabelFor(model => model.return_type, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownListFor(model => model.return_type, Model.list_return_types, htmlAttributes: new { @onchange = "select_ReturnType.returnType();", @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.return_type, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            @*Personal Information*@
+            <h2>Personal Information</h2>
+            <div class="form-group">
+                @Html.LabelFor(model => model.name, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DisplayFor(model => model.name, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.name, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.company, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DisplayFor(model => model.company, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.company, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.email, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DisplayFor(model => model.email, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.HiddenFor(model => model.email)
+                    @Html.ValidationMessageFor(model => model.email, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.phone, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DisplayFor(model => model.phone, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.phone, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            @*General Information*@
+            <h2>General Information</h2>
+            <div class="form-group">
+                <label class="control-label col-md-2" for="po_num">Purchase Order</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.po_num, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.po_num, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.sap_num, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.sap_num, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.sap_num, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.location, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.location, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.location, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.request_date, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DisplayFor(model => model.request_date, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.HiddenFor(model => model.request_date, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.request_date, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            @*Product Information*@
+            <h2>Product Information</h2>
+            <div id="productinfo" style="color:red;">Choose the return type above <br /><br /></div>
+
+            <div class="form-group" style="background-color:#974343;padding: 20px;display:none;color:#fff;" id="stock_rotation" >
+                <h4 style="font-size:20px;">
+                    For <u><b>STOCK ROTATIONS</b></u> use the template by clicking the download link and upload the template after filling it out
+                    <a href="~/attachments/return_tools/Rittal-Stock-Rotation-Template.xlsx" class="btn btn-primary">Download Template</a>
+                </h4>
+                <div class="form-group" style="background-color:#4091b0;padding: 20px ">
+                    @Html.HiddenFor(model => model.file_id, Model.file_id = @ViewBag.spreadsheet_id)
+                    <div class="col-md-10" style="display:inline-block;width:40%;">
+                        @Html.LabelFor(model => model.offset_po)&nbsp;<br />
+                        <span>
+                            @Html.EditorFor(model => model.offset_po, new { htmlAttributes = new { @class = "form-control" } })&nbsp;
+                        </span><br /><br />
+                    </div>
+                    <div class="col-md-10" style="display:inline-block;width:40%;">
+                        <span>
+                            @Html.LabelFor(model => model.attachments_file)<br />
+                            <input type="file" name="attachments_file" id="attachments_file" multiple />&nbsp;
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group" style="display:none;padding:20px;background-color:#4091b0;margin:0px;color:#fff;" id="bill_of_laiden">
+                <div style="background-color:#000;padding:10px;color:#fff;">
+                    <h4>
+                        Returns due to carrier damage including concealed damage must be filed with Rittal within 7 days of the delivery and the delivery must have used a Rittal carrier.
+                        <br/>Returns due to carrier damage including concealed damage for a Customer’s carrier should be filed with the customer’s carrier.
+                    </h4>
+                    <font color="red" size="3">Required *</font>
+                    <h4>
+                        Attach pictures of
+                    </h4>
+                    <ol>
+                        <li>Damaged Packaging</li>
+                        <li>Damaged Product (both photos of the entire product and close ups of the damage)</li>
+                        <li>Product with the Packaging Labels on it</li>
+                        <li>Signed Proof of Delivery (Notation of “Damage” must be on the POD unless it is ‘concealed’)</li>
+                    </ol>
+                    <div>
+                        <div style="color:red;"><input type="file" name="attachments_lading" id="txtUploadFileLading" class="makethispretty" multiple />File Size cannot exceed 10MB</div>
+                        <div class="col-md-10">
+                            <div id="showLadingTitle">Files To be uploaded</div>
+                            <ul id="showLading" style="list-style:none;"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group" style="display:none;padding:20px;margin:0px;color:#fff;" id="ul_and_serial_number">
+                <div style="background-color:#000;padding:10px;">
+                    <font color="red" size="3">Required *</font>
+                    <h4>
+                        Attach images of
+                    </h4>
+                    <ol>
+                        <li>
+                            Product UL and Serial label
+                            <br />
+                            <strong><u>Examples:</u></strong><br />
+                            <a href="javascript:void('null');" id="1" onclick="getid(this.id);return false;">Accessories</a>
+                            <br />
+                            <a href="javascript:void('null');" id="2" onclick="getid(this.id);return false;">Climate</a>
+                            <br />
+                            <a href="javascript:void('null');" id="3" onclick="getid(this.id);return false;">TS/WM</a>
+                        </li>
+                        <li>Packaging label</li>
+                        <li>Picture of the defect</li>
+                    </ol>
+                    <!--Add the sample text modal-->
+                    @{
+                        Html.RenderPartial("_exampleImages");
+                    }
+                </div>
+                <!--Add the sample text modal-->
+            </div>
+            <hr />
+            <div class="form-group" style="background-color:#974343;padding:20px;display:none;color:#fff;" id="parts_data">
+                <h4><span id="sotckreturninfo"></span>Use the plus button to add more parts if needed.</h4> <br />
+                <input type="hidden" name="count" id="count" value="" /> 
+            </div>
+            <!---Handling the warrany-->
+            <div class="warranty"><input type="checkbox" name="warranty" class="warranty" id="warranty" />Read the Warranty</div>
+            <div style="display:none;font-weight:normal !important;" id="modalcontent_warranty">
+                <strong>
+                    IX. Limited Product Warranty.<br />
+                    9.1 THE FOLLOWING WARRANTY IS EXCLUSIVE AND IN LIEU OF ALL<br />
+                    OTHER WARRANTIES, WHETHER EXPRESS, IMPLIED OR<br />
+                    STATUTORY, INCLUDING ANY WARRANTY OF MERCHANTABILITY<br />
+                    OR FITNESS FOR ANY PARTICULAR PURPOSE.<br />
+                </strong>
+                <p style="font-weight:normal !important;">
+                    Company warrants to Buyer that the Products are, at the time of delivery to Buyer,
+                    free of material and workmanship defects, provided that no warranty is made with
+                    respect to (a) any Product which has, in Company’s judgment, been subject to
+                    negligence, misuse, abuse, accident or improper storage, or (b) any Product which has
+                    not, in Company’s judgment, been installed, operated or maintained in accordance
+                    with normal practice and in conformity with recommendations and published
+                    specifications of Company. Repairs to, alteration of, or work done on the Products
+                    without Company’s prior written authorization shall void Company’s warranty on the
+                    Products.
+                </p>
+                <p style="font-weight:normal !important;">
+                    <strong>9.2</strong> At its option, Company shall repair, provide replacement Products for, or refund the
+                    purchase price of any Products that breach the foregoing warranty for twelve (12)
+                    months, or twenty-four (24) months if climate Products, starting from the date of
+                    shipment of the Products to Buyer; and such obligation shall be Company’s exclusive
+                    obligation and the full extent of its liability, and Buyer’s exclusive remedy, for breach
+                    of warranty. Company makes no warranty with respect to any software or firmware
+                    that are a part of the Products, and Company makes no warranty with respect to
+                    Products that are manufactured by and carry the brand of a third party that is not an
+                    affiliate of Rittal Corporation.
+                </p>
+                <p style="font-weight:normal !important;">
+                    Upon discovery of an alleged defect, Buyer shall notify Company in writing within
+                    ten (10) days of such discovery of any claim whatsoever that Buyer may have with
+                    respect to the Products, and failure to give such notice within the specified time shall
+                    constitute an unqualified acceptance and waiver of all claims with respect to the
+                    Products. Upon receipt of notice from Buyer claiming defective Products, Company
+                    may inspect such Products at Buyer’s location or require that they be returned to
+                    Company on a freight collect basis for inspection. All warranty claims must be
+                    supported by a dated proof of purchase and appropriate Product identification
+                    information, where applicable. Product can be returned to Company only when it has
+                    issued proper return authorization. Company retains the right to be the sole judge of
+                    what constitutes a defect in performance or manufacturing in regard to this warranty.
+                    <strong>9.3</strong> This warranty excludes labor costs associated with the replacement of defective
+                    Product.
+                </p>
+                <p style="font-weight:normal !important;">
+                    <strong>9.4</strong> Acceptance shall occur, if not before, when Buyer fails to reject in writing within ten
+                    (10) days after delivery of the Products to Buyer. Buyer may rightfully reject only
+                    where a reasonable inspection shows that the Products fail to substantially conform to
+                    the applicable Product specifications. Rejection shall not affect transfer of title and
+                    risk of loss under Section V. Buyer waives its right to revoke acceptance, it being the
+                    intent of the parties that Buyer’s remedies for any nonconformity detected after
+                    acceptance be limited to those expressly provided herein for breach of warranty.
+                    After acceptance, the Products may not be returned to Company except to the extent
+                    expressly provided herein upon a breach of warranty, or otherwise in accordance with
+                    Company’s returns policy as Company may establish in its discretion
+                </p>   <br />              
+            </div>
+                <br />
+                <input type="hidden" name="n1_name" value="@Request.QueryString["n1_name"]" />
+                <div class="form-group">
+                    <div class="col-md-10">
+                        <input type="submit" value="submit" class="btn btn-primary" />
+                    </div>
+                </div>
+            </div>
+    }
+
+<script type="text/javascript">
+	$(document).ready(function(){
+		$('#close').click(function(){
+		    $('#modal').hide();
+         });
+    });
+
+	//get the form id and asign it to the modal done button class id
+	function getid(id){
+		$('#modal').show();
+		var modalcontent = $('#modalcontent_' + id).html();
+		$('#content').html(modalcontent);
+		//alert(modalcontent);
+	};
+
+	//now assign all the different parameters that would be passed to the new_manage_manually.cfm page
+	function assign(id){
+
+		var new_assigned = $('#'+id).text();
+
+		$('.done').attr('title', id);// create attr title on done class
+		$('.done').attr('name', new_assigned);// create attr name on done class
+
+		// change display title on modal by showing the name of
+		$('#assigned').html('You are assigning this quote to <b style="color:red">'+new_assigned+'</b>');
+
+	}
+
+    </script>
+    <style>
+        /* style the modal */
+        #modal {
+            background: #CCC;
+            width: 60%;
+            height: 50%;
+            min-height: 50%;
+            position: fixed;
+            top: 20%;
+            left: 20%;
+            right: 20%;
+            display: none;
+        }
+
+            #modal > div:first-child {
+                margin-top: 20px;
+                padding: 20px;
+                background: white;
+                width: 90%;
+                height: 70%;
+                position: relative;
+                top: 10px;
+                margin-left: auto;
+                margin-right: auto;
+                color: black;
+                overflow: auto;
+            }
+
+        #close {
+            top: 30px;
+            position: relative;
+            text-align: center;
+        }
+    </style>
+    <div id="modal">
+        <div align="left">
+            <span id="content"></span>
+        </div>
+        <div style="text-align:center;">
+            <button id="close">Close</button>
+        </div>
+    </div><!-- modals-->
+</div>

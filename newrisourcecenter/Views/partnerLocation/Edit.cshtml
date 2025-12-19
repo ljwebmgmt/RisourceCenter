@@ -1,0 +1,294 @@
+﻿@model newrisourcecenter.Models.partnerLocationViewModel
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    $(document).ready(function () {
+
+    $("form").submit(function (e) {
+        e.preventDefault;
+
+        if ($("#loc_state").val() == "Select a state") {
+
+            alert("Select a location");
+
+            return false;
+        }
+
+        return true;
+        });
+
+    sendWebshop = function () {
+        if (confirm("Are you sure you want access to the Online Shop?")) {
+            var email = "test@rittal.us";
+            var company = "42U DirectNet";
+            var location = "Lafayette";
+            $.post("/partnerLocation/sendwebshopRequest?useremail=" + email + "&company=" + company + "&location=" + location + "", function (data) {
+                console.log(data);
+                $("#webshop").html("<div style=\"color:green;\">Your request has been sent. You will be hearing from us soon.</div>");
+            });
+        }
+    }
+
+});
+</script>
+@using (Html.BeginForm("Edit", "partnerLocation", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        <a href="javascript:history.back();" style="float:right;">back</a>
+       <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })      
+        @Html.HiddenFor(model => model.loc_ID)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.comp_ID, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <select name="comp_ID" id="comp_ID" class="form-control">
+                    <option selected>Select a Company</option>
+                    @if (ViewBag.partnerComp != null)
+                    {
+                        foreach (var item in @ViewBag.partnerComp)
+                        {
+                            if (Convert.ToInt64(@Model.comp_ID) == @item.comp_ID)
+                            {
+                                <option value="@item.comp_ID" selected>@item.comp_name</option>
+                            }
+                            <option value="@item.comp_ID">@item.comp_name</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.loc_name, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.loc_name, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.loc_name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.loc_add1, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.loc_add1, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.loc_add1, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.loc_add2, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.loc_add2, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.loc_add2, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.loc_city, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.loc_city, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.loc_city, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.loc_state, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <select name="loc_state" id="loc_state" class="form-control">
+                    <option selected>Select a State</option>
+                    @if (ViewBag.StateData != null)
+                    {
+                        foreach (var item in @ViewBag.StateData)
+                        {
+                            if (Convert.ToInt64(@Model.loc_state) == @item.comp_ID)
+                            {
+                                <option value="@item.comp_ID" selected>@item.comp_name</option>
+                            }
+                            <option value="@item.comp_ID">@item.comp_name</option>
+                        }
+                    }
+
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.loc_zip, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.loc_zip, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.loc_zip, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.loc_phone, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.loc_phone, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.loc_phone, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.loc_fax, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.loc_fax, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.loc_fax, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.loc_web, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.loc_web, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.loc_web, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.loc_email, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.loc_email, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.loc_email, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.loc_logo, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.loc_logo, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.loc_logo, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.attachment, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <input type="file" name="attachment" id="attachment" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.loc_lat, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.loc_lat, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.loc_lat, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.loc_lon, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.loc_lon, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.loc_lon, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.loc_dealor_status, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.loc_dealor_status, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.loc_dealor_status, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.loc_show_address, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.loc_show_address, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.loc_show_address, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        @if (User.IsInRole("Super Admin") || User.IsInRole("Global Admin"))
+        {
+            <div class="form-group">
+                @Html.LabelFor(model => model.loc_Webshop_account, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.loc_Webshop_account, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.loc_Webshop_account, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.loc_Webshop_password, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.loc_Webshop_password, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.loc_Webshop_password, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        }
+        else
+        {
+            if (string.IsNullOrEmpty(Model.loc_Webshop_account))
+            {
+                <div class="col-md-offset-5 form-group">
+                    <div class="col-md-offset-2" id="webshop" ><a href="#" onclick="sendWebshop(); return false;">Request Access to the Rittal Online Shop</a></div>
+                </div>
+            }
+        }
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.loc_SAP_account, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.loc_SAP_account, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.loc_SAP_account, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.loc_SAP_password, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.loc_SAP_password, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.loc_SAP_password, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.price_group, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.price_group, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.price_group, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-10">
+                @Html.HiddenFor(model => model.loc_dateCreated, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.loc_dateCreated, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-10">
+                @Html.HiddenFor(model => model.loc_createdBy, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.loc_createdBy, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-10">
+                @Html.HiddenFor(model => model.old_locID, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.old_locID, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <input name="n2_name" id="n2_name" type="hidden" value="@Request.QueryString["n2_name"]" />
+        <input name="n1_name" id="n1_name" type="hidden" value="@Request.QueryString["n1_name"]" />
+        <input name="loc_dateUpdated" id="loc_dateUpdated" type="hidden" value=@DateTime.Now />
+        <input name="loc_updatedBy" id="loc_updatedBy" type="hidden" value=@Session["userId"] />
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index", new { comp_id = Request.QueryString["comp_id"], n1_name = Request.QueryString["n1_name"], n2_name = Request.QueryString["n2_name"] })
+</div>

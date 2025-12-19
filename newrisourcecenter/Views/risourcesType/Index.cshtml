@@ -1,0 +1,46 @@
+﻿@model IEnumerable<newrisourcecenter.Models.risourcesTypeViewModel>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<p>
+    @Html.ActionLink("Add an Icon", "Create", new { n1_name = @Request.QueryString["n1_name"], msg = "Add an Icon" }, htmlAttributes: new { @class = "btn btn-primary" })
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.type_link)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.type_name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.type_order)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <img src="~/attachments/risources/displayImage/@item.type_link" width="20" height="20" />
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.type_name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.type_order)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.ID, n1_name = @Request.QueryString["n1_name"], msg = item.type_name }, new { @class = "btn btn-info" })
+                    @Html.ActionLink("Delete", "Delete", new { id = item.ID, n1_name = @Request.QueryString["n1_name"] }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false", @class = "btn btn-info" })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

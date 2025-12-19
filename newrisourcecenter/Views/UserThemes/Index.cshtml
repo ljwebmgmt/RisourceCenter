@@ -1,0 +1,35 @@
+﻿@model IEnumerable<newrisourcecenter.Models.UserTheme>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<p>
+    @Html.ActionLink("Add a Theme", "Create",new{ n1_name=Request.QueryString["n1_name"],msg="New User Theme" }, htmlAttributes: new { @class = "btn btn-primary" })
+</p>
+<br />
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.theme_name)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.theme_name)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.theme_id, n1_name = Request.QueryString["n1_name"] }, new { @class = "btn btn-info" })
+                    @Html.ActionLink("Delete", "Delete", new { id = item.theme_id, n1_name = Request.QueryString["n1_name"] }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false", @class = "btn btn-info" })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

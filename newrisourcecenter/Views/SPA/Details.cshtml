@@ -1,0 +1,793 @@
+﻿@model newrisourcecenter.Models.SPADetailsModel
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int usr_SPA = Convert.ToInt32(Session["usr_SPA"]);//Regional Manager
+    int usr_POS = Convert.ToInt32(Session["usr_POS"]);//Account Manager
+    string id = @Request.QueryString["id"];
+    var CanViewMargins = "_No";
+}
+
+@if (@User.IsInRole("Super Admin") || @User.IsInRole("Global Admin") || usr_SPA==1)
+{
+    if (usr_SPA == 1)
+    {
+        CanViewMargins = "_yesRD";
+    }
+    else
+    {
+        CanViewMargins = "_yes";
+    }
+}
+
+<script>
+    var spaactions = {
+        init: function () {
+            tabcontent = $(".tab-content");
+            $("#datedata").hide();
+        },
+        active: function (id, status) {
+            var statusandtype = status.split("_");
+            tabcontent.html("This is the active content");
+            tabcontent.html("");
+
+            if (statusandtype[1] === "Open Ended") {
+                tabcontent.append("<thead><tr><th>Sku</th><th>Description</th><th>List Price</th><th>Instock Price</th><th>Instock Multiplier</th><th>Requested Multiplier</th><th>Requested Price</th><th>Target Price</th><td>Start Date</td></tr></thead>");
+            } else {
+                tabcontent.append("<thead><tr><th>Sku</th><th>Description</th><th>List Price</th><th>Instock Price</th><th>Instock Multiplier</th><th>Quantity</th><th>Requested Multiplier</th><th>Requested Price</th><th>Target Price</th><td>Start Date</td></tr></thead>");
+            }
+
+            $.post("/SPA/GetItems?type=1&id=" + id, function (result) {
+                var obj = JSON.parse(result);
+                if (obj.listitems.length > 0) {
+                    $.each(obj.listitems, function (i, v) {
+                        if (statusandtype[1] !== "Open Ended") {
+                            var quantity = "<td>" + v.Quantity + "</td>";
+                        }
+                        tabcontent.append("<tr><td>" + v.Sku + "</td><td>" + v.Product_name + "</td><td>" + v.List_price + "</td><td id=\"instockprice_" + v.Item_id + "\" >" + v.Instock_price + "</td><td>" + v.Instock_multiplier + "</td>" + quantity + "<td>" + v.Requested_multiplier + "</td><td>" + v.Requested_price + "</td><td>" + v.Target_price + "</td><td>" + v.Created_Update+"</td>");
+                    });
+                } else {
+                    tabcontent.append("<div>No items have been approved</div>");
+                }
+            });
+        },
+        expired: function (id, status) {
+            var statusandtype = status.split("_");
+            $("#datedata").show();
+            $(".nav-tabs").find("li").eq(0).css("background", "none");
+            $(".tab-content").html("");
+
+            if (statusandtype[1] === "Open Ended") {
+                tabcontent.append("<thead><tr><th>Sku</th><th>Description</th><th>List Price</th><th>Instock Price</th><th>Instock Multiplier</th><th>Requested Multiplier</th><th>Requested Price</th><th>Target Price</th><th>Start Date</th><th>End Date</th></tr></thead>");
+            } else {
+                tabcontent.append("<thead><tr><th>Sku</th><th>Description</th><th>List Price</th><th>Instock Price</th><th>Instock Multiplier</th><th>Quantity</th><th>Requested Multiplier</th><th>Requested Price</th><th>Target Price</th><th>Start Date</th><th>End Date</th></tr></thead>");
+            }
+
+            $.post("/SPA/GetItems?type=4&status=expired&id=" + id, function (result) {
+                var obj = JSON.parse(result);
+                if (obj.listitems.length > 0) {
+                    $.each(obj.listitems, function (i, v) {
+                        if (statusandtype[1]!=="Open Ended") {
+                            var quantity = "<td>" + v.Quantity + "</td>";
+                        }
+                        tabcontent.append("<tr><td>" + v.Sku + "</td><td>" + v.Product_name + "</td><td>" + v.List_price + "</td><td id=\"instockprice_" + v.Item_id + "\" >" + v.Instock_price + "</td><td>" + v.Instock_multiplier + "</td>" + quantity + "<td>" + v.Requested_multiplier + "</td><td>" + v.Requested_price + "</td><td>" + v.Target_price + "</td><td>"+ v.Created_Update + "</td><td>" + v.Update_date + "</td>");
+                    });
+                } else {
+                    $(".tab-content").append("<div>No item has expired</div>");
+                }
+            });
+        },
+        pending: function (id, status) {
+            var statusandtype = status.split("_");
+            $("#datedata").hide();
+            $(".nav-tabs").find("li").eq(0).css("background", "none");
+            tabcontent.html("");
+
+            if (statusandtype[1] === "Open Ended") {
+                if (statusandtype[0] === "yes" && statusandtype[2] === "yes") {
+                    var admin_show = "<th>Rittal Cost</th><th>Rittal Margin</th><th>Distributor Margin</th>";
+                    tabcontent.append("<thead><tr><th>Sku</th><th>Description</th><th>List Price</th><th>Instock Price</th><th>Instock Multiplier</th>" + admin_show + "<th>Requested Multiplier</th><th>Requested Price</th><th>Target Price</th></tr></thead>");
+                } else if (statusandtype[0] === "yes" && statusandtype[2] === "yesRD") {
+                    var admin_show = "<th>Rittal Cost</th><th>Rittal Margin</th><th>Distributor Margin</th>";
+                    tabcontent.append("<thead><tr><th>Sku</th><th>Description</th><th>List Price</th><th>Instock Price</th><th>Instock Multiplier</th>" + admin_show + "<th>Requested Multiplier</th><th>Requested Price</th><th>Target Price</th></tr></thead>");
+                } else{
+                    tabcontent.append("<thead><tr><th>Sku</th><th>Description</th><th>List Price</th><th>Instock Price</th><th>Instock Multiplier</th><th>Requested Multiplier</th><th>Requested Price</th><th>Target Price</th></tr></thead>");
+                }
+            } else {
+                if (statusandtype[0] === "yes" && statusandtype[2] === "yes") {
+                    var admin_show = "<th>Rittal Cost</th><th>Rittal Margin</th><th>Distributor Margin</th>";
+                    tabcontent.append("<thead><tr><th>Sku</th><th>Description</th><th>List Price</th><th>Instock Price</th><th>Instock Multiplier</th>" + admin_show + "<th>Quantity</th><th>Requested Multiplier</th><th>Requested Price</th><th>Target Price</th></tr></thead>");
+                } else if (statusandtype[0] === "yes" && statusandtype[2] === "yesRD") {
+                    var admin_show = "<th>Rittal Cost</th><th>Rittal Margin</th><th>Distributor Margin</th>";
+                    tabcontent.append("<thead><tr><th>Sku</th><th>Description</th><th>List Price</th><th>Instock Price</th><th>Instock Multiplier</th>" + admin_show + "<th>Quantity</th><th>Requested Multiplier</th><th>Requested Price</th><th>Target Price</th></tr></thead>");
+                } else {
+                    tabcontent.append("<thead><tr><th>Sku</th><th>Description</th><th>List Price</th><th>Instock Price</th><th>Instock Multiplier</th><th>Quantity</th><th>Requested Multiplier</th><th>Requested Price</th><th>Target Price</th></tr></thead>");
+                }
+            }
+
+            $.post("/SPA/GetItems?type=0&id=" + id, function (result) {
+                var obj = JSON.parse(result);
+                if (obj.listitems.length > 0) {
+                    $.each(obj.listitems, function (i, v) {
+
+                        var Rittal_margin = (parseFloat(v.Requested_price) - parseFloat(v.Cost)) / parseFloat(v.Requested_price);
+                        var Distributor_margin = (parseFloat(v.Target_price) - parseFloat(v.Requested_price)) / parseFloat(v.Target_price);
+                        var updateButton = "";
+                        if (statusandtype[0] === "no"){
+                            updateButton = "<td><a href=\"#\" onclick=\"spaactions.UpdateItems('" + v.Item_id + "','0');return false;\" class=\"btn-default btn-sm\" >update</a></td></tr>";
+                        }
+
+                        if (statusandtype[0] === "no" || statusandtype[2] === "No") {
+                            if (statusandtype[1] !== "Open Ended") {
+                                var quantity = "<input type=\"text\" id=\"q_" + v.Item_id + "\" value=\"" + v.Quantity + "\" />";
+                                tabcontent.append("<tr><td>" + v.Sku + "</td><td>" + v.Product_name + "</td><td>" + v.List_price + "</td><td id=\"instockprice_" + v.Item_id + "\" >" + v.Instock_price + "</td><td>" + v.Instock_multiplier + "</td><td>" + quantity + "</td><td><input type=\"text\" id=\"rm_" + v.Item_id + "\" value=\"" + v.Requested_multiplier + "\" onkeyup=\"spaactions.CalculateRequestPrice('" + v.Item_id + "')\" /></td><td><input type=\"text\" id=\"rp_" + v.Item_id + "\" value=\"" + v.Requested_price + "\" onkeyup=\"spaactions.CalculateRequestedMultiplier('" + v.Item_id + "')\" /></td><td><input type=\"text\" id=\"tp_" + v.Item_id + "\" value=\"" + v.Target_price + "\" /></td>" + updateButton);
+                            } else {
+                                tabcontent.append("<tr><td>" + v.Sku + "</td><td>" + v.Product_name + "</td><td>" + v.List_price + "</td><td id=\"instockprice_" + v.Item_id + "\" >" + v.Instock_price + "</td><td>" + v.Instock_multiplier + "</td><td><input type=\"text\" id=\"rm_" + v.Item_id + "\" value=\"" + v.Requested_multiplier + "\" onkeyup=\"spaactions.CalculateRequestPrice('" + v.Item_id + "')\" /></td><td><input type=\"text\" id=\"rp_" + v.Item_id + "\" value=\"" + v.Requested_price + "\" onkeyup=\"spaactions.CalculateRequestedMultiplier('" + v.Item_id + "')\" /></td><td><input type=\"text\" id=\"tp_" + v.Item_id + "\" value=\"" + v.Target_price + "\" /></td>" + updateButton);
+                            }
+
+                        } else {
+                            if (statusandtype[2] === "yesRD"){
+                                if (statusandtype[1] !== "Open Ended") {
+                                    tabcontent.append("<tr><td>" + v.Sku + "</td><td>" + v.Product_name + "</td><td>" + v.List_price + "</td><td id=\"instockprice_" + v.Item_id + "\" >" + v.Instock_price + "</td><td>" + v.Instock_multiplier + "</td><td id=\"cost_" + v.Item_id + "\" >" + v.Cost + "</td><td id=\"rittal_margin_" + v.Item_id + "\" >" + Rittal_margin.toFixed(2) * 100 + "%</td><td id=\"distri_margin_" + v.Item_id + "\" >" + Distributor_margin.toFixed(2) * 100 + "%</td><td>" + quantity + "</td><td><input type=\"text\" id=\"rm_" + v.Item_id + "\" value=\"" + v.Requested_multiplier + "\" onkeyup=\"spaactions.CalculateRequestPrice('" + v.Item_id + "')\" /></td><td><input type=\"text\" id=\"rp_" + v.Item_id + "\" value=\"" + v.Requested_price + "\" onkeyup=\"spaactions.CalculateRequestedMultiplier('" + v.Item_id + "')\" /></td><td><input type=\"text\" id=\"tp_" + v.Item_id + "\" value=\"" + v.Target_price + "\" /></td></tr>");
+                                } else {
+                                    tabcontent.append("<tr><td>" + v.Sku + "</td><td>" + v.Product_name + "</td><td>" + v.List_price + "</td><td id=\"instockprice_" + v.Item_id + "\" >" + v.Instock_price + "</td><td>" + v.Instock_multiplier + "</td><td id=\"cost_" + v.Item_id + "\" >" + v.Cost + "</td><td id=\"rittal_margin_" + v.Item_id + "\" >" + Rittal_margin.toFixed(2) * 100 + "%</td><td id=\"distri_margin_" + v.Item_id + "\" >" + Distributor_margin.toFixed(2) * 100 + "%</td><td><input type=\"text\" id=\"rm_" + v.Item_id + "\" value=\"" + v.Requested_multiplier + "\" onkeyup=\"spaactions.CalculateRequestPrice('" + v.Item_id + "')\" /></td><td><input type=\"text\" id=\"rp_" + v.Item_id + "\" value=\"" + v.Requested_price + "\" onkeyup=\"spaactions.CalculateRequestedMultiplier('" + v.Item_id + "')\" /></td><td><input type=\"text\" id=\"tp_" + v.Item_id + "\" value=\"" + v.Target_price + "\" /></td></tr>");
+                                }
+                            } else {
+                                if (statusandtype[1] !== "Open Ended") {
+                                    var quantity = "<input type=\"text\" id=\"q_" + v.Item_id + "\" value=\"" + v.Quantity + "\" />";
+                                    tabcontent.append("<tr><td>" + v.Sku + "</td><td>" + v.Product_name + "</td><td>" + v.List_price + "</td><td id=\"instockprice_" + v.Item_id + "\" >" + v.Instock_price + "</td><td>" + v.Instock_multiplier + "</td><td id=\"cost_" + v.Item_id + "\" >" + v.Cost + "</td><td id=\"rittal_margin_" + v.Item_id + "\" >" + Rittal_margin.toFixed(2) * 100 + "%</td><td id=\"distri_margin_" + v.Item_id + "\" >" + Distributor_margin.toFixed(2) * 100 + "%</td><td>" + quantity + "</td><td><input type=\"text\" id=\"rm_" + v.Item_id + "\" value=\"" + v.Requested_multiplier + "\" onkeyup=\"spaactions.CalculateRequestPrice('" + v.Item_id + "')\" /></td><td><input type=\"text\" id=\"rp_" + v.Item_id + "\" value=\"" + v.Requested_price + "\" onkeyup=\"spaactions.CalculateRequestedMultiplier('" + v.Item_id + "')\" /></td><td><input type=\"text\" id=\"tp_" + v.Item_id + "\" value=\"" + v.Target_price + "\" /></td>" +
+                                        "<td><a href=\"#\" onclick=\"spaactions.UpdateItems('" + v.Item_id + "','1');return false;\" class=\"btn-default btn-sm\" >approve</a> <a href=\"#\" onclick=\"spaactions.UpdateItems('" + v.Item_id + "','2');return false;\" class=\"btn-default btn-sm\" >reject</a></td></tr>");
+
+                                } else {
+                                    tabcontent.append("<tr><td>" + v.Sku + "</td><td>" + v.Product_name + "</td><td>" + v.List_price + "</td><td id=\"instockprice_" + v.Item_id + "\" >" + v.Instock_price + "</td><td>" + v.Instock_multiplier + "</td><td id=\"cost_" + v.Item_id + "\" >" + v.Cost + "</td><td id=\"rittal_margin_" + v.Item_id + "\" >" + Rittal_margin.toFixed(2) * 100 + "%</td><td id=\"distri_margin_" + v.Item_id + "\" >" + Distributor_margin.toFixed(2) * 100 + "%</td><td><input type=\"text\" id=\"rm_" + v.Item_id + "\" value=\"" + v.Requested_multiplier + "\" onkeyup=\"spaactions.CalculateRequestPrice('" + v.Item_id + "')\" /></td><td><input type=\"text\" id=\"rp_" + v.Item_id + "\" value=\"" + v.Requested_price + "\" onkeyup=\"spaactions.CalculateRequestedMultiplier('" + v.Item_id + "')\" /></td><td><input type=\"text\" id=\"tp_" + v.Item_id + "\" value=\"" + v.Target_price + "\" /></td>" +
+                                        "<td><a href=\"#\" onclick=\"spaactions.UpdateItems('" + v.Item_id + "','1');return false;\" class=\"btn-default btn-sm\" >approve</a> <a href=\"#\" onclick=\"spaactions.UpdateItems('" + v.Item_id + "','2');return false;\" class=\"btn-default btn-sm\" >reject</a></td></tr>");
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    tabcontent.append("<div>There are no pending items</div>");
+                }
+            });
+        },
+        declined: function (id, status) {
+            var statusandtype = status.split("_");
+            $("#datedata").hide();
+            $(".nav-tabs").find("li").eq(0).css("background", "none");
+            $(".tab-content").html("");
+
+            if (statusandtype[1] === "Open Ended") {
+                if (statusandtype[0] === "yes" && statusandtype[2] === "yes") {
+                    var admin_show = "<th>Rittal Cost</th><th>Rittal Margin</th><th>Distributor Margin</th>";
+                    tabcontent.append("<thead><tr><th>Sku</th><th>Description</th><th>List Price</th><th>Instock Price</th><th>Instock Multiplier</th>" + admin_show +"<th>Requested Multiplier</th><th>Requested Price</th><th>Target Price</th></tr></thead>");
+                } else if (statusandtype[0] === "yes" && statusandtype[2] === "yesRD") {
+                    var admin_show = "<th>Rittal Cost</th><th>Rittal Margin</th><th>Distributor Margin</th>";
+                    tabcontent.append("<thead><tr><th>Sku</th><th>Description</th><th>List Price</th><th>Instock Price</th><th>Instock Multiplier</th>" + admin_show + "<th>Requested Multiplier</th><th>Requested Price</th><th>Target Price</th></tr></thead>");
+                } else {
+                    tabcontent.append("<thead><tr><th>Sku</th><th>Description</th><th>List Price</th><th>Instock Price</th><th>Instock Multiplier</th><th>Requested Multiplier</th><th>Requested Price</th><th>Target Price</th></tr></thead>");
+                }
+            } else {
+                if (statusandtype[0] === "yes" && statusandtype[2] === "yes") {
+                    var admin_show = "<th>Rittal Cost</th><th>Rittal Margin</th><th>Distributor Margin</th>";
+                    tabcontent.append("<thead><tr><th>Sku</th><th>Description</th><th>List Price</th><th>Instock Price</th><th>Instock Multiplier</th>" + admin_show + "<th>Quantity</th><th>Requested Multiplier</th><th>Requested Price</th><th>Target Price</th></tr></thead>");
+                } else if (statusandtype[0] === "yes" && statusandtype[2] === "yesRD") {
+                    var admin_show = "<th>Rittal Cost</th><th>Rittal Margin</th><th>Distributor Margin</th>";
+                    tabcontent.append("<thead><tr><th>Sku</th><th>Description</th><th>List Price</th><th>Instock Price</th><th>Instock Multiplier</th>" + admin_show + "<th>Quantity</th><th>Requested Multiplier</th><th>Requested Price</th><th>Target Price</th></tr></thead>");
+                } else {
+                    tabcontent.append("<thead><tr><th>Sku</th><th>Description</th><th>List Price</th><th>Instock Price</th><th>Instock Multiplier</th><th>Quantity</th><th>Requested Multiplier</th><th>Requested Price</th><th>Target Price</th></tr></thead>");
+                }
+            }
+
+            $.post("/SPA/GetItems?type=2&id=" + id, function (result) {
+                var obj = JSON.parse(result);
+                if (obj.listitems.length > 0) {
+                    $.each(obj.listitems, function (i, v) {
+                        var Rittal_margin = (parseFloat(v.Requested_price) - parseFloat(v.Cost)) / parseFloat(v.Requested_price);
+                        var Distributor_margin = (parseFloat(v.Target_price) - parseFloat(v.Requested_price)) / parseFloat(v.Target_price);
+                        var updateButton = "";
+                        if (statusandtype[0] === "no") {
+                            updateButton = "<td><a href=\"#\" onclick=\"spaactions.UpdateItems('" + v.Item_id + "','0');return false;\" class=\"btn-default btn-sm\" >update</a></td></tr>";
+                        }
+
+                        if (statusandtype[0] === "no" || statusandtype[2] === "No") {
+                            if (statusandtype[1] !== "Open Ended") {
+                                var quantity = "<input type=\"text\" id=\"q_" + v.Item_id + "\" value=\"" + v.Quantity + "\" />";
+                                tabcontent.append("<tr><td>" + v.Sku + "</td><td>" + v.Product_name + "</td><td>" + v.List_price + "</td><td id=\"instockprice_" + v.Item_id + "\" >" + v.Instock_price + "</td><td>" + v.Instock_multiplier + "</td><td>" + quantity + "</td><td><input type=\"text\" id=\"rm_" + v.Item_id + "\" value=\"" + v.Requested_multiplier + "\" onkeyup=\"spaactions.CalculateRequestPrice('" + v.Item_id + "')\" /></td><td><input type=\"text\" id=\"rp_" + v.Item_id + "\" value=\"" + v.Requested_price + "\" onkeyup=\"spaactions.CalculateRequestedMultiplier('" + v.Item_id + "')\" /></td><td><input type=\"text\" id=\"tp_" + v.Item_id + "\" value=\"" + v.Target_price + "\" /></td>" + updateButton);
+                            } else {
+                                tabcontent.append("<tr><td>" + v.Sku + "</td><td>" + v.Product_name + "</td><td>" + v.List_price + "</td><td id=\"instockprice_" + v.Item_id + "\" >" + v.Instock_price + "</td><td>" + v.Instock_multiplier + "</td><td><input type=\"text\" id=\"rm_" + v.Item_id + "\" value=\"" + v.Requested_multiplier + "\" onkeyup=\"spaactions.CalculateRequestPrice('" + v.Item_id + "')\" /></td><td><input type=\"text\" id=\"rp_" + v.Item_id + "\" value=\"" + v.Requested_price + "\" onkeyup=\"spaactions.CalculateRequestedMultiplier('" + v.Item_id + "')\" /></td><td><input type=\"text\" id=\"tp_" + v.Item_id + "\" value=\"" + v.Target_price + "\" /></td>"+updateButton);
+                            }
+                        } else {
+                            if (statusandtype[2] === "yesRD") {
+                                if (statusandtype[1] !== "Open Ended") {
+                                    var quantity = "<input type=\"text\" id=\"q_" + v.Item_id + "\" value=\"" + v.Quantity + "\" />";
+                                    tabcontent.append("<tr><td>" + v.Sku + "</td><td>" + v.Product_name + "</td><td>" + v.List_price + "</td><td id=\"instockprice_" + v.Item_id + "\" >" + v.Instock_price + "</td><td>" + v.Instock_multiplier + "</td><td id=\"cost_" + v.Item_id + "\" >" + v.Cost + "</td><td id=\"rittal_margin_" + v.Item_id + "\" >" + Rittal_margin.toFixed(2) * 100 + "%</td><td id=\"distri_margin_" + v.Item_id + "\" >" + Distributor_margin.toFixed(2) * 100 + "%</td><td>" + quantity + "</td><td><input type=\"text\" id=\"rm_" + v.Item_id + "\" value=\"" + v.Requested_multiplier + "\" onkeyup=\"spaactions.CalculateRequestPrice('" + v.Item_id + "')\" /></td><td><input type=\"text\" id=\"rp_" + v.Item_id + "\" value=\"" + v.Requested_price + "\" onkeyup=\"spaactions.CalculateRequestedMultiplier('" + v.Item_id + "')\" /></td><td><input type=\"text\" id=\"tp_" + v.Item_id + "\" value=\"" + v.Target_price + "\" /></td></tr>");
+                                } else {
+                                    tabcontent.append("<tr><td>" + v.Sku + "</td><td>" + v.Product_name + "</td><td>" + v.List_price + "</td><td id=\"instockprice_" + v.Item_id + "\" >" + v.Instock_price + "</td><td>" + v.Instock_multiplier + "</td><td id=\"cost_" + v.Item_id + "\" >" + v.Cost + "</td><td id=\"rittal_margin_" + v.Item_id + "\" >" + Rittal_margin.toFixed(2) * 100 + "%</td><td id=\"distri_margin_" + v.Item_id + "\" >" + Distributor_margin.toFixed(2) * 100 + "%</td><td><input type=\"text\" id=\"rm_" + v.Item_id + "\" value=\"" + v.Requested_multiplier + "\" onkeyup=\"spaactions.CalculateRequestPrice('" + v.Item_id + "')\" /></td><td><input type=\"text\" id=\"rp_" + v.Item_id + "\" value=\"" + v.Requested_price + "\" onkeyup=\"spaactions.CalculateRequestedMultiplier('" + v.Item_id + "')\" /></td><td><input type=\"text\" id=\"tp_" + v.Item_id + "\" value=\"" + v.Target_price + "\" /></td></tr>");
+                                }
+                            } else {
+                                if (statusandtype[1] !== "Open Ended") {
+                                    var quantity = "<input type=\"text\" id=\"q_" + v.Item_id + "\" value=\"" + v.Quantity + "\" />";
+                                    tabcontent.append("<tr><td>" + v.Sku + "</td><td>" + v.Product_name + "</td><td>" + v.List_price + "</td><td id=\"instockprice_" + v.Item_id + "\" >" + v.Instock_price + "</td><td>" + v.Instock_multiplier + "</td><td id=\"cost_" + v.Item_id + "\" >" + v.Cost + "</td><td id=\"rittal_margin_" + v.Item_id + "\" >" + Rittal_margin.toFixed(2) * 100 + "%</td><td id=\"distri_margin_" + v.Item_id + "\" >" + Distributor_margin.toFixed(2) * 100 + "%</td><td>" + quantity + "</td><td><input type=\"text\" id=\"rm_" + v.Item_id + "\" value=\"" + v.Requested_multiplier + "\" onkeyup=\"spaactions.CalculateRequestPrice('" + v.Item_id + "')\" /></td><td><input type=\"text\" id=\"rp_" + v.Item_id + "\" value=\"" + v.Requested_price + "\" onkeyup=\"spaactions.CalculateRequestedMultiplier('" + v.Item_id + "')\" /></td><td><input type=\"text\" id=\"tp_" + v.Item_id + "\" value=\"" + v.Target_price + "\" /></td>" +
+                                        "<td><a href=\"#\" onclick=\"spaactions.UpdateItems('" + v.Item_id + "','0');return false;\" class=\"btn-default btn-sm\" >update</a></td></tr>");
+                                } else {
+                                    tabcontent.append("<tr><td>" + v.Sku + "</td><td>" + v.Product_name + "</td><td>" + v.List_price + "</td><td id=\"instockprice_" + v.Item_id + "\" >" + v.Instock_price + "</td><td>" + v.Instock_multiplier + "</td><td id=\"cost_" + v.Item_id + "\" >" + v.Cost + "</td><td id=\"rittal_margin_" + v.Item_id + "\" >" + Rittal_margin.toFixed(2) * 100 + "%</td><td id=\"distri_margin_" + v.Item_id + "\" >" + Distributor_margin.toFixed(2) * 100 + "%</td><td><input type=\"text\" id=\"rm_" + v.Item_id + "\" value=\"" + v.Requested_multiplier + "\" onkeyup=\"spaactions.CalculateRequestPrice('" + v.Item_id + "')\" /></td><td><input type=\"text\" id=\"rp_" + v.Item_id + "\" value=\"" + v.Requested_price + "\" onkeyup=\"spaactions.CalculateRequestedMultiplier('" + v.Item_id + "')\" /></td><td><input type=\"text\" id=\"tp_" + v.Item_id + "\" value=\"" + v.Target_price + "\" /></td>" +
+                                        "<td><a href=\"#\" onclick=\"spaactions.UpdateItems('" + v.Item_id + "','0');return false;\" class=\"btn-default btn-sm\" >update</a></td></tr>");
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    $(".tab-content").append("<div>There are no pending items</div>");
+                }
+            });
+        },
+        UpdateItems: function (item_id, status) {
+            var quantity = $("#q_" + item_id).val();
+            console.log(quantity);
+            var requested_price = $("#rp_" + item_id).val();
+            var requested_multiplier = $("#rm_" + item_id).val();
+            var target_price = $("#tp_" + item_id).val();
+            values = { "quantity": quantity, "requested_price": requested_price, "requested_multiplier": requested_multiplier, "target_price": target_price };
+            $.post("/SPA/UpdateItems?status=" + status + "&item_id=" + item_id,values, function (result) {
+                location.reload();
+            });
+        },
+        CalculateRequestPrice: function (item_id) {
+            var instockprice = $("#instockprice_" + item_id).text();
+            var requested_multiplier = $("#rm_" + item_id).val();
+            var newrequest_price = parseFloat(instockprice) * parseFloat(requested_multiplier);
+            $("#rp_" + item_id).empty();
+            $("#rp_" + item_id).val(newrequest_price);
+            //Calaculate Rittal Margin
+            var cost = $("#cost_" + item_id).text();
+            var Rittal_margin = (parseFloat(newrequest_price) - parseFloat(cost)) / parseFloat(newrequest_price);
+            $("#rittal_margin_" + item_id).text(Rittal_margin.toFixed(2) * 100 + "%");
+            //Calculate Distributor Margin
+            var target_price = $("#tp_" + item_id).val();
+            var Distributor_margin = (parseFloat(target_price) - parseFloat(newrequest_price)) / parseFloat(target_price);
+            $("#distri_margin_" + item_id).text(Distributor_margin.toFixed(2));
+        },
+        CalculateRequestedMultiplier: function (item_id) {
+            var instockprice = $("#instockprice_" + item_id).text();
+            var newrequest_price = $("#rp_" + item_id).val();
+            var requested_multiplier = parseFloat(newrequest_price)/parseFloat(instockprice);
+            $("#rm_" + item_id).empty();
+            $("#rm_" + item_id).val(requested_multiplier);
+            //Calaculate Rittal Margin
+            var cost = $("#cost_" + item_id).text();
+            var Rittal_margin = (parseFloat(newrequest_price) - parseFloat(cost)) / parseFloat(newrequest_price);
+            $("#rittal_margin_" + item_id).text(Rittal_margin.toFixed(2) * 100 + "%");
+            //Calculate Distributor Margin
+            var target_price = $("#tp_" + item_id).val();
+            var Distributor_margin = (parseFloat(target_price) - parseFloat(newrequest_price)) / parseFloat(target_price);
+            $("#distri_margin_" + item_id).text(Distributor_margin.toFixed(2));
+        },
+        changeStatus: function (val) {
+            $.post("/SPA/UpdateContractStatus", { "id": val.id, "status": val.value }, function () {
+
+            });
+        },
+        toggleInternalExternal: function (val) {
+            $("#list_notes").html("");
+            $.get("/SPA/filterNotes/?spaid=" + val.id + "&filter=" + val.value, function (data) {
+                var results = JSON.parse(data);
+                $.each(results.notes, function (i,v) {
+                $("#list_notes").append("<tr><td>" + v.Note + "</td>" +
+                    "<td>" + v.Action_date + "</td><td></td></tr>");
+                });
+            });
+        },
+    }
+
+    $(document).ready(spaactions.init);
+</script>
+<style>
+    .tab-content{text-align:center;}
+
+    #distributor_info, #additional_info, #primary_contact, #specifications, #customer_info {
+        background-color: silver;
+        padding: 10px;
+        border-top: 1px dotted #808080;
+    }
+    td input {max-width:100px;} 
+</style>
+<div class="main_content" style="display:inherit;" >
+    <div style="float:right;margin:0px 10px 0px 0px;">
+        @if (Request.QueryString["isAdmin"] == "yes")
+        {
+            <a class="btn btn-info" href="/SPA/SPAadmin/@Request.QueryString["details"]?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&isAdmin=@Request.QueryString["isAdmin"]&submenu=yes">Back</a>
+        }
+        else
+        {
+            <a class="btn btn-info" href="/SPA?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&isAdmin=@Request.QueryString["isAdmin"]&submenu=yes">Back</a>
+        }
+    </div>
+    <br />
+    <br />
+    <div style="background-color: #deefd2;padding:10px;" >
+        @if (User.Identity.Name==ViewBag.email || User.IsInRole("Global Admin") || User.IsInRole("Super Admin")) {
+            <span style="float:right;">
+                <a href="/SPA/Create?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&isAdmin=@Request.QueryString["isAdmin"]&isDetails=yes&id=@Model.Get_SPAs.Spa_id&msg=Edit%20SPA#!/main/@Model.Get_SPAs.Spa_id/@Request.QueryString["isAdmin"]">Edit</a>
+            </span>
+        }
+        <dl class="dl-horizontal" >
+            <dt>
+                @Html.DisplayNameFor(model => model.Get_SPAs.Contract_type):
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Get_SPAs.Contract_type)
+            </dd>
+        </dl>
+
+        <dl class="dl-horizontal" id="distributor_info" >
+            <dd><h4>Distributor Information</h4></dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.List_SPA_Distributor.company_name):
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.List_SPA_Distributor.company_name)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.List_SPA_Distributor.address):
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.List_SPA_Distributor.address)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.List_SPA_Distributor.city):
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.List_SPA_Distributor.city)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.List_SPA_Distributor.state):
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.List_SPA_Distributor.state)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.List_SPA_Distributor.zip):
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.List_SPA_Distributor.zip)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.List_SPA_Distributor.phone):
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.List_SPA_Distributor.phone)
+            </dd>
+        </dl>
+
+        <dl class="dl-horizontal" id="customer_info" >
+            <dd><h4>End customer information</h4></dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Get_SPAs.Customer_company_name):
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Get_SPAs.Customer_company_name)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Get_SPAs.Contract_id):
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Get_SPAs.Contract_id)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Get_SPAs.Customer_address1):
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Get_SPAs.Customer_address1)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Get_SPAs.Customer_address2):
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Get_SPAs.Customer_address2)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Get_SPAs.Customer_city):
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Get_SPAs.Customer_city)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Get_SPAs.Customer_state):
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Get_SPAs.Customer_state)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Get_SPAs.Customer_zip):
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Get_SPAs.Customer_zip)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Get_SPAs.Customer_phone):
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Get_SPAs.Customer_phone)
+            </dd>
+        </dl>
+
+        <dl class="dl-horizontal" id="primary_contact" >
+            <dd><h4>Customer contact information</h4></dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Get_SPAs.Customer_name):
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Get_SPAs.Customer_name)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Get_SPAs.Customer_email):
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Get_SPAs.Customer_email)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Get_SPAs.Customer_title):
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Get_SPAs.Customer_title)
+            </dd>
+        </dl>
+
+        <dl class="dl-horizontal" id="specifications" >
+            <dd><h4>Contract Information</h4></dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Get_SPAs.Projected_sales):
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Get_SPAs.Projected_sales)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Get_SPAs.Distributor_location):
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Get_SPAs.Distributor_location)
+            </dd>
+
+            <dt>
+                @{ Dictionary<string, string> list_competition = new Dictionary<string, string>();
+                    list_competition.Add("1", "Advantag");
+                    list_competition.Add("2", "Cooper");
+                    list_competition.Add("3", "Eldon");
+                    list_competition.Add("4", "Eurobex");
+                    list_competition.Add("5", "Haewa");
+                    list_competition.Add("6", "Hammond");
+                    list_competition.Add("7", "Hoffman");
+                    list_competition.Add("8", "Ice Qube");
+                    list_competition.Add("9", "Integra");
+                    list_competition.Add("10", "ISC");
+                    list_competition.Add("11", "Klockner");
+                    list_competition.Add("12", "Kooltron");
+                    list_competition.Add("13", "McLean");
+                    list_competition.Add("14", "None");
+                    list_competition.Add("15", "Other");
+                    list_competition.Add("16", "Pfannenberg");
+                    list_competition.Add("17", "Saginaw");
+                    list_competition.Add("18", "SCE");
+                    list_competition.Add("19", "Schaefer");
+                    list_competition.Add("20", "SMI");
+                    list_competition.Add("21", "Stahlin");
+                    list_competition.Add("22", "SteeLine");
+                    list_competition.Add("23", "Weigmann");
+                }
+                @Html.DisplayNameFor(model => model.Get_SPAs.Competition):
+            </dt>
+
+            <dd>
+                @foreach (var item in list_competition)
+                {
+                    if (Model.Get_SPAs.Competition == @item.Key)
+                    {
+                        @item.Value
+                    }
+                }
+            </dd>
+
+            <dt>
+                @{ Dictionary<string, string> list_Contract_Status = new Dictionary<string, string>();
+                    list_Contract_Status.Add("1", "Convert existing customer");
+                    list_Contract_Status.Add("2", "Move customer from another distributor");
+                    list_Contract_Status.Add("3", "Ongoing SPA contract for new customer");
+                    list_Contract_Status.Add("4", "One time use only");
+                    list_Contract_Status.Add("5", "Short time period (under one year)");
+                    list_Contract_Status.Add("6", "Unknown");
+                }
+                @Html.DisplayNameFor(model => model.Get_SPAs.Status):
+            </dt>
+
+            <dd>
+                @foreach (var item in list_Contract_Status)
+                {
+                    if (Model.Get_SPAs.Status == @item.Key)
+                    {
+                        @item.Value
+                    }
+                }
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Get_SPAs.Start_date):
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Get_SPAs.Start_date)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Get_SPAs.End_date):
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Get_SPAs.End_date)
+            </dd>
+
+            <dt>
+                @{ Dictionary<string, string> list_Market_Segment = new Dictionary<string, string>();
+                    list_Market_Segment.Add("1", "Energy - Petrochemical");
+                    list_Market_Segment.Add("2", "Energy - Power Generation");
+                    list_Market_Segment.Add("3", "Energy - Others");
+                    list_Market_Segment.Add("4", "Government");
+                    list_Market_Segment.Add("5", "Industrial - Automotive");
+                    list_Market_Segment.Add("6", "Industrial - Food & Beverage");
+                    list_Market_Segment.Add("7", "Industrial - Machinery Mfg");
+                    list_Market_Segment.Add("8", "Industrial - Material Handling");
+                    list_Market_Segment.Add("9", "Industrial - Process Automation");
+                    list_Market_Segment.Add("10", "Industrial - Others");
+                    list_Market_Segment.Add("11", "Infrastructure - Others");
+                    list_Market_Segment.Add("12", "Infrastructure - Transportation");
+                    list_Market_Segment.Add("13", "Infrastructure - Water&amp;Waste");
+                    list_Market_Segment.Add("14", "IT - Education");
+                    list_Market_Segment.Add("15", "IT - Financial");
+                    list_Market_Segment.Add("16", "IT - Healthcare");
+                    list_Market_Segment.Add("17", "IT - Others");
+                }
+                @Html.DisplayNameFor(model => model.Get_SPAs.Market_segement):
+            </dt>
+
+            <dd>
+                @foreach (var item in list_Market_Segment)
+                {
+                    if (Model.Get_SPAs.Market_segement == @item.Key)
+                    {
+                        @item.Value
+                    }
+                }
+            </dd>
+
+            <dt>
+                @{ Dictionary<string, string> list_Account_Type = new Dictionary<string, string>();
+                    list_Account_Type.Add("1", "Contractor");
+                    list_Account_Type.Add("2", "Distributor");
+                    list_Account_Type.Add("3", "Integrator");
+                    list_Account_Type.Add("4", "OEM");
+                    list_Account_Type.Add("5", "Other");
+                    list_Account_Type.Add("6", "Panel Builder");
+                    list_Account_Type.Add("7", "Specifier");
+                    list_Account_Type.Add("8", "User");
+                    list_Account_Type.Add("9", "VAR");
+                }
+                @Html.DisplayNameFor(model => model.Get_SPAs.Account_type):
+            </dt>
+
+            <dd>
+                @foreach (var item in list_Account_Type)
+                {
+                    if (Model.Get_SPAs.Account_type == @item.Key)
+                    {
+                        @item.Value
+                    }
+                }
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Get_SPAs.Updated_date):
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Get_SPAs.Updated_date)
+            </dd>
+
+            <frameset>
+                <dt>
+                    @{ Dictionary<string, string> list_Activity_Status = new Dictionary<string, string>();
+                        list_Activity_Status.Add("1", "Active/Approved");
+                        list_Activity_Status.Add("2", "Declined");
+                        list_Activity_Status.Add("3", "Draft");
+                        list_Activity_Status.Add("4", "Expired");
+                        list_Activity_Status.Add("5", "Upcoming");
+                        list_Activity_Status.Add("6", "Waiting for Approval");
+                    }
+
+                    @Html.DisplayNameFor(model => model.Get_SPAs.Activity_status):
+                </dt>
+
+                <dd style="background-color:#0ff;padding:20px;" >
+                    @if (User.IsInRole("Global Admin") || User.IsInRole("Super Admin"))
+                    {
+                        <select onchange="spaactions.changeStatus(this);" id="@Model.Get_SPAs.Spa_id" class="form-control">
+                            @foreach (var item in list_Activity_Status)
+                            {
+                                if (Model.Get_SPAs.Activity_status == @item.Key)
+                                {
+                                    <option value="@item.Key" selected>@item.Value</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.Key">@item.Value</option>
+                                }
+                            }
+                        </select>
+                    }
+                    else
+                    {
+                        foreach (var item in list_Activity_Status)
+                        {
+                            if (Model.Get_SPAs.Activity_status == @item.Key)
+                            {
+                                @item.Value
+                            }
+                        }
+                    }
+                </dd>
+            </frameset>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Get_SPAs.Updated_by):
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Get_SPAs.Updated_By_Name)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Get_SPAs.Approved_date):
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Get_SPAs.Approved_date)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Get_SPAs.Territory_code):
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Get_SPAs.Territory_code)
+            </dd>
+        </dl>
+
+        <dl class="dl-horizontal" id="additional_info" >
+            <dt>
+                @Html.DisplayNameFor(model => model.Get_SPAs.Additional_information):
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Get_SPAs.Additional_information)
+            </dd>
+        </dl>
+    </div>
+    <br />
+    @*<div style="float:right;margin:10px;"><a href="/SPA/Create?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&isAdmin=@Request.QueryString["isAdmin"]&isDetails=yes&id=@Model.Get_SPAs.Spa_id&msg=Edit%20SPA#!/participants/@Model.Get_SPAs.Spa_id">Edit</a></div>*@
+    <div class="dl-horizontal" id="additional_info" >
+        <h4>List of Participants</h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Sales Rep Name</th>
+                    <td>Email</td>
+                    <td>Role</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var participants in Model.List_SPA_Participants)
+                {
+                    <tr>
+                        <td>
+                            @participants.FullName
+                        </td>
+                        <td>
+                            @participants.Email
+                        </td>
+                        <td>
+                            @participants.Roles
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <br />
+    @*<div style="float:right;margin:10px;"><a href="/SPA/Create?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&isAdmin=@Request.QueryString["isAdmin"]&isDetails=yes&id=@Model.Get_SPAs.Spa_id&msg=Edit%20SPA#!/product/@Model.Get_SPAs.Spa_id">Edit</a></div>*@
+    <div class="dl-horizontal" id="additional_info">
+        <h4>Attached Product Information</h4>
+            <ul class="nav nav-tabs">
+                <li onclick="spaactions.active(this.id,this.title);return false;" id="@Model.Get_SPAs.Spa_id" title="@Request.QueryString["isAdmin"]_@Model.Get_SPAs.Contract_type@CanViewMargins" style="border:solid silver 1px;margin-right:2px;background:#ccc;" ><a href="#">Active items (@ViewBag.current)</a></li>
+                <li onclick="spaactions.expired(this.id,this.title);return false;" id="@Model.Get_SPAs.Spa_id" title="@Request.QueryString["isAdmin"]_@Model.Get_SPAs.Contract_type@CanViewMargins" style="border:solid silver 1px;margin-right:2px;" ><a href="#" >Expired items (@ViewBag.expireditems)</a></li>
+                <li onclick="spaactions.pending(this.id,this.title);return false;" id="@Model.Get_SPAs.Spa_id" title="@Request.QueryString["isAdmin"]_@Model.Get_SPAs.Contract_type@CanViewMargins" style="border:solid silver 1px;margin-right:2px;" ><a href="#" >Pending items (@ViewBag.pending)</a></li>
+                <li onclick="spaactions.declined(this.id,this.title);return false;" id="@Model.Get_SPAs.Spa_id" title="@Request.QueryString["isAdmin"]_@Model.Get_SPAs.Contract_type@CanViewMargins" style="border:solid silver 1px;margin-right:2px;" ><a href="#" >Rejected items (@ViewBag.declined)</a></li>
+            </ul>
+        <div style="width:98%;overflow-x:auto;padding:10px 0px 40px 0px;"><table style="width:100%;font-size: 12px;" class="tab-content"></table></div>
+    </div>
+    <br />
+    <div class="dl-horizontal" id="additional_info">
+    @if (ViewBag.filter == "1")
+    {
+        <span> Fitler by Type <select onchange="spaactions.toggleInternalExternal(this)" class="form-control" id="@Model.Get_SPAs.Spa_id" name="filter"><option value="Filter By">Fitler</option><option value="0">External</option><option value="1">Internal</option></select></span>
+    }
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Notes</th>
+                <th>Action Time</th>
+                <td></td>
+            </tr>
+        </thead>
+        <tbody id="list_notes" >
+            @foreach (var item in Model.List_Notes)
+            {
+            <tr>
+                <td>
+                    @item.Note
+                </td>
+                <td>
+                    @item.Action_date
+                </td>
+                <td></td>
+            </tr>
+            }
+        </tbody>
+    </table>
+    </div>
+    @*<div style="float:right;margin:10px;"><a href="/SPA/Create?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&isAdmin=@Request.QueryString["isAdmin"]&isDetails=yes&id=@Model.Get_SPAs.Spa_id&msg=Edit%20SPA#!/filesUpload/@Model.Get_SPAs.Spa_id">Edit</a></div>*@
+    <div class="dl-horizontal" id="additional_info">
+        <h4>Attached Files</h4>
+        @foreach (var file in Model.List_SPA_Files)
+        {
+            <span>
+                <a href="~/attachments/spa/Contracts/@file.File_name" target="_blank">@file.File_name</a>
+            </span>
+            <br />
+        }
+    </div>
+    <br />
+    @if (Request.QueryString["isAdmin"] == "no")
+    {
+        <div>
+            <a href="/SPA/submitRequest/@Model.Get_SPAs.Spa_id?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&isAdmin=no" class="btn btn-primary" >Submit Request</a>
+        </div>
+    }
+</div>

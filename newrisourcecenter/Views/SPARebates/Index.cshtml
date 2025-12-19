@@ -1,0 +1,64 @@
+﻿@model IEnumerable<newrisourcecenter.Models.SPARebatesViewModel>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="main_content">
+    <div style="display:inline-block;">
+        @Html.ActionLink("Create SPA Rebate >>", "Create", new { n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], msg = "Create SPA Rebate" }, htmlAttributes: new { @class = "btn btn-primary" })
+    </div>  
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.contract_ID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.rebate_total_amount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.credit_memo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.status)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.submit_date)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.memo_date)
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.contract_ID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.rebate_total_amount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.credit_memo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.status)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.submit_date)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.memo_date)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new {id=item.rebate_ID, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], msg = "Create SPA Rebate" }, htmlAttributes: new { }) |
+                    @Html.ActionLink("View Rebates", "Details", new { id = item.rebate_ID }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.rebate_ID })
+                </td>
+            </tr>
+        }
+
+    </table>
+</div>

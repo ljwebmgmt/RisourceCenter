@@ -1,0 +1,30 @@
+﻿@model newrisourcecenter.Models.LiteratureViewModel
+
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h3>Are you sure you want to delete @Request.QueryString["n1_name"]?</h3>
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.lit_name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.lit_name)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to List", "Create", new { n1_name = "Add a Literature" })
+        </div>
+    }
+</div>

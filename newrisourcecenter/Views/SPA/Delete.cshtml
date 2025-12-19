@@ -1,0 +1,217 @@
+﻿@model newrisourcecenter.Models.SPAViewModels
+
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>SPAViewModels</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.usr_id)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.usr_id)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.comp_id)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.comp_id)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.customer_name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.customer_name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.customer_address1)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.customer_address1)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.customer_address2)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.customer_address2)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.customer_city)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.customer_city)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.customer_state)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.customer_state)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.customer_zip)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.customer_zip)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.customer_phone)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.customer_phone)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.customer_email)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.customer_email)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.customer_title)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.customer_title)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.start_date)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.start_date)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.end_date)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.end_date)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.updated_date)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.updated_date)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.approved_date)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.approved_date)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.updated_by)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.updated_by)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.projected_sales)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.projected_sales)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.competition)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.competition)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.territory_code)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.territory_code)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.activity_status)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.activity_status)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.status)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.status)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.contract_type)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.contract_type)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.market_segement)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.market_segement)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.account_type)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.account_type)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    }
+</div>

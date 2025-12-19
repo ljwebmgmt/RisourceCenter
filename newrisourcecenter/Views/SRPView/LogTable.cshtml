@@ -1,0 +1,27 @@
+﻿@model IEnumerable<newrisourcecenter.Models.salesRequestActionLog>
+
+@{
+    Layout = "";
+}
+
+    <thead style="background:#000;color:#fff;">
+        <tr style="color:#fff;">
+            <td>Actor</td>
+            <td>Action</td>
+            <td>Note</td>
+            <td>Time</td>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var logs in Model)
+    {
+        <tr>
+            <td>@logs.name</td>
+            <td>@logs.Action</td>
+            <td>@logs.Notes</td>
+            <td>@string.Format("{0:MM/dd/yyyy}", @logs.Action_Time)</td>
+        </tr>
+    }
+    </tbody>
+
+    

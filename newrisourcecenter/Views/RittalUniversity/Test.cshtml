@@ -1,0 +1,13 @@
+﻿
+@{
+    ViewBag.Title = "Test";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<article class="main_content">
+    <a name="button313anc" href="/RittalUniversity?n1_name=Rittal%20University" title="Print" style="float:right;margin-right:20px;" class="btn btn-primary">Exit Class</a>
+    <section>
+        <h4 align="center">Rittal University Training: @ViewBag.dir_name</h4>
+        <iframe src="~/classes/@ViewBag.dir_name/" style="min-width:100%;margin-left:auto;margin-right:auto;" height="700"></iframe>
+    </section>
+</article>
+

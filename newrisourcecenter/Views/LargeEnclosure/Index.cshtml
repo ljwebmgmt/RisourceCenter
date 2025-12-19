@@ -1,0 +1,273 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/Content/largeenclosure.css" rel="stylesheet" type="text/css" media="screen">
+<script src="~/Scripts/flexslider.js"></script>
+
+<div class="main_content" style="padding-top:10px;">
+    <div class="flexslider" id="0" >
+        <div class="slides" >
+            <div class="slider_1"><img src="~/attachments/LargeEnclosure/images/title01.png" style="height:298px;" /></div>
+
+            <div class="slider_2"><img src="~/attachments/LargeEnclosure/images/title02.jpg" style="height:298px;" /></div>
+
+            <div class="slider_3"><img src="~/attachments/LargeEnclosure/images/title03.jpg" style="height:298px;" /></div>
+        </div>
+
+        <div class="content_slider_txt">
+            <h3>Large Enclosure Pricing Tool</h3>
+            <p>
+                The Large Enclosure Pricing Tool allows you to select enclosures from our family of TS 8 and FMD product families, along with accessories, quickly and easily. The end result is a bill of materials with list pricing which you can then export as a PDF or CSV, save to reference at a later time, and/or send along to our quotes team for a final quote. Get started below!
+                <br />
+            </p>
+        </div>
+    </div>
+    <br />
+    <div class="Header">
+        <form>
+            <div id="formTable1">
+                <input type="hidden" name="language" id="language" value="">
+                <input type="hidden" name="step" id="step" value="">
+                <input type="hidden" name="satz" id="satz" value="">
+                Will you be baying this enclosure?<br>
+                <input name="baying" class="baying" value="1" onclick="enclosureSelector.step0();" type="radio">Yes
+                <input name="baying" class="baying" id="baying" value="0" onclick="enclosureSelector.step0('yes');" type="radio">No
+                <br />
+                <br />
+                <span id="enclosureDimentions">
+                    <table id="table0" style="background-color:rgba(148, 145, 145, 0.76);padding:5px;color:#000;border-radius:5px;font-size:14px;">
+                        <tr>
+                            <td>
+                                <label>Height (in)</label><br />
+                                <select id="height" onchange="enclosureSelector.step0()"></select>
+                            </td>
+                            <td>
+                                <label>Width (in)</label><br />
+                                <select id="width" onchange="enclosureSelector.step0()"></select>
+                            </td>
+                            <td>
+                                <label>Depth (in)</label><br />
+                                <select id="depth" onchange="enclosureSelector.step0()"></select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">
+                                <div style="line-height:30px;">Choose the dimensions above. If you said yes to baying, we’ll display the widths available based on your height and depth requirements.</div>
+                            </td>
+                        </tr>
+                    </table>
+                </span><br />
+                <a href="#step1" class="step1button">
+                    <span class="ButtonLink btn btn-primary" onclick="enclosureSelector.step1();">Display Products</span>
+                </a>
+                <a class="step1button ButtonLink btn btn-primary" href=""><span>Reset</span></a>
+            </div>
+            <div id="formTable2">
+                Already know the product part number? Enter below.<br>
+                <div class="input-group stylish-input-group">
+                    <input name="articelnummer" id="articelnummer" placeholder="Enter Model Number, e.g.: 8845500" value="" maxlength="7" type="Text" class="form-control" onkeyup="enclosureSelector.step1()">
+                    <span class="input-group-addon" id="submit_search">
+                        <button type="submit" onclick="enclosureSelector.step1();return false;">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+                <br />
+                <a class="step12button ButtonLink btn btn-primary" href=""><span>Reset</span></a>
+                <br />
+                <br />
+                <div>
+                    <a href="#" onclick="enclosureSelector.ListConfigurations('show');" class="btn btn-primary">Show Saved Configurations</a>
+                </div>
+            </div>
+        </form>
+    </div>
+    <br clear="all" />
+    <br clear="all" />
+    <div id="step1">
+        <div id="ListTS8"></div>
+        <div id="ListFMDs"></div>
+        <div id="step2link" align="right" onclick="enclosureSelector.showAccessories();return false;"><span><a href="#">Show Accessories</a></span></div>
+    </div>
+    <span id="statusMessage"></span>
+    <div id="bayed_enclosures" ></div>
+    <div id="step2">
+        <div style="background-color:#000;height:350px;">
+            <span id="selectedEnclosureTitle"></span>
+        </div>
+        <br clear="all" />
+        <div id="accessoriestable" ></div>
+        <div id="step3link"></div>
+    </div> 
+    <div id="step3">
+        <div style="margin-left:auto;margin-right:auto;width:90%"><span id="configid"></span></div>
+        <table id="myTable" cellpadding="0" cellspacing="0">
+            <thead>
+                <tr style="color:#000;background-color:rgba(148, 145, 145, 0.76);">
+                    <td width="15%">Part Number</td>
+                    <td width="40%">Description</td>
+                    <td width="10%">Number of Packs</td>
+                    <td width="10%">Pieces Per Pack</td>
+                    <td width="10%">Unit Price</td>
+                    <td width="10%">Total Price</td>
+                    <td width="5%">&nbsp;</td>
+                </tr>
+            </thead>
+            <tbody id="summaryTable"></tbody>
+            <tr><td colspan="5">List Price</td><td colspan="2" id="total_amount">Total Cost</td></tr>
+        </table>
+        <div style="margin-left:40px;" id="allbutons" >
+            <span class="printDiv"><form action="/LargeEnclosure/Exportpdf" id="printPDF" method="POST" target="_blank"></form></span>
+            <span class="printDiv"><form action="/LargeEnclosure/Exportexcel" id="printCSV" method="POST" target="_blank"></form></span>
+            <!-- Trigger the modal with a button -->
+            <span class="printDiv" id="configid_button"></span>
+            <span class="printDiv"><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" id="emailattachment">Submit for RFQ</button></span>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Large enclosure selector - Email</h4>
+                </div>
+                <div class="modal-body" style="width:80%;margin:auto;position:relative;">
+                    <form id="emailforms">
+                        <span id="emailtabledata"></span>
+                        <table border="0" cellpadding="2" cellspacing="0">
+                            <tbody>
+                                <!--<tr><td>Your Name*:&nbsp;</td><td><input name="requestor" value="" class="inp01" type="text"></td></tr>
+                                <tr><td>Your Email*:&nbsp;</td><td><input name="email" value="" class="inp01" type="text"></td></tr>-->
+                                <tr><td>Sold to Party*:&nbsp;</td><td><input name="soldtoparty" value="" class="inp01" type="text"></td></tr>
+                                <tr><td>Sold to Contact*:&nbsp;</td><td><input name="soldtoContact" value="" class="inp01" type="text"></td></tr>
+                                <tr><td>Project Name*:&nbsp;</td><td><input name="projectName" value="" class="inp01" type="text"></td></tr>
+                                <tr>
+                                    <td valign="top">Comment:&nbsp;</td>
+                                    <td><textarea name="comment" cols="31" rows="2" style="color: #000000; height:60px;"></textarea></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        If you chose paint as an option, please select the color below.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Paint Color:&nbsp;</td>
+                                    <td>
+                                        <select name="paintColors" style="color:black;" class="inp01" required="">
+                                            <option value="RAL 7035 - Light Gray">RAL 7035 - Light Gray</option>
+                                            <option value="RAL 9005 - Jet Black">
+                                                RAL 9005 - Jet Black
+                                            </option>
+                                            <option value="RAL 9003 - Signal White">
+                                                RAL 9003 - Signal White
+                                            </option>
+                                            <option value="RAL 9010 - Pure White">
+                                                RAL 9010 - Pure White
+                                            </option>
+                                            <option value="RAL 9002 - Gray White">
+                                                RAL 9002 - Gray White
+                                            </option>
+                                            <option value="RAL 7032 - Pebble Gray">
+                                                RAL 7032 - Pebble Gray
+                                            </option>
+                                            <option value="ANSI 61 - Gray">
+                                                ANSI 61 - Gray
+                                            </option>
+                                            <option value="RAL 7012 - Basalt Gray">
+                                                RAL 7012 - Basalt Gray
+                                            </option>
+                                            <option value="RAL 7022 - Umbra Gray">
+                                                RAL 7022 - Umbra Gray
+                                            </option>
+                                            <option value="RAL 9001 - Cream">
+                                                RAL 9001 - Cream
+                                            </option>
+                                            <option value="RAL 1015 - Light Ivory">
+                                                RAL 1015 - Light Ivory
+                                            </option>
+                                            <option value="RAL 1023 - Traffic Yellow">
+                                                RAL 1023 - Traffic Yellow
+                                            </option>
+                                            <option value="RAL 1033 - Dahlia Yellow">
+                                                RAL 1033 - Dahlia Yellow
+                                            </option>
+                                            <option value="RAL 2000 - Yellow Orange">
+                                                RAL 2000 - Yellow Orange
+                                            </option>
+                                            <option value="RAL 2004 - Pure Orange">
+                                                RAL 2004 - Pure Orange
+                                            </option>
+                                            <option value="RAL 2002 - Vermilion">
+                                                RAL 2002 - Vermilion
+                                            </option>
+                                            <option value="RAL 3020 - Traffic Red">
+                                                RAL 3020 - Traffic Red
+                                            </option>
+                                            <option value="RAL 3001 - Signal Red">
+                                                RAL 3001 - Signal Red
+                                            </option>
+                                            <option value="RAL 3005 - Wine Red">
+                                                RAL 3005 - Wine Red
+                                            </option>
+                                            <option value="RAL 6011 - Reseda Green">
+                                                RAL 6011 - Reseda Green
+                                            </option>
+                                            <option value="RAL 6003 - Olive Green">
+                                                RAL 6003 - Olive Green
+                                            </option>
+                                            <option value="RAL 6002 - Leaf Green">
+                                                RAL 6002 - Leaf Green
+                                            </option>
+                                            <option value="RAL 5018 - Turquoise Blue">
+                                                RAL 5018 - Turquoise Blue
+                                            </option>
+                                            <option value="RAL 5012 - Light Blue">
+                                                RAL 5012 - Light Blue
+                                            </option>
+                                            <option value="RAL 5015 - Sky Blue">
+                                                RAL 5015 - Sky Blue
+                                            </option>
+                                            <option value="RAL 5017 - Traffic Blue">
+                                                RAL 5017 - Traffic Blue
+                                            </option>
+                                            <option value="RAL 5010 - Gentian Blue">
+                                                RAL 5010 - Gentian Blue
+                                            </option>
+                                            <option value="RAL 5005 - Signal Blue">
+                                                RAL 5005 - Signal Blue
+                                            </option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        If you chose holes and cutouts as an option, please attach the drawing below.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <input type="file" name="attechedDrawing" id="attechedDrawing">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" onclick="enclosureSelector.emailtabledata();">Send</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal --> 
+    <div>
+        <div id="myModal1">
+            <div id="configlinks"></div>
+        </div>
+    </div>    
+</div>

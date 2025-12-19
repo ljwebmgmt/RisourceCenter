@@ -1,0 +1,44 @@
+﻿@model IEnumerable<newrisourcecenter.Models.MDFUsers>
+@{
+    ViewBag.Title = "MDFUsers";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="main_content">
+    <section>
+        <div class="dropdown" style="display:inline-block;">
+            <h4><span style="color:#E50043;">@Model.FirstOrDefault().company</span> users and MDF status</h4>
+        </div>
+        <div class="dropdown" style="display:inline-block;float:right;">
+            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                Filter By Company
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                @foreach (var item in @ViewBag.partnerComp)
+                {
+                    <li><a href="~/MDFView/MDFusers/?compid=@item.comp_ID&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=@item.comp_name">@item.comp_name</a></li>
+                }
+            </ul>
+        </div>
+
+        <table class="table">
+            <thead>
+                <tr><th>User ID</th><th>User Status</th><th>Admin Status</th><th></th></tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.fullName</td>
+                        <td>@item.userstatus</td>
+                        <td>@item.adminstatus</td>
+                        <td align="right">
+                            @Html.ActionLink("Edit", "Edit", "UserViewModels", new { id = item.usr_ID, n1_name = Request.QueryString["n1_name"], msg = item.fullName, compid = item.comp_ID, user_ID = item.usr_ID, n2_name = "MDF Status", tool = "MDF" }, new { @class = "btn btn-info" })
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+</section>
+</div>

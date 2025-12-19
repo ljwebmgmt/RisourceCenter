@@ -1,0 +1,64 @@
+﻿@model IEnumerable<newrisourcecenter.Models.tbl_MRK_Zipcode>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.PostalCode)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CGrp)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.V1)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.V1Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.V1Email)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.V1Phone)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.PostalCode)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CGrp)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.V1)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.V1Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.V1Email)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.V1Phone)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.id }) |
+            @Html.ActionLink("Details", "Details", new { id=item.id }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.id })
+        </td>
+    </tr>
+}
+
+</table>

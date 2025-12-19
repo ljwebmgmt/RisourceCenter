@@ -1,0 +1,335 @@
+﻿@model newrisourcecenter.Models.NonPIMViewModel
+@{
+    ViewBag.Title = "Non PIM Product Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    Dictionary<string, string> catalogTitles = new Dictionary<string, string>() { { "catalog", "Catalog Page(s)" }, { "white paper", "White Paper" }, { "flyer", "Flyer" }, { "brochure", "Brochure" }, { "msds", "MSDS" } };
+}
+@functions {
+    string GetReadableFileSize(long fileSizeInBytes)
+    {
+        string[] sizeUnits = { "B", "KB", "MB", "GB", "TB" };
+        double size = fileSizeInBytes;
+        int unitIndex = 0;
+
+        while (size >= 1024 && unitIndex < sizeUnits.Length - 1)
+        {
+            size /= 1024;
+            unitIndex++;
+        }
+        return string.Format("{0:0.##} {1}", size, sizeUnits[unitIndex]);
+    }
+}
+<style>
+    th {
+        padding-top: 5px;
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .hitext {
+        font-weight: bold;
+        color: RED;
+    }
+
+    hr { border: 1px solid #ccc; }
+    tr { background: none !important; }
+</style>
+<div id="page" class="main_content">
+    <div id="main" class="clr">
+        <div id="content">
+            <span class="ContentStart"></span>
+            <div class="cnt-inner">
+                <div id="header-cnt" class="shadowed" style="border-bottom:5px solid #e3006a;">
+                    @if (Model.product != null && Model.product.ContainsKey("use_prod_descsap") && Model.product["use_prod_descsap"].ToString() == "1")
+                    {
+                        <h2>@(Model.product["prod_descsap"].ToString() + " - " + Model.partNumber)</h2>
+                    }
+                    else
+                    {
+                        <h2>@Model.partNumber</h2>
+                    }
+                </div>
+                <div class="cnt-2col-products">
+                    <div class="content-main header">
+                        <div class="info">
+                            <!--- Check to see if this product is Discontinued - If not display Marketing text  --->
+                            @if (Model.discontinuedProduct != null)
+                            {
+                                <span class="hitext">
+                                    @Model.discontinuedProduct.disc_desc<br />
+                                    @if (!string.IsNullOrEmpty(Model.discontinuedProduct.prod_disclookup))
+                                    {
+                                        <span>It has been replaced by @Model.discontinuedProduct.prod_disclookup</span>
+                                    }
+                                    else
+                                    {
+                                        <span> W/O Replacement</span>
+                                    }
+                                </span>
+                            }
+                            <!--- end discontinued. --->
+                        </div>
+                        <!--- start images --->
+                        @if (Model.imageFiles != null && Model.imageFiles.Count > 0)
+                        {
+                            <div class="img-slider" id="img-slider">
+                                <div class="inner">
+                                    <div class="img-slides">
+                                        <div class="slider-container" style="height: 231.0px;">
+                                            @foreach(var file in Model.imageFiles)
+                                            {
+                                                <div class="slide" style="display: block; position: absolute; left: 0px;">
+                                                    <div style="display:block;position:absolute;left:0px;overflow:hidden;background:WHITE;text-align:center;">
+                                                        <img src="/img/products/detail/@file.image_file" height="210px" alt="@file.image_desc" />
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="slider-controls">
+                                        <a href="#" class="slide-left"></a>
+                                        <a href="#" class="slide-right"></a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        <!--- end images --->
+                    </div>
+                    <div class="content-marginal header">
+                        <h3>Part No. </h3>
+                        @(Model.product != null && Model.product.ContainsKey("use_prod_descsap") && Model.product["use_prod_descsap"].ToString() == "1" ? Model.product["prod_descsap"].ToString() + " - " : "")@Model.partNumber
+                    </div>
+                </div>
+                <div class="cnt-2col-products">
+                    <div class="content-main fullwidth">
+                        <div class="tab-box">
+                            <div class="tab-toggle-container"></div><!--- TABS --->
+                            <!--- tab start --->
+                            <div class="tab-toggle">
+                                <h3>Features</h3>
+                                <hr/>
+                            </div>
+                            <div class="tab">
+                                <table class="product-features">
+                                    @if (Model.textFeatures.Count > 0 || Model.additionalSpecifications.Count > 0 || Model.ratings.Count > 0)
+                                    {
+                                        if (Model.textFeatures.Count > 0)
+                                        {
+                                            <tr>
+                                                <th colspan="2"><h4>Product Features</h4></th>
+                                            </tr>
+                                            if (Model.dimension != null && Model.dimension.prod_height > 0 && Model.dimension.prod_width > 0 && Model.dimension.prod_depth > 0)
+                                            {
+                                                <tr>
+                                                    <td colspan="2">
+                                                        <p>
+                                                            <strong>Dimensions:</strong><br />
+                                                            <span>@(Model.dimension.prod_height)mm (@Model.dimension.prod_height.ToString("######.#")) X @(Model.dimension.prod_width)mm (@Model.dimension.prod_width.ToString("######.#")) X @(Model.dimension.prod_depth)mm (@Model.dimension.prod_depth.ToString("######.#"))</span>
+                                                        </p>
+                                                    </td>
+                                                </tr>
+                                            }
+                                            foreach (var obj in Model.textFeatures)
+                                            {
+                                                if (obj.txt_type == "note")
+                                                {
+                                                    <tr>
+                                                        <td colspan="2">
+                                                            <p style="padding-left:10px;">@Html.Raw(obj.txt_marketing)</p>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                        }
+                                        if (Model.additionalSpecifications.Count > 0)
+                                        {
+                                            <tr><th colspan="2"><h4>Additional Specifications</h4></th></tr>
+                                            foreach (var obj in Model.additionalSpecifications)
+                                            {
+                                                <tr>
+                                                    <th align="right" width="40%"><b>@obj.as_desc</b></th>
+                                                    <td width="60%">@obj.asv_value</td>
+                                                </tr>
+                                            }
+                                        }
+                                        if (Model.ratings.Count > 0)
+                                        {
+                                            <tr><th colspan="2"><h4>Ratings</h4></th></tr>
+                                            foreach (var obj in Model.ratings)
+                                            {
+                                                <tr valign="top">
+                                                    <td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@obj.srate_desc @obj.prod_ratevalue</td>
+                                                </tr>
+                                            }
+                                        }
+                                    }
+                                </table>
+                            </div>
+                            <!--- tab end --->
+                            <!--- tab start --->
+                            <div class="tab-toggle">
+                                <h3>Accessories</h3>
+                                <hr/>
+                            </div><!--- Accessories --->
+                            <div class="tab">
+                                @if (Model.accessories != null && Model.accessories.Count > 0)
+                                {
+                                    string currenttitle = "";
+                                    <table class="product-features">
+                                        @foreach (var accessory in Model.accessories)
+                                        {
+                                            string accessoryTitle = accessory.titleName.Split('_')[0];
+                                            if (currenttitle != accessoryTitle)
+                                            {
+                                                <tr><td colspan="2"><h4>@accessoryTitle</h4></td></tr>
+                                                <tr>
+                                                    <th width="30%"><b>Part Number</b></th>
+                                                    <th width="70%"><b>Description</b></th>
+                                                </tr>
+                                                currenttitle = accessoryTitle;
+                                            }
+                                            foreach (var descObj in accessory.descriptions)
+                                            {
+                                                <tr align="left" valign="top">
+                                                    <td>
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@Html.ActionLink((descObj.use_prod_descsap == "1" ? descObj.prod_descsap : descObj.specs_partnum), "Details", "ControllerName", new { part = descObj.specs_partnum }, null)
+                                                    </td>
+                                                    <td>@descObj.prod_description</td>
+                                                </tr>
+                                            }
+                                        }
+                                        <tr>
+                                            <td colspan="2">
+                                                <b>* For a more comprehensive selection of accessories, see <a href="/literature/digital-editions/rittal/index.html#/1/" name="Catalog 33" title="Catalog 33" target="_blank">Catalog 33.</a></b>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                }
+                                else
+                                {
+                                    <div>
+                                        Sorry, there is currently no information available. <br />
+                                        <b>* For a more comprehensive selection of accessories, see <a href="/literature/digital-editions/rittal/index.html#/1/" name="Catalog 33" title="Catalog 33" target="_blank">Catalog 33.</a></b>
+                                    </div>
+                                }
+                            </div>
+                            <!--- tab end --->
+                            <!--- tab start --->
+                            <div class="tab-toggle">
+                                <h3>Literature</h3>
+                                <hr/>
+                            </div><!--- <!--- Literature --->
+                            <div class="tab">
+                                @if (Model.catalogs != null)
+                                {
+                                    <table class="product-features">
+                                        @foreach (string type in new List<string>() { "catalog", "white paper", "flyer", "brochure", "msds" })
+                                        {
+                                            if (Model.catalogs.ContainsKey(type) && Model.catalogs[type].Count > 0)
+                                            {
+                                                <tr><th><h4>@catalogTitles[type]</h4></th></tr>
+                                                foreach (var dict in Model.catalogs[type])
+                                                {
+                                                    <tr><td>@(dict.ContainsKey("lit_title") ? dict["lit_title"].ToString() : "")</td></tr>
+                                                }
+                                            }
+                                        }
+                                    </table>
+                                }
+                                @if (Model.uploads != null && Model.uploads.Count > 0)
+                                {
+                                    List<string> fileTypes = new List<string>() { "dwf", "dwg", "fp", "pdf", "stp", "vid", "zip" };
+                                    <table class="product-features">
+                                        <tr><th colspan="2"><h4>User Guides/Drawings</h4></th></tr>
+                                        @foreach (var dict in Model.uploads)
+                                        {
+                                            string filename = "";
+                                            string filetype = "";
+                                            string absolutePath = "";
+                                            string newFilename = "";
+                                            foreach (string type in fileTypes)
+                                            {
+                                                if (dict.ContainsKey("cad_" + type) && !string.IsNullOrEmpty(dict["cad_" + type].ToString()))
+                                                {
+                                                    filename = dict["cad_" + type].ToString();
+                                                    filetype = type;
+                                                    break;
+                                                }
+                                            }
+                                            if (string.IsNullOrEmpty(filename))
+                                            {
+                                                continue;
+                                            }
+                                            else
+                                            {
+                                                absolutePath = Server.MapPath("~/cad_files/" + filetype + "/" + filename);
+                                                if (!System.IO.File.Exists(absolutePath))
+                                                {
+                                                    continue;
+                                                }
+                                                string[] filenameParts = filename.Split('.');
+                                                newFilename = filename;
+                                                if (filenameParts.Length == 2)
+                                                {
+                                                    string modifiedFilename = filenameParts[0]; // Part before the dot
+                                                    string modifiedFilenameExt = filenameParts[1]; // Extension
+
+                                                    string[] underscoreParts = modifiedFilename.Split('_');
+
+                                                    if (underscoreParts.Length == 2) // Equivalent to ListLen(modifiedfilename, "_") EQ 2
+                                                    {
+                                                        string filenamePartOne = underscoreParts[0];
+                                                        string filenamePartTwo = underscoreParts[1];
+
+                                                        if (filenamePartOne != Model.partNumber) // Equivalent to NEQ
+                                                        {
+                                                            newFilename = Model.partNumber + "_" + filenamePartTwo + "." + modifiedFilenameExt;
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        if (modifiedFilename != Model.partNumber)
+                                                        {
+                                                            newFilename = Model.partNumber + "." + modifiedFilenameExt;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            <tr valign="top">
+                                                <td width="50%">
+                                                    <img src="/common/images/icon_@(filetype == "fp" ? "flashpaper" : (filetype == "zip" ? "winzip" : filetype)).gif" />
+                                                    <a href="/cad_files/@filetype/@filename" target="_blank" download="@newFilename">@newFilename</a> (@GetReadableFileSize(new FileInfo(absolutePath).Length))
+                                                </td>
+                                                <td width="50%">
+                                                    <span style="padding-right:10px;">
+                                                        @if (dict.ContainsKey("cad_desc") && !string.IsNullOrEmpty(dict["cad_desc"].ToString()))
+                                                        {
+                                                            @dict["cad_desc"].ToString()
+                                                        }
+                                                        else
+                                                        {
+                                                            @filetype.ToUpper()
+                                                        }
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </table>
+                                }
+                                </div>
+                            <!--- tab end --->
+                            <!--- tab start --->
+                            <!--<div class="tab-toggle">Certifications</div>--><!--- <!--- Certifications --->
+                            <!--<div class="tab"></div>-->
+                            <!--- tab end --->
+                            <!--- tab start --->
+                            <!--<div class="tab-toggle">Drawings</div>--><!--- <!--- Downloads --->
+                            <!--<div class="tab"></div>-->
+                            <!--- tab end --->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!--- #main --->
+    </div>
+</div>

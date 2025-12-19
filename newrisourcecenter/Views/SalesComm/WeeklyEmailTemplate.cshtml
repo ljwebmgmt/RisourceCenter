@@ -1,0 +1,18 @@
+﻿@model List<newrisourcecenter.Models.WeeklyEmail>
+ @{
+     string host = "";
+     if (Request.Url.Port != 443)
+     {
+         host = "http://" + Request.Url.Host + ":" + Request.Url.Port;
+     }
+     else
+     {
+         host = "https://"+Request.Url.Host;
+     }
+
+     foreach (var item in Model.Distinct())
+     {
+        <div><a href="@host/SalesComm/getSaleComById/?scID=@item.scID&n3id=@item.n3Id&n1_name=Sales Communications&sent=@item.send_date" >@item.sc_headline</a></div>
+        <br />        
+     }
+}

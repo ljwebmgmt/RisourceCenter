@@ -1,0 +1,327 @@
+﻿@model newrisourcecenter.Models.SRPViewModel
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    long companyId = Convert.ToInt64(Session["companyId"]);
+}
+<script>
+    $(document).ready(function () {
+        var paymentMethod = $("#paymentMethod"),supplier=$("#supplier"),shipTo=$("#shipTo"),shiptoAttn=$("#shiptoAttn");
+
+        additem = function () {
+            var id = $("#add_items tr:last").attr('id');
+            if (!id) {
+                var newid = 0;
+            } else {
+                var newid = parseInt(id) + 1;
+            }
+            $("#add_items").append('<tr id="' + newid + '" class="item_list_' + newid + '" >' +
+            '<td>' +
+                newid +
+            '</td>' +
+            '<td>' +
+                '<textarea class="form-control" id="partNumberOrdescription" name="partNumberOrdescription" style="width:200px;"></textarea>' +
+                '<span class="field-validation-valid text-danger" data-valmsg-for="partNumberOrdescription" data-valmsg-replace="true"></span>' +
+            '</td>' +
+            '<td>' +
+                '<input class="form-control text-box single-line" id="quantity_' + newid + '" onkeyup="calculatePrice(' + newid + ');" name="quantity" type="text" value="">' +
+                '<span class="field-validation-valid text-danger" data-valmsg-for="quantity" data-valmsg-replace="true"></span>' +
+            '</td>' +
+            '<td>' +
+                '<input class="form-control text-box single-line date-picker" id="deliveryDate" name="deliveryDate" type="text" value="">' +
+                '<span class="field-validation-valid text-danger" data-valmsg-for="deliveryDate" data-valmsg-replace="true"></span>' +
+            '</td>' +
+            '<td>' +
+                '<input class="form-control text-box single-line" id="unitPrice_' + newid + '" name="unitPrice" onkeyup="calculatePrice(' + newid + ');" type="text" value="">' +
+                '<span class="field-validation-valid text-danger" data-valmsg-for="unitPrice" data-valmsg-replace="true"></span>' +
+            '</td>' +
+            '<td>' +
+                '<input class="form-control text-box single-line" id="totalPrice_' + newid + '" name="totalPrice" type="text" value="">' +
+                '<span class="field-validation-valid text-danger" data-valmsg-for="totalPrice" data-valmsg-replace="true"></span>' +
+            '</td>' +
+            '<td id="actitemDropdownPlace_' + newid + '" ></td>' +
+            '<td id="cccitemDropdownPlace_' + newid + '" ></td>' +
+            '<td><div onclick="deleteitem(' + newid + '); return false;" class="btn btn-primary">-</div></td>' +
+            '</tr>');
+            //implement data picker
+            $(".date-picker").datepicker();
+            $("#actitemDropdownPlace_" + newid).html($("#actitemDropdown").html());
+            $("#cccitemDropdownPlace_" + newid).html($("#cccitemDropdown").html());
+        }
+
+        deleteitem = function (id) {
+            $(".item_list_" + id).remove();
+        }
+
+        calculatePrice = function (id) {
+            var unitPrice = $("#unitPrice_" + id).val();
+            var quantity = $("#quantity_" + id).val();
+            var total = parseInt(quantity) * parseInt(unitPrice)
+            if ($.isNumeric(parseInt(total))) {
+                $("#totalPrice_" + id).val(total);
+            } else {
+                $("#totalPrice_" + id).val(0);
+            }
+        }
+
+        $('select[name="department"]').change(function () {
+            $("#region").empty();
+            var selectedval = $("#department").val();
+            var getloc = "/SRPView/GetRigionalManager/?id=" + selectedval;
+            $.post(getloc, function (data) {
+                $.each(data, function (key, value) {
+                    $("#region").append("<option value=\"" + value.ID + "\">" + value.RegionName + "</option>");
+                });
+            });
+        }).change();
+
+        $('select[name="paymentMethod"]').change(function () {
+            if ($(this).val() == "0") {
+                $('#purchaseRequest').hide();
+            } else {
+                $('#purchaseRequest').show();
+            }
+        }).change();
+
+        $("form").submit(function (e) {
+            if (paymentMethod.val() == "1") {
+                if (supplier.val()=="") {
+                    alert("The supplier field is required");
+                    e.preventDefault();
+                } else if (shipTo.val()=="") {
+                    alert("The ship to field is required");
+                    e.preventDefault();
+                } else if (shiptoAttn.val() == "") {
+                    alert("The ship to attention field is required");
+                    e.preventDefault();
+                }
+            }
+        });
+    });
+</script>
+@using (Html.BeginForm("Create", "SRPView", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <div style="display:inline-block;">
+            @Html.ActionLink("Default Page", "Index", new { n1_name = Request.QueryString["n1_name"], n2_name = Request.QueryString["n2_name"] }, htmlAttributes: new { @class = "btn btn-primary" })
+        </div>
+        @Html.ActionLink("Manage Request", "Manage", new { n1_name = Request.QueryString["n1_name"], n2_name = Request.QueryString["n2_name"] }, htmlAttributes: new { @class = "btn btn-primary", @style = "float:right;clear:all;" })
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.department, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.department, Model.list_departments, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.department, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.requestType, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.requestType, Model.list_requestType, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.requestType, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.paymentMethod, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.paymentMethod, Model.list_paymentMethod, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.paymentMethod, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.region, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <select class="form-control" id="region" name="region"></select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.title, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.title, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.title, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="title">Description: </label>
+            <textarea class="form-control" name="description" id="description" style="height:300px;width:70%;" placeholder="Be Detailed in your explanation: This activity will take place on 05/07/16, we will take out engineers from XYZ Pharmaceuticals to dinner at Ruth Chris Steakhouse then to a Bulls game.
+
+Would like to request $800 for dinner and $1000 for the Bulls game that will include suite tickets, food, and drinks.
+
+Total $1,800.
+
+Potential enclosure and climate business could be the result as they build a new location in Rockford, IL.
+
+Rittal attendees include: John Smith and Jane Jones.
+
+Distributors attending will include (2) reps from Chicago Electrical."></textarea>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.estimatedCost, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="input-group col-md-10">
+                <div class="input-group-addon">$</div>
+                @Html.EditorFor(model => model.estimatedCost, new { htmlAttributes = new { @style="width:150px;", @placeholder="Amount" } })
+                @Html.ValidationMessageFor(model => model.estimatedCost, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.activitydate, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.activitydate, new { htmlAttributes = new { @class = "form-control date-picker" } })
+                @Html.ValidationMessageFor(model => model.activitydate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group" style="border:solid silver 1px;width:100%;padding:40px;margin-left:5px;">
+            @Html.LabelFor(model => model.fileupload, htmlAttributes: new { @class = "control-label col-md-12" })
+            <div class="col-md-10">
+                <input type="file" multiple name="fileupload" />
+            </div>
+        </div>
+
+        <div id="purchaseRequest" style="display:none;">
+            <div class="form-group">
+                @Html.LabelFor(model => model.supplier, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.supplier, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.supplier, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.supplierNumber, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.supplierNumber, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.supplierNumber, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.shipTo, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.shipTo, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.shipTo, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.shiptoAttn, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.shiptoAttn, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.shiptoAttn, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <hr style="background:red !important;" />
+
+            <div style="background-color:silver;padding:20px;">
+                <table class="table">
+                    <tr><td colspan="8" align="right"><div onclick="additem(); return false;" class="btn btn-primary">+ Add a row</div></td></tr>
+                    <tr>
+                        <th>
+                            Item
+                        </th>
+                        <th>
+                            Description
+                        </th>
+                        <th>
+                            Quantity
+                        </th>
+                        <th>
+                            Delivery Date
+                        </th>
+                        <th>
+                            Unit Price
+                        </th>
+                        <th>
+                            Total Price
+                        </th>
+                        <th>
+                            Chart of Accounts
+                        </th>
+                        <th>
+                            Cost Center
+                        </th>
+                        <td></td>
+                    </tr>
+                    <tbody id="add_items">
+                        <tr id="0" class="item_list_0">
+                            <td>
+                                0
+                            </td>
+                            <td>
+                                <textarea class="form-control" id="partNumberOrdescription" name="partNumberOrdescription" style="width:200px;"></textarea>
+                            </td>
+                            <td>
+                                <input class="form-control text-box single-line" id="quantity_0" name="quantity" onkeyup="calculatePrice(0);" type="text" value="" />
+                            </td>
+                            <td>
+                                <input class="form-control text-box single-line date-picker" id="deliveryDate" name="deliveryDate" type="text" value="" />
+                            </td>
+                            <td>
+                                <input class="form-control text-box single-line" id="unitPrice_0" name="unitPrice" onKeyup="calculatePrice(0);" type="text" value="" />
+                            </td>
+                            <td>
+                                <input class="form-control text-box single-line" id="totalPrice_0" name="totalPrice" type="text" value="" />
+                            </td>
+                            <td>
+                                @Html.DropDownListFor(model => model.achType, Model.list_achType, new { @class = "form-control" })
+                            </td>
+                            <td>
+                                @Html.DropDownListFor(model => model.cccType, Model.list_cccType, new { @class = "form-control" })
+                            </td>
+                            <td><div onclick="deleteitem(0); return false;" class="btn btn-primary">-</div></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="form-group" style="border:solid silver 1px;width:100%;padding:40px;margin-left:5px;">
+                    @Html.LabelFor(model => model.uploadinvoice, htmlAttributes: new { @class = "control-label col-md-12" })
+                    <div class="col-md-10">
+                        <input type="file" multiple name="uploadinvoice" />
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <br clear="all" />
+        <hr style="background:red !important;" />
+
+        <input name="n1_name" type="hidden" value="@Request.QueryString["n1_name"]" />
+        <input name="n2_name" type="hidden" value="@Request.QueryString["n2_name"]" />
+        <input name="compID" type="hidden" value="@companyId" />
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input id="SalesRepID" name="SalesRepID" type="hidden" value="@Session["userId"]" />
+                <input type="submit" name="save" value="Save Draft" class="btn btn-primary" />
+                <input type="submit" name="send" value="Submit Request" class="btn btn-success" />
+                @Html.ActionLink("Cancel", "Index", new { n1_name = Request.QueryString["n1_name"], n2_name = Request.QueryString["n2_name"] }, htmlAttributes: new { @class = "btn btn-primary" })
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+<div id="actitemDropdown" hidden="hidden">
+    @Html.DropDownListFor(model => model.achType, Model.list_achType, new { @class = "form-control" })
+</div>
+
+<div id="cccitemDropdown" hidden="hidden">
+    @Html.DropDownListFor(model => model.cccType, Model.list_cccType, new { @class = "form-control" })
+</div>

@@ -1,0 +1,150 @@
+﻿@model newrisourcecenter.Models.LocalizationModel
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    $(document).ready(function () {
+
+        selectEditLanguage = function (selectedObject) {
+            var selectedval = selectedObject.options[selectedObject.selectedIndex].value;
+            var selectedtext = selectedObject.options[selectedObject.selectedIndex].text;
+            if (selectedval != "Select") {
+                var link = "/Localization//Edit/" + selectedval + "?msg=" + selectedtext + "&n1_name=Translate Page Content";
+                location.href = link;
+            }
+        }
+
+        $("form").submit(function (e) {
+            e.preventDefault;
+
+            if ($("#language").val() == "Select") {
+                alert("This content has been translated into all languages");
+                return false;
+            }
+
+            return true;
+        });
+
+    });
+</script>
+
+@using (Html.BeginForm()) 
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <h4>Use the drop down below to edit the language that has already been translated</h4>
+        <div class="form-group">
+            @Html.LabelFor(model => model.edit_language, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(m => m.edit_language, Model.edit_lang_ids, htmlAttributes: new { @onchange = "selectEditLanguage(this);", @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.edit_language, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        @if (@Model.list_country_ids.Count() == 1)
+        {
+            <div class="form-group">
+                @Html.LabelFor(model => model.message_original, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.Raw(Model.message_original)
+                    @Html.ValidationMessageFor(model => model.message_original, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        }
+        else
+        {
+
+        <div class="form-group">
+            @if (@Request.QueryString["tableName"] == null)
+            {
+                @Html.LabelFor(model => model.table_name, htmlAttributes: new { @class = "control-label col-md-2" })
+            }
+            <div class="col-md-10">
+                @if (@Request.QueryString["tableName"] != null)
+                {
+                    <input type="hidden" name="table_name" value="@Request.QueryString["tableName"]" class="form-control" />
+                }
+                else
+                {
+                    @Html.EditorFor(model => model.table_name, new { htmlAttributes = new { @class = "form-control" } })
+                }
+                @Html.ValidationMessageFor(model => model.table_name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @if (@Request.QueryString["parent_id"] == null)
+            {
+                @Html.LabelFor(model => model.parent_id, htmlAttributes: new { @class = "control-label col-md-2" })
+            }
+            <div class="col-md-10">
+                @if (@Request.QueryString["parent_id"] != null)
+                {
+                    <input type="hidden" name="parent_id" value="@Request.QueryString["parent_id"]" class="form-control" />
+                }
+                else
+                {
+                    @Html.EditorFor(model => model.parent_id, new { htmlAttributes = new { @class = "form-control" } })
+                }
+                @Html.ValidationMessageFor(model => model.parent_id, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @if (@Request.QueryString["columnName"] == null)
+            {
+                @Html.LabelFor(model => model.column_name, htmlAttributes: new { @class = "control-label col-md-2" })
+            }
+            <div class="col-md-10">
+                @if (@Request.QueryString["columnName"] != null)
+                {
+                    <input type="hidden" name="column_name" value="@Request.QueryString["columnName"]" class="form-control" />
+                }
+                else
+                {
+                    @Html.EditorFor(model => model.column_name, new { htmlAttributes = new { @class = "form-control" } })
+                }
+                @Html.ValidationMessageFor(model => model.column_name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.message_original, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextAreaFor(model => model.message_original, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.message_original, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.message_translated, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextAreaFor(model => model.message_translated, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.message_translated, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.language, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(m => m.language, Model.list_country_ids, htmlAttributes: new { @onchange = "selectLocation(this);", @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.language, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+        }
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>

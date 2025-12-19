@@ -1,0 +1,85 @@
+﻿    <style>
+    @{
+        int countryId = Convert.ToInt32(Session["userCountryId"]);
+        int languageId = Convert.ToInt32(Session["userLanguageId"]);
+        int count = newrisourcecenter.Controllers.MenuContoller.TopMenu(User.Identity.GetUserName(), languageId, countryId).Count();
+        int x = 0;
+
+        List<int> leftPosition = new List<int>();//start a list of left positions
+        for (int i = 0; i < count; i++)
+        {
+            leftPosition.Add(i * 10);
+        }
+
+        foreach (var item in newrisourcecenter.Controllers.MenuContoller.TopMenu(User.Identity.GetUserName(), languageId, countryId))
+        {
+            string linkCSS = "." + item.LinkID + "_menu_show{ display: none; }" +
+            "#" + item.LinkID + "_menu{magin-top:20px;z-index:1000;width:100%;height:auto;list-style:none;width: 20%;line-height: 30px;position: absolute;}" +
+            "#" + item.LinkID + "_menu a{background-image:none;width: 100%;}";
+            x++;
+            @linkCSS;
+        }
+    }
+    </style>
+    @{
+        var style = new newrisourcecenter.Controllers.UserThemesController().themdata(User.Identity.GetUserName()).ElementAtOrDefault(0).theme_id;
+
+        //if (style == 1)
+        //{
+            @Styles.Render("~/Content/css/dark");
+        @*}
+        else if (style == 2)
+        {
+            @Styles.Render("~/Content/css/blue");
+        }
+        else if (style == 3)
+        {
+            @Styles.Render("~/Content/css/gray");
+
+        }
+        else
+        {
+            @Styles.Render("~/Content/css/white");
+        }*@
+    }
+
+    @Scripts.Render("~/bundles/modernizr")
+
+    @{
+        bool isPinnacle = Convert.ToBoolean(Session["isPinnacleUser"]);
+        string Notlogedinstyle = "<div id=\"main\" style=\"margin-top:1%;padding: 70px 10px 10px;border:solid #696969 1px;background: #ffff;height: 90vh;\" >";
+        string Registerstyle = "<div id=\"main\" style=\"margin-top:-2%;padding: 70px 10px 10px;border:solid #696969 1px;background: #ffff;height: 90vh;\" >";
+        string logedinstyle = "<div id=\"main\" >";
+
+        if (Request.IsAuthenticated)
+        {
+            @Html.Raw(@logedinstyle);
+        }
+        else if (Request.RawUrl.Contains("Register"))
+        {
+            @Html.Raw(@Registerstyle);
+        }
+        else
+        {
+            @Html.Raw(@Notlogedinstyle);
+        }
+
+        long userId = Convert.ToInt64(Session["userId"]);
+
+        if (!Request.IsAuthenticated || userId == 0)
+        {
+            Html.RenderPartial("_LoggedOutPartial");
+        }
+        else
+        {
+            Html.RenderPartial("_LoggedInPartial");
+        }
+    }
+    @using Microsoft.AspNet.Identity
+
+    @RenderBody()
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+

@@ -1,0 +1,112 @@
+﻿@model IEnumerable<newrisourcecenter.Models.LiteratureViewModel>
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    $(document).ready(function () {
+        risourceSelection = function (selectedObject) {
+            var selectedval = selectedObject.options[selectedObject.selectedIndex].value;
+            var selectedid = selectedObject.options[selectedObject.selectedIndex].id;
+            var link = "../SalesComm/GetRiSources/?risource_id=" + selectedval + "&scID=" + selectedid;
+
+            $.post(link, function (data) {
+                $('div#risources').html("<br />" + data + "<br /><br />");
+            });
+        }
+
+        $("#form").submit(function (e) {
+            e.preventDefault;
+
+            if ($("#lit_name").val() == "") {
+
+                alert("Enter a literature name");
+
+                return false;
+            }
+
+            return true;
+        });
+    });
+</script>
+
+@using (Html.BeginForm("Create", "Literature", FormMethod.Post, new { enctype = "multipart/form-data", @id = "form" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="lit_forms">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.FirstOrDefault().lit_name, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <input type="text" name="lit_name" id="lit_name" value="" class="form-control" />
+                @Html.ValidationMessageFor(model => model.FirstOrDefault().lit_name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.FirstOrDefault().risource_menu, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <select name="n2ID" onchange="risourceSelection(this);" class="form-control text-box single-line">
+                    @foreach (var items in @ViewBag.RiSourceMenu)
+                    {
+                        <option value="@items.id">@items.name</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="risource_menu"></label>
+            <div class="col-md-10">
+                <div id="risources">
+
+                </div>
+                <div id="risourceSelected">
+
+                </div>
+            </div>
+        </div>
+
+        <input type="hidden" name="date_updated" id="date_updated" value="" class="form-control" />
+        <input type="hidden" name="updated_by" id="updated_by" value="" class="form-control" />
+        <input type="hidden" name="n1_name" value="@Request.QueryString["n1_name"]" />
+        <input name="date_created" id="date_created" type="hidden" value=@DateTime.Now />
+        <input name="created_by" id="created_by" type="hidden" value=@Session["userId"] />
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+
+    </div>
+}
+
+<h3>Added Literature</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.lit_name)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.lit_name)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.lit_ID, n1_name = Request.QueryString["n1_name"], msg = item.lit_name }, new { @class = "btn btn-info" })
+                    @Html.ActionLink("Delete", "Delete", new { id = item.lit_ID, n1_name = Request.QueryString["n1_name"] }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false", @class = "btn btn-info" })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

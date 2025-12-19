@@ -1,0 +1,71 @@
+﻿@model IEnumerable<newrisourcecenter.Models.RittalUniversityViewModels>
+@{
+    Layout = null;
+
+}
+<div style="text-align:left;">
+    Results @Model.Count()
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.trid)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.tr_module)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UserName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.tr_date)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.tr_PassGrade)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.tr_score)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.usr_email)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.trid)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.tr_module)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.tr_date)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.tr_PassGrade)
+                </td>
+                <td>
+                    @if (Convert.ToInt32(item.tr_score) >= 80)
+                    {
+                        <strong style="color:green;">@Html.DisplayFor(modelItem => item.tr_score)</strong>
+                    }
+                    else
+                    {
+                        <strong style="color:red;">@Html.DisplayFor(modelItem => item.tr_score)</strong>
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.usr_email)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

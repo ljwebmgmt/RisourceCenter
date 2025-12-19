@@ -1,0 +1,40 @@
+﻿@model  newrisourcecenter.Models.LinksViewModel
+
+@{
+    ViewBag.Title = "Links";
+}
+<div class="main_content">
+    <section>
+        @Model.n1_descLong
+    </section>
+    <hr id="header_bar" />
+    <ul>
+        @foreach (var item in Model.list_n2_data)
+        {
+            if (!string.IsNullOrEmpty(item.n2_redirect) || !string.IsNullOrEmpty(item.n2_redirectJS))
+            {
+                <div class="col-sm-6 col-md-3">
+                    <a href="@item.n2_redirect" onclick="@item.n2_redirectJS" target="_blank">
+                        <div class="thumbnail tile rittal-green ">
+                            <h2 style="font-size:12px;line-height:30px;">
+                                @item.n2_nameLong
+                            </h2>
+                        </div>
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="col-sm-6 col-md-3">
+                    <a href="/@item.Controller/@item.PageName?parentid=@item.n1ID&amp;childid=@item.n2ID&amp;n2_name=@item.n2_nameLong&amp;n1_name=@Request.QueryString["n1_name"]">
+                        <div class="thumbnail tile rittal-green ">
+                            <h2 style="font-size:12px;line-height:30px;">
+                                @item.n2_nameLong
+                            </h2>
+                        </div>
+                    </a>
+                </div>
+            }
+        }
+    </ul>
+</div>

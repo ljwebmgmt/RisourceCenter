@@ -1,0 +1,224 @@
+﻿@model newrisourcecenter.Models.RegisterViewModel
+@{
+    ViewBag.heading = "Request an account";
+    Model.Newsletter = true;
+}
+<script>
+    $(document).ready(function () {
+        var companyIds = @Html.Raw(Json.Encode(ViewBag.approverCompanyIds));
+        var optionsdata = $('#optionsdata'), the_loc = $('#the_loc'), sap_numb_box = $("#sap_numb_box");
+        the_loc.hide(); sap_numb_box.hide();
+
+        selectLocation = function (selectedObject) {
+            var selectedval = selectedObject.options[selectedObject.selectedIndex].value;
+            if ($.inArray(parseInt(selectedval), companyIds) > -1) {
+                $('.approver-box').removeClass('hide');
+            }
+            else {
+                $('.approver-box').addClass('hide');
+                $('.approver-box select').val('');
+            }
+            var getloc = "../Account/getLocation/?comp_ID=" + selectedval;
+            the_loc.show();
+            $.post(getloc, function (data) {
+                optionsdata.html(data);
+                sap_numb_box.show();
+            });
+        }
+
+        $("form").submit(function (e) {
+            e.preventDefault;
+            if ($("#comp_loc_ID").val() == "Select a location") {
+                alert("Select a location");
+                return false;
+            }
+            return true;
+        });
+
+        //$("select").prop('class', 'selectpicker');
+        //$("select").attr("data-live-search", "true");
+
+    });
+</script>
+<article align="center" style="background:#fff;">
+
+    <div class="row" align="center">
+        <h2 style="color:#E50043;">@ViewBag.heading</h2>
+        <section align="left" id="registerForm">
+            @using (Html.BeginForm("RegisterTemp", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+            {
+                @Html.AntiForgeryToken()
+
+                if (Request.QueryString["msg"] != null)
+                {
+                    <h4 style="color:red;">@Request.QueryString["msg"]</h4>
+                }
+                else
+                {
+                    <h4>Login Information.</h4>
+                }
+                <hr />
+                <span>
+                    @Html.ValidationSummary("", new { @class = "text-danger" })
+                </span>
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-4">
+                        @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @placeholder = "Enter your email" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-4">
+                        @Html.PasswordFor(m => m.Password, new { @class = "form-control", @placeholder = "Enter your password" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.ConfirmPassword, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-4">
+                        @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control", @placeholder = "Confirm your password" })
+                    </div>
+                </div>
+                <br />
+                <h4>Personal Information</h4>
+                <hr />
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Title, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-4">
+                        @Html.TextBoxFor(m => m.Title, new { @class = "form-control", @placeholder = "Enter your title" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.FirstName, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-4">
+                        @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", @placeholder = "Enter your first name" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.LastName, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-4">
+                        @Html.TextBoxFor(m => m.LastName, new { @class = "form-control", @placeholder = "Enter your last name" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Address1, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-4">
+                        @Html.TextBoxFor(m => m.Address1, new { @class = "form-control", @placeholder = "Enter primary address" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Address2, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-4">
+                        @Html.TextBoxFor(m => m.Address2, new { @class = "form-control", @placeholder = "Enter secondary address" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.City, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-4">
+                        @Html.TextBoxFor(m => m.City, new { @class = "form-control", @placeholder = "Enter your city" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.State, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-4">
+                        @Html.DropDownListFor(m => m.State, Model.List_states, htmlAttributes: new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Country, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-4">
+                        @Html.DropDownListFor(m => m.Country, Model.List_countries, htmlAttributes: new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Language, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-4">
+                        @Html.DropDownListFor(m => m.Language, Model.List_languages, htmlAttributes: new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Zip, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-4">
+                        @Html.TextBoxFor(m => m.Zip, new { @class = "form-control", @placeholder = "Enter your zip", @maxlength = "6" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Phone, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-4">
+                        @Html.TextBoxFor(m => m.Phone, new { @class = "form-control", @placeholder = "Enter your phone number" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Fax, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-4">
+                        @Html.TextBoxFor(m => m.Fax, new { @class = "form-control", @placeholder = "Enter your fax number" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Website, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-4">
+                        @Html.TextBoxFor(m => m.Website, new { @class = "form-control", @placeholder = "Enter your website" })
+                    </div>
+                </div>
+                @Html.HiddenFor(m => m.Newsletter, "true")
+
+                @*<div class="form-group">
+                @Html.LabelFor(m => m.Newsletter, new { @class = "col-md-2 control-label" })
+                <div class="col-md-4">
+                    @Html.RadioButtonFor(m => m.Newsletter, "true") Yes
+                    @Html.RadioButtonFor(m => m.Newsletter, "false") No
+                </div>
+            </div>*@
+                <div>
+                    Don't see your partner company or location in the options below? Contact our Customer Service team at <a href="mailto:customerservice@rittal.us?Subject=RiSourceCenter%20access%20request" target="_top">customerservice@rittal.us</a>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Company, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-4">
+                        @Html.DropDownListFor(m => m.Company, Model.Company_listings, htmlAttributes: new { @onchange = "selectLocation(this);", @class = "form-control" })
+                    </div>
+                </div>
+                <div class="form-group" id="the_loc">
+                    @Html.LabelFor(m => m.Comp_loc_ID, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-4">
+                        <span id="optionsdata"></span>
+                    </div>
+                </div>
+
+                <div class="form-group" id="sap_numb_box">
+                    @Html.LabelFor(m => m.Sap_numb, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-4">
+                        @Html.TextBoxFor(m => m.Sap_numb, new { @class = "form-control", @placeholder = "Enter your SAP number" })
+                    </div>
+                </div>
+
+                <div class="hide approver-box">
+                    <p class="control-label"><b>For Rittal storefront purchases (printed collateral, promo items, apparel, and business cards), please choose the appropriate approver below</b></p>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Region_Approver, new { @class = "col-md-2 control-label" })
+                        <div class="col-md-4">
+                            @Html.DropDownListFor(m => m.Region_Approver, Model.Approver_listings, new { @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-primary">
+                            <span class="glyphicon glyphicon-saved"></span> Register
+                        </button>
+                        @*<input type="submit" class="btn btn-primary" value="Register" />*@
+                        @Html.ActionLink("Go to login page", "Login", null, htmlAttributes: new { @class = "btn btn-primary" })
+                        @Html.ActionLink("Forgot your password?", "ForgotPassword", null, htmlAttributes: new { @class = "btn btn-primary" })
+                    </div>
+                </div>
+            }
+        </section>
+    </div>
+</article>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+

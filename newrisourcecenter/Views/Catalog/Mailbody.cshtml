@@ -1,0 +1,68 @@
+﻿
+@{
+    ViewBag.Title = " ";
+    Layout = null;
+}
+<style>
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    a, a:hover, a:visited {
+        color: #ED0677;
+    }
+
+    .powerbar {
+        background: #393939;
+    }
+</style>
+<div style="width:600px;">
+    <table align="center" style="background:#393939;width:100%;padding:4px;font-family:Verdana, Arial, Helvetica, sans-serif">
+        <tr>
+            <td width="75px" style="width:75px;">
+                <img src="https://risourcecenter.com/images/rittal_logo_header.gif" alt="Rittal Logo" style="padding:4px;" />
+            </td>
+            <td align="left"><span id="title" style="color:#FFF;font-weight:bold;font-size:26px;line-height:18px;margin-top:30px;">&nbsp;Rittal<br />Corporation</span></td>
+        </tr>
+    </table>
+    <div style="height:20px;width:100%;background:#292929;">&nbsp;</div>
+    <strong><p style="color:#e2007a;text-align:left;font-family:Verdana, Arial, Helvetica, sans-serif;padding-left:8px;">@DateTime.Now.ToString("MMMM d yyyy")</p></strong>
+    <div id="mainBody" style="font-family:Verdana, Arial, Helvetica, sans-serif;">
+        <h2 align="center">Rittal Digital on Demand</h2>
+        <!--- intro paragraph --->
+        <p>You have recieved a custom literature document, created by Rittal's Digital on Demand tool.</p>
+        <p>Click  <a href="@String.Format("https://risourcecenter.com/Catalog?LID=792&pgn={0}&cover=true", Model.pages)" target="_blank">HERE</a> to view your digital document.</p>
+        <hr noshade />
+        <strong>From:</strong> @Model.names
+        <br />
+        <strong>Email Address:</strong> @Model.emial_addresses
+        <br />
+        <strong>Company Name:</strong> @Model.company_names
+        <br />
+        <strong>City:</strong> @Model.cities
+        <br />
+        <strong>State:</strong> @Model.states
+        <br />
+        <strong>Zip:</strong> @Model.zip
+        <br />
+        <strong>Phone:</strong> @Model.phones
+        <br />
+        <strong>Project Title:</strong> @Model.project_titles
+        <br />
+        <strong>Comment:</strong> @Model.comments
+        <hr noshade />
+    </div>
+    <br />&nbsp;
+    <div style="height:20px;width:100%;background:#292929;">&nbsp;</div>
+    <div class="powerBar" style="height:23px" align="center">
+        <div style="background-image:url(https://risourcecenter.com/images/pbFiller.gif);background-repeat:repeat-x;background-size:100% 23px;">
+            <img src="https://risourcecenter.com/images/powerBar5.gif" width="100%" />
+        </div>
+    </div>
+    <div align="center" style="width:100%;background:#393939;height:120px;font-family:Verdana, Arial, Helvetica, sans-serif;">
+        &nbsp;
+        <p style="color:#FFF;font-size:14px;">Rittal North America LLC<br>425 N Martingale Rd, Suite 400 Schaumburg, Illinois 60173</p>
+        <p style="font-size:12px;"><a href="https://www.risourcecenter.com/" target="_blank">RiSourceCenter.com</a> | <a href="http://www.rittal.us/" target="_blank">Rittal.us</a></p><br />
+    </div>
+</div>
+

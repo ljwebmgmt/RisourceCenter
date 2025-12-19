@@ -1,0 +1,91 @@
+﻿@model List<newrisourcecenter.Models.LargeEnclosureMyaccessory>
+@{
+    ViewBag.Title = "PDFView";
+    Layout = "";
+}
+<style>
+    td{border:solid 1px #000;}
+</style>
+<div style="width:100%;">
+    <div style="display:inline-block;width:15%;float:left;" ><h1>Rittal</h1></div>
+    <div style="display:inline-block;width:80%;float:right;" >Reference #: @ViewBag.token</div>
+</div>
+<table style="width:100%;border:solid 1px #000;border-collapse:collapse;">
+    <thead>
+        <tr>
+            <th style="width:180px;border:solid 1px #000;">
+                Part Number
+            </th>
+            <th style="width:200px;border:solid 1px #000;" >
+                Description
+            </th>
+            <th style="width:100px;border:solid 1px #000;" >
+                Number of Packs
+            </th>
+            <th style="width:100px;border:solid 1px #000;" >
+                Pieces Per Pack              
+            </th>
+            <td>Unit Price</td>
+            <td>Total Price</td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            //Add enclosures
+            if (item.Part_Number.Contains("Base Enclosure"))
+            {
+                <tr style="background:lightblue;">
+                    <td colspan="6">
+                        @Html.DisplayFor(modelItem => item.Part_Number)
+                    </td>
+                </tr>
+            }
+            if (item.Part_Number.Contains("Bayed enclosures"))
+            {
+                <tr style="background:lightblue;">
+                    <td colspan="6">
+                        @Html.DisplayFor(modelItem => item.Part_Number)
+                    </td>
+                </tr>
+            }
+            //Add enclosures
+            if (!item.Part_Number.Contains("Base Enclosure") && !item.Part_Number.Contains("List Price") && !item.Part_Number.Contains("Bayed enclosures"))
+            {
+                <tr>
+                    <td>
+                        @if (string.IsNullOrEmpty(item.Accessory_Number))
+                        {
+                           <span>@Html.DisplayFor(modelItem => item.Part_Number)</span> 
+                        }
+                        else
+                        {
+                            <span>@Html.DisplayFor(modelItem => item.Part_Number) - @Html.DisplayFor(modelItem => item.Accessory_Number)</span>         
+                        }
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Quantity_Per_Pack)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Number_of_Packs)
+                    </td>
+                    <td>
+                       $@Html.DisplayFor(modelItem => item.Unit_Cost)
+                    </td>
+                    <td>
+                       $@Html.DisplayFor(modelItem => item.Total_Cost)
+                    </td>
+                </tr>
+            }
+        }
+        <tr style="background:lightblue;" >
+            <td colspan="5">@Model.LastOrDefault().Part_Number</td>
+            <td>@Model.LastOrDefault().Total_Cost</td>
+        </tr>
+        @ViewBag.partnum
+    </tbody>
+</table>
+

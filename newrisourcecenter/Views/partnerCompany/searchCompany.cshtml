@@ -1,0 +1,68 @@
+﻿@model IEnumerable<newrisourcecenter.Models.partnerCompanyViewModel>
+@{
+    Layout = null;
+}
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.comp_name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.comp_MDF)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.comp_MDF_amount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.comp_MDF_tLimit)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.comp_MDF_aLimit)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.comp_MDF_mLimit)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.comp_region)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.comp_name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.comp_MDF)
+                </td>
+                <td>
+                    $@Html.DisplayFor(modelItem => item.comp_MDF_amount)
+                </td>
+                <td>
+                    $@Html.DisplayFor(modelItem => item.comp_MDF_tLimit)
+                </td>
+                <td>
+                    $@Html.DisplayFor(modelItem => item.comp_MDF_aLimit)
+                </td>
+                <td>
+                    $@Html.DisplayFor(modelItem => item.comp_MDF_mLimit)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.comp_region)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.comp_ID, n1_name = Request.QueryString["n1_name"], msg = item.comp_name }, new { @class = "btn btn-info" })
+
+                @if (User.IsInRole("Super Admin") || User.IsInRole("Global Admin"))
+                {
+                     @Html.ActionLink("Delete", "Delete", new { id = item.comp_ID, n1_name = Request.QueryString["n1_name"] }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false", @class = "btn btn-info" })
+                }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

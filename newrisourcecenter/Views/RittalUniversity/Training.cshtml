@@ -1,0 +1,216 @@
+﻿@model newrisourcecenter.Models.RittalUniversityViewModels
+@{
+    ViewBag.Title = "Training";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script type="text/javascript">
+    $(document).on('click', '.track-btn', function (e) {
+        e.preventDefault();
+        var obj = $(this);
+        $('.track-courses').addClass('hide');
+        var div = $('.track-courses[data-track="' + obj.attr('data-track') + '"]')
+        div.removeClass('hide');
+        $('.track-btn.btn-track-primary').removeClass('btn-track-primary').addClass('btn-secondary');
+        obj.removeClass('btn-secondary').addClass('btn-track-primary');
+        if (localStorage.getItem('track_' + obj.attr('data-track') + '_' + @ViewBag.userId) != null) {
+            $('.chk-certify-completion', div).attr('checked', true);
+            $('.btn-certify-completion', div).remove();
+        }
+        return false;
+    });
+
+    $(document).on('change', '.training-class-checkbox', function (e) {
+        var obj = $(this);
+        if (!obj.is(':checked'))
+            return false;
+        if (!window.confirm('Are you sure you want to mark this class as completed?')) {
+            obj.prop('checked', false);
+            return false;
+        }
+        var row = obj.parents('tr');
+        $.ajax({
+            url: 'MarkClassComplete',
+            type: 'POST',
+            data: { id: obj.val() },
+            beforeSend: function () {
+                obj.after('<span class="loading">Loading...</span>');
+                obj.hide();
+            },
+            success: function (res) {
+                $('.loading', row).remove();
+                if (res.Success) {
+                    obj.parents('table').before('<div class="alert alert-success removable-alert">' + res.Message + '</div>');
+                    $('td:nth-child(2)', row).text('Completed');
+                    obj.remove();
+                }
+                else {
+                    obj.parents('table').before('<div class="alert alert-danger removable-alert">' + res.Message + '</div>');
+                    obj.show();
+                }
+                setTimeout(function () { $('.alert.removable-alert').remove(); }, 2500);
+            }
+        });
+    });
+
+    $(document).on('change', '.chk-certify-completion', function (e) {
+        var obj = $(this);
+        var wrapper = obj.parents('.box');
+        $('.btn-certify-completion',wrapper).attr('disabled', (obj.is(':checked') ? false : true));
+    });
+
+    $(document).on('click', '.btn-certify-completion', function (e) {
+        e.preventDefault();
+        var obj = $(this);
+        var track = $('.track-courses:not(.hide)').attr('data-track');
+        $.ajax({
+            url: 'CertifyComplete',
+            type: 'POST',
+            data: { track: track },
+            beforeSend: function () {
+                obj.after('<span class="loading">Loading...</span>');
+                obj.hide();
+            },
+            success: function (res) {
+                $('.loading').remove();
+                if (res.Success) {
+                    obj.parents('.box').before('<div class="alert alert-success removable-alert">' + res.Message + '</div>');
+                    obj.remove();
+                    localStorage.setItem('track_' + track + '_' + @ViewBag.userId, "completed");
+                }
+                else {
+                    obj.parents('.box').before('<div class="alert alert-danger removable-alert">' + res.Message + '</div>');
+                    obj.show();
+                }
+                setTimeout(function () { $('.alert.removable-alert').remove(); }, 2500);
+            }
+        });
+        return false;
+    });
+
+    function checkCookie(name) {
+        return document.cookie.split(';').some(cookie =>
+            cookie.trim().startsWith(`${name}=`)
+        );
+    }
+</script>
+<style>
+    .track-btn { margin-right: 10px; padding: 15px;}
+    hr { border: 1px solid #eee; margin: 30px 0; }
+    .btn-track-primary {
+        background: #e50043;
+        border-color: #e50043;
+        color: #fff !important;
+    }
+</style>
+<article class="main_content">
+    <h2>RITTAL UNIVERSITY</h2>
+    <section>
+        <div id="page_text">
+            <div>
+                Our goal is to provide you with the opportunity to experience exceptional training on Rittal products, supporting resources and sales strategies, and to empower you to confidently promote Rittal solutions and services in the marketplace.
+            </div>
+        </div>
+        <hr id="header_bar" />
+        <h4>TRAINING TRACKS</h4>
+        <p>
+            Click a track button below for detailed information.
+        </p>
+        <p>
+            <span>
+                @foreach (string track in Model.trainingTrackNames)
+                {
+                    <button class="btn btn-secondary track-btn" data-track="@track.ToLower()">@track.ToUpper()</button>
+                }
+            </span>
+        </p>
+        <hr/>
+        @foreach (var track in Model.trainingTracks)
+        {
+            <div class="track-courses hide" data-track="@track.name.ToLower()">
+                <div class="track-details">
+                    <p><strong>Days to Complete: @track.complete_days</strong></p>
+                    <p>
+                        Upon completion, you will be awarded a <span style="text-transform: capitalize;">@track.name</span> Training Completion certificate and will qualify to receive the items indicated below:
+                        @if (!string.IsNullOrEmpty(track.prize))
+                        {
+                            <figure style="display: inline-block;text-align: center;font-weight: bold;"><a href="/img/training/@(track.name).jpg" target="_blank" title="Click here to see full-size image"><img src="/img/training/@(track.name).jpg" style="display: inline-block;width: 200px;height: auto;"></a><figcaption>@Html.Raw(track.prize.Replace(",", "<br/>"))</figcaption></figure>
+                        }
+                        else
+                        {
+                            <span>___________</span>
+                        }
+                    </p>
+                </div>
+                <hr />
+                <div class="visible-lg">
+                    <p>
+                        <a href="@track.online_link" target="_blank" class="btn btn-primary">REGISTER FOR ONLINE TRAINING</a>
+                        <span class="arrow" style="background:#eee;width:800px;padding:20px;margin: 0 30px;display:inline-block;">
+                            <span class="normal">Once all online courses are verified completed, click the certification button below to inform us you have completed the track.</span>
+                        </span>
+                    </p>
+                </div>
+                <div class="hidden-lg">
+                    <p class="text-center">
+                        <a href="@track.online_link" target="_blank" class="btn btn-primary">REGISTER FOR ONLINE TRAINING</a>
+                    </p>
+                    <p class="text-center">
+                        <div class="arrow text-center" style="background:#eee;padding:20px;">
+                            <span class="normal">Once all online courses are verified completed, click the certification button below to inform us you have completed the track.</span>
+                        </div>
+                    </p>
+                </div>
+                <hr />
+                <p>
+                    <strong>ONLINE COURSES</strong><br/>Once your online training registration request has been approved, you can dive into the available courses using the hyperlinks below. Once you’ve completed a class you can change the status to help you keep track of your progress.
+                </p>
+                <div class="container-fluid">
+                    <div>
+                        <div class="col-md-6">
+                            <table border="0" cellpadding="10">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">CLASS NAME</th>
+                                        <th class="text-center">DURATION TIME (MINS.)</th>
+                                        <th class="text-center">STATUS</th>
+                                        <th class="text-center">MARK AS COMPLETED</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var trainingClass in Model.trainingClasses[track.name.ToLower()])
+                                    {
+                                        newrisourcecenter.Models.usrClass userClass = Model.usrClasses.ContainsKey(trainingClass.id) ? Model.usrClasses[trainingClass.id] : null;
+                                        <tr>
+                                            <td><a href="@(!string.IsNullOrEmpty(trainingClass.link) ? trainingClass.link : "#")" target="_blank">@trainingClass.course_title</a></td>
+                                            <td class="text-center">@trainingClass.duration</td>
+                                            <td class="text-center">@(userClass != null && userClass.completed == 1 ? "Completed" : "Open")</td>
+                                            <td class="text-center">
+                                                @if (userClass == null || userClass.completed == 0)
+                                                {
+                                                    <input type="checkbox" class="training-class-checkbox" value="@trainingClass.id" />
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="box bg-light p-5" style="width: 400px;margin: 20px auto;padding: 20px;background: #ccc;text-align: center;">
+                            <h4>Online Certification</h4>
+                               <p>
+                                   <input type="checkbox" class="chk-certify-completion" />
+                                    <b>I certify that I have completed the online classes as outlined for this training track.​</b>
+                                </p>
+                                <button type="button" class="btn btn-primary btn-lg btn-certify-completion" disabled>SUBMIT</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        }
+    </section>
+</article>
+
+

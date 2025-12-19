@@ -1,0 +1,37 @@
+﻿@model IEnumerable<newrisourcecenter.Models.partnerIndustryViewModel>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<p>
+    @Html.ActionLink("Add a Partner Industry", "Create", new { n1_name=Request.QueryString["n1_name"],msg="Add a Partner Industry" }, htmlAttributes: new { @class = "btn btn-primary" })
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.pi_industry)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.pi_industry)
+                </td>
+                <td>
+                    @{ string[] reserved = { "1", "2" }; }
+                    @Html.ActionLink("Edit", "Edit", new { id = item.pi_ID, n1_name = Request.QueryString["n1_name"], msg = item.pi_industry }, new { @class = "btn btn-info" })
+                    @if (!reserved.Contains(item.pi_ID.ToString()))
+                    {
+                        @Html.ActionLink("Delete", "Delete", new { id = item.pi_ID, n1_name = Request.QueryString["n1_name"] }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false", @class = "btn btn-info" })
+                    }
+                </td>
+            </tr>
+         }
+    </tbody>
+</table>

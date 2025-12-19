@@ -1,0 +1,98 @@
+﻿@model IEnumerable<newrisourcecenter.Models.partnerLocationViewModel>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    $(document).on('change', '.selectpicker', function (e) {
+        if ($(this).val() == '')
+            return;
+        window.location = $(this).val();
+    });
+</script>
+@if (@Model != null)
+{
+    if (User.IsInRole("Super Admin") || User.IsInRole("Local Admin") && User.IsInRole("Rittal User") || User.IsInRole("Global Admin"))
+    {
+        <div>
+            <div class="dropdown" style="display:inline-block;">
+                <select class="selectpicker" data-live-search="true" title="Filter By Company">
+                    @foreach (var item in @ViewBag.partnerComp)
+                    {
+                        <option value="~/partnerLocation/?comp_id=@item.comp_ID&n1_name=@Request.QueryString["n1_name"]&n2_name=@item.comp_name">@item.comp_name</option>
+                    }
+                </select>
+            </div>
+            <div class="dropdown" style="display:inline-block;">
+                <select class="selectpicker" data-live-search="true" title="Add a Company Location">
+                    @foreach (var item in @ViewBag.partnerComp)
+                    {
+                        <option value="~/partnerLocation/Create/?comp_id=@item.comp_ID&n1_name=@Request.QueryString["n1_name"]&n2_name=@item.comp_name">@item.comp_name</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <br/>
+        <div class="clearfix"></div>
+    }
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.loc_name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.loc_phone)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.loc_logo)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @if (!string.IsNullOrEmpty(item.loc_name))
+                    {
+                        @Html.DisplayFor(modelItem => item.loc_name)
+                    }
+                    else
+                    {
+                     <span>@Request.QueryString["n1_name"] - @Html.DisplayFor(modelItem => item.loc_city)</span>
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.loc_phone)
+                </td>
+                <td>
+                    @{
+                        string host = "";
+                        if (Request.Url.Port != 443)
+                        {
+                            host = "http://" + Request.Url.Host + ":" + Request.Url.Port;
+                        }
+                        else
+                        {
+                            host = "https://" + Request.Url.Host + "";
+                        }
+                        if (!string.IsNullOrEmpty(item.loc_logo))
+                        {
+                            <img src="@string.Format(host+"/company/partners/logos/{0}", @item.loc_logo)" height="20" width="20" />
+                        }
+                    }
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.loc_ID, comp_id = item.comp_ID, n1_name = Request.QueryString["n1_name"], n2_name = Request.QueryString["n2_name"], msg = item.loc_name }, new { @class = "btn btn-info" })
+                    @Html.ActionLink("Delete", "Delete", new { id = item.loc_ID, comp_id = item.comp_ID, n1_name = Request.QueryString["n1_name"], n2_name = Request.QueryString["n2_name"], msg = item.loc_name }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false", @class = "btn btn-info" })
+                </td>
+            </tr>
+         }
+    </tbody>
+</table>
+}else{
+<div>You are not allowed here</div>
+}

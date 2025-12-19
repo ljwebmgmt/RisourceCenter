@@ -1,0 +1,246 @@
+﻿@model newrisourcecenter.Models.SPARebatesViewModel
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    long compaId = Convert.ToInt64(Session["companyId"]);
+}
+<script>
+    var rebates = {
+        init: function () {
+
+        },
+        getlocations: function (comp_id) {
+            $.post("/SPARebates/getLocations?id=" + comp_id, function (response) {
+                var data = JSON.parse(response);
+                $(".loc").remove();
+                var loc = "<div class=\"form-group loc\" ><label class=\"control-label col-md-2\" for=\"list_loc\" >Select Location</label><div class=\"col-md-10\" ><select id=\"loc\" class=\"form-control\" onchange=\"rebates.getSPAContracts(this.value)\" ><option value=\"\" >Select a location</option></select></div></div>";
+                $(".comp").after(loc);
+                $.each(data.locations, function (i,v) {
+                    $("#loc").append("<option value=\"" + v.loc_ID + "\" >" + v.loc_city + "(" + v.loc_SAP_account+")</option>");
+                });                
+           });
+        },
+        getSPAContracts: function (loc_id) {
+            $.post("/SPARebates/getSPAContracts?id=" + loc_id, function (response) {
+                var data = JSON.parse(response);
+                $(".contracts").remove();
+                var spaContracts = "<div class=\"form-group contracts\" ><label class=\"control-label col-md-2\" for=\"list_contracts\" >Select SPA Contract</label><div class=\"col-md-10\" ><select id=\"spaContracts\" class=\"form-control\" onchange=\"rebates.getSPAContractItems(this.value)\" ><option value=\"\" >Select a contract</option></select></div></div>";
+                $(".loc").after(spaContracts);
+                $.each(data.spa_contracts, function (i, v) {
+                    $("#spaContracts").append("<option value=\"" + v.Spa_id + "\" >" + v.Customer_company_name + "(" + v.Contract_id + ") || "+v.count+" items</option>");
+                });
+            });
+        },
+        getSPAContractItems: function (cont_id) {
+            $("#hidden_part").show();
+            $.post("/SPARebates/getSPAContractItems?id=" + cont_id, function (response) {
+                var data = JSON.parse(response);
+                $("#spaItems").empty();
+                $.each(data.spa_items, function (i, v) {
+                    if (i==0){
+                        $("#spaItems").append("<div id=\"" + i + "\" ><span style=\"margin:50px;\" >SKU#  <input type=\"text\" id=\"sku_" + i + "\" value=\"" + v.Sku + "\" /></span><span>Quantity  <input type=\"text\" id=\"quantity_" + i + "\" value=\"" + v.Quantity + "\" /></span><span id=\"validatepart_" + i + "\" style=\"font-size:9px;\"></span></div>");
+                    } else {
+                        $("#spaItems").append("<div id=\"" + i + "\" ><span style=\"margin:50px;\" >SKU#  <input type=\"text\" id=\"sku_" + i + "\" value=\"" + v.Sku + "\" /></span><span>Quantity  <input type=\"text\" id=\"quantity_" + i + "\" value=\"" + v.Quantity + "\" /><a href=\"#\" onclick=\"rebates.deleteItem(" + i + ");return false;\" >X</a></span><span id=\"validatepart_" + i + "\" style=\"font-size:9px;\"></span></div>");
+                    }
+                });
+            });
+        },
+        validateItems: function () {
+            var spa_items = $("#spaItems div").length;
+            var spaContracts = $("#spaContracts").val();
+            var customer_invoice_num = $("#customer_invoice_num").val();
+            var rittal_invoice_num = $("#rittal_invoice_num").val();
+            var invoice_date = $("#invoice_date").val();
+            var rebate_id = $("#rebate_id").val();
+            var x = 0;
+            var arrayvalidate = [];
+
+            if (customer_invoice_num == "") {
+                alert("Please enter customer invoice number");
+                return;
+            }
+
+            if (rittal_invoice_num == "") {
+                alert("Please enter a rittal invoice number");
+                return;
+            }
+
+            if (invoice_date == "") {
+                alert("Please enter an invoice date");
+                return;
+            }
+
+            for (var i = 0; i < spa_items; i++) {
+                var sku = $("#sku_" + i).val();
+                var quantity = $("#quantity_" + i).val();
+                arrayvalidate.push({ "position": i, "sku": sku, "quantity_requested": quantity, "customer_invoice_num": customer_invoice_num, "rittal_invoice_num": rittal_invoice_num, "invoice_date": invoice_date, "contract_id": spaContracts, "rebate_id": rebate_id });
+            }
+
+            $.post("/SPARebates/validateSPAContractItems", { itemsList: arrayvalidate }, function (response) {
+                var data = JSON.parse(response);
+                $("#results_table").html("<table class=\"table\" ><tr><th>Item ID</th><th>SKU</th><th>Rittal Invoice #</th><th>Customer Invoice #</th><th>Requested Quanity</th><th>Invoice Date</th><th>Expected Rebate</th><th>Status</th><td></td></tr><tbody id=\"table_body\" ></tbody></table>");
+                if (data.status_msg === true) {
+                    $("#rebate_id").val(data.rebate_id);
+                    $("#hidden_part").after("<span id=\"donelinks\" ><a href=\"/SPARebates?n1_name=Support%20Tools&n2_name=SPA%20Tool&msg=SPA%20Rebates\" >Done</a>&nbsp;&nbsp;<a href=\"#\" onclick=\"rebates.showhiddendone()\" >Add more items</a>");
+                    $("#hidden_part").hide();
+                    $("#hidden_done").hide();
+                    $.each(data.rebateItems, function (key, values) {
+                        $("#table_body").append("<tr id=\"table_" + values.rebateItem_ID + "\" ><td>" + values.rebateItem_ID + "</td><td>" + values.sku + "</td><td>" + values.rittal_invoice_number + "</td><td>" + values.customer_invoice_number + "</td><td>" + values.quantity_requested + "</td><td>" + values.invoicedate + "</td><td>" + values.rebate_amount + "</td><td style=\"width:200px;\" >" + values.status + "</td><td><a href=\"#\" onclick=\"rebates.deleteRebate(" + values.rebateItem_ID + "," + values.rebate_ID + ")\" >x</a></td></tr>");
+                    });
+                    rebates.calculateTotal();
+                } else {
+                    $.each(data.list_results, function (i, v) {
+                        $("#validatepart_" + v.position).html(v.msg);
+                    });
+                }
+            });
+        },
+        addItems: function () {
+            var spa_items = parseInt($("#spaItems div").last().attr("id")) + 1;
+            $("#spaItems").append("<div id=\"" + spa_items + "\" ><span style=\"margin:50px;\" >SKU#  <input type=\"text\" id=\"sku_" + spa_items + "\" value=\"\" /></span><span>Quantity  <input type=\"text\" id=\"quantity_" + spa_items + "\" value=\"\" /></span><a href=\"#\" onclick=\"rebates.deleteItem(" + spa_items +");return false;\" >X</a><span id=\"validatepart_" + spa_items + "\" style=\"font-size:9px;\"></span></div>");
+        },
+        showhiddendone: function () {
+            $("#hidden_done").show();
+            $("#donelinks").hide();
+        },
+        deleteItem: function (id) {
+            $("#"+id).remove();
+        },
+        deleteRebate: function (id, rebate_id) {
+            $.post("/SPARebates/deleteRebate?id=" + id + "&rebate_id=" + rebate_id, function (response) {
+                if (response=="OK") {
+                    $("#table_" + id).remove();
+                    rebates.calculateTotal();
+                }
+            });
+        },
+        calculateTotal() { 
+            var total_six = 0;
+            $("#table_body").find("tr").each(function () {
+                var tds = $(this).find('td');
+                var six = tds.eq(6).text();
+                total_six = parseFloat(total_six) + parseFloat(six);
+            });
+
+            $("#total").html("<table class=\"table\" ><tr><td colspan=\"6\" >Estimated Total Rebate: </td><td colspan=\"3\" >" + total_six + "</td></tr></table>");
+        }
+    }
+    jQuery(document).ready(rebates.init);
+</script>
+<div class="form-horizontal">
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        <div class="form-horizontal">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div id="hidden_done" >
+                <input type="hidden" id="rebate_id" />
+
+                <div class="form-group comp" >
+                    @Html.LabelFor(model => model.list_comp, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.DropDownListFor(model => model.comp, Model.list_comp, null, htmlAttributes: new { @class = "form-control", @onchange = "rebates.getlocations(this.value)" })
+                        @Html.ValidationMessageFor(model => model.comp, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+
+            <div style="display:none" id="hidden_part" >
+                <div class="form-group">
+                    <label class="control-label col-md-2" for="customer_invoice_num">Customer Invoice Number</label>
+                    <div class="col-md-10">
+                        <input class="form-control text-box single-line" id="customer_invoice_num" name="customer_invoice_num" type="text" value="">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-md-2" for="rittal_invoice_num">Rittal Invoice Number</label>
+                    <div class="col-md-10">
+                        <input class="form-control text-box single-line" id="rittal_invoice_num" name="rittal_invoice_num" type="text" value="">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-md-2" for="invoice_date">Invoice Date</label>
+                    <div class="col-md-10">
+                        <input class="form-control text-box single-line" id="invoice_date" name="invoice_date" type="text" value="">
+                    </div>
+                </div>
+
+                <span id="spaItems"></span>
+
+                <a href="#" onclick="rebates.addItems(); return false;">Add An Item</a>
+
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <a href="#" onclick="rebates.validateItems(); return false;">Validate</a>
+                    </div>
+                </div>
+            </div>
+
+            <span id="results_table" ></span>
+            <div id="total" ></div>
+                @*<div class="form-group">
+                @Html.LabelFor(model => model.contract_ID, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.contract_ID, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.contract_ID, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.rebate_total_amount, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.rebate_total_amount, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.rebate_total_amount, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.credit_memo, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.credit_memo, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.credit_memo, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.status, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.status, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.status, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.submit_date, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.submit_date, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.submit_date, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.memo_date, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.memo_date, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.memo_date, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <input type="submit" value="Create" class="btn btn-default" />
+                        </div>
+                    </div>
+
+                *@
+
+
+        </div>
+    }
+    <div>
+        @Html.ActionLink("Back to List", "Index")
+    </div>
+</div>

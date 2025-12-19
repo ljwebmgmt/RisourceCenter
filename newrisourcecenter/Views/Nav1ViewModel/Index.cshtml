@@ -1,0 +1,88 @@
+﻿@model IEnumerable<newrisourcecenter.Models.Nav1ViewModel>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<p>
+    @Html.ActionLink(@Model.FirstOrDefault().list_nav1_labels.FirstOrDefault().add_link_label[0], "Create", new { n1_name=@Request.QueryString["n1_name"],msg="Level 1 Menu" }, htmlAttributes: new { @class = "btn btn-primary" })
+</p>
+<script type="text/javascript" src="https://www.risourcecenter.com/tablesorter/js/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="https://www.risourcecenter.com/tablesorter/js/jquery.tablesorter.min.js"></script>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Model.LastOrDefault().list_nav1_labels.FirstOrDefault().n1order_label[0]
+                @if (Request.QueryString["translate"] != null)
+                {
+                    @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.LastOrDefault().list_nav1_labels.FirstOrDefault().n1order_label[1], controllerName = "Nav1ViewModel", pageName = "Index", n1_name = "Translate Page Labels",msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                }
+            </th>
+            <th>
+                @Model.LastOrDefault().list_nav1_labels.FirstOrDefault().n1_nameLong_label[0]
+                @if (Request.QueryString["translate"] != null)
+                {
+                    @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.LastOrDefault().list_nav1_labels.FirstOrDefault().n1_nameLong_label[1], controllerName = "Nav1ViewModel", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                }
+            </th>
+            <th>
+                @Model.LastOrDefault().list_nav1_labels.FirstOrDefault().n1_descLong_label[0]
+                @if (Request.QueryString["translate"] != null)
+                {
+                    @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.LastOrDefault().list_nav1_labels.FirstOrDefault().n1_descLong_label[1], controllerName = "Nav1ViewModel", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                }
+            </th>
+            <th>
+            </th>
+        </tr>
+      </thead>
+      <tbody>
+            @foreach (var item in Model)
+            {
+            <tr>
+                <td class="lalign">
+                    @Html.DisplayFor(modelItem => item.n1order)
+                </td>
+                <td class="lalign">
+                    @Html.DisplayFor(modelItem => item.n1_nameLong)
+                    @if (Request.QueryString["translate"] != null)
+                    {
+                        @Html.ActionLink("T", "Create", "Localization", new { parent_id = @item.n1ID, tableName = "nav1", columnName = "n1_nameLong", message = @item.n1_nameLong, n1_name = "Translate Page Content", msg =Request.QueryString["n1_name"], lang=item.default_language }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                    }               
+                </td>
+                <td class="lalign">
+                    @Html.DisplayFor(modelItem => item.n1_descLong)
+                    @if (Request.QueryString["translate"] != null)
+                    {
+                        @Html.ActionLink("T", "Create", "Localization", new { parent_id = @item.n1ID, tableName = "nav1", columnName = "n1_descLong", message = @item.n1_descLong, n1_name = "Translate Page Content", msg = Request.QueryString["n1_name"], lang = item.default_language }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                    }      
+                </td>
+                <td class="lalign">
+                    @{ string[] reserved = { "1", "2","3" }; }
+                    @Html.ActionLink(@Model.LastOrDefault().list_nav1_labels.FirstOrDefault().edit_label[0], "Edit", new { id = item.n1ID, parentid = Request.QueryString["parentid"], n1_name = Request.QueryString["n1_name"] }, new { @class = "btn btn-info" })
+                    @if (Request.QueryString["translate"] != null)
+                    {
+                        @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.LastOrDefault().list_nav1_labels.FirstOrDefault().edit_label[1], controllerName = "Nav1ViewModel", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                    }
+
+                    @if (!reserved.Contains(item.n1ID.ToString()))
+                    {
+                        <span>|</span>
+                        @Html.ActionLink(@Model.LastOrDefault().list_nav1_labels.FirstOrDefault().delete_label[0], "Delete", new { id = item.n1ID, parentid = Request.QueryString["parentid"], n1_name = Request.QueryString["n1_name"] }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false" ,@class = "btn btn-info" })
+                        if (Request.QueryString["translate"] != null)
+                        {
+                            @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.LastOrDefault().list_nav1_labels.FirstOrDefault().delete_label[1], controllerName = "Nav1ViewModel", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                        } 
+                    }
+                </td>
+            </tr>
+            }
+        </tbody>
+</table>
+<script type="text/javascript">
+$(function(){
+  $('#keywords').tablesorter();
+});
+</script>

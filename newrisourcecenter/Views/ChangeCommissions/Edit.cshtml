@@ -1,0 +1,481 @@
+﻿@model newrisourcecenter.Models.ChangeCommission
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Scripts {
+
+    <link href="~/Content/css/select2.min.css" rel="stylesheet" />
+    <script src="~/Scripts/select2.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
+    <script src="~/Scripts/Pages/ChangeCommssion.js"></script>
+
+    <link href="~/Content/css/select2.min.css" rel="stylesheet" />
+    <script src="~/Scripts/select2.min.js"></script>
+
+    <script>
+
+        $(document).ready(function () {
+            var changeComValue = @Model.credit_sale;
+           
+            if (changeComValue == 100) {
+                $('input[name="credit"][value="0"]').prop('checked', true);
+            }
+            else {
+                $('input[name="credit"][value="1"]').prop('checked', true);
+                $('#CreditOption').val(changeComValue);
+            }
+            $('#invoice_date').val('@Model.invoice_date.ToString("yyyy-MM-dd")');
+
+
+           
+            $("[readonly='readonly']").prop("disabled", true);
+
+        });
+
+        function setApprovalStatus(obj) {
+            var val = $(obj).attr("data-value");
+
+            $('[name="HistoryApproval"]').val(val);
+        }
+
+        $("form").submit(function (e) {
+            $("[readonly='readonly']").prop("disabled", false);
+            if (!validateUser()) {
+                alert("Assigned Rep, Assigned Manager, Requesting Manager must not be the same");
+                e.preventDefault();
+            }
+
+        });
+
+        $(document).ready(function () {
+            $('.select2').select2();
+        })
+    </script>
+
+}
+
+
+
+@using (Html.BeginForm())
+{
+
+    List<SelectListItem> approvalStatus = (List<SelectListItem>)ViewBag.ApprovalStatus;
+    newrisourcecenter.ViewModels.ChangeCommissionRoles roles = (newrisourcecenter.ViewModels.ChangeCommissionRoles)ViewBag.roles;
+    string disabled = roles .IsEditable && !roles.IsLocked ? "" : "readonly";
+
+
+
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.ID);
+    <div class="form-horizontal">
+
+        @{
+            List<SelectListItem> Req_Mang = (List<SelectListItem>)ViewBag.Req_Mang;
+            List<SelectListItem> Ass_Mang = (List<SelectListItem>)ViewBag.Ass_Manag;
+            //entire db with @rittal.us
+            List<SelectListItem> Reps = (List<SelectListItem>)ViewBag.Reps;
+
+        }
+
+        <h3>
+            Commission Change Request Form
+        </h3>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.Label("Commssion Change Request Documentation Number : ", htmlAttributes: new { @class = "control-label col-md-4 " })
+            <div class="col-md-3 clearfix">
+
+                @Html.Label(Model.number, htmlAttributes: new { @class = "control-label h4" })
+            </div>
+        </div>
+
+
+        <h4>
+            Changes Requested : *
+        </h4>
+
+        <div class="form-group">
+            <div class="col-md-9">
+                <input type="radio" name="credit" id="credit100" value="0" @(disabled == "readonly" ? "disabled" : "") onchange="setCreditSale(this)">
+                <label for="credit100">
+                    Request For Full Credit of the Sale (100%)
+                </label>
+            </div>
+            <div class="col-md-9">
+                <input type="radio" name="credit" id="credit" value="1" @(disabled == "readonly" ? "disabled" : "") onchange="setCreditSale(this)">
+                <label for="credit">
+                    Request For
+                </label>
+
+
+                @if (disabled != "")
+                {
+                    @Html.DropDownList("CreditOption", (SelectList)ViewBag.creditOptions, "Select ", new { @class = "form-control", style = "width: 80px;display:inline;", onchange = "creditOptionChange(this)", @readonly = "readonly" })
+                }
+                else
+                {
+                    @Html.DropDownList("CreditOption", (SelectList)ViewBag.creditOptions, "Select ", new { @class = "form-control", style = "width: 80px;display:inline;", onchange = "creditOptionChange(this)" })
+                }
+                <label for="credit">
+                    % of the Sale
+                </label>
+
+
+            </div>
+            <div class="clear col-md-2">
+                @Html.ValidationMessageFor(model => model.credit_sale, "", new { @class = "text-danger" })
+            </div>
+            @* Hidden Attribute *@
+            @Html.EditorFor(model => model.credit_sale, new { htmlAttributes = new { @style = "position: absolute;left: -1000px;" } })
+
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.to_representive, "To Representative : *", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @if (disabled != "")
+                {
+                    @Html.EditorFor(model => model.to_representive, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                }
+                else
+                {
+                    @Html.EditorFor(model => model.to_representive, new { htmlAttributes = new { @class = "form-control" } })
+                }
+
+                @Html.ValidationMessageFor(model => model.to_representive, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.from_representive, "From Representative : *", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @if (disabled != "")
+                {
+                    @Html.EditorFor(model => model.from_representive, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                }
+                else
+                {
+                    @Html.EditorFor(model => model.from_representive, new { htmlAttributes = new { @class = "form-control" } })
+                }
+                @Html.ValidationMessageFor(model => model.from_representive, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.account_number, "Account # : * 	", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @if (disabled != "")
+                {
+                    @Html.EditorFor(model => model.account_number, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                }
+                else
+                {
+                    @Html.EditorFor(model => model.account_number, new { htmlAttributes = new { @class = "form-control" } })
+                }
+                @Html.ValidationMessageFor(model => model.account_number, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.account_name, "Account Name : *", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @if (disabled != "")
+                {
+                    @Html.EditorFor(model => model.account_name, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                }
+                else
+                {
+                    @Html.EditorFor(model => model.account_name, new { htmlAttributes = new { @class = "form-control" } })
+                }
+                @Html.ValidationMessageFor(model => model.account_name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.sales_doc_number, "Sales Document # : *		", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+
+                @if (disabled != "")
+                {
+                    @Html.EditorFor(model => model.sales_doc_number, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                }
+                else
+                {
+                    @Html.EditorFor(model => model.sales_doc_number, new { htmlAttributes = new { @class = "form-control" } })
+                }
+                @Html.ValidationMessageFor(model => model.sales_doc_number, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.po_number, "PO # : *", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+
+                @if (disabled != "")
+                {
+                    @Html.EditorFor(model => model.po_number, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                }
+                else
+                {
+                    @Html.EditorFor(model => model.po_number, new { htmlAttributes = new { @class = "form-control" } })
+                }
+                @Html.ValidationMessageFor(model => model.po_number, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+
+            <div class="col-md-6">
+                <h4>
+                    Parts # :
+                </h4>
+                <table class="table">
+                    <tr><td colspan="3" align="right"><button onclick="addparts()" @(disabled == "readonly" ? "disabled" : "") class="btn btn-primary">+ Add a part</button></td></tr>
+                    <tr>
+                        <td>Part No.</td>
+                        <td>Qty</td>
+                        <td></td>
+                    </tr>
+                    <tbody id="parts">
+                        @{
+                            List<string> qty = (ViewBag.qty as List<string>), part_number = (ViewBag.qty as List<string>);
+                            for (int i = 0; i < qty.Count; i++)
+                            {
+                                <tr>
+                                    <td>
+                                        <input class="form-control text-box single-line" id="part_number" @disabled name="part_number" type="number" required value="@part_number[i]" data-val-required="This is required field">
+                                        <span class="field-validation-valid text-danger" data-valmsg-for="part_number" data-valmsg-replace="true"></span>
+                                    </td>
+                                    <td>
+                                        <input class="form-control text-box single-line" id="qty" @disabled name="qty" type="number" value="@qty[i]" required data-val-required="This is required field">
+                                        <span class="field-validation-valid text-danger" data-valmsg-for="qty" data-valmsg-replace="true"> </span>
+                                    </td>
+                                    <td><div onclick="deleteRow(this)" class="btn btn-primary" @(disabled == "readonly" ? "disabled" : "")>-</div></td>
+                                </tr>
+                            }
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.invoice_date, "Invoice Date : * 	", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @if (disabled != "")
+                {
+                    @Html.EditorFor(model => model.invoice_date, new { htmlAttributes = new { @class = "form-control", @type = "date", @readonly = "readonly" } })
+                }
+                else
+                {
+                    @Html.EditorFor(model => model.invoice_date, new { htmlAttributes = new { @class = "form-control", @type = "date" } })
+                }
+                @Html.ValidationMessageFor(model => model.invoice_date, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.amount, "Amount : *	", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @if (disabled != "")
+                {
+                    @Html.EditorFor(model => model.amount, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly", @type = "number", @step = "0.01" } })
+
+                }
+                else
+                {
+                    @Html.EditorFor(model => model.amount, new { htmlAttributes = new { @class = "form-control", @type = "number", @step = "0.01" } })
+                }
+                @Html.ValidationMessageFor(model => model.amount, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.reason, "Reason For Request (Please be Specific) : ", htmlAttributes: new { @class = "control-label col-md-10" })
+            <div class="col-md-6">
+
+                @if (disabled != "")
+                {
+                    @Html.TextAreaFor(model => model.reason, new { @readonly = "readonly" })
+                }
+                else
+                {
+                    @Html.TextAreaFor(model => model.reason, new { })
+                }
+                @Html.ValidationMessageFor(model => model.reason, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.request_representive, "Requesting Rep : *	", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @if (disabled != "")
+                {
+                    @Html.DropDownListFor(model => model.request_representive, Reps, "--Select--", new { @required = "required", @class = "form-control", @readonly = "readonly" })
+                }
+                else
+                {
+                    @Html.DropDownListFor(model => model.request_representive, Reps, "--Select--", new { @required = "required", @class = "form-control select2" })
+                }
+
+                @Html.ValidationMessageFor(model => model.request_representive, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("Date : ", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @DateTime.Now.ToShortDateString()
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.assigned_rep, "Assigned Rep: *", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @if (disabled != "")
+                {
+                    @Html.DropDownListFor(model => model.assigned_rep, Reps, "--Select--", new { @required = "required", @class = "form-control ", @readonly = "readonly" })
+                }
+                else
+                {
+                    @Html.DropDownListFor(model => model.assigned_rep, Reps, "--Select Option--", new { @required = "required", @class = "form-control select2" })
+                }
+                @Html.ValidationMessageFor(model => model.assigned_rep, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.request_manager, "Requesting Manager:	*", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @if (disabled != "")
+                {
+                    @Html.DropDownListFor(model => model.request_manager, Req_Mang, "--Select--", new { @required = "required", @class = "form-control ", @readonly = "readonly" })
+                }
+                else
+                {
+                    @Html.DropDownListFor(model => model.request_manager, Req_Mang, "--Select Option--", new { @required = "required", @class = "form-control select2" })
+                }
+
+                @Html.ValidationMessageFor(model => model.request_manager, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.assigned_manager, "Assigned Manger: *", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @if (disabled != "")
+                {
+                    @Html.DropDownListFor(model => model.assigned_manager, Ass_Mang, "--Select Option--", new { @required = "required", @class = "form-control", @readonly = "readonly" })
+                }
+                else
+                {
+                    @Html.DropDownListFor(model => model.assigned_manager, Ass_Mang, "--Select Option--", new { @required = "required", @class = "form-control select2" })
+                }
+                @Html.ValidationMessageFor(model => model.assigned_manager, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+        @if (roles.IsApprovable)
+        {
+
+            <div class="form-group">
+                @Html.Label("historyNotes", "NOTES :", htmlAttributes: new { @class = "control-label col-md-3" })
+                <div class="col-md-9">
+                    @Html.TextArea("historyNotes", new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    @Html.Hidden("HistoryApproval")
+
+                    @if (!roles.IsLocked)
+                    {
+                        if (roles.IsApprovable)
+                        {
+                            <input type="submit" value="Approve" data-value="@approvalStatus[0].Value" onclick="setApprovalStatus(this)" class="btn btn-success" />
+                            <input type="submit" value="Reject" data-value="@approvalStatus[1].Value" onclick="setApprovalStatus(this)" class="btn btn-danger" />
+                        }
+
+                        if (roles.IsEditable)
+                        {
+                            <input type="submit" value="Edit" class="btn btn-default" />
+                        }
+                    }
+                    @Html.ActionLink("Back to List", "Index", new { n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"] }, new { @class = "btn btn-default" })
+                </div>
+            </div>
+
+
+        }
+        else
+        {
+            <div class="form-group">
+                <div class="col-md-offset-3 col-md-9">
+                    @if (roles.IsEditable)
+                    {
+                        <input type="submit" value="Edit" class="btn btn-default" />
+                    }
+                    @Html.ActionLink("BACK TO LIST", "Index", new { n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"] }, new { @class = "btn btn-default" })
+                </div>
+            </div>
+        }
+
+        <h3>
+            Approval History
+        </h3>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th style="width:10%">
+                        @Html.DisplayName("STATUS")
+                    </th>
+                    <th style="width:60%">
+                        @Html.DisplayName("NOTES")
+                    </th>
+                    <th>
+                        @Html.DisplayName("CREATED BY")
+                    </th>
+                    <th>
+                        @Html.DisplayName("CREATED ON")
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var item in (List<newrisourcecenter.ViewModels.ChangeCommissionHistoryViewModel>)ViewBag.ChangeCommHistory)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.statusName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.notes)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.usr_User.usr_fName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.created_on)
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+
+    </div>
+}
+
+<div>
+
+</div>

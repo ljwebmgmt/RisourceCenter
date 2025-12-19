@@ -1,0 +1,188 @@
+﻿<!doctype html>
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en">
+<!--<![endif]-->
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewBag.Title</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="description" content="" />
+    <meta name="author" content="Samuel Antwi" />
+    <script src="~/Scripts/jquery-3.1.0.min.js"></script>
+
+    @*build the style for the submenu links and drop down*@
+    <style>
+    @{
+        int countryId = Convert.ToInt32(Session["userCountryId"]);
+        int languageId = Convert.ToInt32(Session["userLanguageId"]);
+        int count = newrisourcecenter.Controllers.MenuContoller.TopMenu(User.Identity.GetUserName(), languageId, countryId).Count();
+        int x = 0;
+
+        //List<int> leftPosition = new List<int>();//start a list of left positions
+        //for (int i = 0; i < count; i++)
+        //{
+        //    leftPosition.Add(i * 10);
+        //}
+
+        foreach (var item in newrisourcecenter.Controllers.MenuContoller.TopMenu(User.Identity.GetUserName(), languageId, countryId))
+        {
+            string linkCSS = "." + item.LinkID + "_menu_show{ display: none; }" +
+            "#" + item.LinkID + "_menu{magin-top:20px;z-index:1000;width:100%;height:auto;list-style:none;width: 20%;line-height: 30px;position: absolute;}" +
+            "#" + item.LinkID + "_menu a{background-image:none;width: 100%;}";
+            x++;
+            @linkCSS;
+        }
+    }
+    </style>
+    @{
+        var style = new newrisourcecenter.Controllers.UserThemesController().themdata(User.Identity.GetUserName()).ElementAtOrDefault(0).theme_id;
+
+        //if (style == 1)
+        //{
+            @Styles.Render("~/Content/css/dark");
+        @*}
+        else if (style == 2)
+        {
+            @Styles.Render("~/Content/css/blue");
+        }
+        else if (style == 3)
+        {
+            @Styles.Render("~/Content/css/gray");
+
+        }
+        else
+        {
+            @Styles.Render("~/Content/css/white");
+        }*@
+    }
+
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+    @{
+        string Notlogedinstyle = "<div id=\"main\" style=\"border:solid #696969 1px;background: #ffff;\" >";
+        string Registerstyle = "<div id=\"main\" style=\"border:solid #696969 1px;background: #ffff;\" >";
+        bool isPinnacle = Convert.ToBoolean(Session["isPinnacleUser"]);
+        string logedinstyle = "<div id=\"main\" >";
+
+        if (Request.IsAuthenticated)
+        {
+            @Html.Raw(@logedinstyle);
+        }
+        else if (Request.RawUrl.Contains("Register"))
+        {
+            @Html.Raw(@Registerstyle);
+        }
+        else
+        {
+            @Html.Raw(@Notlogedinstyle);
+        }
+
+        long userId = Convert.ToInt64(Session["userId"]);
+
+        if (!Request.IsAuthenticated || userId == 0)
+        {
+            Html.RenderPartial("_LoggedOutPartial");
+        }
+        else
+        {
+            <header>
+                @{
+                    //Html.RenderPartial("_logoandsearch");
+                    Html.RenderPartial("_LoggedInPartial");
+                }
+            </header>
+            //Html.RenderPartial("_announcements");
+            //Html.RenderPartial("_breadcrumbs");
+        }
+    }
+    @using Microsoft.AspNet.Identity
+
+    @RenderBody()
+    @*<div align="left" class="inner-footer">
+        <span style="font-size:11px;color:#CCC">&copy; 2018 Rittal North America LLC</span>
+    </div>*@
+    <div id="footer" class="main_footer">
+        <div id="powerline" class="--transparent">
+            <span class="powerline-bg">
+            </span>
+            <div class="powerline-rail">
+                <div class="powerline-arrow-wrapper">
+                    <span href="#" class="powerline-arrow" style="background-image: url('/images/80_104.png'); left: 0; z-index: 9;"><span>Enclosures</span></span>
+                    <span href="#" class="powerline-arrow" style="background-image: url('/images/80_104.png'); left: 20%; z-index: 8;"><span>Power distribution</span></span><span href="#" class="powerline-arrow" style="background-image: url('/images/80_104.png'); left: 40%; z-index: 7;"><span>Climate control</span></span><span href="#" class="powerline-arrow" style="background-image: url('/images/80_104.png'); left: 60%; z-index: 5;"><span>IT Infrastructure</span></span><span href="#" class="powerline-arrow" style="background-image: url('/images/80_104.png'); left: 80%; z-index: 4;"><span>Software &amp; Services</span></span>
+                </div>
+            </div><a href="http://www.rittal.us" class="powerline-logo-cover"><img alt="Rittal" src="/images/80_117.png" class="powerline-logo"></a><img alt="Friedhelm Loh Group" src="/images/80_106.png" class="powerline-group-logo">
+        </div></div>
+
+    <script>
+        jQuery(document).ready(function () {
+            $('.sidenav').addClass("sidenav_mb");
+
+        });
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date(); a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+        ga('create', 'UA-56689524-1', 'auto');
+        ga('send', 'pageview');
+        
+    </script>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/angularjs")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>
+
+
+@*<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>@ViewBag.Title - My ASP.NET Application</title>
+        @Styles.Render("~/Content/css")
+        @Scripts.Render("~/bundles/modernizr")
+
+    </head>
+    <body>
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                        <li>@Html.ActionLink("About", "About", "Home")</li>
+                        <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                    </ul>
+                    @Html.Partial("_LoginPartial")
+                </div>
+            </div>
+        </div>
+        <div class="container body-content">
+            @RenderBody()
+            <hr />
+            <footer>
+                <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+            </footer>
+        </div>
+
+        @Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/bundles/bootstrap")
+        @RenderSection("scripts", required: false)
+    </body>
+    </html>*@

@@ -1,0 +1,66 @@
+﻿@model IEnumerable<newrisourcecenter.Models.SRPViewModel>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "";
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.FormID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SalesRepID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.department)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.status)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ponumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.dateCreated)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.dateCompleted)
+            </th>
+            <td style="width:180px;"></td>
+        </tr>
+    </thead>
+    @foreach (var item in Model.OrderByDescending(a => a.FormID))
+            {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.FormID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.fullname)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.department)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.status)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ponumber)
+            </td>
+            <td>
+                @string.Format("{0:MM/dd/yyyy}", item.dateCreated)
+            </td>
+            <td>
+                @string.Format("{0:MM/dd/yyyy}", item.dateCompleted)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.FormID, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"] }, htmlAttributes: new { @class = "btn btn-info" }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.FormID, n1_name = @Request.QueryString["n1_name"] }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false", @class = "btn btn-info" })
+            </td>
+        </tr>
+    }
+</table>
+

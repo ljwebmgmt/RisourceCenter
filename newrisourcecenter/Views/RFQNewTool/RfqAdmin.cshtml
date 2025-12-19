@@ -1,0 +1,340 @@
+﻿@model IEnumerable<newrisourcecenter.Models.RFQNewViewModel>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string userId = Session["userId"].ToString();
+    Dictionary<short, string> variants = new Dictionary<short, string> { { 1, "Variant 1 (Assembly Only)" }, { 2, "Variant 2 (Assembly and/or fabrication)" }, { 3, "Variant 3 (Special stock color)" }, { 5, "Variant 4/5 (Assembly, and/or fabrication, special stock color, and special size)" } };
+}
+<script>
+   var  processRFQs = {
+       init:function(){
+           $('#close').click(function () {
+               $('#modal').hide();
+           });
+       },
+       manage: function (url,id) {
+            $.ajax({
+                type: "POST",
+                url: url,
+                success: function (data) {
+                    if (data==="taken"){
+                        alert("This RFQ is already being managed please pick another one");
+                        $("." + id).hide();
+                        $("#status_" + id).html("<span style=\"color:#E50043;font-weight:bolder;\" >Already Taken</span>");
+                    } else {
+                        $("." + id).hide();
+                        $("#status_" + id).html("Assigned To - " + data);
+                    }
+                },
+            });
+           return false;
+       },
+       //get the form id and asign it to the modal done button class id
+        getid:function(id){
+            $('#modal').show();
+            $('#quote_id').html(id);		
+            $('.done').attr('id', id);		
+        },
+        //now assign all the different parameters that would be passed to the new_manage_manually.cfm page
+        assign: function (id) {
+            var new_assigned = $('#'+id).text();	
+            $('.done').attr('title', id);// create attr title on done class
+            $('.done').attr('name', new_assigned);// create attr name on done class	
+            // change display title on modal by showing the name of 		
+            $('#assigned').html('You are assigning this quote to <b style="color:red">'+new_assigned+'</b>');	
+        },
+        //close the modal
+        close_modal: function (id,title,name){	
+            var assignee = name.split(' ', 1);	
+            if(title!="" && id!=""){	
+                var url = '/RFQNewTool/ManageAssignRFQ/?rfq_id=' + id + '&usr_id=' + title+"&assign=yes";
+                //make ajax call to new_manage_manually.cfm when the Done button is clicked
+                $.ajax({
+                    type:"POST",
+                    url:url,
+                    success: function (data) {
+                        $("." + id).hide();
+                        $('#status_' + id).html('Assigned To - ' + data);// on success change the name of the assignee
+                    },
+                });		
+                $('#modal').hide();//finally hide modal
+            }else{
+                alert('please selet an assignee');//display if modal is not completed
+            }	
+        },
+        //auto search for user names
+        searchAdmin: function (querystring) {		
+            var url = '/RFQNewTool/GetRFQAdmins/?querystring=' + querystring;
+            //make ajax call to list_admin.cfm with the user name  
+            $.ajax({
+                type:"GET",
+                url:url,
+                success: function (data) {
+                    $('#RFQ_list').html(data);//on success add the list of names to be selected
+                },
+            });	
+        },
+        toggleNotes: function (id) {
+            $("#notes_" + id).toggle();
+            if ($("#hide_status_" + id).is(":visible")) {
+                $("#hide_status_" + id).hide();
+                $("#show_status_" + id).show();
+            } else {
+                $("#show_status_" + id).hide();
+                $("#hide_status_" + id).show();
+            }
+        }
+   }
+   jQuery(document).ready(processRFQs.init);
+</script>
+<style>
+    /* style the modal */
+    #modal {
+        background: #CCC;
+        width: 60%;
+        height: 50%;
+        min-height: 50%;
+        position: fixed;
+        top: 10%;
+        left: 20%;
+        right: 20%;
+        display: none;
+    }
+
+    #modal span {
+        float: right;
+    }
+
+    #modal > div:first-child {
+        margin-top: 20px;
+        padding: 20px;
+        background: white;
+        width: 90%;
+        height: 70%;
+        position: relative;
+        top: 10px;
+        margin-left: auto;
+        margin-right: auto;
+        color: black;
+        overflow: auto;
+    }
+
+    #search {
+        text-align: center;
+    }
+    .done {
+        top: 30px;
+        position: relative;
+    }
+
+    #RFQ_list {
+        height:200px;
+        overflow-y:auto;
+    }
+
+    #RFQ_list li {
+        margin-left: 200px;
+        margin-bottom: 20px;
+        list-style: none;
+    }
+
+    #close {
+        top: 30px;
+        position: relative;
+    }
+
+    #admin_list {
+        background: silver;
+        width: 100%;
+    }
+    .img-icon { width: 15px; }
+</style>
+<div class="main_content" >
+    <div>
+        <div style="display:inline-block;float:left;margin-bottom:10px;">
+            @Html.ActionLink("RFQ Report >>", "RFQReport", new { n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], msg = "RFQ Report" }, htmlAttributes: new { @class = "btn btn-primary" })
+        </div>
+        @{ Dictionary<string, string> list_status = new Dictionary<string, string>();
+            list_status.Add("Not Assigned", "Not Assigned");
+            list_status.Add("Assigned", "Assigned");
+            list_status.Add("Completed this month", "Completed this month");
+        }
+        <div style="display:inline-block;float:left;margin-left:20px;">
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                    Filter By Status
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    @foreach (var item in list_status)
+                    {
+                        if (Request.QueryString["filter"] == @item.Key)
+                        {
+                            <li><a href="~/RFQNewTool/RfqAdmin?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=@Request.QueryString["msg"]&filter=@item.Key">@item.Value</a></li>
+                        }
+                        else
+                        {
+                            <li><a href="~/RFQNewTool/RfqAdmin?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=@Request.QueryString["msg"]&filter=@item.Key">@item.Value</a></li>
+                        }
+                    }
+                    <li><a href="~/RFQNewTool/RfqAdmin?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=@Request.QueryString["msg"]">No Filter</a></li>
+                </ul>
+            </div>
+        </div>
+        <div style="display:inline-block;float:left;margin-left:20px;">
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                    @(Request.QueryString["filter_region"] != null ? Request.QueryString["filter_region"] : "Filter By Region")
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    @foreach (string region in new string[] { "CENTRAL", "NORTH", "NORTHEAST", "SOUTH", "SOUTHEAST", "WEST", "GLOBAL KEY ACCOUNTS" })
+                    {
+                        <li><a href="~/RFQNewTool/RfqAdmin?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=@Request.QueryString["msg"]&filter_region=@region">@region</a></li>
+
+                    }
+                    <li><a href="~/RFQNewTool/RfqAdmin?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=@Request.QueryString["msg"]">No Filter</a></li>
+                </ul>
+            </div>
+        </div>
+        <div style="display:inline-block;float:left;margin-left:20px;">
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                    @(Request.QueryString["filter_variant"] != null ? variants[Convert.ToInt16(Request.QueryString["filter_variant"])] : "Filter By Variant")
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    @foreach (var dict in variants)
+                    {
+                        <li><a href="~/RFQNewTool/RfqAdmin?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=@Request.QueryString["msg"]&filter_variant=@dict.Key">@dict.Value</a></li>
+
+                    }
+                    <li><a href="~/RFQNewTool/RfqAdmin?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=@Request.QueryString["msg"]">No Filter</a></li>
+                </ul>
+            </div>
+        </div>
+        <div style="display:inline-block;float:right;">
+            @Html.ActionLink("<< RFQ Home", "Index", new { n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"] }, htmlAttributes: new { @class = "btn btn-primary", @style = "float:right;" })
+        </div>
+    </div>
+
+@if (!string.IsNullOrEmpty(Request.QueryString["success"]))
+{
+    <h2 style="color:green;">@Request.QueryString["success"]</h2>
+}
+<table class="table">
+    <thead>
+        <tr>
+            <th valign="top">
+                ID
+            </th>
+            <th valign="top">
+                Quote Number
+            </th>
+            <th valign="top">
+                Requester
+            </th>
+            <th valign="top">
+                Company Name
+            </th>
+            <th valign="top">End User</th>
+            <th valign="top">
+                Project Name
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.submission_date)
+            </th>
+            <th>
+                Status
+                @if (!string.IsNullOrEmpty(Request.QueryString["filter"]))
+                    {
+                    <span style="color:green;">@Request.QueryString["filter"]</span>
+                }
+            </th>
+            @if (Request.QueryString["filter"] == "Completed this month")
+                    {
+                <th>
+                    @Html.DisplayNameFor(model => model.completion_date)
+                </th>
+            }
+            <th>New/Revision</th>
+            <th>Variant</th>
+            <td style="width:75px;">View/Manage</td>
+        </tr>
+    </thead>
+    @foreach (var item in Model)
+    {
+        string enclosuresString = @item.enclosures;
+
+        <tr>
+            <td>@item.ID</td>
+            <td>
+                @Html.DisplayFor(modelItem => item.qte_num)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.requestor)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.comp_name)
+            </td>
+            <td>@Html.DisplayFor(modelItem => item.end_user_name)<br />@Html.DisplayFor(modelItem => item.end_user_location)</td>
+            <td>
+                @Html.DisplayFor(modelItem => item.qte_ref)
+            </td>
+            <td>
+                @String.Format("{0:d}", @item.submission_date)
+            </td>
+            <td id="status_@item.ID">
+                @if (item.list_RFQ_logs != null && item.list_RFQ_logs.Count() > 0)
+                {
+                    if (!string.IsNullOrEmpty(@item.list_RFQ_logs.LastOrDefault().AdminfullName))
+                    {
+                        <span>@item.list_RFQ_logs.LastOrDefault().AdminfullName - @item.list_RFQ_logs.LastOrDefault().Action</span>
+                    }
+                    else
+                    {
+                        <span>@item.list_RFQ_logs.LastOrDefault().Action</span>
+                    }
+                }
+            </td>
+            @if (Request.QueryString["filter"] == "Completed this month")
+            {
+                <td>
+                    @String.Format("{0:d}", @item.completion_date)
+                </td>
+            }
+            <td>@item.updated_quote</td>
+            <td>@(item.variant.HasValue && variants.ContainsKey(item.variant.Value) ? variants[item.variant.Value] : "")</td>
+            <td style="text-align: center;">
+                <a href="@Url.Action("ViewRFQ", new { id = item.ID, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], ext_form = "no", admin = "yes" })" title="View"><img src="~/images/view.png" class="img-icon" /></a>
+
+                @{ string[] list_superAdmins = { "61272", "40", "11", "10" };}
+                @if (list_superAdmins.Contains(userId.ToString()))
+                {
+                    <a id="@item.ID" onclick="processRFQs.getid(this.id);return false;" href="@Url.Action("ManageAssignRFQ", new { id = item.ID, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"] })" title="Assign"><img src="~/images/assign.png" class="img-icon" /></a>
+                }
+                @if (item.list_RFQ_logs != null && item.list_RFQ_logs.Count() > 0 && @item.list_RFQ_logs.LastOrDefault().Action != "Assigned" && @item.list_RFQ_logs.LastOrDefault().Action != "Assigned-Returned" && @item.list_RFQ_logs.LastOrDefault().Action != "Completed" && @item.list_RFQ_logs.LastOrDefault().Action != "Admin Saved with Notes")
+                {
+                    <a href="@Url.Action("ManageAssignRFQ", new { rfq_id = item.ID, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], usr_id = userId })" id="@item.ID" class="@item.ID" onclick="processRFQs.manage(this.href, this.id); return false;" title="Manage"><img src="~/images/manage.png" class="img-icon" /></a>
+                }
+            </td>
+        </tr>
+    }
+</table>
+
+<div id="modal">
+    <div>
+        <span style="float:left;" >Queue id is <strong id="quote_id"></strong></span>
+        <span style="float:right;" >Search to assign a quote <input type="text" onkeyup="processRFQs.searchAdmin(this.value);" id="searchusers" value="" placeholder="search admin name"></span>
+        <br clear="all" />
+        <h4 align="center" id="assigned"></h4>
+        <div id="RFQ_list"></div>
+    </div>
+    <div align="center">
+        <a href="#" class="done" onclick="processRFQs.close_modal(this.id, this.title, this.name); return false;" align="center"><button>Done</button></a>
+        <button id="close">Close</button>
+    </div>
+</div><!-- modals-->
+
+</div>

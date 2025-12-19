@@ -1,0 +1,333 @@
+﻿@model newrisourcecenter.Models.MDFViewModel
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    jQuery(document).ready(function($){
+
+        $('#returnsforms').submit(function (event) {
+            var fileupload = $('input[name="fileupload"]').val();
+            if (fileupload.indexOf("#") !== -1) {
+                alert("You cannot submit a file with # in the name");
+                event.preventDefault();
+            } else if (fileupload.indexOf("%") !== -1) {
+                alert("You cannot submit a file with % in the name");
+                event.preventDefault();
+            }
+        });
+    });
+</script>
+<style>
+    dt {
+        background: #CCC;
+        padding: 8px;
+        border-top: 1px solid #ddd;
+    }
+</style>
+<p>
+    @if (!string.IsNullOrEmpty(Request.QueryString["success"]))
+    {
+        <h2 style="color:lightblue;">@Request.QueryString["success"]</h2>
+    }
+</p>
+@*@using (Html.BeginForm("AddFile", "MDFView", FormMethod.Post, new { enctype = "multipart/form-data", @id = "returnsforms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.mdf_ID)
+    <div class="form-horizontal">
+        <dl class="dl-horizontal">
+            <dt>
+                Advertising & Promotion Samples
+            </dt>
+
+            <dd>
+                @foreach (var item in Model.list_mdf_files.Where(a => a.mdf_file_type == 2))
+                {
+                    <span><a href="~/attachments/mdf/images/@item.mdf_file_name" target="_blank">File</a> ~
+                    @Html.ActionLink("Delete", "DeleteFiles", new { id = item.mdf_file_ID, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], msg = @Request.QueryString["msg"] }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false" }) | </span>
+                }
+            </dd>
+        </dl>
+        <input type="hidden" value="@Request.QueryString["n1_name"]" name="n1_name" />
+        <input type="hidden" value="@Request.QueryString["n2_name"]" name="n2_name" />
+        <input type="hidden" value="@Request.QueryString["msg"]" name="msg" />
+        <input name="mdf_file_type" type="hidden" value="2" />
+        <input name="mdf_id" type="hidden" value="@Model.mdf_ID" />
+        <input type="file" name="fileupload" multiple id="1" style="height:50px;">
+        <input name="postiamge" type="submit" value="Submit" id="submit" class="btn btn-success" data-icon="arrow-r" data-iconpos="right">
+    </div>
+}*@
+
+@*@using (Html.BeginForm("AddFile", "MDFView", FormMethod.Post, new { enctype = "multipart/form-data", @id = "returnsforms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.mdf_ID)
+    <div class="form-horizontal">
+        <dl class="dl-horizontal">
+            <dt>
+                Upload Reciept Documents
+            </dt>
+
+            <dd>
+                @foreach (var item in Model.list_mdf_files.Where(a => a.mdf_file_type == 1))
+                {
+                    <span>
+                        <a href="~/attachments/mdf/images/@item.mdf_file_name" target="_blank">File</a> ~
+                        @Html.ActionLink("Delete", "DeleteFiles", new { id = item.mdf_file_ID, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], msg = @Request.QueryString["msg"] }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false" }) |
+                    </span>
+                }
+            </dd>
+        </dl>
+        <input type="hidden" value="@Request.QueryString["n1_name"]" name="n1_name" />
+        <input type="hidden" value="@Request.QueryString["n2_name"]" name="n2_name" />
+        <input type="hidden" value="@Request.QueryString["msg"]" name="msg" />
+        <input name="mdf_file_type" type="hidden" value="1" />
+        <input name="mdf_id" type="hidden" value="@Model.mdf_ID" />
+        <input type="file" name="fileupload" multiple id="1" style="height:50px;">
+        <input name="postiamge" type="submit" value="Submit" id="submit" class="btn btn-success" data-icon="arrow-r" data-iconpos="right">
+    </div>
+}*@
+
+@using (Html.BeginForm("ApEdit", "MDFView", FormMethod.Post, new { enctype = "multipart/form-data", @id = "returnsforms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.mdf_ID)
+    <div class="form-horizontal">
+        <a style="float:right;font-weight:normal;" href="/MDFView/manage?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=Manage%20MDFs">back</a>
+
+        <dl class="dl-horizontal">
+
+            <dt>
+                @Html.DisplayNameFor(model => model.mdf_ID)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.mdf_ID)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.mdf_type)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.request_type)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.mdf_status)
+            </dt>
+
+            <dd>
+                @if (@Model.mdf_status == 1)
+                {
+                    <span>Pending</span>
+                }
+                else if (@Model.mdf_status == 2)
+                {
+                    <span>Denied</span>
+                }
+                else if (@Model.mdf_status == 3)
+                {
+                    <span>Approved</span>
+                }
+                else if (@Model.mdf_status == 4)
+                {
+                    <span>Completed</span>
+                }
+                else if (@Model.mdf_status == 5)
+                {
+                    <span>Credit Issued</span>
+                }
+                else if (@Model.mdf_status == 6)
+                {
+                    <span>Canceled</span>
+                }
+                else
+                {
+                    <span>In Progress</span>
+                }
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.mdf_user)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.requester)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.mdf_title)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.mdf_title)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.mdf_desc)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.mdf_desc)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.mdf_totalCost)
+            </dt>
+
+            <dd>
+                @String.Format("{0:C}", @Model.mdf_totalCost)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.mdf_mdfCost)
+            </dt>
+
+            <dd>
+                @String.Format("{0:C}", @Model.mdf_mdfCost)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.mdf_requestDate)
+            </dt>
+
+            <dd>
+                @String.Format("{0:d}", @Model.mdf_requestDate)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.mdf_date)
+            </dt>
+
+            <dd>
+                @String.Format("{0:d}", @Model.mdf_date)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.mdf_reviewDate)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.mdf_reviewDate)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.mdf_validationDate)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.mdf_validationDate)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.mdf_creditIssueDate)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.mdf_creditIssueDate)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.mdf_comments)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.mdf_comments)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.mdf_approvedAmt)
+            </dt>
+
+            <dd>
+                @String.Format("{0:C}", @Model.mdf_approvedAmt)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.mdf_comments2)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.mdf_comments2)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.mdf_validatedAmt)
+            </dt>
+
+            <dd>
+                @String.Format("{0:C}", @Model.mdf_validatedAmt)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.mdf_comments3)
+            </dt>
+
+            <dd>
+                @Html.TextAreaFor(model => model.mdf_comments3)
+            </dd>
+
+            <dt>
+                Upload Reciept Documents
+            </dt>
+
+            <dd>
+                @foreach (var item in Model.list_mdf_files)
+                {
+                    <span>
+                        <a href="~/attachments/mdf/images/@item.mdf_file_name" target="_blank">@item.mdf_file_name</a> ~~
+                        @Html.ActionLink("Delete", "DeleteFiles", new { id = item.mdf_file_ID, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], msg = @Request.QueryString["msg"] }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false" }) ||
+                    </span>
+                }
+            </dd>
+
+        </dl>
+        @* Set values from the database *@
+        @Html.HiddenFor(model => model.mdf_ID)
+        @Html.HiddenFor(model => model.mdf_type)
+        @Html.HiddenFor(model => model.mdf_status)
+        @Html.HiddenFor(model => model.mdf_user)
+        @Html.HiddenFor(model => model.mdf_title)
+        @Html.HiddenFor(model => model.mdf_desc)
+        @Html.HiddenFor(model => model.mdf_totalCost)
+        @Html.HiddenFor(model => model.mdf_mdfCost)
+        @Html.HiddenFor(model => model.mdf_requestDate)
+        @Html.HiddenFor(model => model.mdf_date)
+        @Html.HiddenFor(model => model.mdf_reviewDate)
+        @Html.HiddenFor(model => model.mdf_validationDate)
+        @Html.HiddenFor(model => model.mdf_creditIssueDate)
+        @Html.HiddenFor(model => model.mdf_comments)
+        @Html.HiddenFor(model => model.mdf_approvedAmt)
+        @Html.HiddenFor(model => model.mdf_comments2)
+        @Html.HiddenFor(model => model.mdf_validatedAmt)
+        @Html.HiddenFor(model => model.mdf_loc)
+        @Html.HiddenFor(model => model.mdf_creditMemoNum)
+        @Html.HiddenFor(model => model.mdf_accountingInstruct)
+        @Html.HiddenFor(model => model.archive_year)
+        @Html.HiddenFor(model => model.mdf_comp)
+        @Html.HiddenFor(model => model.mdf_SAP)
+
+        <input type="hidden" value="@Request.QueryString["n1_name"]" name="n1_name" />
+        <input type="hidden" value="@Request.QueryString["n2_name"]" name="n2_name" />
+        @*Control image upload*@
+        <input type="hidden" value="@Request.QueryString["n1_name"]" name="n1_name" />
+        <input type="hidden" value="@Request.QueryString["n2_name"]" name="n2_name" />
+        <input type="hidden" value="@Request.QueryString["msg"]" name="msg" />
+        <input name="mdf_file_type" type="hidden" value="1" />
+        <input name="mdf_id" type="hidden" value="@Model.mdf_ID" />
+        <input type="file" name="fileupload" multiple id="1" style="height:50px;">
+        @*Control image upload*@
+        <input name="userEdit" type="hidden" value="yes" />
+        <div data-role="controlgroup" data-type="horizontal" align="center">
+            <a href="/MDFView/manage?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=Manage%20MDFs" class="btn btn-primary">&nbsp;&nbsp;Back&nbsp;&nbsp;&nbsp;</a>
+            <input name="submit" type="submit" value="Submit" id="submit" class="btn btn-success" data-icon="arrow-r" data-iconpos="right">
+        </div>
+    </div>
+    <p>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.mdf_ID }) |
+        @Html.ActionLink("Back to List", "Index")
+    </p>
+}

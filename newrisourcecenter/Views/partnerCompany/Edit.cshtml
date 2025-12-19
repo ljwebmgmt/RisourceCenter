@@ -1,0 +1,474 @@
+﻿@model newrisourcecenter.Models.partnerCompanyViewModel
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int usr_SPA = Convert.ToInt32(Session["usr_SPA"]);//Regional Manager
+    int usr_POS = Convert.ToInt32(Session["usr_POS"]);//Account Manager
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+<div class="form-horizontal">
+    <a href="javascript:history.back();" style="float:right;">back</a>
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.comp_ID)
+
+    <h3>Company Overview</h3>
+    <div class="form-group">
+        @Html.LabelFor(model => model.comp_name, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.comp_name, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.comp_name, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.comp_region, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DropDownListFor(m => m.comp_region, Model.list_regions, htmlAttributes: new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.comp_region, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.comp_active, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <select name="comp_active" class="form-control">
+                @if (Model.comp_active == 1)
+                {
+                    <option value="1" selected>Active</option>
+                }
+                else
+                {
+                    <option value="0" selected>Not Active</option>
+                }
+                <option value="1">Active</option>
+                <option value="0">Not Acitive</option>
+            </select>
+            @Html.ValidationMessageFor(model => model.comp_active, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.comp_industry, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <select name="comp_industry" id="comp_industry" class="form-control">
+                <option selected>Select an Industry</option>
+                @foreach (var items in Model.list_industry)
+                {
+                    if (items.pi_ID == Model.comp_industry)
+                    {
+                        <option value="@items.pi_ID" selected>@items.pi_industry</option>
+                    }
+                    else
+                    {
+                        <option value="@items.pi_ID">@items.pi_industry</option>
+                    }
+                }
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.comp_type, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <select name="comp_type" id="comp_type" class="form-control">
+                <option selected>Select Company Type</option>
+                @foreach (var items in Model.list_Type)
+                {
+                    if (@items.pt_ID == Model.comp_type)
+                    {
+                        <option value="@items.pt_ID" selected>@items.pt_type</option>
+                    }
+                    <option value="@items.pt_ID">@items.pt_type</option>
+                }
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.comp_level, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.comp_level, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.comp_level, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.comp_products, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @{
+                if (Model.comp_products != null)
+                {
+                    char[] prod = Model.comp_products.ToArray();
+                    string prods = new string(prod);
+                    foreach (var items in Model.list_products)
+                    {
+                        if (prods.Contains(Convert.ToString(items.pp_ID)))
+                        {
+                            <input type="checkbox" name="comp_products" id="comp_products" value="@items.pp_ID" checked />@items.pp_product<br />
+                        }
+                        else
+                        {
+                            <input type="checkbox" name="comp_products" id="comp_products" value="@items.pp_ID" />@items.pp_product<br />
+                        }
+                    }
+
+                }
+                else
+                {
+
+                    foreach (var items in Model.list_products)
+                    {
+                        <input type="checkbox" name="comp_products" id="comp_products" value="@items.pp_ID" />@items.pp_product<br />
+                    }
+
+                }
+            }
+
+            @Html.ValidationMessageFor(model => model.comp_products, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    @if (!User.IsInRole("Channel User"))
+    {
+        <div class="form-group">
+            @Html.LabelFor(model => model.comp_MDF_amount, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                $@Html.EditorFor(model => model.comp_MDF_amount, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.comp_MDF_amount, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    }
+    else
+    {
+        @Html.HiddenFor(model => model.comp_MDF_amount)
+    }
+
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.comp_MDF_oLimit, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            $@Html.DisplayFor(model => model.comp_MDF_oLimit, new { htmlAttributes = new { @class = "form-control" } })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.comp_MDF_eLimit, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            $@Html.DisplayFor(model => model.comp_MDF_eLimit, new { htmlAttributes = new { @class = "form-control" } })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.comp_MDF_aLimit, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            $@Html.DisplayFor(model => model.comp_MDF_aLimit, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.comp_MDF_aLimit, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.comp_MDF_tLimit, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            $@Html.DisplayFor(model => model.comp_MDF_tLimit, new { htmlAttributes = new { @class = "form-control" } })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.comp_MDF_mLimit, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            $@Html.DisplayFor(model => model.comp_MDF_mLimit, new { htmlAttributes = new { @class = "form-control" } })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.comp_MDF_dLimit, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            $@Html.DisplayFor(model => model.comp_MDF_dLimit, new { htmlAttributes = new { @class = "form-control" } })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.MDF_remaining, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            $@Html.DisplayFor(model => model.MDF_remaining, new { htmlAttributes = new { @class = "form-control" } })
+        </div>
+    </div>
+
+    @if (!User.IsInRole("Channel User"))
+    {
+        <div class="form-group">
+            @Html.LabelFor(model => model.comp_MKT_Limit, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                $@Html.EditorFor(model => model.comp_MKT_Limit, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.comp_MKT_Limit, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    }
+    else
+    {
+        @Html.HiddenFor(model => model.comp_MKT_Limit)
+    }
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.MKT_remaining, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            $@Html.DisplayFor(model => model.MKT_remaining, new { htmlAttributes = new { @class = "form-control" } })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.comp_dateUpdated, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DisplayFor(model => model.comp_dateUpdated, new { htmlAttributes = new { @class = "form-control" } })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.comp_updatedBy, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DisplayFor(model => model.full_name, new { htmlAttributes = new { @class = "form-control" } })
+        </div>
+    </div>
+
+    @Html.HiddenFor(model => model.comp_dateCreated, new { htmlAttributes = new { @class = "form-control" } })
+    @Html.HiddenFor(model => model.comp_dateUpdated, new { htmlAttributes = new { @class = "form-control" } })
+    @Html.HiddenFor(model => model.comp_createdBy, new { htmlAttributes = new { @class = "form-control" } })
+    @Html.HiddenFor(model => model.comp_updatedBy, new { htmlAttributes = new { @class = "form-control" } })
+    @Html.HiddenFor(model => model.old_ID, new { htmlAttributes = new { @class = "form-control" } })
+
+    @if (User.IsInRole("Super Admin") || User.IsInRole("Global Admin") || usr_SPA == 1)
+    {
+        <h3>Company Permissions</h3>
+        <div class="form-group">
+            @Html.LabelFor(model => model.comp_MDF, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @if (Model.comp_MDF == 1)
+                {
+                    <span><input name="comp_MDF" checked type="radio" value="1">Yes</span>
+                }
+                else
+                {
+                    <span><input name="comp_MDF" type="radio" value="1">Yes</span>
+                }
+                @if (Model.comp_MDF == 0)
+                {
+                    <span><input name="comp_MDF" checked type="radio" value="0">No</span>
+                }
+                else
+                {
+                    <span><input name="comp_MDF" type="radio" value="0">No</span>
+                }
+
+                @Html.ValidationMessageFor(model => model.comp_MDF, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.comp_SAP, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @if (Model.comp_SAP == 1)
+                {
+                    <span><input name="comp_SAP" checked type="radio" value="1">Yes</span>
+                }
+                else
+                {
+                    <span><input name="comp_SAP" type="radio" value="1">Yes</span>
+                }
+                @if (Model.comp_SAP == 0)
+                {
+                    <span><input name="comp_SAP" checked type="radio" value="0">No</span>
+                }
+                else
+                {
+                    <span><input name="comp_SAP" type="radio" value="0">No</span>
+                }
+
+                @Html.ValidationMessageFor(model => model.comp_SAP, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.comp_POS, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @if (Model.comp_POS == 1)
+                {
+                    <span><input name="comp_POS" checked type="radio" value="1">Yes</span>
+                }
+                else
+                {
+                    <span><input name="comp_POS" type="radio" value="1">Yes</span>
+                }
+                @if (Model.comp_POS == 0)
+                {
+                    <span><input name="comp_POS" checked type="radio" value="0">No</span>
+                }
+                else
+                {
+                    <span><input name="comp_POS" type="radio" value="0">No</span>
+                }
+
+                @Html.ValidationMessageFor(model => model.comp_POS, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.comp_SPA, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @if (Model.comp_SPA == 1)
+                {
+                    <span><input name="comp_SPA" checked type="radio" value="1">Yes</span>
+                }
+                else
+                {
+                    <span><input name="comp_SPA" type="radio" value="1">Yes</span>
+                }
+                @if (Model.comp_SPA == 0)
+                {
+                    <span><input name="comp_SPA" checked type="radio" value="0">No</span>
+                }
+                else
+                {
+                    <span><input name="comp_SPA" type="radio" value="0">No</span>
+                }
+
+                @Html.ValidationMessageFor(model => model.comp_SPA, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.comp_project_reg, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @if (Model.comp_project_reg == 1)
+                {
+                    <span><input name="comp_project_reg" checked type="radio" value="1">Yes</span>
+                }
+                else
+                {
+                    <span><input name="comp_project_reg" type="radio" value="1">Yes</span>
+                }
+                @if (Model.comp_project_reg == 0)
+                {
+                    <span><input name="comp_project_reg" checked type="radio" value="0">No</span>
+                }
+                else
+                {
+                    <span><input name="comp_project_reg" type="radio" value="0">No</span>
+                }
+
+                @Html.ValidationMessageFor(model => model.comp_project_reg, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.comp_FX, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @if (Model.comp_FX == 1)
+                {
+                    <span><input name="comp_FX" checked type="radio" value="1"> Yes</span>
+                }
+                else
+                {
+                    <span><input name="comp_FX" type="radio" value="1"> Yes</span>
+                }
+                @if (Model.comp_FX == 0)
+                {
+                    <span><input name="comp_FX" type="radio" checked value="0">No</span>
+                }
+                else
+                {
+                    <span><input name="comp_FX" type="radio" value="0">No</span>
+                }
+
+                @Html.ValidationMessageFor(model => model.comp_FX, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.comp_RiCRM, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @if (Model.comp_RiCRM == 1)
+                {
+                    <span><input name="comp_RiCRM" type="radio" checked value="1">Yes</span>
+                }
+                else
+                {
+                    <span><input name="comp_RiCRM" type="radio" value="1">Yes</span>
+                }
+                @if (Model.comp_RiCRM == 0)
+                {
+                    <span><input name="comp_RiCRM" type="radio" checked value="0">No</span>
+                }
+                else
+                {
+                    <span><input name="comp_RiCRM" type="radio" value="0">No</span>
+                }
+
+                @Html.ValidationMessageFor(model => model.comp_RiCRM, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    }
+    <h3>Deal Registration</h3>
+    <div class="form-group">
+        @Html.LabelFor(model => model.bid_registration, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <input name="bid_registration" type="radio" value="1" @(Model.bid_registration == 1 ? "checked" : "")>Yes
+            <input name="bid_registration" type="radio" value="0" @(Model.bid_registration == 0 ? "checked" : "")>No
+            @Html.ValidationMessageFor(model => model.bid_registration, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.it_territory_manager, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.it_territory_manager, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.it_territory_manager, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.general_manager, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.general_manager, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.general_manager, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <h3>Company Details</h3>
+    <table class="table" border="1">
+        <tr>
+            <th style="background-color:gray;">Locations</th>
+            <td>@Model.count_locations</td>
+            <td>
+                @Html.ActionLink("Manage Locations", "Index", "partnerLocation", new { comp_id = Model.comp_ID, n1_name = "Admin Partner Location", n2_name = Model.comp_name }, htmlAttributes: new { title = "Manage Locations" })
+            </td>
+        </tr>
+        <tr>
+            <th style="background-color:gray;">Users/Contacts</th>
+            <td>@Model.count_users</td>
+            <td>
+                @Html.ActionLink("Manage Contacts", "Index", "UserViewModels", new { compid = Model.comp_ID, n1_name = "Admin Users", n2_name = Model.comp_name }, htmlAttributes: new { title = "Manage Locations" })
+            </td>
+        </tr>
+        <tr>
+            <th style="background-color:gray;">Jigsaw Users</th>
+            <td>@Model.count_jigsaw</td>
+            <td>
+                @Html.ActionLink("Manage Jigsaw", "Index", "UserViewModels", new { compid = Model.comp_ID, n1_name = "Admin Users", n2_name = Model.comp_name, msg = "Jigsaw" }, htmlAttributes: new { title = "Manage Locations" })
+            </td>
+        </tr>
+    </table>
+    <input type="hidden" name="isSPA" value="@Request.QueryString["isSPA"]" />
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Save" class="btn btn-default" />
+        </div>
+    </div>
+</div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index", new { n1_name = Request.QueryString["n1_name"] })
+</div>

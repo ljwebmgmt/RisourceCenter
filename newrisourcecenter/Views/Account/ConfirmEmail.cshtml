@@ -1,0 +1,24 @@
+﻿
+<article id="main_content" align="center">
+    <div class="row" align="center">
+        <h2 style="color:#E50043;">@ViewBag.heading</h2>
+
+        <section id="confirmationForm" align="center">
+            <div>
+                <p>
+                    <br />
+                        @if (Model.ContainsKey("Success"))
+                        {
+                            @Html.Raw("The account for <strong class='req'>" + ViewBag.email + "</strong> has been activated.<a href='" + Url.Action("Edit","UserViewModels", new { id = ViewBag.userID, compid = ViewBag.companyID, user_ID = ViewBag.userID, n2_name = "User Account" }) + "' style='font-weight:bold;'>Click here</a> to view user profile")
+                        }
+                        else
+                        {
+                            @Model["Error"];
+                        }
+                    <br />
+                    <br />
+                </p>
+            </div>
+        </section>
+    </div>
+</article>

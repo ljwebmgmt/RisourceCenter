@@ -1,0 +1,293 @@
+﻿@model newrisourcecenter.Models.BidRegistration
+@{
+    ViewBag.Title = Model != null && Model.ID > 0 ? "View/Edit" : "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string[] products = new string[] { "Network Enclosures", "Data Center Cooling", "Data Center Power", "Monitoring & Security", "Services" };
+    string[] actions = new string[] { "Pricing", "Pre-Sales  Solution Architect/Tech Support Call", "On-site Visit", "Other" };
+    List<string> selectedProducts = Model != null && !string.IsNullOrEmpty(Model.products) ? Model.products.Split(',').ToList() : new List<string>();
+    List<string> selectedActions = Model != null && !string.IsNullOrEmpty(Model.actions_required) ? Model.actions_required.Split(',').ToList() : new List<string>();
+}
+
+@section Scripts {
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
+    <script>
+        jQuery(document).ready(function () {
+            if (jQuery('.success-msg').length > 0) {
+                jQuery('html,body').animate({ scrollTop: jQuery('.success-msg').offset().top });
+                setTimeout(function () { jQuery('.success-msg').remove(); }, 3000);
+            }
+        });
+
+        function showDistributor(show) {
+            jQuery('.distributor-name').addClass('hide');
+            if (show)
+                jQuery('.distributor-name').removeClass('hide');
+        }
+
+        jQuery(document).on('change', 'input[name="chk_products[]"]', function (e) {
+            var products = [];
+            jQuery('input[name="chk_products[]"]:checked').each(function () {
+                products.push(jQuery(this).val());
+            });
+            jQuery('[name="products"]').val(products.join(','));
+        });
+
+        jQuery(document).on('change', 'input[name="chk_actions[]"]', function (e) {
+            var products = [];
+            jQuery('input[name="chk_actions[]"]:checked').each(function () {
+                products.push(jQuery(this).val());
+            });
+            jQuery('[name="actions_required"]').val(products.join(','));
+        });
+    </script>
+}
+@using (Html.BeginForm((Model != null && Model.ID > 0 ? "Edit" : "Create"), "BidRegistration", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    if (Model != null && Model.ID > 0)
+    {
+        @Html.HiddenFor(model => model.ID);
+        @Html.HiddenFor(model => model.files);
+        @Html.HiddenFor(model => model.created_by);
+        @Html.HiddenFor(model => model.created_on);
+    }
+    <div class="form-horizontal">
+        <h3>Bid Registration Form</h3>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <h4>Channel Partner</h4>
+        <div class="form-group">
+            @Html.LabelFor(model => model.company_id, "Company : *", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                <select name="company_id" class="form-control required">
+                    <option value="">Select Option</option>
+                    @foreach (var item in @ViewBag.partnerComp)
+                    {
+                        <option value="@item.comp_ID" @(Model != null && Model.company_id == item.comp_ID ? "selected" : "")>@item.comp_name</option>
+                    }
+                </select>
+                @Html.ValidationMessageFor(model => model.company_id, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.contact_name, "Contact Name : *", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.contact_name, new { htmlAttributes = new { @class = "form-control required" } })
+                @Html.ValidationMessageFor(model => model.contact_name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.contact_email, "Contact Email : *", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.contact_email, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.contact_email, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.contact_phone, "Contact Phone : *", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.contact_phone, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.contact_phone, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <hr />
+        <h4>End Customer</h4>
+        <div class="form-group">
+            @Html.LabelFor(model => model.customer_name, "Contact Name: *", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.customer_name, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.customer_name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.decision_maker, "Is this person a decision maker? : *", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                <label class="radio-inline">
+                    <input type="radio" name="decision_maker" value="true" data-val="true" required data-val-required="This is required field" @Html.Raw(Model != null ? (Model.decision_maker ? "checked" : "") : "")> Yes
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" name="decision_maker" value="false" data-val="true" required data-val-required="This is required field" @Html.Raw(Model != null ? (!Model.decision_maker ? "checked" : "") : "")> No
+                </label>
+                @Html.ValidationMessageFor(model => model.decision_maker, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.company_name, "Company Name: *", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.company_name, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.company_name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.company_location, "Company HQ Location: *", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.company_location, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.company_location, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.project_location, "Company Project Location: *", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.project_location, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.project_location, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <hr />
+        <h4>Project Details</h4>
+        <div class="form-group">
+            @Html.LabelFor(model => model.project_name, "Project Name: *", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.project_name, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.project_name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.estimated_start_date, "Estimate of Start Date: *", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.estimated_start_date, new { htmlAttributes = new { @class = "form-control", @type = "date", Value = (Model != null && Model.estimated_start_date.HasValue ? Model.estimated_start_date.Value.Date.ToString("yyyy-MM-dd") : "") } })
+                @Html.ValidationMessageFor(model => model.estimated_start_date, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.project_value, "Ball Park Value of Project: *", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.project_value, new { htmlAttributes = new { @class = "form-control", @type = "number" } })
+                @Html.ValidationMessageFor(model => model.project_value, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.products, "Rittal products being recommended (Check all that apply): *", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @foreach (string product in products)
+                {
+                    <label class="checkbox-inline">
+                        <input type="checkbox" name="chk_products[]" value="@product" @Html.Raw(selectedProducts.Contains(product) ? "checked" : "") /> @product
+                    </label>
+                }
+                <br />
+                @Html.ValidationMessageFor(model => model.products, "", new { @class = "text-danger" })
+            </div>
+            @Html.EditorFor(model => model.products, new { htmlAttributes = new { @style = "position: absolute;left: -1000px;" } })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.IT_distributor, "Will you be fulfilling this order through an IT distributor? : *", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                <label class="radio-inline">
+                    <input type="radio" name="IT_distributor" value="true" onchange="showDistributor(true)" data-val="true" required data-val-required="This is required field" @Html.Raw(Model != null ? (Model.IT_distributor ? "checked" : "") : "")> Yes
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" name="IT_distributor" value="false" onchange="showDistributor(false)" data-val="true" required data-val-required="This is required field" @Html.Raw(Model != null ? (!Model.IT_distributor ? "checked" : "") : "")> No
+                </label>
+                @Html.ValidationMessageFor(model => model.IT_distributor, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group distributor-name @Html.Raw(Model == null || !Model.IT_distributor ? "hide" : "")">
+            @Html.LabelFor(model => model.distributor_name, "Distributor Name: *", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.distributor_name, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.distributor_name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.project_type, "Is this project a one-time ship or a rollout? : *", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                <label class="radio-inline">
+                    <input type="radio" name="project_type" value="One-Time Ship" data-val="true" required data-val-required="This is required field" @Html.Raw(Model != null ? (Model.project_type == "One-Time Ship" ? "checked" : "") : "")> One-Time Ship
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" name="project_type" value="Rollout" data-val="true" required data-val-required="This is required field" @Html.Raw(Model != null ? (Model.project_type == "Rollout" ? "checked" : "") : "")> Rollout
+                </label>
+                @Html.ValidationMessageFor(model => model.project_type, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.competition, "Who is our competition and or incumbent?:", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-7">
+                @Html.TextAreaFor(model => model.competition, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.competition, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.actions_required, "Action Required from Rittal, (Check the ones that apply): *", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @foreach (string action in actions)
+                {
+                    <label class="checkbox-inline">
+                        <input type="checkbox" name="chk_actions[]" value="@action" @Html.Raw(selectedActions.Contains(action) ? "checked" : "") /> @action
+                    </label>
+                }
+                <br />
+                @Html.ValidationMessageFor(model => model.products, "", new { @class = "text-danger" })
+            </div>
+            @Html.EditorFor(model => model.actions_required, new { htmlAttributes = new { @style = "position: absolute;left: -1000px;" } })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.files, "Attach any other information that you think is important for us to know:", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                <input type="file" name="fileupload" id="fileupload" class="makethispretty" multiple />
+                <br clear="all" />
+                @if (Model != null && !string.IsNullOrEmpty(Model.files))
+                {
+                    if (!string.IsNullOrEmpty(Request.QueryString["filesuccess"]))
+                    {
+                        <h5 style="color:green;" class="success-msg">@Request.QueryString["filesuccess"]</h5>
+                    }
+                    <ul style="padding-bottom:20px;width:100%;">
+                        @{
+                            string[] files = Model.files.Split(',');
+                        }
+                        @if (files.Count() > 0)
+                        {
+                            foreach (string file in files)
+                            {
+                                if (string.IsNullOrEmpty(file))
+                                {
+                                    continue;
+                                }
+                                string[] parts = file.Split(':');
+                                <li>
+                                    <a href="~/attachments/bid_registrations/@parts[1]" target="_blank" download="@parts[0]">@parts[0]</a>
+                                    @if (string.IsNullOrEmpty(Request.QueryString["admin"]))
+                                    {
+                                        @Html.ActionLink(" - Delete", "DeleteFile", new { id = Model.ID, file = file, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], ext_form = @Request.QueryString["ext_form"] }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false", @class = "text-danger" })
+                                    }
+                                </li>
+                            }
+                        }
+                    </ul>
+                }
+                @Html.ValidationMessageFor(model => model.files, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        @if (Model != null && Model.ID > 0) {
+            <hr />
+            <h4>Approvals</h4>
+            <div class="form-group">
+                @Html.LabelFor(model => model.channel_manager_approval, "IT Channel/Territory Manager:", htmlAttributes: new { @class = "control-label col-md-3" })
+                <div class="col-md-7">
+                    @if (!string.IsNullOrEmpty(Model.channel_manager_approval))
+                    {
+                        <p class="form-control-static">@Model.channel_manager_approval</p>
+                    }
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.gm_approval, "GM Approval:", htmlAttributes: new { @class = "control-label col-md-3" })
+                <div class="col-md-7">
+                    @if (!string.IsNullOrEmpty(Model.gm_approval))
+                    {
+                        <p class="form-control-static">@Model.gm_approval</p>
+                    }
+                </div>
+            </div>
+        }
+        <div class="form-group">
+            <div class="col-md-offset-3 col-md-9">
+                <input type="submit" value="@Html.Raw(Model != null && Model.ID > 0 ? "Update" : "Create")" class="btn btn-primary" />
+                @Html.ActionLink("BACK TO LIST", (ViewBag.isAdmin == "1" ? "Admin" : "Index"), new { n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"] }, new { @class = "btn btn-default" })
+            </div>
+        </div>
+    </div>
+}

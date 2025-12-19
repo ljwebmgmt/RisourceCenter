@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+<head>
+<title>Prompt</title>
+
+<style text="text/css">
+    body { background-color:#ece9d8; }
+</style>
+
+<script language = "JavaScript">
+
+var warguments = window.dialogArguments;
+var sPrompt    = ''
+var sDefault   = ''
+var newPrompt  = ''
+if( warguments && warguments.length >= 2)
+{
+  sPrompt    = warguments[0];
+  sDefault   = warguments[1];
+  newPrompt  = '&nbsp;&nbsp;&nbsp;' + sPrompt.replace( '\n', '<br />&nbsp;&nbsp;&nbsp;' )
+}
+
+onload = init
+
+function init() {
+	document.tpromptform.inputtext.value = sDefault
+}
+
+function doSubmit() {
+    window.returnValue = document.tpromptform.inputtext.value
+    window.top.close()
+    return false;
+}
+
+function doCancel() {
+    window.returnValue = null
+    window.top.close()
+    return false;
+}
+
+</script>
+</head>
+<body>
+  <br />
+  <script>document.write(newPrompt)</script>
+  <center>
+    <form name="tpromptform" id="tpromptform" onSubmit="return doSubmit();">
+      <input type="text" name="inputtext" size=40><br /><br />
+      <input type="button" name="OK" value="    OK    " onclick=doSubmit()>&nbsp;&nbsp;&nbsp;&nbsp;
+      <input type="button" name="Cancel" value="Cancel" onclick=doCancel()>
+    </form>
+  </center>
+</body>
+</html>

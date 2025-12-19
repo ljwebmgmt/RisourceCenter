@@ -1,0 +1,154 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Entity;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Net;
+using System.Web;
+using System.Web.Mvc;
+using newrisourcecenter.Models;
+
+namespace newrisourcecenter.Controllers
+{
+    public class PartnerApplicationController : Controller
+    {
+        private RisourceCenterContext db = new RisourceCenterContext();
+
+        // GET: PartnerApplication
+        public async Task<ActionResult> Index()
+        {
+            long userId = Convert.ToInt64(Session["userId"]);
+            if (!Request.IsAuthenticated || userId == 0)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            return View(await db.PartnerApplicationViewModels.ToListAsync());
+        }
+
+        // GET: PartnerApplication/Details/5
+        public async Task<ActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            PartnerApplicationViewModel partnerApplicationViewModel = await db.PartnerApplicationViewModels.FindAsync(id);
+            if (partnerApplicationViewModel == null)
+            {
+                return HttpNotFound();
+            }
+            return View(partnerApplicationViewModel);
+        }
+
+        // GET: PartnerApplication/Create
+        public ActionResult Create()
+        {
+            return View();
+        }
+
+        // POST: PartnerApplication/Create
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Create([Bind(Include = "appli_id,appli_name,order")] PartnerApplicationViewModel partnerApplicationViewModel)
+        {
+            long userId = Convert.ToInt64(Session["userId"]);
+            if (!Request.IsAuthenticated || userId == 0)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            if (ModelState.IsValid)
+            {
+                db.PartnerApplicationViewModels.Add(partnerApplicationViewModel);
+                await db.SaveChangesAsync();
+                return RedirectToAction("Index", new { n1_name = Request.Form["n1_name"] });
+            }
+
+            return View(partnerApplicationViewModel);
+        }
+
+        // GET: PartnerApplication/Edit/5
+        public async Task<ActionResult> Edit(int? id)
+        {
+            long userId = Convert.ToInt64(Session["userId"]);
+            if (!Request.IsAuthenticated || userId == 0)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            PartnerApplicationViewModel partnerApplicationViewModel = await db.PartnerApplicationViewModels.FindAsync(id);
+            if (partnerApplicationViewModel == null)
+            {
+                return HttpNotFound();
+            }
+            return View(partnerApplicationViewModel);
+        }
+
+        // POST: PartnerApplication/Edit/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Edit([Bind(Include = "appli_id,appli_name,order")] PartnerApplicationViewModel partnerApplicationViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                db.Entry(partnerApplicationViewModel).State = EntityState.Modified;
+                await db.SaveChangesAsync();
+                return RedirectToAction("Index", new { n1_name = Request.Form["n1_name"] });
+            }
+            return View(partnerApplicationViewModel);
+        }
+
+        // GET: PartnerApplication/Delete/5
+        public async Task<ActionResult> Delete(int? id)
+        {
+            long userId = Convert.ToInt64(Session["userId"]);
+            if (!Request.IsAuthenticated || userId == 0)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            PartnerApplicationViewModel partnerApplicationViewModel = await db.PartnerApplicationViewModels.FindAsync(id);
+            if (partnerApplicationViewModel == null)
+            {
+                return HttpNotFound();
+            }
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            db.PartnerApplicationViewModels.Remove(partnerApplicationViewModel);
+            await db.SaveChangesAsync();
+            return RedirectToAction("Index", new { n1_name = Request.QueryString["n1_name"] });
+        }
+
+        // POST: PartnerApplication/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> DeleteConfirmed(int id)
+        {
+            PartnerApplicationViewModel partnerApplicationViewModel = await db.PartnerApplicationViewModels.FindAsync(id);
+            db.PartnerApplicationViewModels.Remove(partnerApplicationViewModel);
+            await db.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+    }
+}

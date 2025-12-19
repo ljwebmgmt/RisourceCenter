@@ -1,0 +1,125 @@
+﻿@model IEnumerable<newrisourcecenter.Models.RiSourcesViewModel>
+@{
+    ViewBag.Title = "Allrisouces";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    var searchRiSources = {
+        init: function () {
+            var filter_form = $("#submit_search");
+            filter_form.on('click', searchRiSources.searchRiS);
+        },
+        searchRiS: function (e) {
+            e.preventDefault();
+
+            var form_value = $("#form_value").val();
+            $.post("/RiSources/SearchRiSources/", { form_value: form_value }, function (result) {
+                var jsonObj = JSON.parse(result);
+                $("#tbody").empty();
+
+                if (jsonObj.status == "OK") {
+                    if (jsonObj.RiSourcesData !=""){
+                        $.each(jsonObj.RiSourcesData, function (i, data) {
+                            if (data.endDate == "1/1/1900") {
+                                endDate = "";
+                            } else {
+                                endDate = data.endDate;
+                            }
+
+                            $("#tbody").append('<tr><td>' + data.ris_headline + '</td><td>' + data.ris_teaser + '</td><td><a class="btn btn-info" href="/RiSources/Edit/' + data.ris_ID + '?parentID=@Request.QueryString["parentId"]&amp;n1_name=@Request.QueryString["n1_name"]&amp;n2_name=@Request.QueryString["n2_name"]">Edit</a>&nbsp;<a class="btn btn-info" href="/RiSources/Delete/' + data.ris_ID + '?parentID=@Request.QueryString["parentId"]&amp;n1_name=@Request.QueryString["n1_name"]&amp;n2_name=@Request.QueryString["n2_name"]" id="delete" onclick="deletef(this.href);return false">Delete</a></td></tr>');
+                        });
+                    } else {
+                            $("#tbody").append('<tr><td colspan="3" ><h1>No results</h1></td></tr>');
+                    }
+                }
+            });
+        },
+    }
+    jQuery(document).ready(searchRiSources.init);
+</script>
+<table>
+    <tr>
+        <td>
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                    Filter ReSources By
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    @foreach (var item in @ViewBag.list_n2ID)
+                    {
+                        <li><a href="?parentID=&n2Id=@item.Key&n1_name=@Request.QueryString["n1_name"]&n2_name=@item.Value.name&img=@item.Value.img">@item.Value.name</a></li>
+                    }
+                </ul>
+            </div>
+        </td>
+        <td>
+            <form>
+                <span class="input-group stylish-input-group">
+                    <input type="text" id="form_value" value="" placeholder="search by doc name" class="form-control" />
+                    <span class="input-group-addon" id="submit_search" >
+                        <button type="submit" >
+                            <span class="glyphicon glyphicon-search" ></span>
+                        </button>
+                    </span>
+                </span>
+            </form>
+        </td>
+        <td>
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                    Add a ReSource
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    @foreach (var item in @ViewBag.list_n2ID)
+                    {
+                        <li><a href="~/RiSources/Create?parentID=&n2Id=@item.Key&n1_name=@Request.QueryString["n1_name"]&n2_name=@item.Value.name&img=@item.Value.img">@item.Value.name</a></li>
+                    }
+                </ul>
+            </div>
+        </td>
+    </tr>
+</table>
+<br />
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ris_headline)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ris_teaser)
+            </th>
+            <th>Document Type</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody id="tbody">
+        @{
+            var typeList = new Dictionary<long, string>();
+            foreach(var item in ViewBag.list_n2ID)
+            {
+                typeList.Add(item.Key, item.Value.name);
+            }
+            foreach (var item in Model)
+            {
+                string documentType = typeList.ContainsKey(item.n2ID) ? typeList[item.n2ID] : "";
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ris_headline)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ris_teaser)
+                    </td>
+                    <td>@documentType</td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { id = item.ris_ID, n2Id = Request.QueryString["n2Id"], parentID = Request.QueryString["parentID"], n1_name = Request.QueryString["n1_name"], n2_name = Request.QueryString["n2_name"], img = Request.QueryString["img"] }, new { @class = "btn btn-info" })
+                        @Html.ActionLink("Delete", "Delete", new { id = item.ris_ID, n2Id = Request.QueryString["n2Id"], parentID = Request.QueryString["parentID"], n1_name = Request.QueryString["n1_name"], n2_name = Request.QueryString["n2_name"], img = Request.QueryString["img"] }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false", @class = "btn btn-info" })
+                    </td>
+                </tr>
+            }
+        }
+
+    </tbody>
+</table>

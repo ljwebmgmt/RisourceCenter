@@ -1,0 +1,86 @@
+﻿@model List<newrisourcecenter.Models.LitRequestedModel>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="main_content">
+    @Html.ActionLink("Request Literature", "Create", new { n1_name=Request.QueryString["n1_name"] }, htmlAttributes: new { @class = "btn btn-primary", @style = "float:right;margin:10px;" })
+    @if (Request.QueryString["msg"] != null)
+    {
+        <h4 style="margin-left:40px;color:red;">@Request.QueryString["msg"]</h4>
+    }
+        <br /><br />
+    <br />
+    <hr />
+    <table class="table" style="width:95%;margin-top:20px;margin-left:auto;margin-right:auto;position:relative;">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().lit_ID)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().status)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @{
+                        if (item.lit_name != null)
+                        {
+                           <strong>@Html.DisplayNameFor(model => model.FirstOrDefault().usr_ID):</strong> 
+                            @Html.DisplayFor(modelItem => item.userName)
+                            <br />
+                            <div>
+                                <strong>@Html.DisplayNameFor(model => model.FirstOrDefault().date_created):</strong>
+                                @string.Format("{0:MM/dd/yyyy}", item.date_created)
+                            </div>
+
+                            string[] rlit_data = item.lit_name.Split(',');
+                            <br />
+                            <table id="lit_table" >
+                                <tr>
+                                    <td colspan="2">Literature Name</td>
+                                    <td style="width:40px;"></td>
+                                    <td colspan="1">Quantity</td>
+                                </tr>
+                                @foreach (var data in rlit_data)
+                                {
+                                    string[] rlit = data.Split('|');
+                                    <tr>
+                                        <td colspan="2">@rlit[0]</td>
+                                        <td style="width:40px;"></td>
+                                        <td colspan="1">@rlit[1]</td>
+                                    </tr>
+                                }
+                            </table>
+
+                        }
+
+                    }
+                </td>
+                <td style="text-transform:capitalize;">
+                    @Html.DisplayFor(modelItem => item.status)
+                </td>
+                <td>
+                @if (User.IsInRole("Super Admin"))
+                {
+                    @Html.ActionLink("Edit", "Edit", new { id = item.rlit_ID, n1_name =Request.QueryString["n1_name"] },new { @class = "btn btn-info" }) <span>&nbsp;</span>
+                    @Html.ActionLink("Delete", "Delete", new { id = item.rlit_ID, n1_name = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "delete", @onclick = "deletef(this.href);return false", @class = "btn btn-info" })
+                }
+                else
+                {
+                   @Html.ActionLink("Edit", "Edit", new { id = item.rlit_ID, n1_name = Request.QueryString["n1_name"] }, new { @class = "btn btn-info" })
+                }
+                </td>
+            </tr>
+        }
+</tbody>
+    </table>
+</div>

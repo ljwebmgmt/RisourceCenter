@@ -1,0 +1,34 @@
+﻿@model IEnumerable<newrisourcecenter.Models.WSdata>
+
+@{
+    Layout = null;
+    string UserLink = "";
+    if (Request.Url.Port != 443)
+    {
+        UserLink = "http://" + Request.Url.Host + ":" + Request.Url.Port;
+    }
+    else
+    {
+        UserLink = "https://" + Request.Url.Host;
+    }
+}
+@foreach (var loc in Model)
+{
+    <div style="width:100%;margin-top:20px;">
+        @if (@loc.ws_account != null)
+        {
+            <hr style="background-color:#000;height:1px;" />
+            if (@loc.ws_account != null)
+            {
+                if (@loc.loc_name != "")
+                {
+                    <span style="margin-right:10%;">@loc.loc_name<span>&nbsp; | &nbsp;</span>@loc.ws_account</span><a href="@UserLink/Webshop/saveWSAccount?ws_account=@loc.ws_account&userId=@Request.QueryString["userId"]&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=@Request.QueryString["msg"]&compid=@Request.QueryString["compId"]&dcompid=@Request.QueryString["dcompid"]&compName=@loc.comp_name&locid=@loc.loc_ID" id="@loc.ws_account" onclick="addAWebshop(this.href); return false" class="btn btn-info" style="float:right;">Add</a>
+                }
+                else
+                {
+                    <span style="margin-right:10%;">@loc.comp_name-@loc.loc_city<span>&nbsp; | &nbsp;</span>@loc.ws_account</span><a href="@UserLink/Webshop/saveWSAccount?ws_account=@loc.ws_account&userId=@Request.QueryString["userId"]&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=@Request.QueryString["msg"]&compid=@Request.QueryString["compId"]&dcompid=@Request.QueryString["dcompid"]&compName=@loc.comp_name-@loc.loc_city&locid=@loc.loc_ID" id="@loc.ws_account" onclick="addAWebshop(this.href); return false" class="btn btn-info" style="float:right;">Add</a>
+                }
+            }
+        }
+    </div>
+}

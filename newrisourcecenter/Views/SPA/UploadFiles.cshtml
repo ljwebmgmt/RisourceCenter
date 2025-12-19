@@ -1,0 +1,36 @@
+﻿@{
+    ViewBag.Title = "Create";
+    Layout = "";
+    int? userId = Convert.ToInt32(Session["userId"]);
+    int? companyId = Convert.ToInt32(Session["companyId"]);
+}
+
+<script>
+    $("#Distributor_location").attr("ng-model", "customerdata.Distributor_location");
+    $("#Distributor_location").attr("ng-change", "GetSalesReps(customerdata.Distributor_location)");
+</script>
+@using (Html.BeginForm())
+{
+    <div class="form-horizontal">
+        <br />
+        <div ng-bind-html="formAction" style="width:100%;background:#bce8f1;padding:20px;color:black;"><img src="/images/lightbox-ico-loading.gif" /></div>
+        <input type="file" name="myfiles" multiple files-Data="myfiles" />
+        <a href="" ng-click="saveFiles(Spa_id)" class="btn-sm btn-primary" >Upload Now</a>
+        <br /><br />
+        <ul ng-repeat="SPAFile in SPAFiles" style="list-style:none;">
+            <li style="padding:5px;background-color:silver;width:98%;" id="{{SPAFile.File_id}}"><a href="~/attachments/spa/Contracts/{{SPAFile.File_name}}" target="_blank" >{{SPAFile.File_name}}</a><a href="" ng-click="deleteSPAFiles(SPAFile.File_id)" style="float:right;">Delete</a></li>
+        </ul>
+        <br />
+        {{cdata}}
+        <div style="float:left;">
+            <span class="btn btn-primary" ng-click="participantsView('participants/'+Spa_id)"><< Back</span>
+        </div>
+        <div style="float:right;">
+            <span class="btn btn-primary" ng-click="NotesView('SpaNotes/'+Spa_id)">Next >></span>
+        </div>
+        <br />
+    </div>
+}
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>

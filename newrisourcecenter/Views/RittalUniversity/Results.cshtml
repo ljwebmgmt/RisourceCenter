@@ -1,0 +1,179 @@
+﻿@model IEnumerable<newrisourcecenter.Models.RittalUniversityViewModels>
+<script>
+    jQuery(document).ready(function ($) {
+        $("#export_results").html('<a href="' + window.location + '&export=true">Output These Results to a Spreadsheet</a>');
+
+        getResults = function (data) {
+            var name = data["name"];
+            var value = data.options[data.selectedIndex].value;
+            var count = $("#count").val();
+            var filterlink = "/RittalUniversity/Filterresults?" + name + "=" + value + "&count="+ count;
+            $("#table").empty();
+            $("#table").html('<img src="/images/lightbox-ico-loading.gif" />');
+
+            $.get(filterlink, function (response) {
+                $("#table").html(response);
+            });
+            $("#export_results").html('<a href="' + filterlink + '&export=true">Output These Results to a Spreadsheet</a>');
+        }
+
+        getResults_range = function (data) {
+            var name = data["name"];
+            var count = $("#count").val();
+            $("#counts_show").html(count);
+            var filterlink = "/RittalUniversity/Filterresults?" + name + "=" + count + "&count=" + count;
+            $("#table").empty();
+            $("#table").html('<img src="/images/lightbox-ico-loading.gif" />');
+
+            $.get(filterlink, function (response) {
+                $("#table").html(response);
+            });
+            $("#export_results").html('<a href="' + filterlink + '&export=true">Output These Results to a Spreadsheet</a>');
+        }
+
+        $("#submit_search").click(function () {
+            var search = $('input[name="search"]').val();
+            var count = $("#count").val();
+            var filterlink = "/RittalUniversity/Filterresults?search=" + search + "&count=" + count;
+            $("#table").empty();
+            $("#table").html('<img src="/images/lightbox-ico-loading.gif" />');
+
+            $.get(filterlink, function (response) {
+                $("#table").html(response);
+            });
+            $("#export_results").html('<a href="' + filterlink + '&export=true">Output These Results to a Spreadsheet</a>');
+        });
+
+    });
+</script>
+<p style="border:solid 1px lightslategrey;padding:20px;background:#fff;">
+    <span class="input-group stylish-input-group" style="width:300px;" >
+        <input type="text" class="form-control" placeholder="Search by class,username or email" name="search" >
+        <span class="input-group-addon">
+            <button type="submit" id="submit_search">
+                <span class="glyphicon glyphicon-search" ></span>
+            </button>
+        </span>
+    </span>
+    <br />
+    <strong>Class:</strong>
+    <select name="className" onchange="getResults(this)" class="btn btn-primary" >
+        <option value="">SELECT</option>
+        @foreach (var item in ViewBag.classess)
+        {
+            <option value="@item.name">@item.name</option>
+        }
+    </select>
+    <strong>Users:</strong>
+    <select name="userid" onchange="getResults(this)" class="btn btn-primary" >
+       <option value="">SELECT</option>
+      @foreach (var item in ViewBag.users)
+        {
+            <option value="@item.id">@item.name</option>
+        }
+    </select>
+    <strong>Company:</strong>
+    <select name="companyid" onchange="getResults(this)" class="btn btn-primary" >
+        <option value="">SELECT</option>    
+        @foreach (var item in ViewBag.companies)
+        {
+            <option value="@item.id">@item.name</option>
+        }
+    </select>
+    <br />
+    <br />
+    <strong>Date:</strong>
+    <select name="date" onchange="getResults(this)" class="btn btn-primary">
+            <option value="" >SELECT</option>
+            <option value="7">Last 7 Days</option>
+            <option value="30">Last 30 Days</option>
+            <option value="90">Last 90 Days</option>
+            <option value="183">Last 6 Months</option>
+            <option value="365">Last Year</option>
+    </select>
+    <strong>Location:</strong>
+    <select class="btn btn-primary" name="location" onchange="getResults(this)">
+        <option value="">SELECT</option>
+        <option value="38">Canada</option>
+        <option value="140">Mexico</option>
+        <option value="228">United States</option>
+    </select>
+    <strong>Count</strong>
+    <input type="range" min="0" max="20000" step="50" value="50" onchange="getResults_range(this)" name="count" id="count" style="width:100%;" /><span id="counts_show"  >50</span>
+    @*<select name="count" onchange="getResults(this)" class="btn btn-primary" id="count">
+        <option value="5">5</option>
+        <option value="20" selected>20</option>
+        <option value="50">50</option>
+        <option value="100">100</option>
+        <option value="200">200</option>
+        <option value="500">500</option>
+        <option value="1000000">Show All</option>
+    </select>*@
+    <br />
+    <br />
+    <span id="export_results" ></span>
+</p>
+<div id="table" align="center" >
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.trid)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.tr_module)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UserName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.tr_date)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.tr_PassGrade)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.tr_score)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.usr_email)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.trid)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.tr_module)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.tr_date)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.tr_PassGrade)
+                </td>
+                <td>
+                    @if (Convert.ToInt32(item.tr_score) >= 80)
+                    {
+                        <strong style="color:green;">@Html.DisplayFor(modelItem => item.tr_score)</strong>
+                    }
+                    else
+                    {
+                        <strong style="color:red;">@Html.DisplayFor(modelItem => item.tr_score)</strong>
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.usr_email)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+</div>

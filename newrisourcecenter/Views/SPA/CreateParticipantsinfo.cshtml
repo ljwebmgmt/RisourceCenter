@@ -1,0 +1,70 @@
+﻿@model newrisourcecenter.Models.SPAViewModels
+@{
+    ViewBag.Title = "Create";
+    Layout = "";
+    int? userId = Convert.ToInt32(Session["userId"]);
+    int? companyId = Convert.ToInt32(Session["companyId"]);
+}
+
+<script>
+    $("#Distributor_location").attr("ng-model", "customerdata.Distributor_location");
+    $("#Distributor_location").attr("ng-change", "GetSalesReps(customerdata.Distributor_location)");
+</script>
+@using (Html.BeginForm())
+{
+    <div class="form-horizontal">
+        <hr />
+        <h4 ng-style="actionid" >{{formAction}}</h4>
+        <span style="color: red;" ng-bind-html="actionStatus">{{actionStatus}}</span>
+        <div class="form-group" style="display:inline-block;width:50%;vertical-align:top;" >
+            <div class="col-md-10">
+                <select id="Sales_rep_user" name="Sales_rep_user" ng-model="Sales_rep_user" class="form-control" style="display:inline-block;">
+                    <option value="">---Add a participant---</option>
+                    <option ng-repeat="salesrep in salesrep" value="{{salesrep.email}}">{{salesrep.contact_name}}-{{salesrep.email}}</option>
+                </select>
+                <span class="btn btn-primary" ng-click="addParticipants()" style="display:inline-block;" >Add</span>
+            </div>
+        </div>
+        <div class="form-group" style="display:inline-block;vertical-align:top;width:50%;" >
+            <input type="hidden" ng-model="territory_code" value="{{territory_code}}" />
+            <input type="text" placeholder="search by name,email or zip" class="form-control" ng-model="querystring" ng-keyup="searchParticipants(querystring);" />
+            <ul style="position:absolute;background:#fff;list-style:none;width:30%;" ng-show="partList" >
+                <li ng-repeat="participants in participantsList"><a href="" ng-click="addParticipants(participants.email)" >{{participants.contact_name}}-{{participants.email}}</a></li>
+            </ul>       
+        </div>
+        <table class="table" >
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <td></td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr id="{{participant.Rep_id}}" ng-repeat="participant in participantsData">
+                    <td>{{participant.FullName}}</td>
+                    <td>{{participant.Email}}</td>
+                    <td>{{participant.Roles}}</td>
+                    <td>
+                        <span ng-if="participant.Roles=='Owner' && participant.Roles=='Default Participant'" >Owner Added</span>
+                        <span  ng-if="participant.Roles!='Owner' && participant.Roles!='Default Participant'" ><a href="" ng-click="deleteParticipant(participant.Rep_id)">Delete</a></span>
+                    </td>
+               </tr>
+            </tbody>
+        </table>
+        <br />
+        {{cdata}}
+        <div style="float:left;">
+            <span class="btn btn-primary" ng-click="productsView('product/'+Spa_id)"><< Back</span>
+        </div>
+        <div style="float:right;">
+            <span class="btn btn-primary" ng-click="filesUploadView('filesUpload/'+Spa_id)">Next >></span>
+        </div>
+        <br />
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>

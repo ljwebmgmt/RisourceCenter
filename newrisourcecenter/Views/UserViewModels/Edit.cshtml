@@ -1,0 +1,834 @@
+﻿@model newrisourcecenter.Models.UserViewModel
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int usr_SPA = Convert.ToInt32(Session["usr_SPA"]);//Regional Manager
+    int usr_POS = Convert.ToInt32(Session["usr_POS"]);//Account Manager
+}
+<script>
+    var companyIds = @Html.Raw(Json.Encode(Model.approver_companyIds));
+    function checkApproverBox() {
+        if ($.inArray(parseInt($('select[name="comp_ID"]').val()), companyIds) > -1) {
+            $('.approver-box').removeClass('hide');
+        }
+        else {
+            $('.approver-box').addClass('hide');
+            $('.approver-box select').val('');
+        }
+    }
+
+    var adminpanel = {
+        init: function () {
+            var activate = $("#activate"), deactivate = $("#deactivate");
+            activate.click(function () {
+                $.post("/UserViewModels/UserStatus/?status=activate&id="+ @Model.usr_ID +"", function (result) {
+                    if (result == "OK") {
+                        $("#userstatus").html("The account has been activated  <a class=\"btn btn-primary\" href=\"#\" onclick=\"javascript:history.back()\" style=\"float:right;\">Back</a> ");
+                    }
+                });
+            });
+            deactivate.click(function () {
+                $.post("/UserViewModels/UserStatus/?status=deactivate&id="+ @Model.usr_ID +"", function (result) {
+                    if(result=="OK"){
+                        $("#userstatus").html("The account has been deactivated  <a class=\"btn btn-primary\" href=\"#\" onclick=\"javascript:history.back()\" style=\"float:right;\">Back</a> ");
+                    }
+                });
+            });
+            $("form").submit(function (e) {
+                e.preventDefault;
+
+                if ($("#comp_loc_ID").val() == "Select a location") {
+
+                    alert("Select a location");
+
+                    return false;
+                }
+
+                return true;
+            });
+
+        },
+        selectLocation : function (selectedObject) {
+            var selectedval = selectedObject.options[selectedObject.selectedIndex].value;
+            checkApproverBox();
+            var getloc = "/Account/getLocation/?comp_ID=" + selectedval;
+            //console.log(getloc);
+            //$('#the_loc').remove();
+            $.post(getloc, function (data) {
+                $('#optionsdata').html(data);
+            });
+        },
+        searchadminpages : function () {
+            var input, filter, ul, li, a, i;
+            input = document.getElementById("search_admin_pages");
+            filter = input.value.toUpperCase();
+            ul = document.getElementById("asignmenu_admin");
+            li = ul.getElementsByTagName("li");
+            for (i = 0; i < li.length; i++) {
+                a = li[i].getElementsByTagName("a")[0];
+                if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                    li[i].style.display = "";
+                } else {
+                    li[i].style.display = "none";
+
+                }
+            }
+        },
+        searchspecialpages: function () {
+            var input, filter, ul, li, a, i;
+            input = document.getElementById("search_special_pages");
+            filter = input.value.toUpperCase();
+            ul = document.getElementById("asignmenu_special");
+            li = ul.getElementsByTagName("li");
+            for (i = 0; i < li.length; i++) {
+                a = li[i].getElementsByTagName("a")[0];
+                if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                    li[i].style.display = "";
+                } else {
+                    li[i].style.display = "none";
+                }
+            }
+        }
+    }
+    jQuery(document).ready(function () {
+        adminpanel.init();
+        checkApproverBox();
+    });
+</script>
+
+@if (User.IsInRole("Super Admin") || User.IsInRole("Local Admin"))
+{
+    @Html.ActionLink(@Model.userlabels.FirstOrDefault().password_label[0], "ChangePassword", "Manage", routeValues: new { n1_name = Request.QueryString["n1_name"], n2_name = @Model.userlabels.FirstOrDefault().password_label[1] }, htmlAttributes: new { title = "Manage", @class = "btn btn-primary", @style = "float:left;", })
+    if (Request.QueryString["translate"] != null)
+    {
+        @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.userlabels.FirstOrDefault().password_label[1], controllerName = "UserViewModels", pageName = "Edit", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+    }
+    @Html.ActionLink("Online Shop Accounts", controllerName: "Webshop", actionName: "Index", routeValues: new { n1_name = Request.QueryString["n1_name"], n2_name = "Online Shop Accounts", msg = Request.QueryString["msg"], user_ID = Model.usr_ID, compid = Model.comp_ID }, htmlAttributes: new { @style = "float:right;margin-left:10px;", @class = "btn btn-primary" })
+    @Html.ActionLink(@Model.userlabels.FirstOrDefault().usr_sap_label[0], controllerName: "partnerStockCheck", actionName: "Index", routeValues: new { n1_name = Request.QueryString["n1_name"], n2_name = "SAP Accounts", msg = Request.QueryString["msg"], user_ID = Model.usr_ID, compid = Model.comp_ID }, htmlAttributes: new { @style = "float:right;", @class = "btn btn-primary" })
+    if (Request.QueryString["translate"] != null)
+    {
+        @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.userlabels.FirstOrDefault().usr_sap_label[1], controllerName = "UserViewModels", pageName = "Edit", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @Style = "float:right;", @id = "translate", @class = "glyphicon glyphicon-edit" })
+    }
+    <br />
+}
+else
+{
+    @Html.ActionLink(@Model.userlabels.FirstOrDefault().password_label[0], "ChangePassword", "Manage", routeValues: new { n1_name = Request.QueryString["n1_name"], n2_name = @Model.userlabels.FirstOrDefault().password_label[1] }, htmlAttributes: new { title = "Manage", @class = "btn btn-primary", @style = "float:left;", })
+    if (Request.QueryString["translate"] != null)
+    {
+        @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.userlabels.FirstOrDefault().password_label[1], controllerName = "UserViewModels", pageName = "Edit", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+    }
+    <br />
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+<div class="form-horizontal">
+    @if (!string.IsNullOrEmpty(Request.QueryString["tool"]) && Request.QueryString["tool"] == "MDF")
+    {
+        <span>@Html.ActionLink("back", "MDFusers", "MDFView", new { compid = Request.QueryString["compid"], n1_name = "Support Tools", n2_name = "MDF Users" }, htmlAttributes: new { @style = "float:right;" })</span>
+    }
+    else if (!string.IsNullOrEmpty(Request.QueryString["n2_name"]) && Request.QueryString["n2_name"] == "home")
+    {
+        <span>@Html.ActionLink("back", "Index", "Home", new { n1_name = "User Admin" }, htmlAttributes: new { @style = "float:right;" })</span>
+    }
+    else
+    {
+        <span>@Html.ActionLink("back", "Index", "UserViewModels", new { n1_name = "User Admin" }, htmlAttributes: new { @style = "float:right;" })</span>
+    }
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.usr_ID)
+
+    @if (User.IsInRole("Super Admin") || User.IsInRole("Local Admin") || User.IsInRole("Global Admin"))
+    {
+        <div class="form-group">
+            <label class="control-label col-md-2" for="n1order">
+                User Status
+            </label>
+            <div class="col-md-3">
+                @if (!ViewBag.status)
+                {
+                    <div class="col-md-10" id="userstatus">Not Active <a href="javascript:void(0);" id="activate" style="float:right;">Activate</a></div>
+                }
+                else
+                {
+                    <div class="col-md-10" id="userstatus">Active <a href="javascript:void(0);" id="deactivate" style="float:right;">Deactivate</a></div>
+                }
+            </div>
+        </div>
+
+        <input name="tool" type="hidden" value="@Request.QueryString["tool"]" />
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="n1order">
+                @Model.userlabels.FirstOrDefault().role_label[0]
+            </label>
+            <div class="col-md-10">
+                @if (User.IsInRole("Super Admin") || User.IsInRole("Local Admin") || User.IsInRole("Global Admin"))
+                {
+                    <select name="role" id="role" class="form-control">
+                        <option value="">
+                            @Model.userlabels.FirstOrDefault().select_role_label[0]
+                        </option>
+                        @if (User.IsInRole("Super Admin"))
+                        {
+                            foreach (var item in Model.list_roles)
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
+                        }
+                        else if (User.IsInRole("Global Admin"))
+                        {
+                            foreach (var item in Model.list_roles.Where(a => a.Value != "Super Admin" && a.Value != "Special Pages Role" && a.Value != "Local Admin Pages"))
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
+                        }
+                        else if (User.IsInRole("Rittal User"))
+                        {
+                            foreach (var item in Model.list_roles.Where(a => a.Value != "Super Admin" && a.Value != "Special Pages Role" && a.Value != "Global Admin" && a.Value != "Local Admin Pages"))
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
+                        }
+                        else
+                        {
+                            foreach (var item in Model.list_roles.Where(a => a.Value != "Super Admin" && a.Value != "Special Pages Role" && a.Value != "Rittal User" && a.Value != "Global Admin" && a.Value != "Local Admin Pages"))
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
+                        }
+                    </select>
+                    @Html.ValidationMessageFor(model => model.role, "", new { @class = "text-danger" })
+                }
+                <div>
+                    <strong>
+                        @if (Request.QueryString["translate"] != null)
+                        {
+                            @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.userlabels.FirstOrDefault().role_label[1], controllerName = "UserViewModels", pageName = "Edit", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                        }
+                    </strong>
+                    <br />
+                    @foreach (var item in @ViewBag.users_role)
+                    {
+                        <div class="col-md-3">
+                            @item.name[0]
+                            @if (User.IsInRole("Super Admin") || User.IsInRole("Local Admin") || User.IsInRole("Global Admin"))
+                            {
+                                if (Request.QueryString["translate"] != null)
+                                {
+                                    @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.userlabels.FirstOrDefault().invoke_label[1], controllerName = "UserViewModels", pageName = "Edit", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @Style = "float:right;", @id = "translate", @class = "glyphicon glyphicon-edit" })
+                                }
+                                @Html.ActionLink(@Model.userlabels.FirstOrDefault().invoke_label[0], "DeleteRole", "UserViewModels", routeValues: new { id = Model.usr_ID, systemID = Model.system_ID, role = item.name[1], msg = Request.QueryString["msg"], compid = Request.QueryString["compid"], n1_name = Request.QueryString["n1_name"], n2_name = Request.QueryString["n2_name"] }, htmlAttributes: new { @style = "float:right;" })
+                            }
+                        </div>
+                        <br />
+                    }
+                    <br />
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="form-group">
+        <label class="control-label col-md-2" for="n1order">
+            @Model.userlabels.FirstOrDefault().usr_title_label[0]
+            @if (Request.QueryString["translate"] != null)
+            {
+                @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.userlabels.FirstOrDefault().usr_title_label[1], controllerName = "UserViewModels", pageName = "Edit", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+            }
+        </label>
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.usr_title, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.usr_title, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-md-2" for="n1order">
+            @Model.userlabels.FirstOrDefault().usr_fName_label[0]
+            @if (Request.QueryString["translate"] != null)
+            {
+                @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.userlabels.FirstOrDefault().usr_fName_label[1], controllerName = "UserViewModels", pageName = "Edit", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+            }
+        </label>
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.usr_fName, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.usr_fName, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-md-2" for="n1order">
+            @Model.userlabels.FirstOrDefault().usr_lName_label[0]
+            @if (Request.QueryString["translate"] != null)
+            {
+                @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.userlabels.FirstOrDefault().usr_lName_label[1], controllerName = "UserViewModels", pageName = "Edit", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+            }
+        </label>
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.usr_lName, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.usr_lName, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    @if (User.IsInRole("Super Admin") || User.IsInRole("Global Admin"))
+    {
+        //Change user company data
+        <div class="form-group">
+            <label class="control-label col-md-2" for="n1order">
+                @Model.userlabels.FirstOrDefault().comp_ID_label[0]
+                @if (Request.QueryString["translate"] != null)
+                {
+                    @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.userlabels.FirstOrDefault().comp_ID_label[1], controllerName = "UserViewModels", pageName = "Edit", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                }
+            </label>
+            <div class="col-md-10">
+                <select name="comp_ID" class="form-control" onChange="adminpanel.selectLocation(this);">
+                    @if (@Model.list_comp_id != null)
+                    {
+                        foreach (var comp in Model.list_comp_id)
+                        {
+                            if (Model.comp_ID == comp.id)
+                            {
+                                <option value="@comp.id" selected>@comp.name</option>
+                            }
+                            else
+                            {
+                                <option value="@comp.id">@comp.name</option>
+                            }
+                        }
+                    }
+                </select>
+                @Html.ValidationMessageFor(model => model.comp_loc_ID, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        //Change user location data
+        <div class="form-group">
+            <label class="control-label col-md-2" for="n1order">
+                @Model.userlabels.FirstOrDefault().comp_loc_ID_label[0]
+                @if (Request.QueryString["translate"] != null)
+                {
+                    @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.userlabels.FirstOrDefault().comp_loc_ID_label[1], controllerName = "UserViewModels", pageName = "Edit", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                }
+            </label>
+            <div class="col-md-10">
+                <span id="optionsdata">
+                    <select name="comp_loc_ID" class="form-control" id="the_loc">
+                        @if (@Model.list_loc_id != null)
+                        {
+                            foreach (var loc in Model.list_loc_id)
+                            {
+                                if (Model.comp_loc_ID == loc.id)
+                                {
+                                    <option value="@loc.id" selected>@loc.name</option>
+                                }
+                                else
+                                {
+                                    <option value="@loc.id">@loc.name</option>
+                                }
+                            }
+                        }
+                    </select>
+                </span>
+                @Html.ValidationMessageFor(model => model.comp_loc_ID, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    }
+    else if (User.IsInRole("Local Admin") && User.IsInRole("Channel User"))
+    {
+        @Html.HiddenFor(model => model.comp_ID, new { htmlAttributes = new { @class = "form-control" } })
+        //Change user location data
+        <div class="form-group">
+            <label class="control-label col-md-2" for="n1order">
+                @Model.userlabels.FirstOrDefault().comp_loc_ID_label[0]
+                @if (Request.QueryString["translate"] != null)
+                {
+                    @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.userlabels.FirstOrDefault().comp_loc_ID_label[1], controllerName = "UserViewModels", pageName = "Edit", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                }
+            </label>
+            <div class="col-md-10">
+                <select name="comp_loc_ID" class="form-control">
+                    @if (@Model.list_loc_id != null)
+                    {
+                        foreach (var loc in Model.list_loc_id)
+                        {
+                            if (Model.comp_loc_ID == loc.id)
+                            {
+                                <option value="@loc.id" selected>@loc.name</option>
+                            }
+                            else
+                            {
+                                <option value="@loc.id">@loc.name</option>
+                            }
+                        }
+                    }
+                </select>
+                @Html.ValidationMessageFor(model => model.comp_loc_ID, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    }
+    else
+    {
+        @Html.HiddenFor(model => model.comp_ID, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.HiddenFor(model => model.comp_loc_ID, new { htmlAttributes = new { @class = "form-control" } })
+    }
+    @Html.HiddenFor(model => model.usr_role, new { htmlAttributes = new { @class = "form-control" } })
+    @Html.HiddenFor(model => model.usr_siteRole, new { htmlAttributes = new { @class = "form-control" } })
+
+    <div class="form-group">
+        <label class="control-label col-md-2" for="n1order">
+            @Model.userlabels.FirstOrDefault().usr_email_label[0]
+            @if (Request.QueryString["translate"] != null)
+            {
+                @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.userlabels.FirstOrDefault().usr_email_label[1], controllerName = "UserViewModels", pageName = "Edit", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+            }
+        </label>
+        <div class="col-md-10">
+            @Html.DisplayFor(model => model.usr_email, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.HiddenFor(model => model.usr_email)
+            @Html.ValidationMessageFor(model => model.usr_email, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    @if (User.IsInRole("Super Admin") || User.IsInRole("Global Admin"))
+    {
+        <div class="form-group">
+            <label class="control-label col-md-2" for="n1order">
+                Password
+            </label>
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.usr_password, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
+    }
+    @Html.HiddenFor(model => model.usr_password)
+
+    <div class="form-group">
+        <label class="control-label col-md-2" for="n1order">
+            @Model.userlabels.FirstOrDefault().usr_add1_label[0]
+            @if (Request.QueryString["translate"] != null)
+            {
+                @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.userlabels.FirstOrDefault().usr_add1_label[1], controllerName = "UserViewModels", pageName = "Edit", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+            }
+        </label>
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.usr_add1, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.usr_add1, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-md-2" for="n1order">
+            @Model.userlabels.FirstOrDefault().usr_add2_label[0]
+            @if (Request.QueryString["translate"] != null)
+            {
+                @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.userlabels.FirstOrDefault().usr_add2_label[1], controllerName = "UserViewModels", pageName = "Edit", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+            }
+        </label>
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.usr_add2, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.usr_add2, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-md-2" for="n1order">
+            @Model.userlabels.FirstOrDefault().usr_city_label[0]
+            @if (Request.QueryString["translate"] != null)
+            {
+                @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.userlabels.FirstOrDefault().usr_city_label[1], controllerName = "UserViewModels", pageName = "Edit", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+            }
+        </label>
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.usr_city, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.usr_city, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-md-2" for="n1order">
+            @Model.userlabels.FirstOrDefault().usr_state_label[0]
+            @if (Request.QueryString["translate"] != null)
+            {
+                @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.userlabels.FirstOrDefault().usr_state_label[1], controllerName = "UserViewModels", pageName = "Edit", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+            }
+        </label>
+        <div class="col-md-10">
+            @Html.DropDownListFor(m => m.usr_state, Model.list_state_ids, htmlAttributes: new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-md-2" for="n1order">
+            @Model.userlabels.FirstOrDefault().usr_country_label[0]
+            @if (Request.QueryString["translate"] != null)
+            {
+                @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.userlabels.FirstOrDefault().usr_country_label[1], controllerName = "UserViewModels", pageName = "Edit", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+            }
+        </label>
+        <div class="col-md-10">
+            @Html.DropDownListFor(m => m.usr_country, Model.list_country_ids, htmlAttributes: new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-md-2" for="n1order">
+            @Model.userlabels.FirstOrDefault().usr_zip_label[0]
+            @if (Request.QueryString["translate"] != null)
+            {
+                @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.userlabels.FirstOrDefault().usr_zip_label[1], controllerName = "UserViewModels", pageName = "Edit", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+            }
+        </label>
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.usr_zip, new { htmlAttributes = new { @class = "form-control", @maxlength = "6" } })
+            @Html.ValidationMessageFor(model => model.usr_zip, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-md-2" for="n1order">
+            @Model.userlabels.FirstOrDefault().usr_phone_label[0]
+            @if (Request.QueryString["translate"] != null)
+            {
+                @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.userlabels.FirstOrDefault().usr_phone_label[1], controllerName = "UserViewModels", pageName = "Edit", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+            }
+        </label>
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.usr_phone, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.usr_phone, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-md-2" for="n1order">
+            @Model.userlabels.FirstOrDefault().usr_fax_label[0]
+            @if (Request.QueryString["translate"] != null)
+            {
+                @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.userlabels.FirstOrDefault().usr_fax_label[1], controllerName = "UserViewModels", pageName = "Edit", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+            }
+        </label>
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.usr_fax, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.usr_fax, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-md-2" for="n1order">
+            @Model.userlabels.FirstOrDefault().usr_web_label[0]
+            @if (Request.QueryString["translate"] != null)
+            {
+                @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.userlabels.FirstOrDefault().usr_web_label[1], controllerName = "UserViewModels", pageName = "Edit", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+            }
+        </label>
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.usr_web, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.usr_web, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    @if (!User.Identity.Name.Contains("rittal.us") || User.IsInRole("Super Admin"))
+    {
+        <div class="form-group">
+            <label class="control-label col-md-2" for="n1order">
+                @Model.userlabels.FirstOrDefault().usr_wN_label[0]
+                @if (Request.QueryString["translate"] != null)
+                {
+                    @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.userlabels.FirstOrDefault().usr_wN_label[1], controllerName = "UserViewModels", pageName = "Edit", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                }
+            </label>
+
+            <div class="col-md-10">
+
+                @if (Model.wN == 1)
+                {
+                    <input type="radio" name="wN" value="1" checked /><span>Yes</span>
+                }
+                else
+                {
+                    <input type="radio" name="wN" value="1" /><span>Yes</span>
+                }
+
+                @if (Model.wN == 0)
+                {
+                    <input type="radio" name="wN" value="0" checked /><span>No</span>
+                }
+                else
+                {
+                    <input type="radio" name="wN" value="0" /><span>No</span>
+                }
+                @Html.ValidationMessageFor(model => model.wN, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    }
+
+    <div class="form-group">
+        <label class="control-label col-md-2" for="n1order">
+            @Model.userlabels.FirstOrDefault().admin_theme_label[0]
+            @if (Request.QueryString["translate"] != null)
+            {
+                @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.userlabels.FirstOrDefault().admin_theme_label[1], controllerName = "UserViewModels", pageName = "Edit", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+            }
+        </label>
+        <div class="col-md-10">
+            @Html.DropDownListFor(m => m.admin_theme, Model.list_theme_name, new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.admin_theme, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+
+    @if (User.IsInRole("Rittal User") && User.IsInRole("Local Admin") || User.IsInRole("Super Admin"))
+    {
+        <div class="form-group">
+            <label class="control-label col-md-2" for="n1order">
+                @Model.userlabels.FirstOrDefault().usr_jigsaw_login_label[0]
+                @if (Request.QueryString["translate"] != null)
+                {
+                    @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.userlabels.FirstOrDefault().usr_jigsaw_login_label[1], controllerName = "UserViewModels", pageName = "Edit", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                }
+            </label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.usr_jigsaw_login, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.usr_jigsaw_login, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="n1order">
+                @Model.userlabels.FirstOrDefault().usr_jigsaw_password_label[0]
+                @if (Request.QueryString["translate"] != null)
+                {
+                    @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.userlabels.FirstOrDefault().usr_jigsaw_password_label[1], controllerName = "UserViewModels", pageName = "Edit", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                }
+            </label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.usr_jigsaw_password, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.usr_jigsaw_password, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="n1order">
+                @Model.userlabels.FirstOrDefault().usr_MDF_login_label[0]
+                @if (Request.QueryString["translate"] != null)
+                {
+                    @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.userlabels.FirstOrDefault().usr_MDF_login_label[1], controllerName = "UserViewModels", pageName = "Edit", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                }
+            </label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.usr_MDF_login, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.usr_MDF_login, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="n1order">
+                @Model.userlabels.FirstOrDefault().usr_MDF_password_label[0]
+                @if (Request.QueryString["translate"] != null)
+                {
+                    @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.userlabels.FirstOrDefault().usr_MDF_password_label[1], controllerName = "UserViewModels", pageName = "Edit", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                }
+            </label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.usr_MDF_password, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.usr_MDF_password, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    }
+
+    @Html.HiddenFor(model => model.system_ID, new { htmlAttributes = new { @class = "form-control" } })
+
+    @if (User.IsInRole("Super Admin") || User.IsInRole("Local Admin") || User.IsInRole("Global Admin"))
+    {
+        string[] pages = { };
+        char[] usr_pages = { };
+
+        if (Model.usr_pages != null)
+        {
+            pages = Model.usr_pages.Split(',');
+        }
+
+        if (User.IsInRole("Super Admin") || User.IsInRole("Global Admin"))
+        {
+            <div class="form-group">
+                @Html.LabelFor(model => model.usr_sales, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @if (Model.usr_sales == 1)
+                    {
+                        <span><input name="usr_sales" type="radio" checked value="1">Yes</span>
+                    }
+                    else
+                    {
+                        <span><input name="usr_sales" type="radio" value="1">Yes</span>
+                    }
+
+                    @if (Model.usr_sales == 0)
+                    {
+                        <span><input name="usr_sales" type="radio" checked value="0">No</span>
+                    }
+                    else
+                    {
+                        <span><input name="usr_sales" type="radio" value="0">No</span>
+                    }
+
+                    @Html.ValidationMessageFor(model => model.usr_sales, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.usr_SPA, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @if (Model.usr_SPA == 1)
+                    {
+                        <span><input name="usr_SPA" type="radio" checked value="1">Yes</span>
+                    }
+                    else
+                    {
+                        <span><input name="usr_SPA" type="radio" value="1">Yes</span>
+                    }
+
+                    @if (Model.usr_SPA == 0)
+                    {
+                        <span><input name="usr_SPA" type="radio" checked value="0">No</span>
+                    }
+                    else
+                    {
+                        <span><input name="usr_SPA" type="radio" value="0">No</span>
+                    }
+
+                    @Html.ValidationMessageFor(model => model.usr_SPA, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.usr_POS, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @if (Model.usr_POS == 1)
+                    {
+                        <span><input name="usr_POS" type="radio" checked value="1">Yes</span>
+                    }
+                    else
+                    {
+                        <span><input name="usr_POS" type="radio" value="1">Yes</span>
+                    }
+                    @if (Model.usr_POS == 0)
+                    {
+                        <span><input name="usr_POS" type="radio" checked value="0">No</span>
+                    }
+                    else
+                    {
+                        <span><input name="usr_POS" type="radio" value="0">No</span>
+                    }
+
+                    @Html.ValidationMessageFor(model => model.usr_POS, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        }
+        <div class="form-group">
+            @Html.LabelFor(model => model.access_request, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">@Html.Raw(Model.access_request)</div>
+        </div>
+
+        if (User.IsInRole("Super Admin"))
+        {
+            <label class="control-label col-md-2" for="n1order">
+                @Model.userlabels.FirstOrDefault().admin_navs_label[0]
+                @if (Request.QueryString["translate"] != null)
+                {
+                    @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.userlabels.FirstOrDefault().admin_navs_label[1], controllerName = "UserViewModels", pageName = "Edit", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+                }
+            </label>
+            <span class="input-group stylish-input-group" style="width:300px;margin:10px 0px 0px 10px;">
+                <input type="text" class="form-control" name="search" id="search_admin_pages" onkeyup="adminpanel.searchadminpages()" placeholder="Search for names..">
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-search"></span>
+                </span>
+            </span>
+            <ul id="asignmenu_admin">
+                @foreach (var item in Model.admin_navs)
+                {
+                    if (pages.Contains(Convert.ToString(item.n2id)))
+                    {
+                        <li><input type="checkbox" name="usr_pages" id="usr_pages" value="@item.n2id" checked /><a>@item.n2name</a></li>
+                    }
+                    else
+                    {
+                        <li><input type="checkbox" name="usr_pages" id="usr_pages" value="@item.n2id" /><a>@item.n2name</a></li>
+                    }
+                }
+            </ul>
+        }
+        <label class="control-label col-md-2" for="n1order">
+            @Model.userlabels.FirstOrDefault().special_navs_label[0]
+            @if (Request.QueryString["translate"] != null)
+            {
+                @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.userlabels.FirstOrDefault().special_navs_label[1], controllerName = "UserViewModels", pageName = "Edit", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
+            }
+        </label>
+        <span class="input-group stylish-input-group" style="width:300px;margin:10px 0px 0px 10px;">
+            <input type="text" class="form-control" name="search" id="search_special_pages" onkeyup="adminpanel.searchspecialpages()" placeholder="Search for names..">
+            <span class="input-group-addon">
+                <span class="glyphicon glyphicon-search"></span>
+            </span>
+        </span>
+        <ul id="asignmenu_special">
+            @if (Model.special_navs != null)
+            {
+                foreach (var item in Model.special_navs)
+                {
+                    if (pages.Contains(Convert.ToString(item.n2id)))
+                    {
+                        <li><input type="checkbox" name="usr_pages" id="usr_pages" value="@item.n2id" checked /><a>@item.n2name</a></li>
+                    }
+                    else
+                    {
+                        <li><input type="checkbox" name="usr_pages" id="usr_pages" value="@item.n2id" /><a>@item.n2name</a></li>
+                    }
+                }
+            }
+        </ul>
+    }
+    else
+    {
+        @Html.HiddenFor(model => model.usr_pages)
+        @Html.HiddenFor(model => model.usr_SPA)
+        @Html.HiddenFor(model => model.usr_POS)
+    }
+
+    @Html.HiddenFor(model => model.usr_MDF)
+    @Html.HiddenFor(model => model.usr_project_reg)
+    @Html.HiddenFor(model => model.access_request)
+    @if (User.IsInRole("Super Admin"))
+    {
+        <div class="hide approver-box">
+            <p class="control-label"><b>For Rittal storefront purchases (printed collateral, promo items, apparel, and business cards), please choose the appropriate approver below</b></p>
+            <div class="form-group">
+                @Html.LabelFor(m => m.region_approver, new { @class = "col-md-2 control-label" })
+                <div class="col-md-4">
+                    @if (!string.IsNullOrEmpty(Model.region_approver))
+                    {
+                        @Html.HiddenFor(model => model.region_approver);
+                        <p class="form-control-static">@Model.region_approver_name</p>
+                    }
+                    else
+                    {
+                        @Html.DropDownListFor(m => m.region_approver, Model.Approver_listings, new { @class = "form-control" })
+                    }
+                    <input type="hidden" name="old_approver" value="@Model.region_approver" />
+                </div>
+            </div>
+        </div>
+    }
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Save" class="btn btn-default" />
+        </div>
+    </div>
+</div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index", new { n1_name = Request.QueryString["n1_name"] })
+</div>

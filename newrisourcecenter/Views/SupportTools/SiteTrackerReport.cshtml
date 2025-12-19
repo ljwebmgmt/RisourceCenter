@@ -1,0 +1,81 @@
+﻿@model IEnumerable<newrisourcecenter.Models.emailtrackerViewModel>
+
+@{
+    ViewBag.Title = "SiteTrackerReport";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<br />
+<div style="background:#f6f0f0;padding:40px;">
+    @Html.ActionLink("View first 100", "SiteTrackerReport", new { n1_name = @Request.QueryString["n1_name"], email_action = "" }, htmlAttributes: new { @class = "btn btn-primary" })
+    @Html.ActionLink("View Clicks Counts", "SiteTrackerReport", new { n1_name = @Request.QueryString["n1_name"], email_action = "click" }, htmlAttributes: new { @class = "btn btn-primary" })
+    @Html.ActionLink("View Opened Count", "SiteTrackerReport", new { n1_name = @Request.QueryString["n1_name"], email_action = "open" }, htmlAttributes: new { @class = "btn btn-primary" })
+    @Html.ActionLink("View All", "SiteTrackerReport", new { n1_name = @Request.QueryString["n1_name"], email_action = "all" }, htmlAttributes: new { @class = "btn btn-primary" })
+    <br /><br />
+    <form action="/Supporttools/SiteTrackerReport?n1_name=Site%20Tracker" method="get">
+        <label>Filter by sent date</label>
+        <input type="hidden" name="email_action" value="date" /> 
+        <input type="text" name="date" class="date-picker form-control"  style="display:inline-block;" />
+        <input type="submit"  value="filter" class="btn btn-primary" style="display:inline-block;" />
+    </form>
+</div>
+@if (string.IsNullOrEmpty(Request.QueryString["email_action"]))
+{
+    <div style="color: lightblue;" >Viewing first 100</div>
+}
+else
+{
+    <div style="color: lightblue;" >Viewing @Request.QueryString["email_action"] counts of @Model.Count() results</div>
+}
+<table class="table" >
+    <thead>
+        <tr>
+            @if (Request.QueryString["email_action"] == "all" || string.IsNullOrEmpty(Request.QueryString["email_action"]))
+            {
+                <th>Compaign Type</th>
+            }
+            <th>Action</th>
+            @if (Request.QueryString["email_action"]!="all" && !string.IsNullOrEmpty(Request.QueryString["email_action"]))
+            {
+                <th>Count</th>
+            }
+            <th>User</th>
+            <th>Date Sent</th>
+            @if (Request.QueryString["email_action"] != "open" || string.IsNullOrEmpty(Request.QueryString["email_action"]))
+            {
+                <th>Date Clicked</th>
+                <th>Links</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.OrderByDescending(a=>a.date_sent))
+        {
+            <tr>
+                @if (Request.QueryString["email_action"] == "all" || string.IsNullOrEmpty(Request.QueryString["email_action"]))
+                {
+                    <th>@item.email_type</th>
+                }
+                <th>@item.msg_action</th>
+                @if (Request.QueryString["email_action"] != "all" && !string.IsNullOrEmpty(Request.QueryString["email_action"]))
+                {
+                    <th>@item.count</th>
+                }
+                <th>@item.full_name</th>
+                <th>@string.Format("{0:MM/dd/yyyy}", item.date_sent)</th>
+                @if (Request.QueryString["email_action"] != "open" || string.IsNullOrEmpty(Request.QueryString["email_action"]))
+                {
+                    <th>@string.Format("{0:MM/dd/yyyy}", item.date_opened)</th>
+                    if (@item.url_tracked != "0")
+                    {
+                        <th><a href="@item.url_tracked" target="_blank">Link</a></th>
+                    }
+                    else
+                    {
+                        <th>No Link</th>
+                    }
+                }
+            </tr>
+        }
+    </tbody>
+
+</table>

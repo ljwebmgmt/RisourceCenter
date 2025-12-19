@@ -1,0 +1,20 @@
+﻿
+@{
+    ViewBag.Title = "Email Sent";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>
+    Your email was successfully sent
+
+    @*@ViewBag.Message*@
+
+
+</h2>
+@if (!String.IsNullOrEmpty(@ViewBag.notice))
+{
+    <h4>@ViewBag.notice @Html.ActionLink("Request Forms", "Dod", "Home")</h4>
+}
+
+
+<button onClick="javascript:window.top.close();return false;">Close Window</button>  

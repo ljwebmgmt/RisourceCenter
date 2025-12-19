@@ -1,0 +1,150 @@
+﻿@model newrisourcecenter.Models.LitRequestedViewModel
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.model= "Literature Request";
+}
+<script>
+    $(document).ready(function () {
+
+        getLitData = function (data) {
+            var id = data.split("|")[0];
+            var lit = data.split("|")[1];
+            var quantity = $("."+id).val();
+            $("#lit_" + id).val(lit+"|"+quantity);
+        }
+
+        $("form").submit(function (e) {
+            e.preventDefault;
+
+            if ($("input[name='rlit_info']:checked").length == 0) {
+
+                alert("Select literature and quantity");
+
+                return false;
+            }
+
+            return true;
+        });
+    });
+</script>
+<div class="main_content">
+@Html.ActionLink("My Requested Literature", "Index", new { n1_name = "My Requested Literature" }, htmlAttributes: new { @class = "btn btn-primary", @style = "float:right;margin:10px;" })
+<p><br /><br /></p>
+<hr />
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.rlit_ID)
+
+        if (User.IsInRole("Super Admin"))
+        {
+            <div class="form-group">
+                @Html.LabelFor(model => model.status, htmlAttributes: new { @class = "control-label col-md-1 col-md-offset-1" })
+                <div class="col-md-10">
+                    <select name="status" class="form-control">
+                        @if (Model.status == 1)
+                        {
+                            <option value="1" selected>Shipped</option>
+                        }
+                        else
+                        {
+                            <option value="0" selected>Not Shipped</option>
+                        }
+                        <option value="1">Shipped</option>
+                        <option value="0">Not Shipped</option>
+                    </select>
+                    @Html.ValidationMessageFor(model => model.status, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        }
+    <div>
+        <br />
+        <br />
+        <br />
+        <br />
+    </div>
+        <table style="width:95%;margin-left:auto;margin-right:auto;position:relative;">
+            <tr>
+                <th colspan="2">Literature Name</th>
+                <th style="width:40px;"></th>
+                <th colspan="1">Quantity</th>
+            </tr>
+            @{
+                int x = 1;
+                int num = 0;
+                string[] rlit_data= {};
+
+                if (Model.rlit_info != null)
+                {
+                    rlit_data = Model.rlit_info.Split(',');
+                }
+
+                foreach (var item in Model.lit_name)
+                {
+                    foreach (var data in rlit_data)
+                    {
+                        string[] rlit = data.Split('|');
+
+                        if (rlit.Contains(@item.lit_name))
+                        {
+                            <tr id="tr">
+                                <td colspan="2" style="padding:10px;"><input type="checkbox" name="rlit_info" id="lit_@x" value="@rlit[0]|@rlit[1]" checked />@item.lit_name</td>
+                                <td style="width:40px;"></td>
+                                <td colspan="1" style="padding:10px;"><input type="text" id="@x|@item.lit_name" class="@x form-control" onkeyup="getLitData(this.id);" value="@rlit[1]"  style="width:10%;" /></td>
+                            </tr><tr><td><br /></td></tr>
+                        }
+                    }
+
+                    var added_lits = Model.added_lits.Where(a => a.lit_list.Contains(@item.lit_name));
+                    num = added_lits.Count();
+                    if (num == 0)
+                    {
+                        <tr id="tr" >
+                            <td colspan="2" style="padding:10px;" ><input type="checkbox" name="rlit_info" id="lit_@x" value="" />@item.lit_name</td>
+                            <td style="width:40px;"></td>
+                            <td colspan="1" style="padding:10px;"><input type="text" id="@x|@item.lit_name" class="@x form-control" onkeyup="getLitData(this.id);" value="" style="width:10%;" /></td>
+                        </tr><tr><td><br /></td></tr>
+                    }
+
+                    x++;
+
+                }
+            }
+        </table>
+        @Html.HiddenFor(model => model.date_created, new { htmlAttributes = new { @class = "form-control" } })
+        <input name="usr_ID" id="usr_ID" type="hidden" value="@Model.usr_ID" />
+        <br />
+        <div class="form-group">
+            <div class="col-md-offset-1">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+
+}
+
+<div>
+    <br /><br />
+</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

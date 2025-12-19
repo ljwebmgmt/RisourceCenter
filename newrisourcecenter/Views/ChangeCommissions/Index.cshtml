@@ -1,0 +1,97 @@
+﻿@model IEnumerable<newrisourcecenter.ViewModels.ChangeCommissionViewModel>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<div class="main_content">
+    <div class="col-lg-12" style="padding-bottom: 10px;">
+        @Html.ActionLink("Create New", "Create", new { n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], msg = "Create Change Request" }, htmlAttributes: new { @class = "btn btn-primary" })
+
+
+        @if ((bool)ViewBag.IsLevel2Users )
+        {
+            @Html.ActionLink("Admin Panel >>", "CommissionAdminPanel", new { n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"]}, htmlAttributes: new { @class = "btn btn-primary pull-right" })
+        }
+    </div>
+
+    <table class="table">
+
+
+        <thead>
+            <tr>
+                <th>
+                    ID
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.to_representive)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.from_representive)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.po_number)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.invoice_date)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.amount)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.initialApproval)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FinalApproval)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.created_by)
+                </th>
+                <td style="width:100px"></td>
+            </tr>
+        </thead>
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.number)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.to_representive)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.from_representive)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.po_number)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.invoice_date.Date)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.amount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.initialApproval)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FinalApproval)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.username)
+            </td>
+            <td>
+                @if (item.roles.IsViewable)
+                {
+                    @Html.ActionLink("View", "Edit", new { id = item.ID, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], msg = "View Change Request " }, htmlAttributes: new { @class = "btn btn-info" })
+
+                }
+                @*@Html.ActionLink("Delete", "Delete", new { id = item.ID }, htmlAttributes: new { @class = "btn btn-info" })*@
+            </td>
+        </tr>
+        }
+
+    </table>
+</div>
