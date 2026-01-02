@@ -1,0 +1,25 @@
+﻿@model IEnumerable<newrisourcecenter.Models.RiSourcesViewModel>
+@{
+    var typeList = new Dictionary<long, string>();
+    foreach (var item in ViewBag.list_n2ID)
+    {
+        typeList.Add(item.Key, item.Value.name);
+    }
+    foreach (var item in Model)
+    {
+        string documentType = typeList.ContainsKey(item.n2ID) ? typeList[item.n2ID] : "";
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ris_headline)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ris_teaser)
+            </td>
+            <td>@documentType</td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.ris_ID, n2Id = Request.QueryString["n2Id"], parentID = Request.QueryString["parentID"], n1_name = Request.QueryString["n1_name"], n2_name = Request.QueryString["n2_name"], img = Request.QueryString["img"] }, new { @class = "btn btn-info" })
+                @Html.ActionLink("Delete", "Delete", new { id = item.ris_ID, n2Id = Request.QueryString["n2Id"], parentID = Request.QueryString["parentID"], n1_name = Request.QueryString["n1_name"], n2_name = Request.QueryString["n2_name"], img = Request.QueryString["img"] }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false", @class = "btn btn-info" })
+            </td>
+        </tr>
+    }
+}

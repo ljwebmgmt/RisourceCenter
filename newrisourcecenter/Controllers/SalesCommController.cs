@@ -159,15 +159,20 @@ namespace newrisourcecenter.Controllers
                 nav2_Menu.Add(new Nav1List { id = n2dsitems.nav2.n2ID, name = n2dsitems.nav2.n2_nameLong, img = n2dsitems.nav2.n2_headerImg, n3id=n2dsitems.nav3.n3ID, n3name=n2dsitems.nav3.n3_nameLong});  
             }
             ViewBag.nav_Menu = nav2_Menu;
-
+            List<SalesCommViewModel> listSaleComms = null;
             if (n3id == 0)
             {
-                return View(await db.SalesCommViewModels.OrderByDescending(a => a.scID).ToListAsync());
+                listSaleComms = await db.SalesCommViewModels.OrderByDescending(a => a.scID).ToListAsync();
             }
             else
             {
-                return View(await db.SalesCommViewModels.OrderByDescending(a => a.scID).Where(a => a.n3ID == n3id).ToListAsync());
+                listSaleComms = await db.SalesCommViewModels.OrderByDescending(a => a.scID).Where(a => a.n3ID == n3id).ToListAsync();
             }
+            if(Request.IsAjaxRequest())
+            {
+                return PartialView("_SalesCommTable", listSaleComms);
+            }
+            return View(listSaleComms);
         }
         #endregion
 

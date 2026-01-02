@@ -966,12 +966,17 @@ namespace newrisourcecenter.Models
             mdfViewModels.company_metrics = company_metrics;
             mdfViewModels.company_metrics_mkt = company_metrics_mkt;
             mdfViewModels.rcmNames = this.getRCM();
-            return View(mdfViewModels);     
+            ViewBag.IsArchive = false;
+            if (Request.IsAjaxRequest())
+            {
+                return PartialView("_MDFTableResults", mdfViewModels);
+            }
+            return View(mdfViewModels);
         }
 
         public Dictionary<string,string> getRCM()
         {
-            Dictionary<string,string> dict = dbEntity.RCMContacts.Where(a => !string.IsNullOrEmpty(a.email)).OrderBy(x => x.first_name).GroupBy(x => x.email).ToDictionary(x => x.Key, y => (y.FirstOrDefault().first_name + " " + y.FirstOrDefault().last_name).Trim());
+            Dictionary<string, string> dict = dbEntity.RCMContacts.Where(a => !string.IsNullOrEmpty(a.email)).OrderBy(x => x.first_name).GroupBy(x => x.email).ToDictionary(x => x.Key, y => (y.FirstOrDefault().first_name + " " + y.FirstOrDefault().last_name).Trim());
             dict.Add(ConfigurationManager.AppSettings["NationalChannelManagerEmail"], ConfigurationManager.AppSettings["NationalChannelManagerName"]);
             return dict;
         }
@@ -1194,6 +1199,11 @@ namespace newrisourcecenter.Models
             mdfViewModels.list_comp = list_comp;
             mdfViewModels.company_metrics = company_metrics;
             mdfViewModels.rcmNames = this.getRCM();
+            ViewBag.IsArchive = true;
+            if (Request.IsAjaxRequest())
+            {
+                return PartialView("_MDFTableResults", mdfViewModels);
+            }
             return View(mdfViewModels);
         }
 

@@ -33,6 +33,28 @@
         },
     }
     jQuery(document).ready(searchCommunications.init);
+    $(document).on('click', '.ajax-filter', function (e) {
+        e.preventDefault();
+        var url = $(this).attr('href');
+        $(this).closest('.dropdown').removeClass('open');
+        $.ajax({
+            url: url,
+            type: 'GET',
+            beforeSend: function () {
+                $('table.table').css('opacity', '0.5');
+            },
+            success: function (result) {
+                $('table.table tbody#tbody').html(result);
+                window.history.pushState({ path: url }, '', url);
+                $('table.table').css('opacity', '1');
+
+            },
+            error: function () {
+                alert("Error loading data. Please try again.");
+                $('table.table').css('opacity', '1');
+            }
+        });
+    });
 </script>
     <table>
         <tr>
@@ -45,7 +67,7 @@
                     <ul class="dropdown-menu">
                         @foreach (var item in @ViewBag.nav_Menu)
                         {
-                            <li><a href="?n2id=@item.id&img=@item.img&n3id=@item.n3id&n1_name=@Request.QueryString["n1_name"]&n2_name=@item.name&n3_name=@item.n3name">@item.name - @item.n3name</a></li>
+                            <li><a class="ajax-filter" href="?n2id=@item.id&img=@item.img&n3id=@item.n3id&n1_name=@Request.QueryString["n1_name"]&n2_name=@item.name&n3_name=@item.n3name">@item.name - @item.n3name</a></li>
                         }
                     </ul>
                 </div>
@@ -76,6 +98,9 @@
                     </ul>
                 </div>
             </td>
+            <td>
+                <a class="btn btn-primary ajax-filter" href="~/SalesComm/AllSalesComms?n1_name=@Request.QueryString["n1_name"]">Reset</a>
+            </td>
         </tr>
     </table>
     <br/>
@@ -96,24 +121,7 @@
             </tr>
         </thead>
         <tbody id="tbody">
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.sc_headline)
-                    </td>
-                    <td>
-                        @string.Format("{0:d}", @item.sc_startDate)
-                    </td>
-                    <td>
-                        @string.Format("{0:d}", @item.sc_endDate)
-                    </td>
-                    <td>
-                        @Html.ActionLink("Edit", "Edit", new { id = item.scID, n3id = item.n3ID, n2id = Request.QueryString["n2id"], n1_name = Request.QueryString["n1_name"], n2_name = Request.QueryString["n2_name"], n3_name = Request.QueryString["n3_name"] }, new { @class = "btn btn-info" })
-                        @Html.ActionLink("Delete", "Delete", new { id = item.scID, n3id = item.n3ID, n2id = Request.QueryString["n2id"], n1_name = Request.QueryString["n1_name"], n2_name = Request.QueryString["n2_name"], n3_name = Request.QueryString["n3_name"] }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false", @class = "btn btn-info" })
-                    </td>
-                </tr>
-            }
+            @Html.Partial("_SalesCommTable", Model)
         </tbody>
     </table>
 </div>

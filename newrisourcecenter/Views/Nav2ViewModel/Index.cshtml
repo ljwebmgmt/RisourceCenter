@@ -4,7 +4,30 @@
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<script type="text/javascript">
+    $(document).on('click', '.ajax-filter', function (e) {
+        e.preventDefault();
+        var url = $(this).attr('href');
+        $(this).closest('.dropdown').removeClass('open');
+        $.ajax({
+            url: url,
+            type: 'GET',
+            beforeSend: function () {
+                $('table.table').css('opacity', '0.5');
+            },
+            success: function (result) {
+                $('table.table tbody#tbody').html(result);
+                window.history.pushState({ path: url }, '', url);
+                $('table.table').css('opacity', '1');
 
+            },
+            error: function () {
+                alert("Error loading data. Please try again.");
+                $('table.table').css('opacity', '1');
+            }
+        });
+    });
+</script>
 <div>
     <div class="dropdown" style="display:inline-block;">
         <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
@@ -12,10 +35,10 @@
             <span class="caret"></span>
         </button>
         <ul class="dropdown-menu">
-            <li><a href="?parentid=0&n1_name=@Request.QueryString["n1_name"]&msg=@ViewBag.n1_name">@ViewBag.n1_name</a></li>
+            <li><a class="ajax-filter" href="?parentid=0&n1_name=@Request.QueryString["n1_name"]&msg=@ViewBag.n1_name">@ViewBag.n1_name</a></li>
             @foreach (var item in @ViewBag.list_n1ID)
             {
-                <li><a href="?parentid=@item.id&msg=@item.name&n1_name=@Request.QueryString["n1_name"]">@item.name</a></li>
+                <li><a class="ajax-filter" href="?parentid=@item.id&msg=@item.name&n1_name=@Request.QueryString["n1_name"]">@item.name</a></li>
             }
         </ul>
     </div>
@@ -64,43 +87,7 @@
             <th></th>
         </tr>
     </thead>
-    <tbody>
-    @foreach (var item in Model)
-    {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.n2order)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.n2_nameLong)
-                @if (Request.QueryString["translate"] != null)
-                {
-                    @Html.ActionLink("T", "Create", "Localization", new { parent_id = @item.n2ID, tableName = "nav2", columnName = "n2_nameLong", message = @item.n2_nameLong, n1_name = "Translate Page Content", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
-                }
-            </td>
-            <td>
-                @Html.Raw(item.n2_descLong)
-                @if (Request.QueryString["translate"] != null)
-                {
-                    @Html.ActionLink("T", "Create", "Localization", new { parent_id = @item.n2ID, tableName = "nav2", columnName = "n2_descLong", message = @item.n2_descLong, n1_name = "Translate Page Content", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
-                }
-            </td>
-            <td>
-               @{ string[] reserved = { "1", "2","4","8","11","12","13","17","21","23","7" }; }
-                @Html.ActionLink(@Model.LastOrDefault().nav2labels.FirstOrDefault().edit_label[0], "Edit", new { id = item.n2ID, parentid = Request.QueryString["parentid"], n1_name = Request.QueryString["n1_name"], msg = Request.QueryString["msg"], img = item.n2_headerImg }, new { @class = "btn btn-info" })
-                @if (Request.QueryString["translate"] != null)
-                {
-                    @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.LastOrDefault().nav2labels.FirstOrDefault().edit_label[1], controllerName = "Nav2ViewModel", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
-                }
-                @if(!reserved.Contains(item.n2ID.ToString())) {          
-                    @Html.ActionLink(@Model.LastOrDefault().nav2labels.FirstOrDefault().delete_label[0], "Delete", new { id = item.n2ID, parentid = Request.QueryString["parentid"], n1_name = Request.QueryString["n1_name"], msg = Request.QueryString["msg"] }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false", @class = "btn btn-info" })
-                    if (Request.QueryString["translate"] != null)
-                    {
-                        @Html.ActionLink("T", "Create", "Labels", new { labelName = @Model.LastOrDefault().nav2labels.FirstOrDefault().delete_label[1], controllerName = "Nav2ViewModel", pageName = "Index", n1_name = "Translate Page Labels", msg = Request.QueryString["n1_name"] }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
-                    } 
-                }
-            </td>
-        </tr>
-    }
+    <tbody id="tbody">
+        @Html.Partial("_Nav2Table",Model)
     </tbody>
 </table>

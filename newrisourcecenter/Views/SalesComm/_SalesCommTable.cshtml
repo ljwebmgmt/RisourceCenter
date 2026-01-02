@@ -1,0 +1,19 @@
+﻿@model IEnumerable<newrisourcecenter.Models.SalesCommViewModel>
+@foreach (var item in Model)
+{
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.sc_headline)
+        </td>
+        <td>
+            @string.Format("{0:d}", @item.sc_startDate)
+        </td>
+        <td>
+            @string.Format("{0:d}", @item.sc_endDate)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id = item.scID, n3id = item.n3ID, n2id = Request.QueryString["n2id"], n1_name = Request.QueryString["n1_name"], n2_name = Request.QueryString["n2_name"], n3_name = Request.QueryString["n3_name"] }, new { @class = "btn btn-info" })
+            @Html.ActionLink("Delete", "Delete", new { id = item.scID, n3id = item.n3ID, n2id = Request.QueryString["n2id"], n1_name = Request.QueryString["n1_name"], n2_name = Request.QueryString["n2_name"], n3_name = Request.QueryString["n3_name"] }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false", @class = "btn btn-info" })
+        </td>
+    </tr>
+}

@@ -3,8 +3,6 @@
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    string userId = Session["userId"].ToString();
-    Dictionary<string, string> productCategories = new Dictionary<string, string>() { { "ts8-ie", "TS8 INDUSTRIAL" }, { "vx-ie", "VX INDUSTRIAL" }, { "ts8-it", "TS8 DATA CENTER" }, { "WM_AE_JB", "WM/AE/AX/JB/KX" }, { "spare", "SPARE PARTS" }, { "other", "OTHER" } };
 }
 <script>
    var  processRFQs = {
@@ -86,7 +84,30 @@
             }
         }
    }
-   jQuery(document).ready(processRFQs.init);
+    jQuery(document).ready(processRFQs.init);
+    $(document).on('click', '.ajax-filter', function (e) {
+        e.preventDefault();
+        var url = $(this).attr('href');
+        $(this).closest('.dropdown').removeClass('open');
+        $.ajax({
+            url: url,
+            type: 'GET',
+            beforeSend: function () {
+                $('table.table').css('opacity', '0.5');
+            },
+            success: function (result) {
+                $('table.table tbody').html(result);
+                $('#rfq-count').text($('table.table tbody tr').length);
+                window.history.pushState({ path: url }, '', url);
+                $('table.table').css('opacity', '1');
+
+            },
+            error: function () {
+                alert("Error loading data. Please try again.");
+                $('table.table').css('opacity', '1');
+            }
+        });
+    });
 </script>
 <style>
     /* style the modal */
@@ -171,14 +192,14 @@
                     {
                         if (Request.QueryString["filter"] == @item.Key)
                         {
-                            <li><a href="~/RFQTool/RfqAdmin?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=@Request.QueryString["msg"]&filter=@item.Key">@item.Value</a></li>
+                            <li><a class="ajax-filter" href="~/RFQTool/RfqAdmin?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=@Request.QueryString["msg"]&filter=@item.Key">@item.Value</a></li>
                         }
                         else
                         {
-                            <li><a href="~/RFQTool/RfqAdmin?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=@Request.QueryString["msg"]&filter=@item.Key">@item.Value</a></li>
+                            <li><a class="ajax-filter" href="~/RFQTool/RfqAdmin?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=@Request.QueryString["msg"]&filter=@item.Key">@item.Value</a></li>
                         }
                     }
-                    <li><a href="~/RFQTool/RfqAdmin?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=@Request.QueryString["msg"]">No Filter</a></li>
+                    <li><a class="ajax-filter" href="~/RFQTool/RfqAdmin?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=@Request.QueryString["msg"]">No Filter</a></li>
                 </ul>
             </div>
         </div>
@@ -191,10 +212,10 @@
                 <ul class="dropdown-menu">
                     @foreach (string region in new string[] { "CENTRAL", "NORTH", "NORTHEAST", "SOUTH", "SOUTHEAST", "WEST", "GLOBAL KEY ACCOUNTS" })
                     {
-                        <li><a href="~/RFQTool/RfqAdmin?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=@Request.QueryString["msg"]&filter_region=@region">@region</a></li>
+                        <li><a class="ajax-filter" href="~/RFQTool/RfqAdmin?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=@Request.QueryString["msg"]&filter_region=@region">@region</a></li>
 
                     }
-                    <li><a href="~/RFQTool/RfqAdmin?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=@Request.QueryString["msg"]">No Filter</a></li>
+                    <li><a class="ajax-filter" href="~/RFQTool/RfqAdmin?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=@Request.QueryString["msg"]">No Filter</a></li>
                 </ul>
             </div>
         </div>
@@ -202,7 +223,7 @@
             @Html.ActionLink("<< RFQ Home", "Index", new { n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"] }, htmlAttributes: new { @class = "btn btn-primary", @style = "float:right;" })
         </div>
         <div style="float:right;margin-right:15px;font-size:28px;line-height:50px;">
-            <strong>No. of RFQs: <span style="color:red;">@Model.Count()</span></strong>
+            <strong>No. of RFQs: <span id="rfq-count" style="color:red;">@Model.Count()</span></strong>
         </div>
     </div>
 
@@ -254,97 +275,10 @@
             <td style="width:75px;"></td>
         </tr>
     </thead>
-    @foreach (var item in Model)
-    {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.ID)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.qte_num)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.requestor)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.comp_name)
-            </td>
-        <td>@Html.DisplayFor(modelItem => item.end_user_name)<br />@Html.DisplayFor(modelItem => item.end_user_location)</td>
-            <td>
-                @Html.DisplayFor(modelItem => item.qte_ref)
-            </td>
-            <td class="text-center">
-                @(!string.IsNullOrEmpty(item.part_type_other) ? ((item.part_type_other == "Climate Control" || item.part_type_other == "Enclosure Spare Parts") ? "SP/CL" : item.part_type_other) : (!string.IsNullOrEmpty(item.mods_it) ? "V" + item.mods_it : ""))
-            </td>
-            <td>
-                @(!string.IsNullOrEmpty(item.product_category) && productCategories.ContainsKey(item.product_category) ? productCategories[item.product_category] : "")
-            </td>
-            <td>
-                @String.Format("{0:d}", @item.submission_date)         
-            </td>
-            @if (item.list_RFQ_logs != null && item.list_RFQ_logs.Count() > 0)
-            {
-                if (!string.IsNullOrEmpty(@item.list_RFQ_logs.LastOrDefault().AdminfullName))
-                {
-                    <td id="status_@item.ID" >@item.list_RFQ_logs.LastOrDefault().AdminfullName - @item.list_RFQ_logs.LastOrDefault().Action</td>
-                }
-                else
-                {
-                    <td id="status_@item.ID" >@item.list_RFQ_logs.LastOrDefault().Action</td>
-                }
-            }
-            @if (Request.QueryString["filter"] == "Completed this month")
-            {
-                <td>
-                    @String.Format("{0:d}", @item.completion_date)
-                </td>
-            }
-            <td>@item.updated_quote</td>
-            @*<td>
-                <a href="#" onclick="processRFQs.toggleNotes(@item.ID); return false;" id="show_status_@item.ID">show notes</a>
-                <a href="#" onclick="processRFQs.toggleNotes(@item.ID); return false;" id="hide_status_@item.ID" style="display:none;">hide notes</a>
-                <div id="notes_@item.ID" style="overflow-y:auto;max-height:250px;display:none;">
-                    @if (item.list_RFQ_logs != null && item.list_RFQ_logs.Count() > 0)
-                    {
-                        <table class="table">
-                            <thead>
-                                <tr style="background:#E5E2AE;">
-                                    <td><b>Name</b></td>
-                                    <td><b>Action</b></td>
-                                    <td><b>Time of Action</b></td>
-                                    <td><b>Admin Note</b></td>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var logs in item.list_RFQ_logs)
-                                {
-                                    <tr>
-                                        <td>@logs.fullName</td>
-                                        <td>@logs.Action</td>
-                                        <td>@logs.Action_Time</td>
-                                        <td>@logs.Notes</td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    }
-                </div>
-            </td>*@
-            <td style="text-align: center;">
-                <a href="@Url.Action("Edit", new { id = item.ID, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], ext_form = "no", admin = "yes" })" title="View"><img src="~/images/view.png" class="img-icon" /></a>
-
-                @{ string[] list_superAdmins = { "61272", "40", "11", "10", "65932", "28" };}
-                @if (list_superAdmins.Contains(userId.ToString()))
-                {
-                    <a id="@item.ID" onclick="processRFQs.getid(this.id);return false;" href="@Url.Action("ManageAssignRFQ", new { id = item.ID, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"] })" title="Assign"><img src="~/images/assign.png" class="img-icon" /></a>
-                }
-                @if (item.list_RFQ_logs != null && item.list_RFQ_logs.Count() > 0 && @item.list_RFQ_logs.LastOrDefault().Action != "Assigned" && @item.list_RFQ_logs.LastOrDefault().Action != "Assigned-Returned" && @item.list_RFQ_logs.LastOrDefault().Action != "Completed" && @item.list_RFQ_logs.LastOrDefault().Action != "Admin Saved with Notes")
-                {
-                    <a href="@Url.Action("ManageAssignRFQ", new { rfq_id = item.ID, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], usr_id = userId })" id="@item.ID" class="@item.ID" onclick="processRFQs.manage(this.href, this.id); return false;" title="Manage"><img src="~/images/manage.png" class="img-icon" /></a>
-                }
-            </td>
-        </tr>
-    }
+    <tbody>
+        @Html.Partial("_RfqAdminTable", Model)
+    </tbody>
+    
 </table>
 
 <div id="modal">

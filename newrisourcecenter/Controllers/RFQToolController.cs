@@ -345,7 +345,10 @@ namespace newrisourcecenter.Controllers
                     });
                 }
             }
-
+            if(Request.IsAjaxRequest())
+            {
+                return PartialView("_RfqAdminTable", list_rfqs);
+            }
             return View(list_rfqs);
         }
         #endregion

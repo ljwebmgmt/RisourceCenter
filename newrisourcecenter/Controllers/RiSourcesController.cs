@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using Ionic.Zip;
 using newrisourcecenter.ViewModels;
 using CsvHelper;
+using System.Globalization;
 
 namespace newrisourcecenter.Controllers
 {
@@ -191,24 +192,27 @@ namespace newrisourcecenter.Controllers
 
             //Add n1ID to the list of n1IDs for the drop down
             Dictionary<long,Nav1List> list_n2ID = new Dictionary<long,Nav1List>();
+            List<long> excludedIds = new List<long>() { 49, 46, 42, 78, 30177 };
             foreach (var n2dsitems in n2ids)
             {
-                if ( n2dsitems.n2ID != 49 ) {
-                    if ( n2dsitems.n2ID != 46 && n2dsitems.n2ID != 42 && n2dsitems.n2ID != 78)
-                    {
-                        list_n2ID.Add(n2dsitems.n2ID,new Nav1List { id = n2dsitems.n2ID, name = n2dsitems.n2_nameLong, img = n2dsitems.n2_headerImg,n3order=n2dsitems.n2order });
-                    }
-                }     
+                if (excludedIds.Contains(n2dsitems.n2ID))
+                    continue;
+                list_n2ID.Add(n2dsitems.n2ID, new Nav1List { id = n2dsitems.n2ID, name = n2dsitems.n2_nameLong, img = n2dsitems.n2_headerImg, n3order = n2dsitems.n2order });    
             }
-            ViewBag.list_n2ID = list_n2ID.OrderBy(a=>a.Value.n3order);
-
+            ViewBag.list_n2ID = list_n2ID.OrderBy(a => a.Value.n3order);
+            List<RiSourcesViewModel> listRisources = null;
             if (n2id == 0) {
-                return View(await db.RiSourcesViewModels.OrderByDescending(a => a.ris_ID).ToListAsync());
+                listRisources = await db.RiSourcesViewModels.OrderByDescending(a => a.ris_ID).ToListAsync();
             }
             else
             {
-                return View(await db.RiSourcesViewModels.OrderByDescending(a => a.ris_ID).Where(a=>a.n2ID==n2id).ToListAsync());
+                listRisources = await db.RiSourcesViewModels.OrderByDescending(a => a.ris_ID).Where(a => a.n2ID == n2id).ToListAsync();
             }
+            if(Request.IsAjaxRequest())
+            {
+                return PartialView("_RisourcesTable", listRisources);
+            }
+            return View(listRisources);
         }
 
         // GET: RiSources
@@ -1661,7 +1665,7 @@ namespace newrisourcecenter.Controllers
         {
             using (var memoryStream = new MemoryStream())
             using (var streamWriter = new StreamWriter(memoryStream))
-            using (var csvWriter = new CsvWriter(streamWriter))
+            using (var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture))
             {
                 csvWriter.WriteRecords(records);
                 streamWriter.Flush();
