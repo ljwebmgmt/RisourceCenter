@@ -8,7 +8,7 @@
     $(document).on('click', '.ajax-filter', function (e) {
         e.preventDefault();
         var url = $(this).attr('href');
-        $(this).closest('.dropdown').removeClass('open');
+        $(this).closest('.dropdown ').removeClass('open');
         $.ajax({
             url: url,
             type: 'GET',

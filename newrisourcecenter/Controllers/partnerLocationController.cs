@@ -28,7 +28,7 @@ namespace newrisourcecenter.Models
             {
                 return RedirectToAction("Login", "Account");
             }
-
+            List<partnerLocationViewModel> listPartnerLocations = null;
             if (User.IsInRole("Super Admin") || User.IsInRole("Local Admin") && User.IsInRole("Rittal User") || User.IsInRole("Global Admin"))
             {
                 //select the company list from the partnerCompanies database
@@ -42,11 +42,11 @@ namespace newrisourcecenter.Models
                 ViewBag.partnerComp = comp_listing;
                 if (comp_id==0)
                 {
-                    return View(await db.partnerLocationViewModels.Where(a => a.comp_ID == companyId).OrderByDescending(a => a.loc_ID).ToListAsync());
+                    listPartnerLocations = await db.partnerLocationViewModels.Where(a => a.comp_ID == companyId).OrderByDescending(a => a.loc_ID).ToListAsync();
                 }
                 else
                 {
-                    return View(await db.partnerLocationViewModels.Where(a => a.comp_ID == comp_id).OrderByDescending(a => a.loc_ID).ToListAsync());
+                    listPartnerLocations = await db.partnerLocationViewModels.Where(a => a.comp_ID == comp_id).OrderByDescending(a => a.loc_ID).ToListAsync();
                 }
             }
             else if (User.IsInRole("Local Admin") && User.IsInRole("Channel User"))
@@ -61,14 +61,13 @@ namespace newrisourcecenter.Models
                     comp_listing.Add(new CompData { comp_name = item.comp_name, comp_ID = item.comp_ID });
                 }
                 ViewBag.partnerComp = comp_listing;
-
-                return View(await db.partnerLocationViewModels.Where(a => a.comp_ID == companyId).ToListAsync());
+                listPartnerLocations = await db.partnerLocationViewModels.Where(a => a.comp_ID == companyId).ToListAsync();
             }
-            else
+            if(Request.IsAjaxRequest())
             {
-                return View();
+                return PartialView("_PartnerLocationTable", listPartnerLocations);
             }
-
+            return View(listPartnerLocations);
         }
 
         // GET: partnerLocation/Details/5

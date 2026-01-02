@@ -1,0 +1,40 @@
+﻿@model IEnumerable<newrisourcecenter.Models.partnerLocationViewModel>
+@foreach (var item in Model)
+{
+    <tr>
+        <td>
+            @if (!string.IsNullOrEmpty(item.loc_name))
+            {
+                @Html.DisplayFor(modelItem => item.loc_name)
+            }
+            else
+            {
+                <span>@Request.QueryString["n1_name"] - @Html.DisplayFor(modelItem => item.loc_city)</span>
+            }
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.loc_phone)
+        </td>
+        <td>
+            @{
+                string host = "";
+                if (Request.Url.Port != 443)
+                {
+                    host = "http://" + Request.Url.Host + ":" + Request.Url.Port;
+                }
+                else
+                {
+                    host = "https://" + Request.Url.Host + "";
+                }
+                if (!string.IsNullOrEmpty(item.loc_logo))
+                {
+                    <img src="@string.Format(host+"/company/partners/logos/{0}", @item.loc_logo)" height="20" width="20" />
+                }
+            }
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id = item.loc_ID, comp_id = item.comp_ID, n1_name = Request.QueryString["n1_name"], n2_name = Request.QueryString["n2_name"], msg = item.loc_name }, new { @class = "btn btn-info" })
+            @Html.ActionLink("Delete", "Delete", new { id = item.loc_ID, comp_id = item.comp_ID, n1_name = Request.QueryString["n1_name"], n2_name = Request.QueryString["n2_name"], msg = item.loc_name }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false", @class = "btn btn-info" })
+        </td>
+    </tr>
+}
