@@ -12,7 +12,10 @@
         },
         submit_filter_form:function(e){
             e.preventDefault();
-            $.post("/partnerCompany/searchCompany/?form_value=" + $("#form_value").val() + "&n1_name=Admin Users", function (result) {
+            const params = new URLSearchParams({
+                form_value: $("#form_value").val()
+            });
+            $.post("/partnerCompany/searchCompany?" + params.toString(), function (result) {
                 $("#tabledata").empty();
                 $("#tabledata").html(result);
             });
