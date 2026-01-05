@@ -1198,6 +1198,7 @@ namespace newrisourcecenter.Models
             mdfViewModels.mdf_main = list_mdfViewModels;
             mdfViewModels.list_comp = list_comp;
             mdfViewModels.company_metrics = company_metrics;
+            mdfViewModels.company_metrics_mkt = company_metrics_mkt;
             mdfViewModels.rcmNames = this.getRCM();
             ViewBag.IsArchive = true;
             if (Request.IsAjaxRequest())

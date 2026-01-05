@@ -5571,6 +5571,13 @@
     <Content Include="Views\RittalUniversity\Training.cshtml" />
     <Content Include="Views\UserViewModels\LastLoginReport.cshtml" />
     <Content Include="Views\RiSources\RisourcesReport.cshtml" />
+    <Content Include="Views\MDFView\_MDFTableResults.cshtml" />
+    <Content Include="Views\Nav2ViewModel\_Nav2Table.cshtml" />
+    <Content Include="Views\Nav3ViewModel\_Nav3Table.cshtml" />
+    <Content Include="Views\partnerLocation\_PartnerLocationTable.cshtml" />
+    <Content Include="Views\RFQTool\_RfqAdminTable.cshtml" />
+    <Content Include="Views\RiSources\_RisourcesTable.cshtml" />
+    <Content Include="Views\SalesComm\_SalesCommTable.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\uploads\" />

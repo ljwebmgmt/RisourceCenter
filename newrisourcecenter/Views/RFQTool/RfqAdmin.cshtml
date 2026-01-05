@@ -93,18 +93,18 @@
             url: url,
             type: 'GET',
             beforeSend: function () {
-                $('table.table').css('opacity', '0.5');
+                $('.table-wrapper').css('opacity', '0.5');
             },
             success: function (result) {
-                $('table.table tbody').html(result);
+                $('.table-wrapper').html(result);
                 $('#rfq-count').text($('table.table tbody tr').length);
                 window.history.pushState({ path: url }, '', url);
-                $('table.table').css('opacity', '1');
+                $('.table-wrapper').css('opacity', '1');
 
             },
             error: function () {
                 alert("Error loading data. Please try again.");
-                $('table.table').css('opacity', '1');
+                $('.table-wrapper').css('opacity', '1');
             }
         });
     });
@@ -231,55 +231,9 @@
 {
     <h2 style="color:green;">@Request.QueryString["success"]</h2>
 }
-<table class="table">
-    <thead>
-        <tr>
-            <th valign="top">
-                ID
-            </th>
-            <th valign="top">
-                Quote Number
-            </th>
-            <th valign="top">
-                Requester
-            </th>
-            <th valign="top">
-                Company Name
-            </th>
-            <th valign="top">End User</th>
-            <th valign="top">
-                Project Name
-            </th>
-            <th valign="top">Variant Code</th>
-            <th valign="top">Product Category</th>
-            <th>
-                @Html.DisplayNameFor(model => model.submission_date)
-            </th>
-            <th>
-                Status
-                @if (!string.IsNullOrEmpty(Request.QueryString["filter"]))
-                    {
-                    <span style="color:green;">@Request.QueryString["filter"]</span>
-                }
-            </th>
-            @if (Request.QueryString["filter"] == "Completed this month")
-                    {
-                <th>
-                    @Html.DisplayNameFor(model => model.completion_date)
-                </th>
-            }
-            <th>New quote / revision</th>
-            @*<th>
-                Notes
-            </th>*@
-            <td style="width:75px;"></td>
-        </tr>
-    </thead>
-    <tbody>
-        @Html.Partial("_RfqAdminTable", Model)
-    </tbody>
-    
-</table>
+<div class="table-wrapper">
+    @Html.Partial("_RfqAdminTable", Model)
+</div>
 
 <div id="modal">
     <div>

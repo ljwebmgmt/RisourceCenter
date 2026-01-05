@@ -3,64 +3,111 @@
     Dictionary<string, string> productCategories = new Dictionary<string, string>() { { "ts8-ie", "TS8 INDUSTRIAL" }, { "vx-ie", "VX INDUSTRIAL" }, { "ts8-it", "TS8 DATA CENTER" }, { "WM_AE_JB", "WM/AE/AX/JB/KX" }, { "spare", "SPARE PARTS" }, { "other", "OTHER" } };
     string userId = Session["userId"].ToString();
 }
-@foreach (var item in Model)
-{
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.ID)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.qte_num)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.requestor)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.comp_name)
-        </td>
-        <td>@Html.DisplayFor(modelItem => item.end_user_name)<br />@Html.DisplayFor(modelItem => item.end_user_location)</td>
-        <td>
-            @Html.DisplayFor(modelItem => item.qte_ref)
-        </td>
-        <td class="text-center">
-            @(!string.IsNullOrEmpty(item.part_type_other) ? ((item.part_type_other == "Climate Control" || item.part_type_other == "Enclosure Spare Parts") ? "SP/CL" : item.part_type_other) : (!string.IsNullOrEmpty(item.mods_it) ? "V" + item.mods_it : ""))
-        </td>
-        <td>
-            @(!string.IsNullOrEmpty(item.product_category) && productCategories.ContainsKey(item.product_category) ? productCategories[item.product_category] : "")
-        </td>
-        <td>
-            @String.Format("{0:d}", @item.submission_date)
-        </td>
-        @if (item.list_RFQ_logs != null && item.list_RFQ_logs.Count() > 0)
-        {
-            if (!string.IsNullOrEmpty(@item.list_RFQ_logs.LastOrDefault().AdminfullName))
+<table class="table">
+    <thead>
+        <tr>
+            <th valign="top">
+                ID
+            </th>
+            <th valign="top">
+                Quote Number
+            </th>
+            <th valign="top">
+                Requester
+            </th>
+            <th valign="top">
+                Company Name
+            </th>
+            <th valign="top">End User</th>
+            <th valign="top">
+                Project Name
+            </th>
+            <th valign="top">Variant Code</th>
+            <th valign="top">Product Category</th>
+            <th>
+                @Html.DisplayNameFor(model => model.submission_date)
+            </th>
+            <th>
+                Status
+                @if (!string.IsNullOrEmpty(Request.QueryString["filter"]))
+                {
+                    <span style="color:green;">@Request.QueryString["filter"]</span>
+                }
+            </th>
+            @if (Request.QueryString["filter"] == "Completed this month")
             {
-                <td id="status_@item.ID">@item.list_RFQ_logs.LastOrDefault().AdminfullName - @item.list_RFQ_logs.LastOrDefault().Action</td>
+                <th>
+                    @Html.DisplayNameFor(model => model.completion_date)
+                </th>
             }
-            else
-            {
-                <td id="status_@item.ID">@item.list_RFQ_logs.LastOrDefault().Action</td>
-            }
-        }
-        @if (Request.QueryString["filter"] == "Completed this month")
+            <th>New quote / revision</th>
+            @*<th>
+                    Notes
+                </th>*@
+            <td style="width:75px;"></td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
         {
-            <td>
-                @String.Format("{0:d}", @item.completion_date)
-            </td>
-        }
-        <td>@item.updated_quote</td>
-        <td style="text-align: center;">
-            <a href="@Url.Action("Edit", new { id = item.ID, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], ext_form = "no", admin = "yes" })" title="View"><img src="~/images/view.png" class="img-icon" /></a>
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.qte_num)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.requestor)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.comp_name)
+                </td>
+                <td>@Html.DisplayFor(modelItem => item.end_user_name)<br />@Html.DisplayFor(modelItem => item.end_user_location)</td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.qte_ref)
+                </td>
+                <td class="text-center">
+                    @(!string.IsNullOrEmpty(item.part_type_other) ? ((item.part_type_other == "Climate Control" || item.part_type_other == "Enclosure Spare Parts") ? "SP/CL" : item.part_type_other) : (!string.IsNullOrEmpty(item.mods_it) ? "V" + item.mods_it : ""))
+                </td>
+                <td>
+                    @(!string.IsNullOrEmpty(item.product_category) && productCategories.ContainsKey(item.product_category) ? productCategories[item.product_category] : "")
+                </td>
+                <td>
+                    @String.Format("{0:d}", @item.submission_date)
+                </td>
+                @if (item.list_RFQ_logs != null && item.list_RFQ_logs.Count() > 0)
+                {
+                    if (!string.IsNullOrEmpty(@item.list_RFQ_logs.LastOrDefault().AdminfullName))
+                    {
+                        <td id="status_@item.ID">@item.list_RFQ_logs.LastOrDefault().AdminfullName - @item.list_RFQ_logs.LastOrDefault().Action</td>
+                    }
+                    else
+                    {
+                        <td id="status_@item.ID">@item.list_RFQ_logs.LastOrDefault().Action</td>
+                    }
+                }
+                @if (Request.QueryString["filter"] == "Completed this month")
+                {
+                    <td>
+                        @String.Format("{0:d}", @item.completion_date)
+                    </td>
+                }
+                <td>@item.updated_quote</td>
+                <td style="text-align: center;">
+                    <a href="@Url.Action("Edit", new { id = item.ID, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], ext_form = "no", admin = "yes" })" title="View"><img src="~/images/view.png" class="img-icon" /></a>
 
-            @{ string[] list_superAdmins = { "61272", "40", "11", "10", "65932", "28" };}
-            @if (list_superAdmins.Contains(userId.ToString()))
-            {
-                <a id="@item.ID" onclick="processRFQs.getid(this.id);return false;" href="@Url.Action("ManageAssignRFQ", new { id = item.ID, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"] })" title="Assign"><img src="~/images/assign.png" class="img-icon" /></a>
-            }
-            @if (item.list_RFQ_logs != null && item.list_RFQ_logs.Count() > 0 && @item.list_RFQ_logs.LastOrDefault().Action != "Assigned" && @item.list_RFQ_logs.LastOrDefault().Action != "Assigned-Returned" && @item.list_RFQ_logs.LastOrDefault().Action != "Completed" && @item.list_RFQ_logs.LastOrDefault().Action != "Admin Saved with Notes")
-            {
-                <a href="@Url.Action("ManageAssignRFQ", new { rfq_id = item.ID, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], usr_id = userId })" id="@item.ID" class="@item.ID" onclick="processRFQs.manage(this.href, this.id); return false;" title="Manage"><img src="~/images/manage.png" class="img-icon" /></a>
-            }
-        </td>
-    </tr>
-}
+                    @{ string[] list_superAdmins = { "61272", "40", "11", "10", "65932", "28" };}
+                    @if (list_superAdmins.Contains(userId.ToString()))
+                    {
+                        <a id="@item.ID" onclick="processRFQs.getid(this.id);return false;" href="@Url.Action("ManageAssignRFQ", new { id = item.ID, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"] })" title="Assign"><img src="~/images/assign.png" class="img-icon" /></a>
+                    }
+                    @if (item.list_RFQ_logs != null && item.list_RFQ_logs.Count() > 0 && @item.list_RFQ_logs.LastOrDefault().Action != "Assigned" && @item.list_RFQ_logs.LastOrDefault().Action != "Assigned-Returned" && @item.list_RFQ_logs.LastOrDefault().Action != "Completed" && @item.list_RFQ_logs.LastOrDefault().Action != "Admin Saved with Notes")
+                    {
+                        <a href="@Url.Action("ManageAssignRFQ", new { rfq_id = item.ID, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], usr_id = userId })" id="@item.ID" class="@item.ID" onclick="processRFQs.manage(this.href, this.id); return false;" title="Manage"><img src="~/images/manage.png" class="img-icon" /></a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -82,7 +82,7 @@
                     @String.Format("{0:P}", @Model.company_metrics.FirstOrDefault().PercentageUtilized / 100)
                 </td>
                 <td width="4%" style="border-bottom:none;border-top:none;background:#292929;">&nbsp;</td>
-                <td align="center">@String.Format("{0:P}", @Model.company_metrics_mkt.FirstOrDefault().PercentageUtilized / 100)</td>
+                <td align="center">@(Model.company_metrics_mkt != null && Model.company_metrics_mkt.FirstOrDefault() != null && Model.company_metrics_mkt.FirstOrDefault().PercentageUtilized.HasValue ? String.Format("{0:P}", @Model.company_metrics_mkt.FirstOrDefault().PercentageUtilized / 100) : "")</td>
             </tr>
             <tr>
                 <th align="right">Pending</th>
@@ -94,7 +94,7 @@
                 <td align="center">@String.Format("{0:C}", @Model.company_metrics.FirstOrDefault().Pending_DP_total)</td>
                 <td align="center">@String.Format("{0:C}", @Model.company_metrics.FirstOrDefault().totalPending)</td>
                 <td width="4%" style="border-bottom:none;border-top:none;background:#292929;">&nbsp;</td>
-                <td align="center">@String.Format("{0:C}", @Model.company_metrics_mkt.FirstOrDefault().totalPending)</td>
+                <td align="center">@(Model.company_metrics_mkt != null && Model.company_metrics_mkt.FirstOrDefault() != null && Model.company_metrics_mkt.FirstOrDefault().totalPending.HasValue ? String.Format("{0:C}", @Model.company_metrics_mkt.FirstOrDefault().totalPending) : "")</td>
             </tr>
             <tr>
                 <th align="right">Approved</th>
