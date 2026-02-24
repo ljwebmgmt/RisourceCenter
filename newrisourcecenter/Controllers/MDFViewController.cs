@@ -967,10 +967,6 @@ namespace newrisourcecenter.Models
             mdfViewModels.company_metrics_mkt = company_metrics_mkt;
             mdfViewModels.rcmNames = this.getRCM();
             ViewBag.IsArchive = false;
-            if (Request.IsAjaxRequest())
-            {
-                return PartialView("_MDFTableResults", mdfViewModels);
-            }
             return View(mdfViewModels);
         }
 

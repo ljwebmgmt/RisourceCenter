@@ -19,7 +19,7 @@ namespace newrisourcecenter.Models
         CommonController locController = new CommonController();
 
         // GET: partnerCompany
-        public async Task<ActionResult> Index()
+        public ActionResult Index()
         {
 
             long companyId = Convert.ToInt64(Session["companyId"]);
@@ -28,22 +28,31 @@ namespace newrisourcecenter.Models
             {
                 return RedirectToAction("Login", "Account");
             }
-            ViewBag.industries = dbEntity.partnerIndustries.ToDictionary(x => x.pi_ID, x => x.pi_industry);
-            ViewBag.types = dbEntity.partnerTypes.ToDictionary(x => x.pt_ID, x => x.pt_type);
-            if (User.IsInRole("Super Admin") || User.IsInRole("Local Admin") && User.IsInRole("Rittal User") || User.IsInRole("Global Admin"))
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> GetCompaniesPaged(int start, int limit, string search = "")
+        {
+            long companyId = Convert.ToInt64(Session["companyId"]);
+            long userId = Convert.ToInt64(Session["userId"]);
+
+            if (!Request.IsAuthenticated || userId == 0) return Json(new { error = "Unauthorized" }, JsonRequestBehavior.AllowGet);
+            var query = db.partnerCompanyViewModels.AsQueryable();
+            if (!(User.IsInRole("Super Admin") || (User.IsInRole("Local Admin") && User.IsInRole("Rittal User")) || User.IsInRole("Global Admin")))
             {
-                //select the company list from the partnerCompanies database
-                return View(await db.partnerCompanyViewModels.OrderBy(a=>a.comp_name).ToListAsync());
+                query = query.Where(a => a.comp_ID == companyId);
             }
-            else if (User.IsInRole("Local Admin") && User.IsInRole("Channel User"))
+            if (!string.IsNullOrEmpty(search))
             {
-                //select the company list from the partnerCompanies database
-                return View(await db.partnerCompanyViewModels.Where( a=>a.comp_ID == companyId).OrderBy(a => a.comp_name).ToListAsync());
+                if (int.TryParse(search, out int compIdSearch))
+                    query = query.Where(a => a.comp_ID == compIdSearch || a.comp_name.Contains(search));
+                else
+                    query = query.Where(a => a.comp_name.Contains(search));
             }
-            else
-            {
-                return View();
-            }
+            int totalCount = await query.CountAsync();
+            var rows = await query.OrderBy(a => a.comp_name).Skip(start).Take(limit).ToListAsync();
+            return Json(new { rows, total = totalCount }, JsonRequestBehavior.AllowGet);
         }
 
         // GET: Labels
@@ -334,30 +343,36 @@ namespace newrisourcecenter.Models
         }
 
         // GET: partnerCompany/Delete/5
-        public async Task<ActionResult> Delete(long? id)
+        public async Task<JsonResult> Delete(long? id)
         {
-            long userId = Convert.ToInt64(Session["userId"]);
-            if (!Request.IsAuthenticated || userId == 0)
+            try
             {
-                return RedirectToAction("Login", "Account");
+                if (id == null)
+                {
+                    throw new Exception("An error occurred while processing your request.");
+                }
+                long userId = Convert.ToInt64(Session["userId"]);
+                if (!Request.IsAuthenticated || userId == 0)
+                {
+                    throw new Exception("Please Login. Login has timed out");
+                }
+                partnerCompanyViewModel partnerCompanyViewModel = await db.partnerCompanyViewModels.FindAsync(id);
+                if (partnerCompanyViewModel == null)
+                {
+                    throw new Exception("Company not found");
+                }
+                db.partnerCompanyViewModels.Remove(partnerCompanyViewModel);
+                await db.SaveChangesAsync();
+
+                //Log the action by the user
+                await locController.siteActionLog(Convert.ToInt32(partnerCompanyViewModel.comp_ID), "PartnerCompany", DateTime.Now, " Partner Company was deleted by user " + userId, "Delete", Convert.ToInt32(userId));
+                return Json("OK");
             }
-            if (id == null)
+            catch (Exception e)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return Json(e.Message);
             }
-            partnerCompanyViewModel partnerCompanyViewModel = await db.partnerCompanyViewModels.FindAsync(id);
-            if (partnerCompanyViewModel == null)
-            {
-                return HttpNotFound();
-            }
-
-            db.partnerCompanyViewModels.Remove(partnerCompanyViewModel);
-            await db.SaveChangesAsync();
-
-            //Log the action by the user
-            await locController.siteActionLog(Convert.ToInt32(partnerCompanyViewModel.comp_ID), "PartnerCompany", DateTime.Now, " Partner Company was deleted by user " + userId, "Delete", Convert.ToInt32(userId));
-
-            return RedirectToAction("Index",new { n1_name = Request.QueryString["n1_name"] });
         }
 
         // POST: partnerCompany/Delete/5

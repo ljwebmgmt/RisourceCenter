@@ -1,10 +1,175 @@
 ﻿@model IEnumerable<newrisourcecenter.Models.RFQViewModel>
-
+@using Newtonsoft.Json
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <script>
+    let gridApi = null;
+    document.addEventListener('DOMContentLoaded', () => {
+        const rowData = @Html.Raw(JsonConvert.SerializeObject(Model));
+        const productCategories = @Html.Raw(JsonConvert.SerializeObject(new Dictionary<string, string>() { { "ts8-ie", "TS8 INDUSTRIAL" }, { "vx-ie", "VX INDUSTRIAL" }, { "ts8-it", "TS8 DATA CENTER" }, { "WM_AE_JB", "WM/AE/AX/JB/KX" }, { "spare", "SPARE PARTS" }, { "other", "OTHER" } }));
+        const n1_name = '@(Context.Request.QueryString["n1_name"])';
+        const n2_name = '@(Context.Request.QueryString["n2_name"])';
+        const currentUserId = '@Session["userId"].ToString()';
+        const superAdmins = ["61272", "40", "11", "10", "65932", "28"];
+        const editUrlBase = '@Url.Action("Edit")';
+        const assignUrlBase = '@Url.Action("ManageAssignRFQ")';
+        // 2. Define Columns with Filtering, Sorting, and Hiding
+        const columnDefs = [
+            { field: "ID", headerName: "ID", width: 90 },
+            { field: "qte_num", headerName: "Quote Number", filter: true, sortable: true },
+            { field: "requestor", headerName: "Requested By", filter: 'agTextColumnFilter' },
+            { field: "comp_name", headerName: "Company Name", filter: 'agTextColumnFilter' },
+            { field: "company_region", headerName: "Region", filter: 'agTextColumnFilter' },
+            {
+                field: "end_user_name",
+                headerName: 'End User',
+                filter: true,
+                cellRenderer: params => {
+                    return params.value + '<br/>' + params.data.end_user_location;
+                }
+            },
+            { field: "qte_ref", headerName: "Project Name", filter: true },
+            {
+                field: "mods_it",
+                headerName: 'Variant Code',
+                filter: true,
+                cellRenderer: params => {
+                    const partType = params.data.part_type_other;
+                    var variantCode = '';
+                    if (partType != null && partType != '') {
+                        if (partType == "Climate Control" || partType == "Enclosure Spare Parts") {
+                            variantCode = 'SP/CL';
+                        }
+                        else {
+                            variantCode = partType;
+                        }
+                    }
+                    else if (params.data.mods_it != null && params.data.mods_it != '') {
+                        variantCode = 'V' + params.data.mods_it;
+                    }
+                    return variantCode;
+                },
+            },
+            {
+                field: "product_category",
+                headerName: 'Product Category',
+                filter: 'agTextColumnFilter',
+                refData: productCategories,
+            },
+            {
+                field: "submission_date", headerName: "Submission Date", filter: 'agDateColumnFilter',
+                valueFormatter: params => {
+                    if (!params.value) return "";
+                    const date = new Date(params.value);
+                    return date.toLocaleDateString();
+                }
+            },
+            {
+                field: "list_RFQ_logs", headerName: "Status", filter: 'agTextColumnFilter',
+                cellRenderer: params => {
+                    const logs = params.value;
+                    const rowId = params.data.id;
+                    if (!logs || logs.length === 0) {
+                        return `<span id="status_${rowId}">-</span>`;
+                    }
+                    const lastLog = logs[logs.length - 1];
+                    let displayValue = "";
+                    if (lastLog.AdminfullName && lastLog.AdminfullName.trim() !== "") {
+                        displayValue = `${lastLog.AdminfullName} - ${lastLog.Action}`;
+                    } else {
+                        displayValue = lastLog.Action;
+                    }
+                    return `<span id="status_${rowId}">${displayValue}</span>`;
+                }
+            },
+            {
+                field: "completion_date", headerName: "Completion Date", filter: 'agDateColumnFilter',
+                valueFormatter: params => {
+                    if (!params.value) return "";
+                    const date = new Date(params.value);
+                    return date.toLocaleDateString();
+                }
+            },
+            { field: "updated_quote", headerName: "New Quote / Revision", filter: true, sortable: true },
+            {
+                headerName: "Actions",
+                field: "ID",
+                sortable: false,
+                filter: false,
+                pinned: 'right',
+                cellRenderer: params => {
+                    const item = params.data;
+                    const id = item.ID;
+                    const logs = item.list_RFQ_logs || [];
+                    const lastLog = logs.length > 0 ? logs[logs.length - 1] : null;
+
+                    // --- 1. View Link (Always visible) ---
+                    const viewUrl = `${editUrlBase}?id=${id}&n1_name=${n1_name}&n2_name=${n2_name}&ext_form=no&admin=yes`;
+                    let html = `<a href="${viewUrl}" title="View"><img src="/images/view.png" class="img-icon" /></a> `;
+
+                    // --- 2. Assign Link (SuperAdmin check) ---
+                    if (superAdmins.includes(currentUserId)) {
+                        const assignUrl = `${assignUrlBase}?id=${id}&n1_name=${n1_name}&n2_name=${n2_name}`;
+                        html += `<a id="${id}" onclick="processRFQs.getid(this.id);return false;" href="${assignUrl}" title="Assign">
+                        <img src="/images/assign.png" class="img-icon" />
+                     </a> `;
+                    }
+
+                    // --- 3. Manage Link (Log Logic check) ---
+                    const excludedActions = ["Assigned", "Assigned-Returned", "Completed", "Admin Saved with Notes"];
+
+                    if (lastLog && !excludedActions.includes(lastLog.action)) {
+                        const manageUrl = `${assignUrlBase}?rfq_id=${id}&n1_name=${n1_name}&n2_name=${n2_name}&usr_id=${currentUserId}`;
+                        html += `<a href="${manageUrl}" id="${id}" class="${id}" onclick="processRFQs.manage(this.href, this.id); return false;" title="Manage">
+                        <img src="/images/manage.png" class="img-icon" />
+                     </a>`;
+                    }
+
+                    return `<div style="text-align: center;">${html}</div>`;
+                }
+            }
+        ];
+        const gridOptions = {
+            rowData: rowData,
+            columnDefs: columnDefs,
+            pagination: true,
+            paginationPageSize: 20,
+            onGridReady: (params) => {
+                gridApi = params.api;
+                params.api.sizeColumnsToFit();
+                initColumnMenu();
+            } ,
+        };
+        const gridDiv = document.querySelector('#rfqTableGrid');
+        gridApi = agGrid.createGrid(gridDiv, gridOptions);
+
+        function initColumnMenu() {
+            const menu = document.getElementById('columnToggleMenu');
+            if (!menu || !gridApi) return;
+
+            const cols = gridApi.getColumns();
+            menu.innerHTML = ''; // Clear once
+
+            cols.forEach(col => {
+                const def = col.getColDef();
+                // Skip hidden internal columns or the Action column
+                if (!def.headerName || def.headerName === "Actions") return;
+
+                const li = document.createElement('li');
+                li.style.padding = "5px 15px";
+                li.innerHTML = `
+                    <label style="cursor:pointer; font-weight:normal; display:flex; align-items:center; gap:8px; margin:0;">
+                        <input type="checkbox" ${col.isVisible() ? 'checked' : ''} 
+                               onchange="toggleColumn('${def.field}', this)"> 
+                        ${def.headerName}
+                    </label>
+                `;
+                menu.appendChild(li);
+            });
+        }
+    });
    var  processRFQs = {
        init:function(){
            $('#close').click(function () {
@@ -31,21 +196,21 @@
        //get the form id and asign it to the modal done button class id
         getid:function(id){
             $('#modal').show();
-            $('#quote_id').html(id);		
-            $('.done').attr('id', id);		
+            $('#quote_id').html(id);
+            $('.done').attr('id', id);
         },
         //now assign all the different parameters that would be passed to the new_manage_manually.cfm page
         assign: function (id) {
-            var new_assigned = $('#'+id).text();	
+            var new_assigned = $('#'+id).text();
             $('.done').attr('title', id);// create attr title on done class
-            $('.done').attr('name', new_assigned);// create attr name on done class	
-            // change display title on modal by showing the name of 		
-            $('#assigned').html('You are assigning this quote to <b style="color:red">'+new_assigned+'</b>');	
+            $('.done').attr('name', new_assigned);// create attr name on done class
+            // change display title on modal by showing the name of
+            $('#assigned').html('You are assigning this quote to <b style="color:red">'+new_assigned+'</b>');
         },
         //close the modal
-        close_modal: function (id,title,name){	
-            var assignee = name.split(' ', 1);	
-            if(title!="" && id!=""){	
+        close_modal: function (id,title,name){
+            var assignee = name.split(' ', 1);
+            if(title!="" && id!=""){
                 var url = '/RFQTool/ManageAssignRFQ/?rfq_id=' + id + '&usr_id=' + title+"&assign=yes";
                 //make ajax call to new_manage_manually.cfm when the Done button is clicked
                 $.ajax({
@@ -55,23 +220,23 @@
                         $("." + id).hide();
                         $('#status_' + id).html('Assigned To - ' + data);// on success change the name of the assignee
                     },
-                });		
+                });
                 $('#modal').hide();//finally hide modal
             }else{
                 alert('please selet an assignee');//display if modal is not completed
-            }	
+            }
         },
         //auto search for user names
-        searchAdmin: function (querystring) {		
+        searchAdmin: function (querystring) {
             var url = '/RFQTool/GetRFQAdmins/?querystring=' + querystring;
-            //make ajax call to list_admin.cfm with the user name  
+            //make ajax call to list_admin.cfm with the user name
             $.ajax({
                 type:"GET",
                 url:url,
                 success: function (data) {
                     $('#RFQ_list').html(data);//on success add the list of names to be selected
                 },
-            });	
+            });
         },
         toggleNotes: function (id) {
             $("#notes_" + id).toggle();
@@ -85,28 +250,22 @@
         }
    }
     jQuery(document).ready(processRFQs.init);
-    $(document).on('click', '.ajax-filter', function (e) {
-        e.preventDefault();
-        var url = $(this).attr('href');
-        $(this).closest('.dropdown').removeClass('open');
-        $.ajax({
-            url: url,
-            type: 'GET',
-            beforeSend: function () {
-                $('.table-wrapper').css('opacity', '0.5');
-            },
-            success: function (result) {
-                $('.table-wrapper').html(result);
-                $('#rfq-count').text($('table.table tbody tr').length);
-                window.history.pushState({ path: url }, '', url);
-                $('.table-wrapper').css('opacity', '1');
 
-            },
-            error: function () {
-                alert("Error loading data. Please try again.");
-                $('.table-wrapper').css('opacity', '1');
-            }
-        });
+    function toggleColumn(field, checkbox) {
+        if (gridApi) {
+            gridApi.applyColumnState({
+                state: [
+                    {
+                        colId: field,
+                        hide: !checkbox.checked // In AG Grid, 'hide' is the property name
+                    }
+                ]
+            });
+        }
+    }
+
+    $(document).on('click', '#columnToggleMenu', function (e) {
+        e.stopPropagation(); // Prevents Bootstrap from closing the menu on internal clicks
     });
 </script>
 <style>
@@ -123,42 +282,43 @@
         display: none;
     }
 
-    #modal span {
-        float: right;
-    }
+        #modal span {
+            float: right;
+        }
 
-    #modal > div:first-child {
-        margin-top: 20px;
-        padding: 20px;
-        background: white;
-        width: 90%;
-        height: 70%;
-        position: relative;
-        top: 10px;
-        margin-left: auto;
-        margin-right: auto;
-        color: black;
-        overflow: auto;
-    }
+        #modal > div:first-child {
+            margin-top: 20px;
+            padding: 20px;
+            background: white;
+            width: 90%;
+            height: 70%;
+            position: relative;
+            top: 10px;
+            margin-left: auto;
+            margin-right: auto;
+            color: black;
+            overflow: auto;
+        }
 
     #search {
         text-align: center;
     }
+
     .done {
         top: 30px;
         position: relative;
     }
 
     #RFQ_list {
-        height:200px;
-        overflow-y:auto;
+        height: 200px;
+        overflow-y: auto;
     }
 
-    #RFQ_list li {
-        margin-left: 200px;
-        margin-bottom: 20px;
-        list-style: none;
-    }
+        #RFQ_list li {
+            margin-left: 200px;
+            margin-bottom: 20px;
+            list-style: none;
+        }
 
     #close {
         top: 30px;
@@ -169,9 +329,12 @@
         background: silver;
         width: 100%;
     }
-    .img-icon { width: 15px; }
+
+    .img-icon {
+        width: 15px;
+    }
 </style>
-<div class="main_content" >
+<div class="main_content">
     <div>
         <div style="display:inline-block;float:left;margin-bottom:10px;">
             @Html.ActionLink("RFQ Report >>", "RFQReport", new { n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], msg = "RFQ Report" }, htmlAttributes: new { @class = "btn btn-primary" })
@@ -219,6 +382,16 @@
                 </ul>
             </div>
         </div>
+        <div style="display:inline-block; float:left; margin-left:20px;">
+            <div class="dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+                    <img src="/images/manage.png" style="width:15px; margin-right:5px;" /> Hide/Show Columns
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" id="columnToggleMenu" style="max-height: 400px; overflow-y: auto; padding: 10px 0;">
+                </ul>
+            </div>
+        </div>
         <div style="display:inline-block;float:right;">
             @Html.ActionLink("<< RFQ Home", "Index", new { n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"] }, htmlAttributes: new { @class = "btn btn-primary", @style = "float:right;" })
         </div>
@@ -227,26 +400,26 @@
         </div>
     </div>
 
-@if (!string.IsNullOrEmpty(Request.QueryString["success"]))
-{
-    <h2 style="color:green;">@Request.QueryString["success"]</h2>
-}
-<div class="table-wrapper">
-    @Html.Partial("_RfqAdminTable", Model)
-</div>
+    @if (!string.IsNullOrEmpty(Request.QueryString["success"]))
+    {
+        <h2 style="color:green;">@Request.QueryString["success"]</h2>
+    }
+    <div class="table-wrapper" style="clear:both;">
+        <div id="rfqTableGrid" class="ag-theme-quartz" style="height: 1000px; width: 100%;"></div>
+    </div>
 
-<div id="modal">
-    <div>
-        <span style="float:left;" >Queue id is <strong id="quote_id"></strong></span>
-        <span style="float:right;" >Search to assign a quote <input type="text" onkeyup="processRFQs.searchAdmin(this.value);" id="searchusers" value="" placeholder="search admin name"></span>
-        <br clear="all" />
-        <h4 align="center" id="assigned"></h4>
-        <div id="RFQ_list"></div>
-    </div>
-    <div align="center">
-        <a href="#" class="done" onclick="processRFQs.close_modal(this.id, this.title, this.name); return false;" align="center"><button>Done</button></a>
-        <button id="close">Close</button>
-    </div>
-</div><!-- modals-->
+    <div id="modal">
+        <div>
+            <span style="float:left;">Queue id is <strong id="quote_id"></strong></span>
+            <span style="float:right;">Search to assign a quote <input type="text" onkeyup="processRFQs.searchAdmin(this.value);" id="searchusers" value="" placeholder="search admin name"></span>
+            <br clear="all" />
+            <h4 align="center" id="assigned"></h4>
+            <div id="RFQ_list"></div>
+        </div>
+        <div align="center">
+            <a href="#" class="done" onclick="processRFQs.close_modal(this.id, this.title, this.name); return false;" align="center"><button>Done</button></a>
+            <button id="close">Close</button>
+        </div>
+    </div><!-- modals-->
 
 </div>

@@ -204,8 +204,8 @@ namespace newrisourcecenter.Controllers
                     salesPerson = rfq.distro_name;
                     compName = rfq.distro_company;
                 }
-
-                if(!string.IsNullOrEmpty(filter_region) && compRegions.Count() > 0 && !compRegions.Contains(compName))
+                string compRegion = await db.partnerCompanyViewModels.Where(x => x.comp_name == compName).Select(x => x.comp_region).FirstOrDefaultAsync();
+                if (!string.IsNullOrEmpty(filter_region) && compRegions.Count() > 0 && !compRegions.Contains(compName))
                 {
                     continue;
                 }
@@ -290,7 +290,8 @@ namespace newrisourcecenter.Controllers
                             updated_quote = rfq.updated_quote,
                             part_type_other = rfq.part_type_other,
                             mods_it = rfq.mods_it,
-                            product_category = rfq.product_category
+                            product_category = rfq.product_category,
+                            company_region = compRegion
                         });
                     }
                 }
@@ -316,7 +317,8 @@ namespace newrisourcecenter.Controllers
                             updated_quote = rfq.updated_quote,
                             part_type_other = rfq.part_type_other,
                             mods_it = rfq.mods_it,
-                            product_category = rfq.product_category
+                            product_category = rfq.product_category,
+                            company_region = compRegion
                         });
                     }
                 }
@@ -341,13 +343,10 @@ namespace newrisourcecenter.Controllers
                         updated_quote = rfq.updated_quote,
                         part_type_other = rfq.part_type_other,
                         mods_it = rfq.mods_it,
-                        product_category = rfq.product_category
+                        product_category = rfq.product_category,
+                        company_region = compRegion
                     });
                 }
-            }
-            if(Request.IsAjaxRequest())
-            {
-                return PartialView("_RfqAdminTable", list_rfqs);
             }
             return View(list_rfqs);
         }

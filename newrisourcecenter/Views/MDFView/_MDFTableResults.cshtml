@@ -1,4 +1,5 @@
 ﻿@model newrisourcecenter.Models.MDFViewModel
+@using Newtonsoft.Json
 @{
     bool isArchive = ViewBag.IsArchive ?? false;
 }
@@ -163,94 +164,225 @@
 }
 <h4>MDF Breakdown</h4>
 <b>Click on the request number to view/edit details.</b>
-<table cellpadding="5" border="1" class="table">
-    <thead>
-        <tr>
-            <th align="center" class="header">Manage Request</th>
-            <th align="left" class="header">Company</th>
-            <th align="left" class="header">Request Type</th>
-            <th align="left" class="header">Requester</th>
-            <th align="left" class="header">Estimated Cost</th>
-            <th align="left" class="header">Actual Cost</th>
-            <th align="left" class="header">Amount Approved</th>
-            <th align="left" class="header">Completed Amount</th>
-            <th align="center" class="header">Request Date</th>
-            <th align="center" class="header">Expected Date</th>
-            <th align="center" class="header">Title</th>
-            <th align="left" class="header">Assigned RCM</th>
-            <th align="left" class="header">Status</th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (Model.mdf_main != null)
-        {
-            foreach (var item in Model.mdf_main.OrderByDescending(a => a.mdf_ID))
+<div class="table-wrapper" style="clear:both;">
+    <div id="mdfTableGrid" class="ag-theme-quartz" style="height: 1000px; width: 100%;"></div>
+</div>
+<script type="text/javascript">
+    let gridApi = null;
+    document.addEventListener('DOMContentLoaded', () => {
+        const mdfStatusMap = {
+            1: "Pending",
+            2: "RCM Denied",
+            8: "RCM Approved",
+            7: "Marketing Denied",
+            3: "Marketing Approved",
+            4: "Completed",
+            5: "Credit Issued",
+            6: "Cancelled"
+        };
+        const rowData = @Html.Raw(JsonConvert.SerializeObject(Model.mdf_main.OrderByDescending(a => a.mdf_ID)));
+        const rcmNames = @Html.Raw(JsonConvert.SerializeObject(Model.rcmNames));
+        const isArchive = @isArchive.ToString().ToLower();
+        const n1_name = '@(Context.Request.QueryString["n1_name"])';
+        const n2_name = '@(Context.Request.QueryString["n2_name"])';
+        const year = '@Request.QueryString["year"]';
+        // 2. Define Columns with Filtering, Sorting, and Hiding
+        const columnDefs = [
             {
-                <tr>
-                    <td>
-                        @if (isArchive)
-                        {
-                            <a href="/MDFView/DetailsAdminArchive/@item.mdf_ID/?&n1_name=@Request.QueryString["n1_name"]&year=@Request.QueryString["year"]&n2_name=Admin&msg=Details for @item.mdf_ID">@item.mdf_ID</a>
-                        }
-                        else
-                        {
-                            <a href="/MDFView/DetailsAdmin/@item.mdf_ID/?&n1_name=@Request.QueryString["n1_name"]&n2_name=Admin&msg=Details for @item.mdf_ID">@item.mdf_ID</a>
-                            <span>|</span>
-                            @Html.ActionLink("remove", "Delete", new { id = item.mdf_ID, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"] }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false" })
-                        }
-                    </td>
-                    <td>@item.company</td>
-                    <td>@item.request_type</td>
-                    <td>@item.requester</td>
-                    <td>@string.Format("{0:C}", item.mdf_totalCost)</td>
-                    <td>@string.Format("{0:C}", item.mdf_mdfCost)</td>
-                    <td>@string.Format("{0:C}", (item.cost_center != "Split" ? item.mdf_approvedAmt : (item.mdf_approvedAmt + item.mdf_approvedAmt_mkt)))</td>
-                    <td>@string.Format("{0:C}", (item.cost_center != "Split" ? item.mdf_validatedAmt : (item.mdf_validatedAmt + item.mdf_validatedAmt_mkt)))</td>
-                    <td align="center">@String.Format("{0:d}", @item.mdf_requestDate)</td>
-                    <td align="center">@String.Format("{0:d}", @item.mdf_date)</td>
-                    <td align="center">@item.mdf_title</td>
-                    <td align="left">@(!string.IsNullOrEmpty(item.rcm) ? (Model.rcmNames.ContainsKey(item.rcm) ? Model.rcmNames[item.rcm] + " (" + item.rcm + ")" : item.rcm) : "")</td>
-                    <td>
+                headerName: "Manage Request",
+                field: "mdf_ID",
+                pinned: 'left',
+                cellRenderer: params => {
+                    const id = params.value;
+                    if (isArchive) {
+                        return `<a href="/MDFView/DetailsAdminArchive/${id}/?&n1_name=${n1_name}&year=${year}&n2_name=Admin&msg=Details for ${id}">${id}</a>`;
+                    } else {
+                        const deleteUrl = `/MDFView/Delete?id=${id}&n1_name=${n1_name}&n2_name=${n2_name}`;
+                        return `
+                            <a href="/MDFView/DetailsAdmin/${id}/?&n1_name=${n1_name}&n2_name=Admin&msg=Details for ${id}">${id}</a>
+                            <span> | </span>
+                            <a href="${deleteUrl}" onclick="deletef(this.href); return false;" style="color:red;">remove</a>
+                        `;
+                    }
+                }
+            },
+            { headerName: "Company", field: "company", filter: true },
+            { headerName: "Request Type", field: "request_type", filter: true },
+            { headerName: "Requester", field: "requester", filter: true },
+            {
+                headerName: "Estimated Cost",
+                field: "mdf_totalCost",
+                valueFormatter: p => p.value ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(p.value) : '$0.00',
+                filter: 'agNumberColumnFilter',
+                filterParams: {
+                    buttons: ['reset', 'apply'],
+                    closeOnApply: true
+                },
+                cellClass: 'text-right'
+            },
+            {
+                headerName: "Actual Cost",
+                field: "mdf_mdfCost",
+                valueFormatter: p => p.value ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(p.value) : '$0.00',
+                filter: 'agNumberColumnFilter',
+                filterParams: {
+                    buttons: ['reset', 'apply'],
+                    closeOnApply: true
+                },
+                cellClass: 'text-right'
+            },
+            {
+                headerName: "Amount Approved",
+                // We check if it's the footer row first
+                valueGetter: p => {
+                    if (p.node.rowPinned === 'bottom') return p.data.mdf_approvedAmt_total;
+                    const item = p.data;
+                    return item.cost_center !== "Split" ? item.mdf_approvedAmt : (item.mdf_approvedAmt + item.mdf_approvedAmt_mkt);
+                },
+                valueFormatter: p => p.value ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(p.value) : '$0.00',
+                cellStyle: p => p.node.rowPinned === 'bottom' ? { fontWeight: 'bold', backgroundColor: '#f4f4f4' } : null,
+                filter: 'agNumberColumnFilter',
+                filterParams: {
+                    buttons: ['reset', 'apply'],
+                    closeOnApply: true
+                },
+                cellClass: 'text-right'
+            },
+            {
+                headerName: "Completed Amount",
+                valueGetter: p => {
+                    if (p.node.rowPinned === 'bottom') return p.data.mdf_validatedAmt_total;
+                    const item = p.data;
+                    return item.cost_center !== "Split" ? item.mdf_validatedAmt : (item.mdf_validatedAmt + item.mdf_validatedAmt_mkt);
+                },
+                valueFormatter: p => p.value ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(p.value) : '$0.00',
+                cellStyle: p => p.node.rowPinned === 'bottom' ? { fontWeight: 'bold', backgroundColor: '#f4f4f4' } : null,
+                filter: 'agNumberColumnFilter',
+                filterParams: {
+                    buttons: ['reset', 'apply'],
+                    closeOnApply: true
+                },
+                cellClass: 'text-right'
+            },
+            {
+                headerName: "Request Date",
+                field: "mdf_requestDate",
+                valueFormatter: p => p.value ? new Date(p.value).toLocaleDateString() : '',
+                filter: 'agDateColumnFilter'
+            },
+            {
+                headerName: "Expected Date",
+                field: "mdf_date",
+                valueFormatter: p => p.value ? new Date(p.value).toLocaleDateString() : '',
+                filter: 'agDateColumnFilter'
+            },
+            { headerName: "Title", field: "mdf_title", filter: true },
+            {
+                headerName: "Assigned RCM",
+                field: "rcm",
+                valueGetter: p => {
+                    const rcm = p.data.rcm;
+                    if (!rcm) return "";
+                    return rcmNames[rcm] ? `${rcmNames[rcm]} (${rcm})` : rcm;
+                },
+                filter: true
+            },
+            {
+                headerName: "Status",
+                field: "mdf_status",
+                cellRenderer: p => {
+                    return mdfStatusMap[p.value] || "In Progress";
+                },
+                filter: true
+            }
+        ];
+        const gridOptions = {
+            rowData: rowData,
+            columnDefs: columnDefs,
+            pagination: true,
+            paginationPageSize: 20,
+            pinnedBottomRowData: [],
+            onGridReady: (params) => {
+                gridApi = params.api;
+                params.api.sizeColumnsToFit();
+                initColumnMenu();
+                generateFooterTotals();
+            },
+            onFilterChanged: () => generateFooterTotals()
+        };
+        const gridDiv = document.querySelector('#mdfTableGrid');
+        gridApi = agGrid.createGrid(gridDiv, gridOptions);
 
-                        @if (@item.mdf_status == 1)
+        function initColumnMenu() {
+            const menu = document.getElementById('columnToggleMenu');
+            if (!menu || !gridApi) return;
+
+            const cols = gridApi.getColumns();
+            menu.innerHTML = ''; // Clear once
+
+            cols.forEach(col => {
+                const def = col.getColDef();
+                // Skip hidden internal columns or the Action column
+                if (!def.headerName || def.headerName === "Actions") return;
+
+                const li = document.createElement('li');
+                li.style.padding = "5px 15px";
+                li.innerHTML = `
+                    <label style="cursor:pointer; font-weight:normal; display:flex; align-items:center; gap:8px; margin:0;">
+                        <input type="checkbox" ${col.isVisible() ? 'checked' : ''}
+                               onchange="toggleColumn('${def.field}', this)">
+                        ${def.headerName}
+                    </label>
+                `;
+                menu.appendChild(li);
+            });
+        }
+
+        function toggleColumn(field, checkbox) {
+            if (gridApi) {
+                gridApi.applyColumnState({
+                    state: [
                         {
-                            <span>Pending</span>
+                            colId: field,
+                            hide: !checkbox.checked // In AG Grid, 'hide' is the property name
                         }
-                        else if (@item.mdf_status == 2)
-                        {
-                            <span>RCM Denied</span>
-                        }
-                        else if (@item.mdf_status == 8)
-                        {
-                            <span>RCM Approved</span>
-                        }
-                        else if (@item.mdf_status == 7)
-                        {
-                            <span>Marketing Denied</span>
-                        }
-                        else if (@item.mdf_status == 3)
-                        {
-                            <span>Marketing Approved</span>
-                        }
-                        else if (@item.mdf_status == 4)
-                        {
-                            <span>Completed</span>
-                        }
-                        else if (@item.mdf_status == 5)
-                        {
-                            <span>Credit Issued</span>
-                        }
-                        else if (@item.mdf_status == 6)
-                        {
-                            <span>Cancelled</span>
-                        }
-                        else
-                        {
-                            <span>In Progress</span>
-                        }
-                    </td>
-                </tr>
+                    ]
+                });
             }
         }
-    </tbody>
-</table>
+
+        function generateFooterTotals() {
+            let totalEstimated = 0;
+            let totalActual = 0;
+            let totalApproved = 0;
+            let totalCompleted = 0;
+
+            // Use forEachNodeAfterFilter to only sum what the user actually sees
+            gridApi.forEachNodeAfterFilter((rowNode) => {
+                const data = rowNode.data;
+                totalEstimated += data.mdf_totalCost || 0;
+                totalActual += data.mdf_mdfCost || 0;
+
+                // Logic for Split cost center totals
+                totalApproved += (data.cost_center !== "Split" ? data.mdf_approvedAmt : (data.mdf_approvedAmt + data.mdf_approvedAmt_mkt)) || 0;
+                totalCompleted += (data.cost_center !== "Split" ? data.mdf_validatedAmt : (data.mdf_validatedAmt + data.mdf_validatedAmt_mkt)) || 0;
+            });
+
+            // Set the data for the pinned bottom row
+            gridApi.setGridOption('pinnedBottomRowData', [
+                {
+                    mdf_ID: "TOTALS:", // Label for the first column
+                    mdf_totalCost: totalEstimated,
+                    mdf_mdfCost: totalActual,
+                    // These field names must match your valueGetters or fields in columnDefs
+                    mdf_approvedAmt_total: totalApproved,
+                    mdf_validatedAmt_total: totalCompleted
+                }
+            ]);
+        }
+    });
+
+    $(document).on('click', '#columnToggleMenu', function (e) {
+        e.stopPropagation(); // Prevents Bootstrap from closing the menu on internal clicks
+    });
+</script>

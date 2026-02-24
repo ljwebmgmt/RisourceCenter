@@ -1296,6 +1296,8 @@ namespace newrisourcecenter.Models
         public string end_user_name { get; set; }
         [Display(Name = "End User Location (City/State):")]
         public string end_user_location { get; set; }
+        [NotMapped]
+        public string company_region { get; set; }
     }
 
     [Table("RFQ_Data_Extend")]

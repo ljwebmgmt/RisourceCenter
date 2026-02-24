@@ -14,7 +14,10 @@
     <meta name="description" content="" />
     <meta name="author" content="Samuel Antwi" />
     <script src="~/Scripts/jquery-3.1.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"></script>
 
+    @*<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community/styles/ag-grid.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community/styles/ag-theme-quartz.css" />*@
     @*build the style for the submenu links and drop down*@
     <style>
     @{
@@ -44,21 +47,21 @@
 
         //if (style == 1)
         //{
-            @Styles.Render("~/Content/css/dark");
+        @Styles.Render("~/Content/css/dark");
         @*}
-        else if (style == 2)
-        {
-            @Styles.Render("~/Content/css/blue");
-        }
-        else if (style == 3)
-        {
-            @Styles.Render("~/Content/css/gray");
+            else if (style == 2)
+            {
+                @Styles.Render("~/Content/css/blue");
+            }
+            else if (style == 3)
+            {
+                @Styles.Render("~/Content/css/gray");
 
-        }
-        else
-        {
-            @Styles.Render("~/Content/css/white");
-        }*@
+            }
+            else
+            {
+                @Styles.Render("~/Content/css/white");
+            }*@
     }
 
     @Scripts.Render("~/bundles/modernizr")

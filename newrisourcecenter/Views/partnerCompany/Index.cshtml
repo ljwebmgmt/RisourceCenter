@@ -4,128 +4,173 @@
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<style type="text/css">
+    .btn.btn-xs {
+        padding: 1px 5px !important;
+        height: auto !important;
+    }
+</style>
 <script>
-    var adminpanel = {
-        init: function () {
-            var filter_form = $("#submit_search");
-            filter_form.on('click', adminpanel.submit_filter_form);
+    let gridApi;
+    const adminUser = @((User.IsInRole("Super Admin") || User.IsInRole("Global Admin")).ToString().ToLower());
+    const columnDefs = [
+        { headerName: "Company Name", field: "comp_name", flex: 2, filter: true },
+        { headerName: "MDF Program?", field: "comp_MDF", width: 100 },
+        {
+            headerName: "Total MDF Funds",
+            field: "comp_MDF_amount",
+            valueFormatter: p => p.value ? '$' + p.value.toLocaleString() : '$0',
+            cellClass: 'text-right'
         },
-        submit_filter_form:function(e){
-            e.preventDefault();
-            const params = new URLSearchParams({
-                form_value: $("#form_value").val()
-            });
-            $.post("/partnerCompany/searchCompany?" + params.toString(), function (result) {
-                $("#tabledata").empty();
-                $("#tabledata").html(result);
-            });
+        {
+            headerName: "Funds For Training",
+            field: "comp_MDF_tLimit",
+            valueFormatter: p => p.value ? '$' + p.value.toLocaleString() : '$0',
+            cellClass: 'text-right'
         },
-    }
-    jQuery(document).ready(adminpanel.init);
-</script>
-
-@if (@Model != null)
-{
-    if (User.IsInRole("Super Admin") || User.IsInRole("Local Admin") && User.IsInRole("Rittal User") || User.IsInRole("Global Admin"))
-    {
-        <table>
-            <tr>
-                <td>
-                    @Html.ActionLink("Add Company", "Create", new { n1_name = Request.QueryString["n1_name"], msg = "Add Company" }, htmlAttributes: new { @class = "btn btn-primary" })
-                </td>
-                <td>
-                    <form>
-                        <span class="input-group stylish-input-group" style="width:300px;">
-                            <input type="text" id="form_value" value="" placeholder="Search on Company Name" class="form-control" list="companyNames" />
-                            <datalist id="companyNames">
-                                @foreach (var item in Model)
-                                {
-                                    <option value="@item.comp_name" />
-                                }
-                            </datalist>
-                            <span class="input-group-addon" id="submit_search">
-                                <button type="submit">
-                                    <span class="glyphicon glyphicon-search"></span>
-                                </button>
-                            </span>
-                        </span>
-                    </form>
-                </td>
-            </tr>
-        </table>
-
-    }
-    <br />
-<div id="tabledata">
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.comp_name)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.comp_MDF)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.comp_MDF_amount)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.comp_MDF_tLimit)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.comp_MDF_aLimit)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.comp_MDF_mLimit)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.comp_MKT_Limit)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.comp_region)
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.comp_name)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.comp_MDF)
-                    </td>
-                    <td>
-                        $@Html.DisplayFor(modelItem => item.comp_MDF_amount)
-                    </td>
-                    <td>
-                        $@Html.DisplayFor(modelItem => item.comp_MDF_tLimit)
-                    </td>
-                    <td>
-                        $@Html.DisplayFor(modelItem => item.comp_MDF_aLimit)
-                    </td>
-                    <td>
-                        $@Html.DisplayFor(modelItem => item.comp_MDF_mLimit)
-                    </td>
-                    <td>
-                        $@Html.DisplayFor(modelItem => item.comp_MKT_Limit)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.comp_region)
-                    </td>
-                    <td>
-                        @Html.ActionLink("Edit", "Edit", new { id = item.comp_ID, n1_name = Request.QueryString["n1_name"], msg = item.comp_name }, new { @class = "btn btn-info" })
-
-                        @if (User.IsInRole("Super Admin") || User.IsInRole("Global Admin"))
-                        {
-                            @Html.ActionLink("Delete", "Delete", new { id = item.comp_ID, n1_name = Request.QueryString["n1_name"] }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false", @class = "btn btn-info" })
-                        }
-                    </td>
-                </tr>
+        {
+            headerName: "Funds For Promotional Activity",
+            field: "comp_MDF_aLimit",
+            valueFormatter: p => p.value ? '$' + p.value.toLocaleString() : '$0',
+            cellClass: 'text-right'
+        },
+        {
+            headerName: "Funds For Merchandise",
+            field: "comp_MDF_mLimit",
+            valueFormatter: p => p.value ? '$' + p.value.toLocaleString() : '$0',
+            cellClass: 'text-right'
+        },
+        {
+            headerName: "Total MKT Funds",
+            field: "comp_MKT_Limit",
+            valueFormatter: p => p.value ? '$' + p.value.toLocaleString() : '$0',
+            cellClass: 'text-right'
+        },
+        {
+            headerName: "Region",
+            field: "comp_region",
+            width: 120
+        },
+        {
+            headerName: "Actions",
+            width: 180,
+            sortable: false,
+            cellRenderer: params => {
+                if (!params.data) {
+                    return '<span class="text-muted">Loading...</span>';
+                }
+                const id = params.data.comp_ID
+                let html = `<a href="/partnerCompany/Edit/${id}" class="btn btn-xs btn-info">Edit</a> `;
+                if (adminUser) {
+                    html += `<a href="/partnerCompany/Delete/${id}" class="btn btn-xs btn-danger delete-company">Delete</a>`;
+                }
+                return html;
             }
-        </tbody>
-    </table>
-</div>
+        }
+    ];
+
+    const gridOptions = {
+        columnDefs: columnDefs,
+        rowModelType: 'infinite',
+        pagination: true,
+        paginationPageSize: 20,
+        cacheBlockSize: 20,
+        onGridReady: params => {
+            gridApi = params.api;
+            params.api.setGridOption('datasource', companyDataSource);
+        }
+    };
+
+    const companyDataSource = {
+        getRows: (params) => {
+            gridApi.setGridOption('loading', true);
+            const searchText = $('#companySearchInput').val();
+
+            fetch(`/partnerCompany/GetCompaniesPaged?start=${params.startRow}&limit=20&search=${searchText}`)
+                .then(res => res.json())
+                .then(data => {
+                    gridApi.setGridOption('loading', false);
+                    params.successCallback(data.rows, data.total);
+                })
+                .catch(() => params.failCallback());
+        }
+    };
+
+    function onSearchChange() {
+        gridApi.refreshInfiniteCache();
+    }
+
+    // Handle Enter Key in Search
+    $('#companySearchInput').on('keypress', function (e) {
+        if (e.which === 13) onSearchChange();
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const gridDiv = document.querySelector('#companyGrid');
+        gridApi = agGrid.createGrid(gridDiv, gridOptions);
+    });
+
+    $(document).on('click', '.delete-company', function (e) {
+        e.preventDefault();
+        if (!window.confirm('Are you sure you want to delete this company?')) {
+            return false;
+        }
+        var obj = $(this);
+        var originalText = obj.text();
+        $.ajax({
+            url: obj.attr('href'),
+            type: 'DELETE',
+            dataType: 'json',
+            beforeSend: function () {
+                gridApi.setGridOption('loading', true);
+                obj.text('Loading....').prop('disabled', true);
+            },
+            success: function (res) {
+                const messageContainer = $('.table-wrapper');
+
+                if (res !== 'Ok') {
+                    messageContainer.before('<div class="alert alert-danger">' + res + '</div>');
+                }
+                else {
+                    messageContainer.before('<div class="alert alert-success">Company successfully deleted</div>');
+                    if (gridApi) {
+                        gridApi.refreshInfiniteCache();
+                    }
+                }
+
+                setTimeout(function () {
+                    $('.alert').remove();
+                }, 3000);
+            },
+            error: function () {
+                alert("An error occurred while deleting the user.");
+            },
+            complete: function () {
+                gridApi.hideOverlay();
+                obj.text(originalText).prop('disabled', false);
+            }
+        });
+        return false;
+    });
+</script>
+@if (User.IsInRole("Super Admin") || User.IsInRole("Local Admin") && User.IsInRole("Rittal User") || User.IsInRole("Global Admin"))
+{
+    <div class="header-container" style="display:flex; align-items: center; margin-bottom: 20px;">
+        <div>
+            @Html.ActionLink("Add Company", "Create", new { n1_name = Request.QueryString["n1_name"], msg = "Add Company" }, htmlAttributes: new { @class = "btn btn-primary" })
+        </div>
+
+        <div class="input-group" style="margin-left:20px;width:350px;">
+            <input type="text" id="companySearchInput" class="form-control" placeholder="Search by ID or Company Name..." />
+            <span class="input-group-btn">
+                <button class="btn btn-default" type="button" onclick="onSearchChange()">
+                    <span class="glyphicon glyphicon-search"></span>
+                </button>
+            </span>
+        </div>
+    </div>
 }
+
+<div class="table-wrapper" style="clear:both;">
+    <div id="companyGrid" class="ag-theme-quartz" style="height: 1000px; width: 100%;"></div>
+</div>

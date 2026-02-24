@@ -48,7 +48,7 @@ namespace newrisourcecenter.Controllers
 
         #region Index
         // GET: UserViewModels
-        public async Task<ActionResult> Index(int compid = 0,int locid=0, string msg = null, int prev1 = 0, int next = 0,string querystring = null)
+        public ActionResult Index()
         {
             long userId = Convert.ToInt64(Session["userId"]);
             if (!Request.IsAuthenticated || userId == 0)
@@ -56,19 +56,7 @@ namespace newrisourcecenter.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
-            long siteRole = Convert.ToInt64(Session["siteRole"]);
-            long adminRole = Convert.ToInt64(Session["userRole"]);
-            long companyId = Convert.ToInt64(Session["companyId"]);
-            string system_ID = Convert.ToString(Session["system_ID"]);
-            ViewBag.LastID = "";
-
-           var roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(db));
-            var roles = roleManager.Roles;
-            roles.Where(a => a.Id == system_ID);
-            var UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));//get the users and roles
-            List<UserViewModel> usr_list = new List<UserViewModel>();
-            IQueryable<UserViewModel> user_data;
-
+            // Keep the Company Dropdown logic for the filter menu
             if (User.IsInRole("Super Admin") || User.IsInRole("Local Admin") || User.IsInRole("Global Admin"))
             {
                 var compdata = db.partnerCompanyViewModels;
@@ -78,209 +66,110 @@ namespace newrisourcecenter.Controllers
                     complist.Add(new Nav1List { id = item.comp_ID, name = item.comp_name });
                 }
                 ViewBag.compData = complist;
+            }
+            return View();
+        }
 
-                if (compid == 0 && msg == null)
+        [HttpGet]
+        public async Task<JsonResult> GetUsersPaged(int start, int limit, int compid = 0, int locid = 0, string querystring = "")
+        {
+            long userId = Convert.ToInt64(Session["userId"]);
+            long companyId = Convert.ToInt64(Session["companyId"]);
+            var UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
+
+            // 1. Base Query
+            IQueryable<UserViewModel> query = db.UserViewModels.Where(a => !a.deleted);
+
+            // 2. Apply your existing filtering logic
+            if (User.IsInRole("Super Admin") || User.IsInRole("Local Admin") || User.IsInRole("Global Admin"))
+            {
+                if(compid > 0)
                 {
-                    if (next == 0)
+                    query = query.Where(a => a.comp_ID == compid);
+                    if (locid != 0)
                     {
-                        user_data = db.UserViewModels.Where(a =>  !a.deleted && a.comp_ID == companyId);
+                        query = query.Where(a => a.comp_loc_ID == locid);
                     }
-                    else
-                    {
-                        user_data = db.UserViewModels.Where(a => !a.deleted && a.comp_ID == companyId && a.usr_ID >= next);
-                    }
-
-                    foreach (var item in await user_data.Take(20).ToListAsync())
-                    {
-                        ViewBag.admin = "";
-                        if (item.system_ID != null)
-                        {
-                            IList<string> users_roles = new List<string>();
-                            try
-                            {
-                                users_roles = UserManager.GetRoles(item.system_ID);//Get users by role
-                            }
-                            catch (Exception) { continue; }//Get users by role
-                            if (users_roles.Count() != 0 && (users_roles.Contains("Super Admin") || users_roles.Contains("Local Admin") && User.IsInRole("Rittal User") || users_roles.Contains("Local Admin") && users_roles.Contains("Channel User") || users_roles.Contains("Global Admin")))
-                            {
-                                ViewBag.admin = "Admin";
-                            }
-                        }
-
-                        usr_list.Add(new UserViewModel
-                        {
-                            usr_ID = item.usr_ID,
-                            usr_fName = item.usr_fName,
-                            usr_lName = item.usr_lName,
-                            comp_ID = item.comp_ID,
-                            usr_email = item.usr_email,
-                            user_role = ViewBag.admin
-                        });
-                    }
-
-                    //Get last ID
-                    if (usr_list.Count() != 0)
-                    {
-                        ViewBag.LastID = usr_list.LastOrDefault().usr_ID;
-                    }
-
-                    return View(usr_list.OrderBy(a => a.usr_fName));
-                }
-                else
-                {
-                    ViewBag.locationsDatas = db.partnerLocationViewModels.Where(a=>a.comp_ID==compid);
-                    if (querystring != "")
-                    {
-                        if (compid != 0 && locid == 0)
-                        {
-                            user_data = db.UserViewModels.Where(a => !a.deleted && a.comp_ID == compid && a.usr_fName == querystring || a.comp_ID == compid && a.usr_lName == querystring || a.comp_ID == compid && a.usr_email.Contains(querystring) && a.usr_ID >= next);
-                        }
-                        else
-                        {
-                            user_data = db.UserViewModels.Where(a => !a.deleted && a.comp_ID == compid && a.comp_loc_ID == locid && a.usr_fName == querystring || a.comp_ID == compid && a.comp_loc_ID == locid && a.usr_lName == querystring || a.comp_ID == compid && a.comp_loc_ID == locid && a.usr_email.Contains(querystring) && a.usr_ID >= next);
-                        }
-                    }
-                    else
-                    {
-                        if (compid != 0 && locid == 0)
-                        {
-                            user_data = db.UserViewModels.Where(a => !a.deleted && a.comp_ID == compid && a.usr_ID >= next);
-                        }
-                        else
-                        {
-                            user_data = db.UserViewModels.Where(a => !a.deleted && a.comp_ID == compid && a.comp_loc_ID == locid && a.usr_ID >= next);
-                        }
-                    }
-
-                    foreach (var item in await user_data.Take(20).ToListAsync())
-                    {
-                        ViewBag.admin = "";
-                        if (item.system_ID != null)
-                        {
-                            IList<string> users_roles = new List<string>();
-                            try
-                            {
-                                users_roles = UserManager.GetRoles(item.system_ID);//Get users by role
-                            }
-                            catch (Exception) { continue; }//Get users by role
-                            if (users_roles.Count()!=0 && (users_roles.Contains("Super Admin") || users_roles.Contains("Local Admin") && users_roles.Contains("Rittal User") || users_roles.Contains("Local Admin") && users_roles.Contains("Channel User") || User.IsInRole("Global Admin")))
-                            {
-                                ViewBag.admin = "Admin";
-                            }
-                        }
-
-                        usr_list.Add(new UserViewModel
-                        {
-                            usr_ID = item.usr_ID,
-                            usr_fName = item.usr_fName,
-                            usr_lName = item.usr_lName,
-                            comp_ID = item.comp_ID,
-                            usr_email = item.usr_email,
-                            user_role = ViewBag.admin
-                        });
-                    }
-
-                    //Get last ID
-                    if (usr_list.Count() != 0)
-                    {
-                        ViewBag.LastID = usr_list.LastOrDefault().usr_ID;
-                    }
-
-                    return View(usr_list.OrderBy(a => a.usr_fName));
                 }
             }
             else if (User.IsInRole("Local Admin") && User.IsInRole("Channel User"))
             {
-                if (next == 0)
-                {
-                    user_data = db.UserViewModels.Where(a => !a.deleted && a.comp_ID == companyId).Take(20);
-                }
-                else
-                {
-                    user_data = db.UserViewModels.Where(a => !a.deleted && a.comp_ID == companyId && a.usr_ID >= next).Take(20);
-                }
-
-                foreach (var item in await user_data.ToListAsync())
-                {
-                    ViewBag.admin = "";
-                    if (item.system_ID != null)
-                    {
-                        IList<string> users_roles = new List<string>();
-                        try
-                        {
-                            users_roles = UserManager.GetRoles(item.system_ID);//Get users by role
-                        }
-                        catch (Exception) { continue; }//Get users by role
-                        if (users_roles.Count() != 0 && (users_roles.Contains("Super Admin") || users_roles.Contains("Local Admin") && users_roles.Contains("Rittal User") || users_roles.Contains("Local Admin") && users_roles.Contains("Channel User") || User.IsInRole("Global Admin")))
-                        {
-                            ViewBag.admin = "Admin";
-                        }
-                    }
-
-                    usr_list.Add(new UserViewModel
-                    {
-                        usr_ID = item.usr_ID,
-                        usr_fName = item.usr_fName,
-                        usr_lName = item.usr_lName,
-                        comp_ID = item.comp_ID,
-                        usr_email = item.usr_email,
-                        user_role = ViewBag.admin
-                    });
-                }
-
-                //Get last ID
-                if (usr_list.Count() != 0)
-                {
-                    ViewBag.LastID = usr_list.LastOrDefault().usr_ID;
-                }
-
-                return View(usr_list.OrderBy(a => a.usr_fName));
+                query = query.Where(a => a.comp_ID == companyId);
             }
             else
             {
-                user_data = db.UserViewModels.Where(a => a.usr_ID == userId);
-                foreach (var item in await user_data.ToListAsync())
-                {
-                    ViewBag.admin = "";
-                    if (item.system_ID != null)
-                    {
-                        IList<string> users_roles = new List<string>();
-                        try
-                        {
-                            users_roles = UserManager.GetRoles(item.system_ID);//Get users by role
-                        }
-                        catch (Exception) { continue; }//Get users by role
-                        if (users_roles.Count() != 0 && (users_roles.Contains("Super Admin") || users_roles.Contains("Local Admin") && users_roles.Contains("Rittal User") || users_roles.Contains("Local Admin") && users_roles.Contains("Channel User") || User.IsInRole("Global Admin")))
-                        {
-                            ViewBag.admin = "Admin";
-                        }
-                    }
-
-                    usr_list.Add(new UserViewModel
-                    {
-                        usr_ID = item.usr_ID,
-                        usr_fName = item.usr_fName,
-                        usr_lName = item.usr_lName,
-                        comp_ID = item.comp_ID,
-                        usr_email = item.usr_email,
-                        user_role = ViewBag.admin
-                    });
-                }
-
-                //Get last ID
-                if (usr_list.Count() != 0)
-                {
-                    ViewBag.LastID = usr_list.LastOrDefault().usr_ID;
-                }
-
-                return View(usr_list.OrderBy(a => a.usr_fName));
+                query = query.Where(a => a.usr_ID == userId);
             }
+
+            // 3. Apply Search String (querystring)
+            if (!string.IsNullOrEmpty(querystring))
+            {
+                query = query.Where(a => querystring.Contains(a.usr_fName) ||
+                                         querystring.Contains(a.usr_lName) ||
+                                         a.usr_email.Contains(querystring));
+            }
+
+            // 4. Get Total Count for Pagination
+            int totalCount = await query.CountAsync();
+
+            // 5. Paginate and Fetch
+            var rawData = await query.OrderBy(a => a.usr_fName)
+                                     .Skip(start)
+                                     .Take(limit)
+                                     .ToListAsync();
+
+            var companyMap = db.partnerCompanyViewModels.ToDictionary(x => x.comp_ID, x => x.comp_name);
+
+            // 6. Map to ViewModel & Role Logic
+            var resultList = rawData.Select(item => new {
+                item.usr_ID,
+                item.usr_fName,
+                item.usr_lName,
+                item.usr_email,
+                item.comp_ID,
+                user_role = GetAdminRole(item.system_ID, UserManager),
+                item.inactive,
+                companyName = item.comp_ID.HasValue && companyMap.ContainsKey(item.comp_ID.Value) ? companyMap[item.comp_ID.Value] : "N/A",
+                item.usr_lastLogin
+            }).ToList();
+
+            return Json(new { rows = resultList, total = totalCount }, JsonRequestBehavior.AllowGet);
+        }
+
+        // Helper to keep the logic clean
+        private string GetAdminRole(string systemId, UserManager<ApplicationUser> manager)
+        {
+            if (string.IsNullOrEmpty(systemId)) return "";
+            try
+            {
+                var roles = manager.GetRoles(systemId);
+                if (roles != null && (roles.Contains("Super Admin") || roles.Contains("Global Admin") || roles.Contains("Local Admin")))
+                {
+                    return "Admin";
+                }
+            }
+            catch (InvalidOperationException)
+            {
+                return "";
+            }
+            return "";
+        }
+
+        [HttpGet]
+        public JsonResult GetLocations(int compid)
+        {
+            var locations = db.partnerLocationViewModels
+                .Where(a => a.comp_ID == compid)
+                .Select(l => new { id = l.loc_ID, name = l.loc_name }) // Adjust names to match your model
+                .ToList();
+
+            return Json(locations, JsonRequestBehavior.AllowGet);
         }
         #endregion
 
         #region Export
         // GET: UserViewModels
-        public async Task<ActionResult> Export(int compid = 0, int locid = 0, int next = 0)
+        public ActionResult Export()
         {
             long userId = Convert.ToInt64(Session["userId"]);
             if (!Request.IsAuthenticated || userId == 0)
@@ -288,100 +177,18 @@ namespace newrisourcecenter.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
-            long companyId = Convert.ToInt64(Session["companyId"]);
-            string system_ID = Convert.ToString(Session["system_ID"]);
-            ViewBag.LastID = "";
-
-            List<UserViewModel> usr_list = new List<UserViewModel>();
-            IQueryable<UserViewModel> user_data;
-
+            // Keep the Company Dropdown logic for the filter menu
             if (User.IsInRole("Super Admin") || User.IsInRole("Local Admin") || User.IsInRole("Global Admin"))
             {
-                var compdata = db.partnerCompanyViewModels.Where(x => x.comp_active == 1);
+                var compdata = db.partnerCompanyViewModels;
                 List<Nav1List> complist = new List<Nav1List>();
                 foreach (var item in compdata.OrderBy(a => a.comp_name))
                 {
                     complist.Add(new Nav1List { id = item.comp_ID, name = item.comp_name });
                 }
                 ViewBag.compData = complist;
-
-                if (compid == 0)
-                {
-                    if (next == 0)
-                    {
-                        user_data = db.UserViewModels.Where(a => !a.deleted && a.comp_ID == companyId);
-                    }
-                    else
-                    {
-                        user_data = db.UserViewModels.Where(a => !a.deleted && a.comp_ID == companyId && a.usr_ID >= next);
-                    }
-                }
-                else
-                {
-                    ViewBag.locationsDatas = db.partnerLocationViewModels.Where(a => a.comp_ID == compid);
-                    if (compid != 0 && locid == 0)
-                    {
-                        user_data = db.UserViewModels.Where(a => !a.deleted && a.comp_ID == compid && a.usr_ID >= next);
-                    }
-                    else
-                    {
-                        user_data = db.UserViewModels.Where(a => !a.deleted && a.comp_ID == compid && a.comp_loc_ID == locid && a.usr_ID >= next);
-                    }
-                }
             }
-            else if (User.IsInRole("Local Admin") && User.IsInRole("Channel User"))
-            {
-                if (next == 0)
-                {
-                    user_data = db.UserViewModels.Where(a => !a.deleted && a.comp_ID == companyId);
-                }
-                else
-                {
-                    user_data = db.UserViewModels.Where(a => !a.deleted && a.comp_ID == companyId && a.usr_ID >= next);
-                }
-            }
-            else
-            {
-                user_data = db.UserViewModels.Where(a => !a.deleted && a.usr_ID == userId);
-            }
-
-            int userCount = await user_data.CountAsync();
-            ViewBag.showNext = userCount > 20;
-            foreach (var item in await user_data.Take(20).ToListAsync())
-            {
-                string admin = "";
-                if (item.system_ID != null)
-                {
-                    IList<string> users_roles = new List<string>();
-                    try
-                    {
-                        users_roles = UserManager.GetRoles(item.system_ID);//Get users by role
-                    }
-                    catch (Exception) { continue; }//Get users by role
-                    if (users_roles.Count() != 0 && (users_roles.Contains("Super Admin") || users_roles.Contains("Local Admin") && User.IsInRole("Rittal User") || users_roles.Contains("Local Admin") && users_roles.Contains("Channel User") || users_roles.Contains("Global Admin")))
-                    {
-                        admin = "Admin";
-                    }
-                }
-
-                usr_list.Add(new UserViewModel
-                {
-                    usr_ID = item.usr_ID,
-                    usr_fName = item.usr_fName,
-                    usr_lName = item.usr_lName,
-                    comp_ID = item.comp_ID,
-                    usr_email = item.usr_email,
-                    user_role = admin
-                });
-            }
-
-            //Get last ID
-            if (usr_list.Count() != 0)
-            {
-                ViewBag.LastID = usr_list.LastOrDefault().usr_ID;
-            }
-
-            return View(usr_list.OrderBy(a => a.usr_fName));
+            return View();
         }
 
         [HttpGet]
@@ -390,15 +197,22 @@ namespace newrisourcecenter.Controllers
             long userId = Convert.ToInt64(Session["userId"]);
             long companyId = Convert.ToInt64(Session["companyId"]);
             List<UserExport> usr_list = new List<UserExport>();
-            IQueryable<UserViewModel> user_data;
+            IQueryable<UserViewModel> user_data = db.UserViewModels.Where(a => !a.deleted);
 
             if (User.IsInRole("Super Admin") || User.IsInRole("Local Admin") || User.IsInRole("Global Admin") || (User.IsInRole("Local Admin") && User.IsInRole("Channel User")))
             {
-                user_data = db.UserViewModels.Where(a => !a.deleted && a.comp_ID == (compid == 0 ? companyId : compid));
+                if(compid > 0)
+                {
+                    user_data = user_data.Where(x => x.comp_ID == compid);
+                }  
+                if(locid > 0)
+                {
+                    user_data = user_data.Where(x => x.comp_loc_ID == locid);
+                }
             }
             else
             {
-                user_data = db.UserViewModels.Where(a => !a.deleted && a.usr_ID == userId);
+                user_data = user_data.Where(a => a.usr_ID == userId);
             }
             Dictionary<long, string> companyNames = await db.partnerCompanyViewModels.ToDictionaryAsync(x => x.comp_ID, x => x.comp_name);
             Dictionary<long, string> locationNames = await db.partnerLocationViewModels.ToDictionaryAsync(x => x.loc_ID, x => x.loc_name);
@@ -435,7 +249,7 @@ namespace newrisourcecenter.Controllers
 
         #region Last Login Report
         // GET: UserViewModels
-        public async Task<ActionResult> LastLoginReport(int compid = 0, int locid = 0, int next = 0)
+        public ActionResult LastLoginReport()
         {
             long userId = Convert.ToInt64(Session["userId"]);
             if (!Request.IsAuthenticated || userId == 0)
@@ -443,104 +257,18 @@ namespace newrisourcecenter.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
-            long companyId = Convert.ToInt64(Session["companyId"]);
-            string system_ID = Convert.ToString(Session["system_ID"]);
-            ViewBag.LastID = "";
-
-            List<UserViewModel> usr_list = new List<UserViewModel>();
-            IQueryable<UserViewModel> user_data;
-            var compdata = db.partnerCompanyViewModels.Where(x => x.comp_active == 1);
+            // Keep the Company Dropdown logic for the filter menu
             if (User.IsInRole("Super Admin") || User.IsInRole("Local Admin") || User.IsInRole("Global Admin"))
             {
+                var compdata = db.partnerCompanyViewModels;
                 List<Nav1List> complist = new List<Nav1List>();
                 foreach (var item in compdata.OrderBy(a => a.comp_name))
                 {
                     complist.Add(new Nav1List { id = item.comp_ID, name = item.comp_name });
                 }
                 ViewBag.compData = complist;
-
-                if (compid == 0)
-                {
-                    if (next == 0)
-                    {
-                        user_data = db.UserViewModels.Where(a => !a.deleted);
-                    }
-                    else
-                    {
-                        user_data = db.UserViewModels.Where(a => !a.deleted && a.usr_ID >= next);
-                    }
-                }
-                else
-                {
-                    ViewBag.locationsDatas = db.partnerLocationViewModels.Where(a => a.comp_ID == compid);
-                    if (compid != 0 && locid == 0)
-                    {
-                        user_data = db.UserViewModels.Where(a => !a.deleted && a.comp_ID == compid && a.usr_ID >= next);
-                    }
-                    else
-                    {
-                        user_data = db.UserViewModels.Where(a => !a.deleted && a.comp_ID == compid && a.comp_loc_ID == locid && a.usr_ID >= next);
-                    }
-                }
             }
-            else if (User.IsInRole("Channel User"))
-            {
-                if (next == 0)
-                {
-                    user_data = db.UserViewModels.Where(a => !a.deleted && a.comp_ID == companyId);
-                }
-                else
-                {
-                    user_data = db.UserViewModels.Where(a => !a.deleted && a.comp_ID == companyId && a.usr_ID >= next);
-                }
-            }
-            else
-            {
-                user_data = db.UserViewModels.Where(a => !a.deleted && a.usr_ID == userId);
-            }
-
-            int userCount = await user_data.CountAsync();
-            ViewBag.showNext = userCount > 100;
-            foreach (var item in await user_data.Take(100).ToListAsync())
-            {
-                string admin = "";
-                if (item.system_ID != null)
-                {
-                    IList<string> users_roles = new List<string>();
-                    try
-                    {
-                        users_roles = UserManager.GetRoles(item.system_ID);//Get users by role
-                    }
-                    catch (Exception) { continue; }//Get users by role
-                    if (users_roles.Count() != 0 && (users_roles.Contains("Super Admin") || users_roles.Contains("Local Admin") && User.IsInRole("Rittal User") || users_roles.Contains("Local Admin") && users_roles.Contains("Channel User") || users_roles.Contains("Global Admin")))
-                    {
-                        admin = "Admin";
-                    }
-                }
-
-                usr_list.Add(new UserViewModel
-                {
-                    usr_ID = item.usr_ID,
-                    usr_fName = item.usr_fName,
-                    usr_lName = item.usr_lName,
-                    comp_ID = item.comp_ID,
-                    usr_email = item.usr_email,
-                    user_role = admin,
-                    usr_lastLogin = item.usr_lastLogin
-                });
-            }
-
-            //Get last ID
-            if (usr_list.Count() != 0)
-            {
-                ViewBag.LastID = usr_list.LastOrDefault().usr_ID;
-            }
-            LastLoginReportViewModel viewModel = new LastLoginReportViewModel()
-            {
-                users = usr_list.OrderBy(a => a.usr_fName).ToList(),
-                companyNames = compdata.ToDictionary(x => x.comp_ID, x => x.comp_name)
-            };
-            return View(viewModel);
+            return View();
         }
 
         [HttpGet]
@@ -549,26 +277,26 @@ namespace newrisourcecenter.Controllers
             long userId = Convert.ToInt64(Session["userId"]);
             long companyId = Convert.ToInt64(Session["companyId"]);
             List<UserExport> usr_list = new List<UserExport>();
-            IQueryable<UserViewModel> user_data;
+            IQueryable<UserViewModel> user_data = db.UserViewModels.Where(a => !a.deleted);
 
             if (User.IsInRole("Super Admin") || User.IsInRole("Local Admin") || User.IsInRole("Global Admin"))
             {
-                if(compid == 0)
+                if(compid > 0)
                 {
-                    user_data = db.UserViewModels.Where(a => !a.deleted);
+                    user_data = user_data.Where(a => a.comp_ID == compid);
                 }
-                else
+                if(locid > 0)
                 {
-                    user_data = db.UserViewModels.Where(a => !a.deleted && a.comp_ID == compid);
+                    user_data = user_data.Where(a => a.comp_loc_ID == locid);
                 }
             }
             else if(User.IsInRole("Channel User"))
             {
-                user_data = db.UserViewModels.Where(a => !a.deleted && a.comp_ID == companyId);
+                user_data = user_data.Where(a => a.comp_ID == companyId);
             }
             else
             {
-                user_data = db.UserViewModels.Where(a => !a.deleted && a.usr_ID == userId);
+                user_data = user_data.Where(a => a.usr_ID == userId);
             }
             Dictionary<long, string> companyNames = await db.partnerCompanyViewModels.ToDictionaryAsync(x => x.comp_ID, x => x.comp_name);
             Dictionary<long, string> locationNames = await db.partnerLocationViewModels.ToDictionaryAsync(x => x.loc_ID, x => x.loc_name);

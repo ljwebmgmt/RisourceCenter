@@ -1,5 +1,4 @@
 ﻿@model newrisourcecenter.Models.MDFViewModel
-
 @{
     ViewBag.Title = "Manage";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -137,6 +136,16 @@
                     {
                         <li><a class="ajax-filter" href="~/MDFView/ManageAdmin?rcm=@rcm.Key&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&year=@Request.QueryString["year"]&comp_id=@Request.QueryString["comp_id"]&type=@Request.QueryString["type"]&status=@Request.QueryString["status"]">@rcm.Value</a></li>
                     }
+                </ul>
+            </div>
+        </div>
+        <div id="dropdown">
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                    Hide/Show Columns
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" id="columnToggleMenu" style="max-height: 400px; overflow-y: auto; padding: 10px 0;">
                 </ul>
             </div>
         </div>

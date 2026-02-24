@@ -127,6 +127,16 @@
                 <li>@Html.ActionLink("Manage MDF Users", "MDFusers", "MDFView", new { compid = Request.QueryString["compid"], n1_name = "Support Tools", n2_name = "MDF Users" }, htmlAttributes: new { @class = "ajax-filter" })</li>
             </ul>
         </div>
+        <div style="display:inline-block; float:left; margin-left:20px;">
+            <div class="dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+                    <img src="/images/manage.png" style="width:15px; margin-right:5px;" /> Hide/Show Columns
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" id="columnToggleMenu" style="max-height: 400px; overflow-y: auto; padding: 10px 0;">
+                </ul>
+            </div>
+        </div>
         <div class="mdf-data-container">
             @Html.Partial("_MDFTableResults", Model)
         </div>

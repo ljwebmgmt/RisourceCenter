@@ -1,4 +1,4 @@
-@model newrisourcecenter.Models.LastLoginReportViewModel 
+@model newrisourcecenter.Models.LastLoginReportViewModel
 @{
     ViewBag.Title = "Users Last Login Report";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -8,142 +8,127 @@
     long companyId = Convert.ToInt64(Session["companyId"]);
 }
 <script>
-    function getLink(href) {
-        window.location.href = href;
+    const columnDefs = [
+        {
+            headerName: "", field: "user_role", width: 50,
+            cellRenderer: params => params.value === "Admin" ?
+                '<span class="glyphicon glyphicon-star" style="color:red;"></span>' : ''
+        },
+        { headerName: "User ID", field: "usr_ID", width: 90 },
+        { headerName: "First Name", field: "usr_fName", flex: 1 },
+        { headerName: "Last Name", field: "usr_lName", flex: 1 },
+        { headerName: "Email", field: "usr_email", flex: 1.5 },
+        { headerName: "Company", field: "companyName", flex: 1.2 },
+        {
+            headerName: "Last Login",
+            field: "usr_lastLogin",
+            flex: 1.2,
+            valueFormatter: params => {
+                if (!params.value) return "-";
+                // Convert C# JSON Date /Date(123456789)/ to readable string
+                const date = new Date(parseInt(params.value.replace(/\/Date\((\d+)\)\//, '$1')));
+                return date.toLocaleString();
+            }
+        },
+        {
+            headerName: "Status", field: "inactive", width: 110,
+            cellRenderer: params => params.value ?
+                '<span class="label label-default">In-active</span>' :
+                '<span class="label label-success">Active</span>'
+        }
+    ];
+
+    const gridOptions = {
+        columnDefs: columnDefs,
+        rowModelType: 'infinite',
+        pagination: true,
+        paginationPageSize: 100,
+        cacheBlockSize: 100,
+        onGridReady: params => {
+            gridApi = params.api;
+            params.api.setGridOption('datasource', loginDataSource);
+        }
+    };
+
+    const loginDataSource = {
+        getRows: (params) => {
+            gridApi.setGridOption('loading', true);
+
+            const compName = $('#companySearch').val();
+            const compId = $(`#companies option[value="${compName}"]`).attr('data-id') || 0;
+            const locId = $('#locFilter').val() || 0;
+
+            fetch(`/UserViewModels/GetUsersPaged?start=${params.startRow}&limit=100&compid=${compId}&locid=${locId}`)
+                .then(res => res.json())
+                .then(data => {
+                    gridApi.setGridOption('loading', false);
+                    params.successCallback(data.rows, data.total);
+                })
+                .catch(() => params.failCallback());
+        }
+    };
+
+    function onCompanyFilterChange() {
+        const compName = $('#companySearch').val();
+        const compId = $(`#companies option[value="${compName}"]`).attr('data-id');
+
+        if (compId) {
+            // Fetch locations for the selected company
+            fetch(`/UserViewModels/GetLocations?compid=${compId}`)
+                .then(res => res.json())
+                .then(data => {
+                    const locSelect = $('#locFilter');
+                    locSelect.empty().append('<option value="0">All Locations</option>');
+                    data.forEach(l => locSelect.append(`<option value="${l.id}">${l.name}</option>`));
+                    $('#locContainer').show();
+                    onFilterChange();
+                });
+        } else {
+            $('#locContainer').hide();
+            onFilterChange();
+        }
     }
 
-    jQuery(document).on('change', '.company-search', function (e) {
-        filterCmpany();
-    });
-
-    jQuery(document).on('click', '.btn-company-filter', function (e) {
-        e.preventDefault();
-        filterCompany();
-        return false;
-    });
-
-    function filterCompany() {
-        var comp = jQuery('.company-search').val();
-        if (comp == '')
-            return;
-        var opt = jQuery('datalist#companies option[value="' + comp + '"]');
-        if (opt.length == 0)
-            return;
-        getLink(opt.attr('data-href'));
+    function onFilterChange() {
+        gridApi.refreshInfiniteCache();
     }
+
+    function downloadLastLoginCSV() {
+        const compName = $('#companySearch').val();
+        const compId = $(`#companies option[value="${compName}"]`).attr('data-id') || 0;
+        window.location.href = `/UserViewModels/ExportLastLoginCSV?compid=${compId}&locid=${$('#locFilter').val() || 0}`;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const gridDiv = document.querySelector('#userTableGrid');
+        gridApi = agGrid.createGrid(gridDiv, gridOptions);
+    });
 </script>
-
 @if (User.IsInRole("Super Admin") || User.IsInRole("Local Admin") || User.IsInRole("Global Admin"))
 {
-    <table>
-        <tr>
-            @if (User.IsInRole("Super Admin") || User.IsInRole("Local Admin") && User.IsInRole("Rittal User") || User.IsInRole("Global Admin"))
-            {
-                <td>
-                    <div style="display:flex;margin-right:10px;">
-                        <input type="text" class="company-search" placeholder="Search Company...." list="companies" style="width:400px;max-width:400px;" />
-                        <button class="btn btn-primary btn-company-filter" type="button">Filter</button>
-                        <datalist id="companies">
-                            @foreach (var item in @ViewBag.compData)
-                            {
-                                <option value="@item.name" data-href="?n1_name=@Request.QueryString["n1_name"]&compid=@item.id&msg=@item.name&comp_name=@item.name">@item.name</option>
-                            }
-                        </datalist>
-                    </div>
-                </td>
-                if (!string.IsNullOrEmpty(Request.QueryString["compid"]))
+    <div class="filter-header" style="margin-bottom: 15px; display: flex; gap: 10px; align-items: center;">
+        <div style="display:flex; gap: 5px;">
+            <input type="text" id="companySearch" class="form-control" placeholder="Search Company...." list="companies" style="width:300px;" />
+            <datalist id="companies">
+                @foreach (var item in ViewBag.compData)
                 {
-                    <td>
-                        <div class="dropdown" style="display:inline-block;">
-                            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-                                Filter By Locations
-                                <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu">
-                                @foreach (var item in @ViewBag.locationsDatas)
-                                {
-                                    if (!string.IsNullOrEmpty(item.loc_name))
-                                    {
-                                        string name = item.loc_name;
-                                        <li><a href="?n1_name=@Request.QueryString["n1_name"]&compid=@Request.QueryString["compid"]&locid=@item.loc_ID&msg=@name&comp_name=@Request.QueryString["comp_name"]" onclick="getLink(this.href); return false;">@name</a></li>
-                                    }
-                                    else
-                                    {
-                                        string name = Request.QueryString["comp_name"] + "-" + item.loc_city;
-                                        <li><a href="?n1_name=@Request.QueryString["n1_name"]&compid=@Request.QueryString["compid"]&locid=@item.loc_ID&msg=@name&comp_name=@Request.QueryString["comp_name"]" onclick="getLink(this.href); return false;">@name</a></li>
-                                    }
-                                }
-                            </ul>
-                        </div>
-                    </td>
+                    <option value="@item.name" data-id="@item.id">@item.name</option>
                 }
-                <td>
-                    @Html.ActionLink("Download CSV", "ExportLastLoginCSV", new { n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], compid = @Request.QueryString["compid"], locid = @Request.QueryString["locid"] }, new { @class = "btn btn-primary", onclick = "getLink(this.href); return false;" })
-                </td>
-            }
-            @if (ViewBag.showNext)
-            {
-                <td style="text-align:right;width:90%;">
-                    @Html.ActionLink("Next >>", "LastLoginReport", new { n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], next = @ViewBag.LastID, compid = @Request.QueryString["compid"], locid = @Request.QueryString["locid"], msg = @Request.QueryString["msg"], comp_name = @Request.QueryString["comp_name"] }, new { @class = "btn btn-primary", onclick = "getLink(this.href); return false;" })
-                </td>
-            }
-        </tr>
-    </table>
+            </datalist>
+            <button class="btn btn-primary" onclick="onCompanyFilterChange()">Filter</button>
+        </div>
+
+        <select id="locFilter" class="form-control" style="display:none; width: 200px;" onchange="onFilterChange()">
+            <option value="0">All Locations</option>
+        </select>
+
+        <button class="btn btn-success" onclick="downloadLastLoginCSV()">
+            <span class="glyphicon glyphicon-download-alt"></span> Download CSV
+        </button>
+    </div>
 }
 <p class="glyphicon glyphicon-star" style="color:#E50043;font-size:14px;"> - Administrator</p>
 
-<div id="tabledata">
-    <table class="table">
-        <thead>
-            <tr>
-                <td></td>
-                <th>User ID</th>
-                <th>
-                    First Name
-                </th>
-                <th>
-                    Last Name
-                </th>
-                <th>
-                    Email
-                </th>
-                <th>Company</th>
-                <th>Last Login</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (Model.users.Count() > 0)
-            {
-                foreach (var item in Model.users)
-                {
-                    <tr>
-                        <td>
-                            @if (item.user_role == "Admin")
-                            {
-                                <span class="glyphicon glyphicon-star" style="color:red;"></span>
-                            }
-                        </td>
-                        <td> @item.usr_ID</td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.usr_fName)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.usr_lName)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.usr_email)
-                        </td>
-                        <td>@(item.comp_ID.HasValue && Model.companyNames.ContainsKey(item.comp_ID.Value) ? Model.companyNames[item.comp_ID.Value] : "")</td>
-                        <td>@(item.usr_lastLogin != null && item.usr_lastLogin.HasValue ? item.usr_lastLogin.Value.ToString() : "")</td>
-                        <td>@(!item.inactive ? "Active" : "In-active")</td>
-                    </tr>
-                }
-            }
-            else
-            {
-                <tr><td colspan="5">No users in the selected company</td></tr>
-            }
-        </tbody>
-    </table>
+<div class="table-wrapper" style="clear:both;">
+    <div id="userTableGrid" class="ag-theme-quartz" style="height: 1000px; width: 100%;"></div>
 </div>

@@ -18,6 +18,9 @@
             <th valign="top">
                 Company Name
             </th>
+            <th valign="top">
+                Region
+            </th>
             <th valign="top">End User</th>
             <th valign="top">
                 Project Name
@@ -42,8 +45,8 @@
             }
             <th>New quote / revision</th>
             @*<th>
-                    Notes
-                </th>*@
+            Notes
+        </th>*@
             <td style="width:75px;"></td>
         </tr>
     </thead>
@@ -63,6 +66,7 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.comp_name)
                 </td>
+                <td>@Html.DisplayFor(modelItem => item.company_region)</td>
                 <td>@Html.DisplayFor(modelItem => item.end_user_name)<br />@Html.DisplayFor(modelItem => item.end_user_location)</td>
                 <td>
                     @Html.DisplayFor(modelItem => item.qte_ref)
