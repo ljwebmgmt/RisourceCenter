@@ -14,7 +14,7 @@
     let gridApi;
     const adminUser = @((User.IsInRole("Super Admin") || User.IsInRole("Global Admin")).ToString().ToLower());
     const columnDefs = [
-        { headerName: "Company Name", field: "comp_name", flex: 2, filter: true },
+        { headerName: "Company Name", field: "comp_name", flex: 2 },
         { headerName: "MDF Program?", field: "comp_MDF", width: 100 },
         {
             headerName: "Total MDF Funds",
