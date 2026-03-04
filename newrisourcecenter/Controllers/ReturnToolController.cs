@@ -1255,7 +1255,7 @@ namespace newrisourcecenter.Controllers
                 }
 
                 //return View(returnTools.Take(10));
-                return View(returnTools);
+                return Json(returnTools, JsonRequestBehavior.AllowGet);
             }
             catch (Exception)
             {

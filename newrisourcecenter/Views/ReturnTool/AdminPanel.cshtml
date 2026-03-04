@@ -9,12 +9,48 @@
         userpages = pages.Split(',');
     }
 }
-<div id="theusers" style="display:none;">
-    <option>Select a requester</option>
-        @Html.Raw(ViewBag.list_users)
-    
-</div>
+
+<style type="text/css">
+    .btn.btn-xs {
+        padding: 1px 5px !important;
+        height: auto !important;
+    }
+</style>
 <script>
+    var gridApi;
+
+    // 1. Initialize AG Grid on page load
+    document.addEventListener('DOMContentLoaded', function () {
+        var gridOptions = {
+            columnDefs: [
+                { field: "form_id", headerName: "Form ID", sortable: true, filter: true },
+                { field: "name", headerName: "Name", sortable: true, filter: true },
+                { field: "company", headerName: "Company Name", sortable: true, filter: true },
+                { field: "submission_date", headerName: "Date Submitted", sortable: true, valueFormatter: params => formatDate(params.value) },
+                { field: "completion_date", headerName: "Date Completed", sortable: true, valueFormatter: params => formatDate(params.value) },
+                { field: "status", headerName: "Status", sortable: true },
+                { field: "authonumber", headerName: "Auth Number", sortable: true },
+                {
+                    headerName: "Actions",
+                    cellRenderer: params => {
+                        const id = params.data.form_id;
+                        return `
+                        <a href="/attachments/return_tools/PDFs/pdf_${id}.pdf" class="btn btn-xs btn-default" target="_blank">PDF</a>
+                        <a href="/ReturnTool/Edit/${id}" class="btn btn-xs btn-info">Edit</a>
+                        <a href="/ReturnTool/Delete/${id}" onclick="deletef(this.href);return false;" class="btn btn-xs btn-danger">Delete</a>
+                    `;
+                    }
+                }
+            ],
+            defaultColDef: { flex: 1, minWidth: 100 },
+            rowData: @Html.Raw(Json.Encode(Model)),
+            pagination: true,
+            paginationPageSize: 20
+        };
+        const gridDiv = document.querySelector('#returnGrid');
+        gridApi = agGrid.createGrid(gridDiv, gridOptions);
+    });
+
     var adminpanel = {
         init: function () {
             var formID = $('#formID'), filter = $('#filter'), inputfilter = $('input[name=filter]'), adminform = $('#adminform'), filter_form = $("#filterform");
@@ -108,7 +144,7 @@
                         '<div style="float:left;" ><label class="control-label col-md-2" >Requester</label></div>' +
                     '<div style="float:left;" >' +
                     '<select class="form-control getrequester" name="requester" id="form_value"></select>'+
-                        
+
                         '</div>' +
                         '<div style="float:left;" >&nbsp;&nbsp;<input type="submit" name="post" value="Filter" class="btn btn-default" style="inline-block;" /></div>' +
                     '</div>'
@@ -149,14 +185,31 @@
         },
         submit_filter_form:function(e){
             e.preventDefault();
-            $.post("/ReturnTool/AdminPanelFilter/?form_value1=" + $("#form_value1").val() + "&form_value=" + $("#form_value").val() + "&filterType=" + $("#filterType").val() + "&n1_name=Return Request", function (result) {
-                $("#tabledata").empty();
-                $("#tabledata").html(result);
+            gridApi.setGridOption('loading', true);
+            var url = "/ReturnTool/AdminPanelFilter/?form_value1=" + $("#form_value1").val() +
+                "&form_value=" + $("#form_value").val() +
+                "&filterType=" + $("#filterType").val() +
+                "&n1_name=Return Request";
+
+            $.post(url, function (result) {
+                gridApi.setGridOption('rowData', result);
+                gridApi.setGridOption('loading', false);
             });
         },
     }
     jQuery(document).ready(adminpanel.init);
+
+    function formatDate(dateStr) {
+        if (!dateStr) return "";
+        const ms = parseInt(dateStr.replace(/\/Date\((\d+)\)\//, '$1'));
+        return new Date(ms).toLocaleDateString();
+    }
 </script>
+<div id="theusers" style="display:none;">
+    <option>Select a requester</option>
+    @Html.Raw(ViewBag.list_users)
+
+</div>
 <div class="main_content">
     <div>
         <strong>Filter By</strong>
@@ -174,14 +227,13 @@
     <form action="~/ReturnTool/AdminPanel" align="left" id="filterform">
         <span id="filter"></span>
     </form>
-    <br clear="left"/><br />
+    <br clear="left" /><br />
     <table style="width:100%;text-align:center !important;" align="center">
         <tr>
             <td>
                 @Html.ActionLink("Submit a Return Request >>", "Create", new { n1_name = @Request.QueryString["n1_name"], msg = "Submit a Return Request" }, htmlAttributes: new { @style = "float:left;", @class = "btn btn-primary" })
             </td>
             <td>
-
             </td>
             <td>
                 @Html.ActionLink("<< Back", "Index", new { n1_name = @Request.QueryString["n1_name"], msg = "" }, htmlAttributes: new { @class = "btn btn-primary", @style = "float:right;", @onclick = "javascript:history.back()" })
@@ -189,82 +241,7 @@
         </tr>
     </table>
     <hr />
-    <div id="tabledata">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.form_id)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.name)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.company)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.submission_date)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.completion_date)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.status)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.authonumber)
-                    </th>
-                    <td></td>
-                </tr>
-            </thead>
-            <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.form_id)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.name)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.company)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.submission_date)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.completion_date)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.status)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.authonumber)
-                    </td>
-                    <td>
-                        @{ string pdflink = string.Format("/attachments/return_tools/PDFs/pdf_{0}.pdf", @item.form_id);}
-                        <a href="@pdflink">View PDF</a>
-                        @Html.ActionLink("Edit", "Edit", new { id = item.form_id, n1_name = @Request.QueryString["n1_name"], msg = "Admin Panel" }, new { @class = "btn btn-info" })
-                        @Html.ActionLink("Delete", "Delete", new { id = item.form_id, n1_name = @Request.QueryString["n1_name"] }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false", @class = "btn btn-info" })
-                    </td>
-                </tr>
-                ViewBag.form_id = item.form_id;
-            }
-            </tbody>
-        </table>
-
-        @*@if (Model.Count() >= 10)
-        {
-            if (Request.QueryString["next"] == null)
-            {
-                @Html.ActionLink("Next >>", "AdminPanel", new { n1_name = @Request.QueryString["n1_name"], msg = "Admin Panel", prev = @ViewBag.form_id - 1, next = @ViewBag.form_id - 10 }, new { @class = "btn btn-info" })
-            }
-            else
-            {
-                @Html.ActionLink("Next >>", "AdminPanel", new { n1_name = @Request.QueryString["n1_name"], msg = "Admin Panel", prev = @ViewBag.form_id - 1, next = @ViewBag.form_id - 10 }, new { @class = "btn btn-info" })
-                @Html.ActionLink("<< Previous", "AdminPanel", new { n1_name = @Request.QueryString["n1_name"], msg = "Admin Panel", prev = Convert.ToInt32(Request.QueryString["next"]) + 19, next = Convert.ToInt32(Request.QueryString["next"]) + 10 }, new { @class = "btn btn-info", @style = "float:right;" })
-            }
-        }*@
+    <div class="table-wrapper" style="clear:both;">
+        <div id="returnGrid" class="ag-theme-quartz" style="height: 1000px; width: 100%;"></div>
     </div>
 </div>
