@@ -8,55 +8,82 @@
         typeList.Add(item.Key.ToString(), item.Value.name);
     }
 }
-<script>
-    var typeList = @Html.Raw(Json.Encode(typeList));
-    var searchRiSources = {
-        init: function () {
-            var filter_form = $("#submit_search");
-            filter_form.on('click', searchRiSources.searchRiS);
-        },
-        searchRiS: function (e) {
-            e.preventDefault();
-
-            var form_value = $("#form_value").val();
-            $.post("/RiSources/SearchRiSources/", { form_value: form_value }, function (result) {
-                var jsonObj = JSON.parse(result);
-                $("#tbody").empty();
-
-                if (jsonObj.status == "OK") {
-                    if (jsonObj.RiSourcesData !=""){
-                        $.each(jsonObj.RiSourcesData, function (i, data) {
-                            $("#tbody").append('<tr><td>' + data.ris_headline + '</td><td>' + data.ris_teaser + '</td><td>' + (typeList.hasOwnProperty(data.n2ID) ? typeList[data.n2ID] : '') + '</td><td><a class="btn btn-info" href="/RiSources/Edit/' + data.ris_ID + '?parentID=@Request.QueryString["parentId"]&amp;n1_name=@Request.QueryString["n1_name"]&amp;n2_name=@Request.QueryString["n2_name"]">Edit</a>&nbsp;<a class="btn btn-info" href="/RiSources/Delete/' + data.ris_ID + '?parentID=@Request.QueryString["parentId"]&amp;n1_name=@Request.QueryString["n1_name"]&amp;n2_name=@Request.QueryString["n2_name"]" id="delete" onclick="deletef(this.href);return false">Delete</a></td></tr>');
-                        });
-                    } else {
-                            $("#tbody").append('<tr><td colspan="4" class="text-center">No results</td></tr>');
-                    }
-                }
-            });
-        },
+<style type="text/css">
+    .btn.btn-xs {
+        padding: 1px 5px !important;
+        height: auto !important;
     }
-    jQuery(document).ready(searchRiSources.init);
-    $(document).on('click', '.ajax-filter', function (e) {
-        e.preventDefault();
-        var url = $(this).attr('href');
-        $(this).closest('.dropdown').removeClass('open');
-        $.ajax({
-            url: url,
-            type: 'GET',
-            beforeSend: function () {
-                $('table.table').css('opacity', '0.5');
-            },
-            success: function (result) {
-                $('table.table tbody#tbody').html(result);
-                window.history.pushState({ path: url }, '', url);
-                $('table.table').css('opacity', '1');
+</style>
+<script>
+    let gridApi;
+    // Map of ID to Name for the "Document Type" column
+    const typeListLookup = @Html.Raw(Json.Encode(typeList));
 
-            },
-            error: function () {
-                alert("Error loading data. Please try again.");
-                $('table.table').css('opacity', '1');
+    const columnDefs = [
+        { headerName: "RiSource Headline", field: "ris_headline", sortable: true, filter: true, flex: 2 },
+        { headerName: "RiSource Teaser", field: "ris_teaser", sortable: true, filter: true, flex: 3 },
+        {
+            headerName: "Document Type",
+            field: "n2ID",
+            filter: 'agTextColumnFilter',
+            flex: 1,
+            valueFormatter: params => typeListLookup[params.value] || params.value,
+            filterValueGetter: params => typeListLookup[params.data.n2ID] || params.data.n2ID
+        },
+        {
+            headerName: "Actions",
+            width: 160,
+            sortable: false,
+            filter: false,
+            cellRenderer: params => {
+                const id = params.data.ris_ID;
+                const pId = "@Request.QueryString["parentId"]";
+                const n1 = "@Request.QueryString["n1_name"]";
+                const n2 = "@Request.QueryString["n2_name"]";
+
+                return `
+                    <a class="btn btn-xs btn-info" href="/RiSources/Edit/${id}?parentID=${pId}&n1_name=${n1}&n2_name=${n2}">Edit</a>
+                    <a href="/RiSources/Delete/${id}" class="btn btn-xs btn-danger" onclick="deletef(this.href);return false;">Delete</a>
+                `;
             }
-        });
+        }
+    ];
+
+    const gridOptions = {
+        columnDefs: columnDefs,
+        rowData: @Html.Raw(Json.Encode(Model)),
+        pagination: true,
+        paginationPageSize: 20,
+        defaultColDef: { resizable: true }
+    };
+
+    // 1. Handle Quick Search
+    function onFilterChanged() {
+        gridApi.setGridOption('quickFilterText', document.getElementById('quickFilter').value);
+    }
+
+    // 2. Handle the Dropdown "Filter By Type"
+    function applyTypeFilter(typeName) {
+        if (!gridApi) return;
+        const currentModel = gridApi.getFilterModel();
+        currentModel.n2ID = {
+            filterType: 'text',
+            type: 'equals',
+            filter: typeName
+        };
+        gridApi.setFilterModel(currentModel);
+    }
+
+    // 3. Reset All
+    function resetFilters() {
+        document.getElementById('quickFilter').value = '';
+        gridApi.setGridOption('quickFilterText', '');
+        gridApi.setFilterModel(null);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const gridDiv = document.querySelector('#risourcesGrid');
+        gridApi = agGrid.createGrid(gridDiv, gridOptions);
     });
 </script>
 <table>
@@ -70,7 +97,7 @@
                 <ul class="dropdown-menu">
                     @foreach (var item in @ViewBag.list_n2ID)
                     {
-                        <li><a class="ajax-filter" href="?parentID=&n2Id=@item.Key&n1_name=@Request.QueryString["n1_name"]&n2_name=@item.Value.name&img=@item.Value.img">@item.Value.name</a></li>
+                        <li><a href="javascript:void(0);" onclick="applyTypeFilter('@item.Value.name')">@item.Value.name</a></li>
                     }
                 </ul>
             </div>
@@ -78,10 +105,10 @@
         <td>
             <form>
                 <span class="input-group stylish-input-group">
-                    <input type="text" id="form_value" value="" placeholder="search by doc name" class="form-control" />
-                    <span class="input-group-addon" id="submit_search" >
-                        <button type="submit" >
-                            <span class="glyphicon glyphicon-search" ></span>
+                    <input type="text" id="quickFilter" placeholder="Search by doc name..." class="form-control" oninput="onFilterChanged()" />
+                    <span class="input-group-addon" id="submit_search">
+                        <button type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
                         </button>
                     </span>
                 </span>
@@ -102,25 +129,11 @@
             </div>
         </td>
         <td>
-            <a class="btn btn-primary ajax-filter" href="~/RiSources/Allrisouces?n1_name=@Request.QueryString["n1_name"]">Reset</a>
+            <button class="btn btn-default" onclick="resetFilters()">Reset</button>
         </td>
     </tr>
 </table>
 <br />
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.ris_headline)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ris_teaser)
-            </th>
-            <th>Document Type</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody id="tbody">
-        @Html.Partial("_RisourcesTable", Model)
-    </tbody>
-</table>
+<div class="table-wrapper" style="clear:both;">
+    <div id="risourcesGrid" class="ag-theme-quartz" style="height: 1000px; width: 100%;"></div>
+</div>

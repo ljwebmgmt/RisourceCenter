@@ -4,124 +4,153 @@
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<script>
-    var searchCommunications = {
-        init: function () {
-
-        },
-        searchComm: function () {
-            var form_value = $("#form_value").val();
-            $.post("/SalesComm/searchComm/", { form_value: form_value }, function (result) {
-                var jsonObj = JSON.parse(result);
-                $("#tbody").empty();
-
-                if (jsonObj.status == "OK") {
-                    if (jsonObj.commData != "") {
-                        $.each(jsonObj.commData, function (i, data) {
-                            if (data.endDate == "1/1/1900") {
-                                endDate = "";
-                            } else {
-                                endDate = data.endDate;
-                            }
-                            $("#tbody").append('<tr><td>' + data.sc_headline + '</td><td>' + data.startDate + '</td><td>' + endDate + '</td><td><a class="btn btn-info" href="/SalesComm/Edit/' + data.scID + '?n3id=' + data.n3ID + '&amp;n1_name=@Request.QueryString["n1_name"]&amp;n2_name=@Request.QueryString["n2_name"]">Edit</a>&nbsp;<a class="btn btn-info" href="/SalesComm/Delete/' + data.scID + '?n3id=' + data.n3ID + '&amp;n1_name=@Request.QueryString["n1_name"]&amp;n2_name=@Request.QueryString["n2_name"]" id="delete" onclick="deletef(this.href);return false">Delete</a></td></tr>');
-                        });
-                    } else {
-                        $("#tbody").append('<tr><td colspan="3" ><h1>No results</h1></td></tr>');
-                    }
-                }
-            });
-        },
+<style type="text/css">
+    .btn.btn-xs {
+        padding: 1px 5px !important;
+        height: auto !important;
     }
-    jQuery(document).ready(searchCommunications.init);
-    $(document).on('click', '.ajax-filter', function (e) {
-        e.preventDefault();
-        var url = $(this).attr('href');
-        $(this).closest('.dropdown').removeClass('open');
-        $.ajax({
-            url: url,
-            type: 'GET',
-            beforeSend: function () {
-                $('table.table').css('opacity', '0.5');
-            },
-            success: function (result) {
-                $('table.table tbody#tbody').html(result);
-                window.history.pushState({ path: url }, '', url);
-                $('table.table').css('opacity', '1');
+</style>
+<script>
+    let gridApi;
 
-            },
-            error: function () {
-                alert("Error loading data. Please try again.");
-                $('table.table').css('opacity', '1');
+    const columnDefs = [
+        { headerName: "Headline", field: "sc_headline", flex: 2, sortable: true, filter: true },
+        {
+            headerName: "Start Date",
+            field: "sc_startDate",
+            flex: 1,
+            sortable: true,
+            filter: 'agDateColumnFilter',
+            valueFormatter: params => formatDate(params.value)
+        },
+        {
+            headerName: "End Date",
+            field: "sc_endDate",
+            flex: 1,
+            sortable: true,
+            filter: 'agDateColumnFilter',
+            valueFormatter: params => {
+                // Your logic: hide date if it's 1/1/1900
+                const formatted = formatDate(params.value);
+                return (formatted === "1/1/1900" || formatted === "01/01/1900") ? "" : formatted;
             }
+        },
+        {
+            headerName: "Actions",
+            width: 160,
+            sortable: false,
+            filter: false,
+            cellRenderer: params => {
+                const data = params.data;
+                const n1 = "@Request.QueryString["n1_name"]";
+                const n2 = "@Request.QueryString["n2_name"]";
+
+                return `
+                    <a class="btn btn-xs btn-info" href="/SalesComm/Edit/${data.scID}?n3id=${data.n3ID}&n1_name=${n1}&n2_name=${n2}">Edit</a>
+                    <a href="/SalesComm/Delete/${data.scID}?n3id=${data.n3ID}" class="btn btn-xs btn-danger" onclick="deletef(this.href);return false;">Delete</a>
+                `;
+            }
+        },
+        // Hidden column to support your "Filter By" dropdown logic
+        { field: "n3ID", hide: true, filter: 'agNumberColumnFilter' }
+    ];
+
+    const gridOptions = {
+        columnDefs: columnDefs,
+        rowData: @Html.Raw(Json.Encode(Model)),
+        pagination: true,
+        paginationPageSize: 20,
+        onGridReady: (params) => {
+            gridApi = params.api;
+        }
+    };
+
+    // Helper to format C# JSON dates
+    function formatDate(dateStr) {
+        if (!dateStr) return "";
+        if (dateStr.indexOf('/Date') !== -1) {
+            const ms = parseInt(dateStr.replace(/\/Date\((\d+)\)\//, '$1'));
+            return new Date(ms).toLocaleDateString();
+        }
+        return new Date(dateStr).toLocaleDateString();
+    }
+
+    function onQuickFilterChanged() {
+        gridApi.setGridOption('quickFilterText', document.getElementById('form_value').value);
+    }
+
+    function applyNavFilter(n3idValue) {
+        if (!gridApi) return;
+
+        // Set the filter model specifically for the n3ID column
+        gridApi.setColumnFilterModel('n3ID', {
+            filterType: 'number',
+            type: 'equals',
+            filter: n3idValue
+        }).then(() => {
+            gridApi.onFilterChanged();
         });
+    }
+
+    function resetGrid() {
+        document.getElementById('form_value').value = '';
+        gridApi.setGridOption('quickFilterText', '');
+        gridApi.setFilterModel(null);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const gridDiv = document.querySelector('#salesCommGrid');
+        gridApi = agGrid.createGrid(gridDiv, gridOptions);
     });
 </script>
-    <table>
-        <tr>
-            <td>
-                <div class="dropdown">
-                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-                        Filter Communications By
-                        <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu">
-                        @foreach (var item in @ViewBag.nav_Menu)
-                        {
-                            <li><a class="ajax-filter" href="?n2id=@item.id&img=@item.img&n3id=@item.n3id&n1_name=@Request.QueryString["n1_name"]&n2_name=@item.name&n3_name=@item.n3name">@item.name - @item.n3name</a></li>
-                        }
-                    </ul>
-                </div>
-            </td>
-            <td>
-                <div class="dropdown">
-                    <span class="input-group stylish-input-group">
-                        <input type="text" id="form_value" value="" placeholder="search by doc name" class="form-control" />
-                        <span class="input-group-addon" id="submit_search">
-                            <button type="submit">
-                                <span class="glyphicon glyphicon-search" onclick="searchCommunications.searchComm();"></span>
-                            </button>
-                        </span>
+<table>
+    <tr>
+        <td>
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                    Filter Communications By
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    @foreach (var item in @ViewBag.nav_Menu)
+                    {
+                        <li><a href="javascript:void(0);" onclick="applyNavFilter(@item.n3id)">@item.name - @item.n3name</a></li>
+                    }
+                </ul>
+            </div>
+        </td>
+        <td>
+            <div class="dropdown">
+                <span class="input-group stylish-input-group">
+                    <input type="text" id="form_value" placeholder="search by doc name" class="form-control" oninput="onQuickFilterChanged()" />
+                    <span class="input-group-addon">
+                        <button type="button" onclick="onQuickFilterChanged()">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
                     </span>
-                </div>
-            </td>
-            <td>
-                <div class="dropdown">
-                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-                        Add Sales Communication
-                        <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu">
-                        @foreach (var item in @ViewBag.nav_Menu)
-                        {
-                            <li><a href="Create?n2id=@item.id&img=@item.img&n3id=@item.n3id&n1_name=@Request.QueryString["n1_name"]&n2_name=@item.name&n3_name=@item.n3name">@item.name - @item.n3name</a></li>
-                        }
-                    </ul>
-                </div>
-            </td>
-            <td>
-                <a class="btn btn-primary ajax-filter" href="~/SalesComm/AllSalesComms?n1_name=@Request.QueryString["n1_name"]">Reset</a>
-            </td>
-        </tr>
-    </table>
-    <br/>
-<div id="resultsList" >
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.sc_headline)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.sc_startDate)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.sc_endDate)
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody id="tbody">
-            @Html.Partial("_SalesCommTable", Model)
-        </tbody>
-    </table>
+                </span>
+            </div>
+        </td>
+        <td>
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                    Add Sales Communication
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    @foreach (var item in @ViewBag.nav_Menu)
+                    {
+                        <li><a href="Create?n2id=@item.id&img=@item.img&n3id=@item.n3id&n1_name=@Request.QueryString["n1_name"]&n2_name=@item.name&n3_name=@item.n3name">@item.name - @item.n3name</a></li>
+                    }
+                </ul>
+            </div>
+        </td>
+        <td>
+            <button class="btn btn-default" onclick="resetGrid()">Reset</button>
+        </td>
+    </tr>
+</table>
+<br/>
+<div class="table-wrapper" style="clear:both;">
+    <div id="salesCommGrid" class="ag-theme-quartz" style="height: 1000px; width: 100%;"></div>
 </div>
