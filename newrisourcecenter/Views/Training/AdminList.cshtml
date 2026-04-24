@@ -1,0 +1,77 @@
+@{
+    ViewBag.Title = "Training Admin - Trainings";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid" style="padding-top:20px; padding-bottom:20px;">
+    <div style="max-width:1400px; margin:0 auto;">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="clearfix">
+                    <h2 class="pull-left" style="margin-top:0;">All Trainings</h2>
+                    <a href="/Training/Admin" class="btn btn-primary btn-sm pull-right" style="margin-top:3px;">Create Training</a>
+                </div>
+
+                <div class="panel panel-default" style="margin-top:15px;">
+                    <div class="panel-heading"><strong>Trainings (Most recent first)</strong></div>
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered" id="trainingsTable" style="margin-bottom:0;">
+                                <thead>
+                                    <tr>
+                                        <th style="width:80px;">ID</th>
+                                        <th>Title</th>
+                                        <th style="width:120px;">Passing %</th>
+                                        <th style="width:90px;">PDF</th>
+                                        <th style="width:90px;">Video</th>
+                                        <th style="width:120px;">Questions</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                        <div id="listMessage" class="alert alert-info" style="display:none; margin-top:15px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        function htmlEncode(value) {
+            return $('<div/>').text(value).html();
+        }
+
+        function loadTrainings() {
+            $.getJSON('/Training/GetAllTrainingsAdmin', function (data) {
+                var trainings = data || [];
+                var rows = '';
+                for (var i = 0; i < trainings.length; i++) {
+                    var t = trainings[i];
+                    rows += '<tr>';
+                    rows += '<td>' + t.Id + '</td>';
+                    rows += '<td>' + htmlEncode(t.Title || '') + '</td>';
+                    rows += '<td>' + (t.PassingPercentage || 0) + '%</td>';
+                    rows += '<td>' + (t.HasPdf ? 'Yes' : 'No') + '</td>';
+                    rows += '<td>' + (t.HasVideo ? 'Yes' : 'No') + '</td>';
+                    rows += '<td>' + (t.QuestionCount || 0) + '</td>';
+                    rows += '</tr>';
+                }
+
+                $('#trainingsTable tbody').html(rows);
+
+                if (!trainings.length) {
+                    $('#listMessage').text('No trainings found.').show();
+                } else {
+                    $('#listMessage').hide();
+                }
+            }).fail(function (xhr) {
+                $('#listMessage').text(xhr.responseText || 'Unable to load trainings.').show();
+            });
+        }
+
+        loadTrainings();
+    })();
+</script>

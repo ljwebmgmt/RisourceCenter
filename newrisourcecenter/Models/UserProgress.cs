@@ -12,21 +12,24 @@ namespace newrisourcecenter.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class AspNetRole
+    public partial class UserProgress
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public AspNetRole()
+        public UserProgress()
         {
-            this.AspNetUserRoles = new HashSet<AspNetUserRole>();
-            this.TrainingRoleAssignments = new HashSet<TrainingRoleAssignment>();
+            this.TrainingQuizAttempts = new HashSet<TrainingQuizAttempt>();
         }
     
-        public string Id { get; set; }
-        public string Name { get; set; }
+        public int Id { get; set; }
+        public int UserId { get; set; }
+        public Nullable<int> TrainingContentId { get; set; }
+        public System.DateTime StartTime { get; set; }
+        public Nullable<System.DateTime> EndTime { get; set; }
+        public Nullable<int> ScorePercentage { get; set; }
+        public Nullable<bool> IsPassed { get; set; }
     
+        public virtual TrainingContent TrainingContent { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AspNetUserRole> AspNetUserRoles { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TrainingRoleAssignment> TrainingRoleAssignments { get; set; }
+        public virtual ICollection<TrainingQuizAttempt> TrainingQuizAttempts { get; set; }
     }
 }

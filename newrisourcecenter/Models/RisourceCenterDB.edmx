@@ -818,6 +818,23 @@
           <Property Name="industry" Type="nvarchar" MaxLength="100" />
           <Property Name="color" Type="nvarchar(max)" />
         </EntityType>
+        <EntityType Name="QuizOptions">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="QuestionId" Type="int" />
+          <Property Name="OptionText" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="IsCorrect" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="QuizQuestions">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TrainingContentId" Type="int" />
+          <Property Name="QuestionText" Type="nvarchar(max)" Nullable="false" />
+        </EntityType>
         <EntityType Name="RCMContacts">
           <Key>
             <PropertyRef Name="id" />
@@ -1932,6 +1949,52 @@
           <Property Name="duration" Type="decimal" Precision="10" Scale="2" />
           <Property Name="link" Type="nvarchar(max)" />
         </EntityType>
+        <EntityType Name="TrainingContents">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Title" Type="nvarchar" MaxLength="200" Nullable="false" />
+          <Property Name="Description" Type="nvarchar(max)" />
+          <Property Name="PdfPath" Type="nvarchar" MaxLength="500" />
+          <Property Name="VideoPath" Type="nvarchar" MaxLength="500" />
+          <Property Name="PassingPercentage" Type="int" />
+        </EntityType>
+        <EntityType Name="TrainingQuizAttempt">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TrainingContentId" Type="int" Nullable="false" />
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="UserProgressId" Type="int" />
+          <Property Name="StartedAt" Type="datetime" Nullable="false" />
+          <Property Name="SubmittedAt" Type="datetime" Nullable="false" />
+          <Property Name="TotalQuestions" Type="int" Nullable="false" />
+          <Property Name="CorrectQuestions" Type="int" Nullable="false" />
+          <Property Name="ScorePercentage" Type="int" Nullable="false" />
+          <Property Name="PassingPercentage" Type="int" Nullable="false" />
+          <Property Name="IsPassed" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TrainingQuizAttemptAnswer">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="AttemptId" Type="int" Nullable="false" />
+          <Property Name="QuestionId" Type="int" Nullable="false" />
+          <Property Name="OptionId" Type="int" Nullable="false" />
+          <Property Name="IsCorrect" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TrainingRoleAssignment">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TrainingContentId" Type="int" Nullable="false" />
+          <Property Name="RoleId" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="CreatedAt" Type="datetime" Nullable="false" />
+        </EntityType>
         <EntityType Name="trainingTracks">
           <Key>
             <PropertyRef Name="id" />
@@ -1942,6 +2005,18 @@
           <Property Name="prize" Type="varchar" MaxLength="500" />
           <Property Name="online_link" Type="varchar(max)" />
           <Property Name="person_link" Type="varchar(max)" />
+        </EntityType>
+        <EntityType Name="UserProgress">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="TrainingContentId" Type="int" />
+          <Property Name="StartTime" Type="datetime" Nullable="false" />
+          <Property Name="EndTime" Type="datetime" />
+          <Property Name="ScorePercentage" Type="int" />
+          <Property Name="IsPassed" Type="bit" />
         </EntityType>
         <EntityType Name="usr_user">
           <Key>
@@ -2122,6 +2197,42 @@
           <Property Name="usr_user" Type="int" Nullable="false" />
           <Property Name="loc_id" Type="bigint" Nullable="false" />
         </EntityType>
+        <Association Name="FK__QuizOptio__Quest__7913E27D">
+          <End Role="QuizQuestions" Type="Self.QuizQuestions" Multiplicity="0..1" />
+          <End Role="QuizOptions" Type="Self.QuizOptions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="QuizQuestions">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="QuizOptions">
+              <PropertyRef Name="QuestionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__QuizQuest__Train__763775D2">
+          <End Role="TrainingContents" Type="Self.TrainingContents" Multiplicity="0..1" />
+          <End Role="QuizQuestions" Type="Self.QuizQuestions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TrainingContents">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="QuizQuestions">
+              <PropertyRef Name="TrainingContentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__UserProgr__Train__7BF04F28">
+          <End Role="TrainingContents" Type="Self.TrainingContents" Multiplicity="0..1" />
+          <End Role="UserProgress" Type="Self.UserProgress" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TrainingContents">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserProgress">
+              <PropertyRef Name="TrainingContentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_ChangeCommission">
           <End Role="ChangeCommission" Type="Self.ChangeCommission" Multiplicity="1" />
           <End Role="ChangeCommissionPart" Type="Self.ChangeCommissionPart" Multiplicity="*" />
@@ -2145,6 +2256,90 @@
             </Principal>
             <Dependent Role="AspNetUserRoles">
               <PropertyRef Name="RoleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TrainingQuizAttempt_TrainingContent">
+          <End Role="TrainingContents" Type="Self.TrainingContents" Multiplicity="1" />
+          <End Role="TrainingQuizAttempt" Type="Self.TrainingQuizAttempt" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TrainingContents">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TrainingQuizAttempt">
+              <PropertyRef Name="TrainingContentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TrainingQuizAttempt_UserProgress">
+          <End Role="UserProgress" Type="Self.UserProgress" Multiplicity="0..1" />
+          <End Role="TrainingQuizAttempt" Type="Self.TrainingQuizAttempt" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserProgress">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TrainingQuizAttempt">
+              <PropertyRef Name="UserProgressId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TrainingQuizAttemptAnswer_Attempt">
+          <End Role="TrainingQuizAttempt" Type="Self.TrainingQuizAttempt" Multiplicity="1" />
+          <End Role="TrainingQuizAttemptAnswer" Type="Self.TrainingQuizAttemptAnswer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TrainingQuizAttempt">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TrainingQuizAttemptAnswer">
+              <PropertyRef Name="AttemptId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TrainingQuizAttemptAnswer_Option">
+          <End Role="QuizOptions" Type="Self.QuizOptions" Multiplicity="1" />
+          <End Role="TrainingQuizAttemptAnswer" Type="Self.TrainingQuizAttemptAnswer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="QuizOptions">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TrainingQuizAttemptAnswer">
+              <PropertyRef Name="OptionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TrainingQuizAttemptAnswer_Question">
+          <End Role="QuizQuestions" Type="Self.QuizQuestions" Multiplicity="1" />
+          <End Role="TrainingQuizAttemptAnswer" Type="Self.TrainingQuizAttemptAnswer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="QuizQuestions">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TrainingQuizAttemptAnswer">
+              <PropertyRef Name="QuestionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TrainingRoleAssignment_AspNetRoles">
+          <End Role="AspNetRoles" Type="Self.AspNetRoles" Multiplicity="1" />
+          <End Role="TrainingRoleAssignment" Type="Self.TrainingRoleAssignment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetRoles">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TrainingRoleAssignment">
+              <PropertyRef Name="RoleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TrainingRoleAssignment_TrainingContent">
+          <End Role="TrainingContents" Type="Self.TrainingContents" Multiplicity="1" />
+          <End Role="TrainingRoleAssignment" Type="Self.TrainingRoleAssignment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TrainingContents">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TrainingRoleAssignment">
+              <PropertyRef Name="TrainingContentId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2201,6 +2396,8 @@
           <EntitySet Name="PMQuote" EntityType="Self.PMQuote" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="product_accessories" EntityType="Self.product_accessories" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="products" EntityType="Self.products" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="QuizOptions" EntityType="Self.QuizOptions" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="QuizQuestions" EntityType="Self.QuizQuestions" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RCMContacts" EntityType="Self.RCMContacts" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RegionApprovers" EntityType="Self.RegionApprovers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ReturnToolActionLogs" EntityType="Self.ReturnToolActionLogs" Schema="dbo" store:Type="Tables" />
@@ -2246,12 +2443,29 @@
           <EntitySet Name="stats_training" EntityType="Self.stats_training" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="themes" EntityType="Self.themes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="trainingClasses" EntityType="Self.trainingClasses" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TrainingContents" EntityType="Self.TrainingContents" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TrainingQuizAttempt" EntityType="Self.TrainingQuizAttempt" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TrainingQuizAttemptAnswer" EntityType="Self.TrainingQuizAttemptAnswer" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TrainingRoleAssignment" EntityType="Self.TrainingRoleAssignment" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="trainingTracks" EntityType="Self.trainingTracks" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserProgress" EntityType="Self.UserProgress" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="usr_user" EntityType="Self.usr_user" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="usr_user_temp" EntityType="Self.usr_user_temp" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="usr_user_test" EntityType="Self.usr_user_test" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="usrClasses" EntityType="Self.usrClasses" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Webshop_connect" EntityType="Self.Webshop_connect" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK__QuizOptio__Quest__7913E27D" Association="Self.FK__QuizOptio__Quest__7913E27D">
+            <End Role="QuizQuestions" EntitySet="QuizQuestions" />
+            <End Role="QuizOptions" EntitySet="QuizOptions" />
+          </AssociationSet>
+          <AssociationSet Name="FK__QuizQuest__Train__763775D2" Association="Self.FK__QuizQuest__Train__763775D2">
+            <End Role="TrainingContents" EntitySet="TrainingContents" />
+            <End Role="QuizQuestions" EntitySet="QuizQuestions" />
+          </AssociationSet>
+          <AssociationSet Name="FK__UserProgr__Train__7BF04F28" Association="Self.FK__UserProgr__Train__7BF04F28">
+            <End Role="TrainingContents" EntitySet="TrainingContents" />
+            <End Role="UserProgress" EntitySet="UserProgress" />
+          </AssociationSet>
           <AssociationSet Name="FK_ChangeCommission" Association="Self.FK_ChangeCommission">
             <End Role="ChangeCommission" EntitySet="ChangeCommission" />
             <End Role="ChangeCommissionPart" EntitySet="ChangeCommissionPart" />
@@ -2259,6 +2473,34 @@
           <AssociationSet Name="FK_dbo_AspNetUserRoles_dbo_AspNetRoles_RoleId" Association="Self.FK_dbo_AspNetUserRoles_dbo_AspNetRoles_RoleId">
             <End Role="AspNetRoles" EntitySet="AspNetRoles" />
             <End Role="AspNetUserRoles" EntitySet="AspNetUserRoles" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TrainingQuizAttempt_TrainingContent" Association="Self.FK_TrainingQuizAttempt_TrainingContent">
+            <End Role="TrainingContents" EntitySet="TrainingContents" />
+            <End Role="TrainingQuizAttempt" EntitySet="TrainingQuizAttempt" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TrainingQuizAttempt_UserProgress" Association="Self.FK_TrainingQuizAttempt_UserProgress">
+            <End Role="UserProgress" EntitySet="UserProgress" />
+            <End Role="TrainingQuizAttempt" EntitySet="TrainingQuizAttempt" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TrainingQuizAttemptAnswer_Attempt" Association="Self.FK_TrainingQuizAttemptAnswer_Attempt">
+            <End Role="TrainingQuizAttempt" EntitySet="TrainingQuizAttempt" />
+            <End Role="TrainingQuizAttemptAnswer" EntitySet="TrainingQuizAttemptAnswer" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TrainingQuizAttemptAnswer_Option" Association="Self.FK_TrainingQuizAttemptAnswer_Option">
+            <End Role="QuizOptions" EntitySet="QuizOptions" />
+            <End Role="TrainingQuizAttemptAnswer" EntitySet="TrainingQuizAttemptAnswer" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TrainingQuizAttemptAnswer_Question" Association="Self.FK_TrainingQuizAttemptAnswer_Question">
+            <End Role="QuizQuestions" EntitySet="QuizQuestions" />
+            <End Role="TrainingQuizAttemptAnswer" EntitySet="TrainingQuizAttemptAnswer" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TrainingRoleAssignment_AspNetRoles" Association="Self.FK_TrainingRoleAssignment_AspNetRoles">
+            <End Role="AspNetRoles" EntitySet="AspNetRoles" />
+            <End Role="TrainingRoleAssignment" EntitySet="TrainingRoleAssignment" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TrainingRoleAssignment_TrainingContent" Association="Self.FK_TrainingRoleAssignment_TrainingContent">
+            <End Role="TrainingContents" EntitySet="TrainingContents" />
+            <End Role="TrainingRoleAssignment" EntitySet="TrainingRoleAssignment" />
           </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
@@ -2429,6 +2671,53 @@
           <EntitySet Name="trainingClasses" EntityType="RisourceCenterMexicoModel.trainingClass" />
           <EntitySet Name="trainingTracks" EntityType="RisourceCenterMexicoModel.trainingTrack" />
           <EntitySet Name="usrClasses" EntityType="RisourceCenterMexicoModel.usrClass" />
+          <EntitySet Name="QuizOptions" EntityType="RisourceCenterMexicoModel.QuizOption" />
+          <EntitySet Name="QuizQuestions" EntityType="RisourceCenterMexicoModel.QuizQuestion" />
+          <EntitySet Name="TrainingContents" EntityType="RisourceCenterMexicoModel.TrainingContent" />
+          <EntitySet Name="TrainingQuizAttempts" EntityType="RisourceCenterMexicoModel.TrainingQuizAttempt" />
+          <EntitySet Name="TrainingQuizAttemptAnswers" EntityType="RisourceCenterMexicoModel.TrainingQuizAttemptAnswer" />
+          <AssociationSet Name="FK__QuizOptio__Quest__7913E27D" Association="RisourceCenterMexicoModel.FK__QuizOptio__Quest__7913E27D">
+            <End Role="QuizQuestion" EntitySet="QuizQuestions" />
+            <End Role="QuizOption" EntitySet="QuizOptions" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TrainingQuizAttemptAnswer_Option" Association="RisourceCenterMexicoModel.FK_TrainingQuizAttemptAnswer_Option">
+            <End Role="QuizOption" EntitySet="QuizOptions" />
+            <End Role="TrainingQuizAttemptAnswer" EntitySet="TrainingQuizAttemptAnswers" />
+          </AssociationSet>
+          <AssociationSet Name="FK__QuizQuest__Train__763775D2" Association="RisourceCenterMexicoModel.FK__QuizQuest__Train__763775D2">
+            <End Role="TrainingContent" EntitySet="TrainingContents" />
+            <End Role="QuizQuestion" EntitySet="QuizQuestions" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TrainingQuizAttemptAnswer_Question" Association="RisourceCenterMexicoModel.FK_TrainingQuizAttemptAnswer_Question">
+            <End Role="QuizQuestion" EntitySet="QuizQuestions" />
+            <End Role="TrainingQuizAttemptAnswer" EntitySet="TrainingQuizAttemptAnswers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TrainingQuizAttempt_TrainingContent" Association="RisourceCenterMexicoModel.FK_TrainingQuizAttempt_TrainingContent">
+            <End Role="TrainingContent" EntitySet="TrainingContents" />
+            <End Role="TrainingQuizAttempt" EntitySet="TrainingQuizAttempts" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TrainingQuizAttemptAnswer_Attempt" Association="RisourceCenterMexicoModel.FK_TrainingQuizAttemptAnswer_Attempt">
+            <End Role="TrainingQuizAttempt" EntitySet="TrainingQuizAttempts" />
+            <End Role="TrainingQuizAttemptAnswer" EntitySet="TrainingQuizAttemptAnswers" />
+          </AssociationSet>
+          <EntitySet Name="UserProgresses" EntityType="RisourceCenterMexicoModel.UserProgress" />
+          <AssociationSet Name="FK__UserProgr__Train__7BF04F28" Association="RisourceCenterMexicoModel.FK__UserProgr__Train__7BF04F28">
+            <End Role="TrainingContent" EntitySet="TrainingContents" />
+            <End Role="UserProgress" EntitySet="UserProgresses" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TrainingQuizAttempt_UserProgress" Association="RisourceCenterMexicoModel.FK_TrainingQuizAttempt_UserProgress">
+            <End Role="UserProgress" EntitySet="UserProgresses" />
+            <End Role="TrainingQuizAttempt" EntitySet="TrainingQuizAttempts" />
+          </AssociationSet>
+          <EntitySet Name="TrainingRoleAssignments" EntityType="RisourceCenterMexicoModel.TrainingRoleAssignment" />
+          <AssociationSet Name="FK_TrainingRoleAssignment_AspNetRoles" Association="RisourceCenterMexicoModel.FK_TrainingRoleAssignment_AspNetRoles">
+            <End Role="AspNetRole" EntitySet="AspNetRoles" />
+            <End Role="TrainingRoleAssignment" EntitySet="TrainingRoleAssignments" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TrainingRoleAssignment_TrainingContent" Association="RisourceCenterMexicoModel.FK_TrainingRoleAssignment_TrainingContent">
+            <End Role="TrainingContent" EntitySet="TrainingContents" />
+            <End Role="TrainingRoleAssignment" EntitySet="TrainingRoleAssignments" />
+          </AssociationSet>
           </EntityContainer>
         <EntityType Name="ReturnToolActionLog">
           <Key>
@@ -2538,6 +2827,7 @@
           <Property Name="Id" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="AspNetUserRoles" Relationship="RisourceCenterMexicoModel.FK_dbo_AspNetUserRoles_dbo_AspNetRoles_RoleId" FromRole="AspNetRole" ToRole="AspNetUserRole" />
+          <NavigationProperty Name="TrainingRoleAssignments" Relationship="RisourceCenterMexicoModel.FK_TrainingRoleAssignment_AspNetRoles" FromRole="AspNetRole" ToRole="TrainingRoleAssignment" />
         </EntityType>
         <EntityType Name="AspNetUserClaim">
           <Key>
@@ -4525,6 +4815,248 @@
           <Property Name="completed" Type="Byte" />
           <Property Name="completed_at" Type="DateTime" Precision="3" />
         </EntityType>
+        <EntityType Name="QuizOption">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="QuestionId" Type="Int32" />
+          <Property Name="OptionText" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="IsCorrect" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="QuizQuestion" Relationship="RisourceCenterMexicoModel.FK__QuizOptio__Quest__7913E27D" FromRole="QuizOption" ToRole="QuizQuestion" />
+          <NavigationProperty Name="TrainingQuizAttemptAnswers" Relationship="RisourceCenterMexicoModel.FK_TrainingQuizAttemptAnswer_Option" FromRole="QuizOption" ToRole="TrainingQuizAttemptAnswer" />
+        </EntityType>
+        <EntityType Name="QuizQuestion">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TrainingContentId" Type="Int32" />
+          <Property Name="QuestionText" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="QuizOptions" Relationship="RisourceCenterMexicoModel.FK__QuizOptio__Quest__7913E27D" FromRole="QuizQuestion" ToRole="QuizOption" />
+          <NavigationProperty Name="TrainingContent" Relationship="RisourceCenterMexicoModel.FK__QuizQuest__Train__763775D2" FromRole="QuizQuestion" ToRole="TrainingContent" />
+          <NavigationProperty Name="TrainingQuizAttemptAnswers" Relationship="RisourceCenterMexicoModel.FK_TrainingQuizAttemptAnswer_Question" FromRole="QuizQuestion" ToRole="TrainingQuizAttemptAnswer" />
+        </EntityType>
+        <EntityType Name="TrainingContent">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Title" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PdfPath" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="VideoPath" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="PassingPercentage" Type="Int32" />
+          <NavigationProperty Name="QuizQuestions" Relationship="RisourceCenterMexicoModel.FK__QuizQuest__Train__763775D2" FromRole="TrainingContent" ToRole="QuizQuestion" />
+          <NavigationProperty Name="TrainingQuizAttempts" Relationship="RisourceCenterMexicoModel.FK_TrainingQuizAttempt_TrainingContent" FromRole="TrainingContent" ToRole="TrainingQuizAttempt" />
+          <NavigationProperty Name="UserProgresses" Relationship="RisourceCenterMexicoModel.FK__UserProgr__Train__7BF04F28" FromRole="TrainingContent" ToRole="UserProgress" />
+          <NavigationProperty Name="TrainingRoleAssignments" Relationship="RisourceCenterMexicoModel.FK_TrainingRoleAssignment_TrainingContent" FromRole="TrainingContent" ToRole="TrainingRoleAssignment" />
+        </EntityType>
+        <EntityType Name="TrainingQuizAttempt">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TrainingContentId" Type="Int32" Nullable="false" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="UserProgressId" Type="Int32" />
+          <Property Name="StartedAt" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="SubmittedAt" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="TotalQuestions" Type="Int32" Nullable="false" />
+          <Property Name="CorrectQuestions" Type="Int32" Nullable="false" />
+          <Property Name="ScorePercentage" Type="Int32" Nullable="false" />
+          <Property Name="PassingPercentage" Type="Int32" Nullable="false" />
+          <Property Name="IsPassed" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="TrainingContent" Relationship="RisourceCenterMexicoModel.FK_TrainingQuizAttempt_TrainingContent" FromRole="TrainingQuizAttempt" ToRole="TrainingContent" />
+          <NavigationProperty Name="TrainingQuizAttemptAnswers" Relationship="RisourceCenterMexicoModel.FK_TrainingQuizAttemptAnswer_Attempt" FromRole="TrainingQuizAttempt" ToRole="TrainingQuizAttemptAnswer" />
+          <NavigationProperty Name="UserProgress" Relationship="RisourceCenterMexicoModel.FK_TrainingQuizAttempt_UserProgress" FromRole="TrainingQuizAttempt" ToRole="UserProgress" />
+        </EntityType>
+        <EntityType Name="TrainingQuizAttemptAnswer">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AttemptId" Type="Int32" Nullable="false" />
+          <Property Name="QuestionId" Type="Int32" Nullable="false" />
+          <Property Name="OptionId" Type="Int32" Nullable="false" />
+          <Property Name="IsCorrect" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="QuizOption" Relationship="RisourceCenterMexicoModel.FK_TrainingQuizAttemptAnswer_Option" FromRole="TrainingQuizAttemptAnswer" ToRole="QuizOption" />
+          <NavigationProperty Name="QuizQuestion" Relationship="RisourceCenterMexicoModel.FK_TrainingQuizAttemptAnswer_Question" FromRole="TrainingQuizAttemptAnswer" ToRole="QuizQuestion" />
+          <NavigationProperty Name="TrainingQuizAttempt" Relationship="RisourceCenterMexicoModel.FK_TrainingQuizAttemptAnswer_Attempt" FromRole="TrainingQuizAttemptAnswer" ToRole="TrainingQuizAttempt" />
+        </EntityType>
+        <Association Name="FK__QuizOptio__Quest__7913E27D">
+          <End Type="RisourceCenterMexicoModel.QuizQuestion" Role="QuizQuestion" Multiplicity="0..1" />
+          <End Type="RisourceCenterMexicoModel.QuizOption" Role="QuizOption" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="QuizQuestion">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="QuizOption">
+              <PropertyRef Name="QuestionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TrainingQuizAttemptAnswer_Option">
+          <End Type="RisourceCenterMexicoModel.QuizOption" Role="QuizOption" Multiplicity="1" />
+          <End Type="RisourceCenterMexicoModel.TrainingQuizAttemptAnswer" Role="TrainingQuizAttemptAnswer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="QuizOption">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TrainingQuizAttemptAnswer">
+              <PropertyRef Name="OptionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__QuizQuest__Train__763775D2">
+          <End Type="RisourceCenterMexicoModel.TrainingContent" Role="TrainingContent" Multiplicity="0..1" />
+          <End Type="RisourceCenterMexicoModel.QuizQuestion" Role="QuizQuestion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TrainingContent">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="QuizQuestion">
+              <PropertyRef Name="TrainingContentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TrainingQuizAttemptAnswer_Question">
+          <End Type="RisourceCenterMexicoModel.QuizQuestion" Role="QuizQuestion" Multiplicity="1" />
+          <End Type="RisourceCenterMexicoModel.TrainingQuizAttemptAnswer" Role="TrainingQuizAttemptAnswer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="QuizQuestion">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TrainingQuizAttemptAnswer">
+              <PropertyRef Name="QuestionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TrainingQuizAttempt_TrainingContent">
+          <End Type="RisourceCenterMexicoModel.TrainingContent" Role="TrainingContent" Multiplicity="1" />
+          <End Type="RisourceCenterMexicoModel.TrainingQuizAttempt" Role="TrainingQuizAttempt" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TrainingContent">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TrainingQuizAttempt">
+              <PropertyRef Name="TrainingContentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TrainingQuizAttemptAnswer_Attempt">
+          <End Type="RisourceCenterMexicoModel.TrainingQuizAttempt" Role="TrainingQuizAttempt" Multiplicity="1" />
+          <End Type="RisourceCenterMexicoModel.TrainingQuizAttemptAnswer" Role="TrainingQuizAttemptAnswer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TrainingQuizAttempt">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TrainingQuizAttemptAnswer">
+              <PropertyRef Name="AttemptId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="UserProgress">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="TrainingContentId" Type="Int32" />
+          <Property Name="StartTime" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="EndTime" Type="DateTime" Precision="3" />
+          <Property Name="ScorePercentage" Type="Int32" />
+          <Property Name="IsPassed" Type="Boolean" />
+          <NavigationProperty Name="TrainingContent" Relationship="RisourceCenterMexicoModel.FK__UserProgr__Train__7BF04F28" FromRole="UserProgress" ToRole="TrainingContent" />
+          <NavigationProperty Name="TrainingQuizAttempts" Relationship="RisourceCenterMexicoModel.FK_TrainingQuizAttempt_UserProgress" FromRole="UserProgress" ToRole="TrainingQuizAttempt" />
+        </EntityType>
+        <Association Name="FK__UserProgr__Train__7BF04F28">
+          <End Type="RisourceCenterMexicoModel.TrainingContent" Role="TrainingContent" Multiplicity="0..1" />
+          <End Type="RisourceCenterMexicoModel.UserProgress" Role="UserProgress" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TrainingContent">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserProgress">
+              <PropertyRef Name="TrainingContentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TrainingQuizAttempt_UserProgress">
+          <End Type="RisourceCenterMexicoModel.UserProgress" Role="UserProgress" Multiplicity="0..1" />
+          <End Type="RisourceCenterMexicoModel.TrainingQuizAttempt" Role="TrainingQuizAttempt" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserProgress">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TrainingQuizAttempt">
+              <PropertyRef Name="UserProgressId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="TrainingRoleAssignment">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TrainingContentId" Type="Int32" Nullable="false" />
+          <Property Name="RoleId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedAt" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="AspNetRole" Relationship="RisourceCenterMexicoModel.FK_TrainingRoleAssignment_AspNetRoles" FromRole="TrainingRoleAssignment" ToRole="AspNetRole" />
+          <NavigationProperty Name="TrainingContent" Relationship="RisourceCenterMexicoModel.FK_TrainingRoleAssignment_TrainingContent" FromRole="TrainingRoleAssignment" ToRole="TrainingContent" />
+        </EntityType>
+        <Association Name="FK_TrainingRoleAssignment_AspNetRoles">
+          <End Type="RisourceCenterMexicoModel.AspNetRole" Role="AspNetRole" Multiplicity="1" />
+          <End Type="RisourceCenterMexicoModel.TrainingRoleAssignment" Role="TrainingRoleAssignment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetRole">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TrainingRoleAssignment">
+              <PropertyRef Name="RoleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
+          <End Type="RisourceCenterMexicoModel.AspNetUser" Role="AspNetUser" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="RisourceCenterMexicoModel.AspNetUserClaim" Role="AspNetUserClaim" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AspNetUserClaim">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
+          <End Type="RisourceCenterMexicoModel.AspNetUser" Role="AspNetUser" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="RisourceCenterMexicoModel.AspNetUserLogin" Role="AspNetUserLogin" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AspNetUserLogin">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TrainingRoleAssignment_TrainingContent">
+          <End Type="RisourceCenterMexicoModel.TrainingContent" Role="TrainingContent" Multiplicity="1" />
+          <End Type="RisourceCenterMexicoModel.TrainingRoleAssignment" Role="TrainingRoleAssignment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TrainingContent">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TrainingRoleAssignment">
+              <PropertyRef Name="TrainingContentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -6744,6 +7276,88 @@
                 <ScalarProperty Name="class_ID" ColumnName="class_ID" />
                 <ScalarProperty Name="usr_ID" ColumnName="usr_ID" />
                 <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="QuizOptions">
+            <EntityTypeMapping TypeName="RisourceCenterMexicoModel.QuizOption">
+              <MappingFragment StoreEntitySet="QuizOptions">
+                <ScalarProperty Name="IsCorrect" ColumnName="IsCorrect" />
+                <ScalarProperty Name="OptionText" ColumnName="OptionText" />
+                <ScalarProperty Name="QuestionId" ColumnName="QuestionId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="QuizQuestions">
+            <EntityTypeMapping TypeName="RisourceCenterMexicoModel.QuizQuestion">
+              <MappingFragment StoreEntitySet="QuizQuestions">
+                <ScalarProperty Name="QuestionText" ColumnName="QuestionText" />
+                <ScalarProperty Name="TrainingContentId" ColumnName="TrainingContentId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TrainingContents">
+            <EntityTypeMapping TypeName="RisourceCenterMexicoModel.TrainingContent">
+              <MappingFragment StoreEntitySet="TrainingContents">
+                <ScalarProperty Name="PassingPercentage" ColumnName="PassingPercentage" />
+                <ScalarProperty Name="VideoPath" ColumnName="VideoPath" />
+                <ScalarProperty Name="PdfPath" ColumnName="PdfPath" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TrainingQuizAttempts">
+            <EntityTypeMapping TypeName="RisourceCenterMexicoModel.TrainingQuizAttempt">
+              <MappingFragment StoreEntitySet="TrainingQuizAttempt">
+                <ScalarProperty Name="IsPassed" ColumnName="IsPassed" />
+                <ScalarProperty Name="PassingPercentage" ColumnName="PassingPercentage" />
+                <ScalarProperty Name="ScorePercentage" ColumnName="ScorePercentage" />
+                <ScalarProperty Name="CorrectQuestions" ColumnName="CorrectQuestions" />
+                <ScalarProperty Name="TotalQuestions" ColumnName="TotalQuestions" />
+                <ScalarProperty Name="SubmittedAt" ColumnName="SubmittedAt" />
+                <ScalarProperty Name="StartedAt" ColumnName="StartedAt" />
+                <ScalarProperty Name="UserProgressId" ColumnName="UserProgressId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="TrainingContentId" ColumnName="TrainingContentId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TrainingQuizAttemptAnswers">
+            <EntityTypeMapping TypeName="RisourceCenterMexicoModel.TrainingQuizAttemptAnswer">
+              <MappingFragment StoreEntitySet="TrainingQuizAttemptAnswer">
+                <ScalarProperty Name="IsCorrect" ColumnName="IsCorrect" />
+                <ScalarProperty Name="OptionId" ColumnName="OptionId" />
+                <ScalarProperty Name="QuestionId" ColumnName="QuestionId" />
+                <ScalarProperty Name="AttemptId" ColumnName="AttemptId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserProgresses">
+            <EntityTypeMapping TypeName="RisourceCenterMexicoModel.UserProgress">
+              <MappingFragment StoreEntitySet="UserProgress">
+                <ScalarProperty Name="IsPassed" ColumnName="IsPassed" />
+                <ScalarProperty Name="ScorePercentage" ColumnName="ScorePercentage" />
+                <ScalarProperty Name="EndTime" ColumnName="EndTime" />
+                <ScalarProperty Name="StartTime" ColumnName="StartTime" />
+                <ScalarProperty Name="TrainingContentId" ColumnName="TrainingContentId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TrainingRoleAssignments">
+            <EntityTypeMapping TypeName="RisourceCenterMexicoModel.TrainingRoleAssignment">
+              <MappingFragment StoreEntitySet="TrainingRoleAssignment">
+                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
+                <ScalarProperty Name="RoleId" ColumnName="RoleId" />
+                <ScalarProperty Name="TrainingContentId" ColumnName="TrainingContentId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

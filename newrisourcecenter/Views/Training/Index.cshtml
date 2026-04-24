@@ -1,0 +1,182 @@
+@{
+    ViewBag.Title = "Training";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid" style="padding-top:20px; padding-bottom:20px;">
+    <div style="max-width:1400px; margin:0 auto;">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="clearfix">
+                    <h2 class="pull-left" style="margin-top:0;">My Trainings</h2>
+                    @if (User.IsInRole("Super Admin"))
+                    {
+                        <a class="btn btn-primary btn-sm pull-right" href="/Training/Admin" style="margin-top:3px;">Training Admin</a>
+                    }
+                </div>
+                <div id="trainingList" style="margin-top:15px;"></div>
+                <hr />
+                <div id="quizContainer" style="display:none;">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <strong>Quiz</strong>
+                            <span class="text-muted" style="margin-left:8px;">Select all that apply</span>
+                        </div>
+                        <div class="panel-body">
+                            <form id="quizForm">
+                                <div id="quizQuestions"></div>
+                                <button type="submit" class="btn btn-success">Submit Quiz</button>
+                            </form>
+                            <div id="resultContainer" style="display:none; margin-top:15px;" class="alert alert-info"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        var activeTrainingId = 0;
+        var trainings = [];
+        var startedTrainingIds = {};
+
+        function loadAssignedTrainings() {
+            $.getJSON('/Training/GetAssignedTrainings', function (data) {
+                trainings = data || [];
+                renderTrainingCards();
+            });
+        }
+
+        function renderTrainingCards() {
+            var html = '';
+            if (!trainings.length) {
+                html = '<p>No training assigned for your role.</p>';
+                $('#trainingList').html(html);
+                return;
+            }
+
+            for (var i = 0; i < trainings.length; i++) {
+                var t = trainings[i];
+                var isStarted = !!startedTrainingIds[t.Id];
+                html += '<div class="panel panel-default">';
+                html += '<div class="panel-heading"><strong>' + htmlEncode(t.Title || '') + '</strong></div>';
+                html += '<div class="panel-body">';
+                html += '<p>' + htmlEncode(t.Description || '') + '</p>';
+                html += '<p>Pass Percentage: <strong>' + (t.PassingPercentage || 0) + '%</strong></p>';
+                html += '<button class="btn btn-primary btn-sm" onclick="startTraining(' + t.Id + ')">Start</button> ';
+                html += '<span id="contentLinks_' + t.Id + '" style="' + (isStarted ? '' : 'display:none;') + '">';
+                if (t.PdfPath) {
+                    html += '<button class="btn btn-default btn-sm" onclick="openContent(' + t.Id + ',\'pdf\')">Open PDF</button> ';
+                }
+                if (t.VideoPath) {
+                    html += '<button class="btn btn-default btn-sm" onclick="openContent(' + t.Id + ',\'video\')">Open Video</button> ';
+                }
+                html += '</span>';
+                if (t.PdfPath || t.VideoPath) {
+                    html += '<span id="contentLocked_' + t.Id + '" class="text-muted" style="margin-left:8px;' + (isStarted ? 'display:none;' : '') + '">Start training to unlock content.</span> ';
+                }
+                html += '<button class="btn btn-info btn-sm" onclick="loadQuiz(' + t.Id + ')">Take Quiz</button>';
+                html += '</div></div>';
+            }
+            $('#trainingList').html(html);
+        }
+
+        window.startTraining = function (id) {
+            $.post('/Training/StartTraining', { trainingContentId: id }, function () {
+                activeTrainingId = id;
+                startedTrainingIds[id] = true;
+                $('#contentLinks_' + id).show();
+                $('#contentLocked_' + id).hide();
+                alert('Training started. Content is now unlocked.');
+            });
+        };
+
+        window.openContent = function (id, type) {
+            if (!startedTrainingIds[id]) {
+                alert('Please click Start first.');
+                return;
+            }
+
+            var url = '/Training/OpenContent?trainingContentId=' + id + '&contentType=' + encodeURIComponent(type);
+            window.open(url, '_blank');
+        };
+
+        window.loadQuiz = function (id) {
+            activeTrainingId = id;
+            $.getJSON('/Training/GetQuiz', { trainingContentId: id }, function (quiz) {
+                if (!quiz || !quiz.length) {
+                    alert('No quiz configured for this training.');
+                    return;
+                }
+
+                var qHtml = '';
+                for (var i = 0; i < quiz.length; i++) {
+                    var q = quiz[i];
+                    qHtml += '<div class="panel panel-default" style="margin-bottom:12px;">';
+                    qHtml += '<div class="panel-body">';
+                    qHtml += '<p style="margin-top:0;"><strong>' + htmlEncode(q.QuestionText || '') + '</strong></p>';
+                    for (var j = 0; j < q.Options.length; j++) {
+                        var o = q.Options[j];
+                        qHtml += '<label class="checkbox" style="margin-top:6px; margin-bottom:6px;">';
+                        qHtml += '<input type="checkbox" name="q_' + q.Id + '" value="' + o.Id + '" /> ' + htmlEncode(o.OptionText || '');
+                        qHtml += '</label>';
+                    }
+                    qHtml += '</div></div>';
+                }
+
+                $('#quizQuestions').html(qHtml);
+                $('#quizContainer').show();
+                $('#resultContainer').hide();
+            }).fail(function (xhr) {
+                alert(xhr.responseText || 'Quiz is not available yet.');
+            });
+        };
+
+        $('#quizForm').on('submit', function (e) {
+            e.preventDefault();
+            var answersMap = {};
+            $('#quizQuestions input[type=checkbox]:checked').each(function () {
+                var name = $(this).attr('name');
+                var questionId = parseInt(name.replace('q_', ''), 10);
+                var selectedOptionId = parseInt($(this).val(), 10);
+                if (!answersMap[questionId]) {
+                    answersMap[questionId] = [];
+                }
+                answersMap[questionId].push(selectedOptionId);
+            });
+
+            var answers = [];
+            for (var qId in answersMap) {
+                if (!answersMap.hasOwnProperty(qId)) {
+                    continue;
+                }
+                answers.push({ QuestionId: parseInt(qId, 10), SelectedOptionIds: answersMap[qId] });
+            }
+
+            var payload = { ContentId: activeTrainingId, Answers: answers };
+            $.ajax({
+                url: '/Training/SubmitQuiz',
+                method: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(payload),
+                success: function (result) {
+                    var msg = 'Score: ' + result.scorePercentage + '% | Pass: ' + result.passPercentage + '% | ';
+                    msg += result.isPassed ? 'Status: PASSED' : 'Status: FAILED';
+                    msg += ' | Time: ' + result.elapsedSeconds + ' seconds';
+                    $('#resultContainer').text(msg).show();
+                },
+                error: function (xhr) {
+                    alert(xhr.responseText || 'Unable to submit quiz.');
+                }
+            });
+        });
+
+        function htmlEncode(value) {
+            return $('<div/>').text(value).html();
+        }
+
+        loadAssignedTrainings();
+    })();
+</script>

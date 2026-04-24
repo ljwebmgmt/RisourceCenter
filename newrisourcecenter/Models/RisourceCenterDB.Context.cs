@@ -128,5 +128,12 @@ namespace newrisourcecenter.Models
         public virtual DbSet<trainingClass> trainingClasses { get; set; }
         public virtual DbSet<trainingTrack> trainingTracks { get; set; }
         public virtual DbSet<usrClass> usrClasses { get; set; }
+        public virtual DbSet<QuizOption> QuizOptions { get; set; }
+        public virtual DbSet<QuizQuestion> QuizQuestions { get; set; }
+        public virtual DbSet<TrainingContent> TrainingContents { get; set; }
+        public virtual DbSet<TrainingQuizAttempt> TrainingQuizAttempts { get; set; }
+        public virtual DbSet<TrainingQuizAttemptAnswer> TrainingQuizAttemptAnswers { get; set; }
+        public virtual DbSet<UserProgress> UserProgresses { get; set; }
+        public virtual DbSet<TrainingRoleAssignment> TrainingRoleAssignments { get; set; }
     }
 }

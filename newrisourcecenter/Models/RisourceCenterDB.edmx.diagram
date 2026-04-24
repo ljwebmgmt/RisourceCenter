@@ -104,6 +104,23 @@
         <EntityTypeShape EntityType="RisourceCenterMexicoModel.trainingClass" Width="1.5" PointX="25.375" PointY="31.75" />
         <EntityTypeShape EntityType="RisourceCenterMexicoModel.trainingTrack" Width="1.5" PointX="27.375" PointY="31.75" />
         <EntityTypeShape EntityType="RisourceCenterMexicoModel.usrClass" Width="1.5" PointX="33.375" PointY="0.75" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.QuizOption" Width="1.5" PointX="37.875" PointY="4.375" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.QuizQuestion" Width="1.5" PointX="35.625" PointY="4.375" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.TrainingContent" Width="1.5" PointX="33.375" PointY="6.25" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.TrainingQuizAttempt" Width="1.5" PointX="35.625" PointY="7.25" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.TrainingQuizAttemptAnswer" Width="1.5" PointX="40.125" PointY="6.25" />
+        <AssociationConnector Association="RisourceCenterMexicoModel.FK__QuizOptio__Quest__7913E27D" />
+        <AssociationConnector Association="RisourceCenterMexicoModel.FK_TrainingQuizAttemptAnswer_Option" />
+        <AssociationConnector Association="RisourceCenterMexicoModel.FK__QuizQuest__Train__763775D2" />
+        <AssociationConnector Association="RisourceCenterMexicoModel.FK_TrainingQuizAttemptAnswer_Question" />
+        <AssociationConnector Association="RisourceCenterMexicoModel.FK_TrainingQuizAttempt_TrainingContent" />
+        <AssociationConnector Association="RisourceCenterMexicoModel.FK_TrainingQuizAttemptAnswer_Attempt" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.UserProgress" Width="1.5" PointX="35.625" PointY="12.25" />
+        <AssociationConnector Association="RisourceCenterMexicoModel.FK__UserProgr__Train__7BF04F28" />
+        <AssociationConnector Association="RisourceCenterMexicoModel.FK_TrainingQuizAttempt_UserProgress" />
+        <EntityTypeShape EntityType="RisourceCenterMexicoModel.TrainingRoleAssignment" Width="1.5" PointX="35.625" PointY="1" />
+        <AssociationConnector Association="RisourceCenterMexicoModel.FK_TrainingRoleAssignment_AspNetRoles" />
+        <AssociationConnector Association="RisourceCenterMexicoModel.FK_TrainingRoleAssignment_TrainingContent" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

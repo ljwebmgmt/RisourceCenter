@@ -12,21 +12,23 @@ namespace newrisourcecenter.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class AspNetRole
+    public partial class QuizQuestion
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public AspNetRole()
+        public QuizQuestion()
         {
-            this.AspNetUserRoles = new HashSet<AspNetUserRole>();
-            this.TrainingRoleAssignments = new HashSet<TrainingRoleAssignment>();
+            this.QuizOptions = new HashSet<QuizOption>();
+            this.TrainingQuizAttemptAnswers = new HashSet<TrainingQuizAttemptAnswer>();
         }
     
-        public string Id { get; set; }
-        public string Name { get; set; }
+        public int Id { get; set; }
+        public Nullable<int> TrainingContentId { get; set; }
+        public string QuestionText { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AspNetUserRole> AspNetUserRoles { get; set; }
+        public virtual ICollection<QuizOption> QuizOptions { get; set; }
+        public virtual TrainingContent TrainingContent { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TrainingRoleAssignment> TrainingRoleAssignments { get; set; }
+        public virtual ICollection<TrainingQuizAttemptAnswer> TrainingQuizAttemptAnswers { get; set; }
     }
 }

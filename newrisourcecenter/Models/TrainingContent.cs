@@ -12,20 +12,30 @@ namespace newrisourcecenter.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class AspNetRole
+    public partial class TrainingContent
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public AspNetRole()
+        public TrainingContent()
         {
-            this.AspNetUserRoles = new HashSet<AspNetUserRole>();
+            this.QuizQuestions = new HashSet<QuizQuestion>();
+            this.TrainingQuizAttempts = new HashSet<TrainingQuizAttempt>();
+            this.UserProgresses = new HashSet<UserProgress>();
             this.TrainingRoleAssignments = new HashSet<TrainingRoleAssignment>();
         }
     
-        public string Id { get; set; }
-        public string Name { get; set; }
+        public int Id { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public string PdfPath { get; set; }
+        public string VideoPath { get; set; }
+        public Nullable<int> PassingPercentage { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AspNetUserRole> AspNetUserRoles { get; set; }
+        public virtual ICollection<QuizQuestion> QuizQuestions { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TrainingQuizAttempt> TrainingQuizAttempts { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<UserProgress> UserProgresses { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TrainingRoleAssignment> TrainingRoleAssignments { get; set; }
     }
