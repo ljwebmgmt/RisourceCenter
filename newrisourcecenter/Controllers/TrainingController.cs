@@ -540,6 +540,16 @@ namespace newrisourcecenter.Controllers
                 return Json("Invalid payload.");
             }
 
+            if (!ModelState.IsValid)
+            {
+                Response.StatusCode = 400;
+                var errors = ModelState
+                    .Where(kvp => kvp.Value != null && kvp.Value.Errors != null && kvp.Value.Errors.Count > 0)
+                    .SelectMany(kvp => kvp.Value.Errors.Select(e => (kvp.Key + ": " + (e.ErrorMessage ?? "Invalid value"))))
+                    .ToList();
+                return Json(string.Join("\n", errors));
+            }
+
             var training = await db.TrainingContents.FindAsync(model.Id);
             if (training == null)
             {
@@ -567,6 +577,39 @@ namespace newrisourcecenter.Controllers
                 {
                     Response.StatusCode = 400;
                     return Json("At least one quiz question is required.");
+                }
+
+                var normalizedQuestions = model.Questions
+                    .Where(q => q != null && !string.IsNullOrWhiteSpace(q.QuestionText))
+                    .Select(q => new
+                    {
+                        QuestionText = q.QuestionText,
+                        Options = (q.Options ?? new List<TrainingOptionCreateViewModel>())
+                            .Where(o => o != null && !string.IsNullOrWhiteSpace(o.OptionText))
+                            .ToList()
+                    })
+                    .ToList();
+
+                if (normalizedQuestions.Count == 0)
+                {
+                    Response.StatusCode = 400;
+                    return Json("At least one quiz question is required.");
+                }
+
+                for (int i = 0; i < normalizedQuestions.Count; i++)
+                {
+                    var q = normalizedQuestions[i];
+                    if (q.Options.Count < 2)
+                    {
+                        Response.StatusCode = 400;
+                        return Json(string.Format("Question {0} must have at least 2 options. Options received: {1}", i + 1, q.Options.Count));
+                    }
+
+                    if (!q.Options.Any(o => o.IsCorrect))
+                    {
+                        Response.StatusCode = 400;
+                        return Json(string.Format("Question {0} must have at least 1 correct option.", i + 1));
+                    }
                 }
             }
 
@@ -669,6 +712,16 @@ namespace newrisourcecenter.Controllers
                 return Json("Invalid payload.");
             }
 
+            if (!ModelState.IsValid)
+            {
+                Response.StatusCode = 400;
+                var errors = ModelState
+                    .Where(kvp => kvp.Value != null && kvp.Value.Errors != null && kvp.Value.Errors.Count > 0)
+                    .SelectMany(kvp => kvp.Value.Errors.Select(e => (kvp.Key + ": " + (e.ErrorMessage ?? "Invalid value"))))
+                    .ToList();
+                return Json(string.Join("\n", errors));
+            }
+
             if (string.IsNullOrWhiteSpace(model.Title))
             {
                 Response.StatusCode = 400;
@@ -693,6 +746,39 @@ namespace newrisourcecenter.Controllers
                 return Json("At least one quiz question is required.");
             }
 
+            var normalizedQuestions = model.Questions
+                .Where(q => q != null && !string.IsNullOrWhiteSpace(q.QuestionText))
+                .Select(q => new
+                {
+                    QuestionText = q.QuestionText,
+                    Options = (q.Options ?? new List<TrainingOptionCreateViewModel>())
+                        .Where(o => o != null && !string.IsNullOrWhiteSpace(o.OptionText))
+                        .ToList()
+                })
+                .ToList();
+
+            if (normalizedQuestions.Count == 0)
+            {
+                Response.StatusCode = 400;
+                return Json("At least one quiz question is required.");
+            }
+
+            for (int i = 0; i < normalizedQuestions.Count; i++)
+            {
+                var q = normalizedQuestions[i];
+                if (q.Options.Count < 2)
+                {
+                    Response.StatusCode = 400;
+                    return Json(string.Format("Question {0} must have at least 2 options. Options received: {1}", i + 1, q.Options.Count));
+                }
+
+                if (!q.Options.Any(o => o.IsCorrect))
+                {
+                    Response.StatusCode = 400;
+                    return Json(string.Format("Question {0} must have at least 1 correct option.", i + 1));
+                }
+            }
+
             string pdfPath = SaveTrainingFile(model.PdfFile, "pdf");
             string videoPath = SaveTrainingFile(model.VideoFile, "video");
 
@@ -707,7 +793,7 @@ namespace newrisourcecenter.Controllers
             db.TrainingContents.Add(training);
             await db.SaveChangesAsync();
 
-            foreach (var question in model.Questions.Where(q => !string.IsNullOrWhiteSpace(q.QuestionText)))
+            foreach (var question in model.Questions.Where(q => q != null && !string.IsNullOrWhiteSpace(q.QuestionText)))
             {
                 var quizQuestion = new QuizQuestion
                 {
