@@ -3,8 +3,8 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container-fluid" style="padding-top:20px; padding-bottom:20px;">
-    <div style="max-width:1400px; margin:0 auto;">
+<div class="main_content" style="padding-top:20px; padding-bottom:20px;">
+    <div class="container">
         <div class="row">
             <div class="col-xs-12">
                 <div class="clearfix">
@@ -45,6 +45,12 @@
         function loadAssignedTrainings() {
             $.getJSON('/Training/GetAssignedTrainings', function (data) {
                 trainings = data || [];
+                startedTrainingIds = {};
+                for (var i = 0; i < trainings.length; i++) {
+                    if (trainings[i].IsStarted) {
+                        startedTrainingIds[trainings[i].Id] = true;
+                    }
+                }
                 renderTrainingCards();
             });
         }
@@ -65,7 +71,7 @@
                 html += '<div class="panel-body">';
                 html += '<p>' + htmlEncode(t.Description || '') + '</p>';
                 html += '<p>Pass Percentage: <strong>' + (t.PassingPercentage || 0) + '%</strong></p>';
-                html += '<button class="btn btn-primary btn-sm" onclick="startTraining(' + t.Id + ')">Start</button> ';
+                html += '<button class="btn btn-primary btn-sm" onclick="startTraining(' + t.Id + ')">' + (isStarted ? 'Restart' : 'Start') + '</button> ';
                 html += '<span id="contentLinks_' + t.Id + '" style="' + (isStarted ? '' : 'display:none;') + '">';
                 if (t.PdfPath) {
                     html += '<button class="btn btn-default btn-sm" onclick="openContent(' + t.Id + ',\'pdf\')">Open PDF</button> ';

@@ -1,0 +1,251 @@
+@{
+    ViewBag.Title = "Training Admin - Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var trainingId = (int)ViewBag.TrainingId;
+}
+
+<div class="main_content" style="padding-top:20px; padding-bottom:20px;">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="clearfix">
+                    <h2 class="pull-left" style="margin-top:0;">Edit Training (ID: @trainingId)</h2>
+                    <div class="pull-right" style="margin-top:3px;">
+                        <a href="/Training/AdminList" class="btn btn-default btn-sm">Back to Listing</a>
+                        <a href="/Training/Admin" class="btn btn-default btn-sm" style="margin-left:8px;">Create New</a>
+                    </div>
+                </div>
+
+                <form id="trainingEditForm" class="form-horizontal" enctype="multipart/form-data" style="margin-top:15px;">
+                    <input type="hidden" id="TrainingId" value="@trainingId" />
+                    <input type="hidden" id="HasAttempts" value="0" />
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading"><strong>Training Details</strong></div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="Title" class="col-sm-4 control-label">Title</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="Title" required />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="PassingPercentage" class="col-sm-4 control-label">Passing Percentage</label>
+                                        <div class="col-sm-8">
+                                            <input type="number" min="0" max="100" class="form-control" id="PassingPercentage" value="70" required />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="Description" class="col-sm-2 control-label">Description</label>
+                                <div class="col-sm-10">
+                                    <textarea class="form-control" id="Description" rows="3"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="PdfFile" class="col-sm-4 control-label">PDF File</label>
+                                        <div class="col-sm-8">
+                                            <input type="file" id="PdfFile" accept=".pdf" />
+                                            <div class="help-block" id="ExistingPdf"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="VideoFile" class="col-sm-4 control-label">Video File</label>
+                                        <div class="col-sm-8">
+                                            <input type="file" id="VideoFile" accept="video/*" />
+                                            <div class="help-block" id="ExistingVideo"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="RoleIds" class="col-sm-2 control-label">Assign Roles</label>
+                                <div class="col-sm-10">
+                                    <select id="RoleIds" class="form-control" multiple style="height:220px;"></select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading"><strong>Quiz Questions</strong></div>
+                        <div class="panel-body">
+                            <div id="questionContainer"></div>
+                            <div class="clearfix" style="margin-top:10px;">
+                                <button type="button" class="btn btn-default btn-sm" id="addQuestionBtn">Add Question</button>
+                                <button type="submit" class="btn btn-primary pull-right">Save Changes</button>
+                            </div>
+                            <div id="editMessage" class="alert alert-info" style="display:none; margin-top:15px;"></div>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        var trainingId = parseInt($('#TrainingId').val(), 10);
+
+        function addQuestionBlock(question) {
+            var qIndex = $('#questionContainer .question-block').length;
+            var html = '';
+            html += '<div class="panel panel-default question-block" style="margin-bottom:12px;">';
+            html += '<div class="panel-body">';
+            html += '<div class="form-group">';
+            html += '<label class="col-sm-2 control-label">Question</label>';
+            html += '<div class="col-sm-10"><input class="form-control question-text" value="' + htmlEncode((question && question.QuestionText) || '') + '" /></div>';
+            html += '</div>';
+            html += '<div class="option-list">';
+
+            var options = (question && question.Options) ? question.Options : [];
+            for (var i = 0; i < 4; i++) {
+                var opt = options[i] || {};
+                html += '<div class="form-group">';
+                html += '<label class="col-sm-2 control-label">Option ' + (i + 1) + '</label>';
+                html += '<div class="col-sm-8"><input class="form-control option-text" value="' + htmlEncode(opt.OptionText || '') + '" /></div>';
+                html += '<div class="col-sm-2">';
+                html += '<div class="checkbox" style="margin:0; padding-top:7px;">';
+                html += '<label><input type="checkbox" name="correct_' + qIndex + '" class="option-correct" ' + ((opt.IsCorrect) ? 'checked' : '') + ' /> Correct</label>';
+                html += '</div>';
+                html += '</div>';
+                html += '</div>';
+            }
+
+            html += '<div class="clearfix"></div>';
+            html += '</div></div></div>';
+            $('#questionContainer').append(html);
+        }
+
+        function htmlEncode(value) {
+            return $('<div/>').text(value).html();
+        }
+
+        function loadRoles(selectedRoleIds) {
+            $.getJSON('/Training/GetRoles', function (roles) {
+                var html = '';
+                for (var i = 0; i < roles.length; i++) {
+                    html += '<option value="' + roles[i].Id + '">' + roles[i].Name + '</option>';
+                }
+                $('#RoleIds').html(html);
+                if (selectedRoleIds && selectedRoleIds.length) {
+                    $('#RoleIds').val(selectedRoleIds);
+                }
+            });
+        }
+
+        function loadTraining() {
+            $.getJSON('/Training/GetAdminTrainingDetails', { id: trainingId }, function (res) {
+                var t = res.training;
+                var hasAttempts = !!res.hasAttempts;
+                $('#HasAttempts').val(hasAttempts ? '1' : '0');
+                $('#Title').val(t.Title || '');
+                $('#Description').val(t.Description || '');
+                $('#PassingPercentage').val(t.PassingPercentage || 0);
+
+                if (t.PdfPath) {
+                    $('#ExistingPdf').html('Current: <a href="' + t.PdfPath + '" target="_blank">Open PDF</a>');
+                }
+                if (t.VideoPath) {
+                    $('#ExistingVideo').html('Current: <a href="' + t.VideoPath + '" target="_blank">Open Video</a>');
+                }
+
+                loadRoles(res.roleIds || []);
+
+                $('#questionContainer').empty();
+                var questions = t.Questions || [];
+                if (!questions.length) {
+                    addQuestionBlock();
+                    return;
+                }
+
+                for (var i = 0; i < questions.length; i++) {
+                    addQuestionBlock(questions[i]);
+                }
+
+                if (hasAttempts) {
+                    $('#addQuestionBtn').hide();
+                    $('#questionContainer').find('input, textarea, select').prop('disabled', true);
+                    $('#editMessage').text('Quiz questions are locked because there are existing quiz attempts for this training.').show();
+                }
+            }).fail(function (xhr) {
+                $('#editMessage').text(xhr.responseText || 'Unable to load training.').show();
+            });
+        }
+
+        function toFormData() {
+            var fd = new FormData();
+            fd.append('Id', trainingId);
+            fd.append('Title', $('#Title').val());
+            fd.append('Description', $('#Description').val());
+            fd.append('PassingPercentage', $('#PassingPercentage').val());
+
+            var pdf = $('#PdfFile')[0].files[0];
+            var video = $('#VideoFile')[0].files[0];
+            if (pdf) { fd.append('PdfFile', pdf); }
+            if (video) { fd.append('VideoFile', video); }
+
+            var selectedRoles = $('#RoleIds').val() || [];
+            for (var r = 0; r < selectedRoles.length; r++) {
+                fd.append('RoleIds', selectedRoles[r]);
+            }
+
+            $('#questionContainer .question-block').each(function (qIndex) {
+                var qText = $(this).find('.question-text').val();
+                fd.append('Questions[' + qIndex + '].QuestionText', qText);
+
+                $(this).find('.form-group').each(function (optIndex) {
+                    var optTextEl = $(this).find('.option-text');
+                    if (!optTextEl.length) {
+                        return;
+                    }
+                    var isCorrect = $(this).find('.option-correct').is(':checked');
+                    fd.append('Questions[' + qIndex + '].Options[' + optIndex + '].OptionText', optTextEl.val());
+                    fd.append('Questions[' + qIndex + '].Options[' + optIndex + '].IsCorrect', isCorrect);
+                });
+            });
+
+            return fd;
+        }
+
+        $('#addQuestionBtn').on('click', function () {
+            addQuestionBlock();
+        });
+
+        $('#trainingEditForm').on('submit', function (e) {
+            e.preventDefault();
+            if ($('#HasAttempts').val() === '1') {
+                $('#questionContainer').find('input, textarea, select').prop('disabled', false);
+            }
+            $.ajax({
+                url: '/Training/Update',
+                method: 'POST',
+                data: toFormData(),
+                processData: false,
+                contentType: false,
+                success: function (result) {
+                    $('#editMessage').text('Training updated. ID: ' + result.trainingId).show();
+                },
+                error: function (xhr) {
+                    $('#editMessage').text(xhr.responseText || 'Unable to update training.').show();
+                }
+            });
+        });
+
+        loadTraining();
+    })();
+</script>

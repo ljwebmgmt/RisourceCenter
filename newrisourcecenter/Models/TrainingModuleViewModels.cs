@@ -14,6 +14,11 @@ namespace newrisourcecenter.Models
         public List<TrainingQuestionCreateViewModel> Questions { get; set; }
     }
 
+    public class TrainingUpdateViewModel : TrainingCreateViewModel
+    {
+        public int Id { get; set; }
+    }
+
     public class TrainingQuestionCreateViewModel
     {
         public string QuestionText { get; set; }

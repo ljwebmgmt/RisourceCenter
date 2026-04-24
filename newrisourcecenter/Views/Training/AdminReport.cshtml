@@ -1,0 +1,127 @@
+@{
+    ViewBag.Title = "Training Admin - Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="main_content" style="padding-top:20px; padding-bottom:20px;">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="clearfix">
+                    <h2 class="pull-left" style="margin-top:0;">Training Report</h2>
+                    <a href="/Training/AdminList" class="btn btn-default btn-sm pull-right" style="margin-top:3px;">Back to Listing</a>
+                </div>
+
+                <div class="panel panel-default" style="margin-top:15px;">
+                    <div class="panel-heading"><strong>Filters</strong></div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Training</label>
+                                    <select id="TrainingSelect" class="form-control"></select>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group" style="margin-top:25px;">
+                                    <button class="btn btn-primary" id="LoadBtn" type="button">Load Report</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="reportMessage" class="alert alert-info" style="display:none; margin-top:10px;"></div>
+                    </div>
+                </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-heading"><strong>Results</strong></div>
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered" id="reportTable" style="margin-bottom:0;">
+                                <thead>
+                                    <tr>
+                                        <th style="width:90px;">Progress ID</th>
+                                        <th style="width:90px;">User ID</th>
+                                        <th>User</th>
+                                        <th>Email</th>
+                                        <th style="width:170px;">Started</th>
+                                        <th style="width:170px;">Ended</th>
+                                        <th style="width:120px;">Time (sec)</th>
+                                        <th style="width:120px;">Latest Score</th>
+                                        <th style="width:110px;">Passed</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        function htmlEncode(value) {
+            return $('<div/>').text(value).html();
+        }
+
+        function loadTrainings() {
+            $.getJSON('/Training/GetAllTrainingsAdmin', function (trainings) {
+                var html = '<option value="">-- Select --</option>';
+                trainings = trainings || [];
+                for (var i = 0; i < trainings.length; i++) {
+                    html += '<option value="' + trainings[i].Id + '">' + htmlEncode(trainings[i].Title || '') + '</option>';
+                }
+                $('#TrainingSelect').html(html);
+            });
+        }
+
+        function renderRows(rows) {
+            var html = '';
+            for (var i = 0; i < rows.length; i++) {
+                var r = rows[i];
+                var latest = r.LatestAttempt;
+                var latestScore = latest ? (latest.ScorePercentage + '%') : '';
+                var latestPassed = latest ? (latest.IsPassed ? 'Yes' : 'No') : '';
+
+                html += '<tr>';
+                html += '<td>' + r.Id + '</td>';
+                html += '<td>' + r.UserId + '</td>';
+                html += '<td>' + htmlEncode(r.UserName || '') + '</td>';
+                html += '<td>' + htmlEncode(r.UserEmail || '') + '</td>';
+                html += '<td>' + htmlEncode(r.StartTime || '') + '</td>';
+                html += '<td>' + htmlEncode(r.EndTime || '') + '</td>';
+                html += '<td>' + (r.ElapsedSeconds || 0) + '</td>';
+                html += '<td>' + htmlEncode(latestScore) + '</td>';
+                html += '<td>' + htmlEncode(latestPassed) + '</td>';
+                html += '</tr>';
+            }
+            $('#reportTable tbody').html(html);
+        }
+
+        function loadReport() {
+            var trainingId = parseInt($('#TrainingSelect').val(), 10);
+            if (!trainingId) {
+                $('#reportMessage').text('Please select a training.').show();
+                return;
+            }
+
+            $('#reportMessage').hide();
+
+            $.getJSON('/Training/GetTrainingStatsAdmin', { trainingContentId: trainingId }, function (rows) {
+                rows = rows || [];
+                renderRows(rows);
+                if (!rows.length) {
+                    $('#reportMessage').text('No progress records found for this training.').show();
+                }
+            }).fail(function (xhr) {
+                $('#reportMessage').text(xhr.responseText || 'Unable to load report.').show();
+            });
+        }
+
+        $('#LoadBtn').on('click', loadReport);
+        loadTrainings();
+    })();
+</script>

@@ -3,13 +3,14 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container-fluid" style="padding-top:20px; padding-bottom:20px;">
-    <div style="max-width:1400px; margin:0 auto;">
+<div class="main_content" style="padding-top:20px; padding-bottom:20px;">
+    <div class="container">
         <div class="row">
             <div class="col-xs-12">
                 <div class="clearfix">
                     <h2 class="pull-left" style="margin-top:0;">All Trainings</h2>
                     <a href="/Training/Admin" class="btn btn-primary btn-sm pull-right" style="margin-top:3px;">Create Training</a>
+                    <a href="/Training/AdminReport" class="btn btn-default btn-sm pull-right" style="margin-top:3px; margin-right:8px;">View Report</a>
                 </div>
 
                 <div class="panel panel-default" style="margin-top:15px;">
@@ -25,6 +26,8 @@
                                         <th style="width:90px;">PDF</th>
                                         <th style="width:90px;">Video</th>
                                         <th style="width:120px;">Questions</th>
+                                        <th>Assigned Roles</th>
+                                        <th style="width:90px;">Edit</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -50,6 +53,7 @@
                 var rows = '';
                 for (var i = 0; i < trainings.length; i++) {
                     var t = trainings[i];
+                    var roles = (t.RoleNames || []).join(', ');
                     rows += '<tr>';
                     rows += '<td>' + t.Id + '</td>';
                     rows += '<td>' + htmlEncode(t.Title || '') + '</td>';
@@ -57,6 +61,8 @@
                     rows += '<td>' + (t.HasPdf ? 'Yes' : 'No') + '</td>';
                     rows += '<td>' + (t.HasVideo ? 'Yes' : 'No') + '</td>';
                     rows += '<td>' + (t.QuestionCount || 0) + '</td>';
+                    rows += '<td>' + htmlEncode(roles) + '</td>';
+                    rows += '<td><a class="btn btn-xs btn-default" href="/Training/AdminEdit/' + t.Id + '">Edit</a></td>';
                     rows += '</tr>';
                 }
 

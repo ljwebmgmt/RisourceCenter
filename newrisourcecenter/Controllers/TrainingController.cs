@@ -38,6 +38,21 @@ namespace newrisourcecenter.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Super Admin")]
+        public ActionResult AdminEdit(int id)
+        {
+            ViewBag.TrainingId = id;
+            return View();
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Super Admin")]
+        public ActionResult AdminReport()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Super Admin")]
         public async Task<JsonResult> GetAllTrainingsAdmin()
         {
             var trainings = await db.TrainingContents
@@ -49,12 +64,95 @@ namespace newrisourcecenter.Controllers
                     PassingPercentage = x.PassingPercentage ?? 0,
                     HasPdf = x.PdfPath != null && x.PdfPath != "",
                     HasVideo = x.VideoPath != null && x.VideoPath != "",
-                    QuestionCount = x.QuizQuestions.Count()
+                    QuestionCount = x.QuizQuestions.Count(),
+                    RoleNames = x.TrainingRoleAssignments.Select(a => a.AspNetRole.Name)
                 })
                 .OrderByDescending(x => x.Id)
                 .ToListAsync();
 
             return Json(trainings, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Super Admin")]
+        public async Task<JsonResult> GetTrainingStatsAdmin(int trainingContentId)
+        {
+            var trainingExists = await db.TrainingContents.AnyAsync(x => x.Id == trainingContentId);
+            if (!trainingExists)
+            {
+                Response.StatusCode = 404;
+                return Json("Training not found.", JsonRequestBehavior.AllowGet);
+            }
+
+            var progresses = await db.UserProgresses
+                .Where(x => x.TrainingContentId == trainingContentId)
+                .Select(x => new
+                {
+                    x.Id,
+                    x.UserId,
+                    x.StartTime,
+                    x.EndTime,
+                    x.ScorePercentage,
+                    x.IsPassed
+                })
+                .ToListAsync();
+
+            var userIds = progresses.Select(x => x.UserId).Distinct().ToList();
+
+            var users = await db.usr_user
+                .Where(x => userIds.Contains(x.usr_ID))
+                .Select(x => new { x.usr_ID, x.usr_fName, x.usr_lName, x.usr_email })
+                .ToListAsync();
+
+            var userById = users.ToDictionary(x => x.usr_ID, x => x);
+
+            var attempts = await db.TrainingQuizAttempts
+                .Where(x => x.TrainingContentId == trainingContentId)
+                .Select(x => new { x.UserId, x.SubmittedAt, x.ScorePercentage, x.IsPassed })
+                .ToListAsync();
+
+            var latestAttemptByUser = attempts
+                .GroupBy(x => x.UserId)
+                .Select(g => g.OrderByDescending(x => x.SubmittedAt).FirstOrDefault())
+                .Where(x => x != null)
+                .ToDictionary(x => x.UserId, x => x);
+
+            var nowUtc = DateTime.UtcNow;
+            var rows = progresses
+                .OrderByDescending(x => x.StartTime)
+                .Select(p =>
+                {
+                    var u = userById.ContainsKey(p.UserId) ? userById[p.UserId] : null;
+                    var end = p.EndTime ?? nowUtc;
+                    var elapsed = end - p.StartTime;
+
+                    object attempt;
+                    if (!latestAttemptByUser.TryGetValue(p.UserId, out var last))
+                    {
+                        attempt = null;
+                    }
+                    else
+                    {
+                        attempt = new { last.SubmittedAt, last.ScorePercentage, last.IsPassed };
+                    }
+
+                    return new
+                    {
+                        p.Id,
+                        p.UserId,
+                        UserName = u == null ? "" : (u.usr_fName + " " + u.usr_lName),
+                        UserEmail = u == null ? "" : u.usr_email,
+                        p.StartTime,
+                        p.EndTime,
+                        ElapsedSeconds = Math.Max(0, (int)elapsed.TotalSeconds),
+                        LatestAttempt = attempt,
+                        ProgressScorePercentage = p.ScorePercentage,
+                        ProgressIsPassed = p.IsPassed
+                    };
+                })
+                .ToList();
+
+            return Json(rows, JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]
@@ -82,6 +180,14 @@ namespace newrisourcecenter.Controllers
             var trainingIds = allTrainings.Select(x => x.Id).ToList();
             var roleAssignments = await GetAssignmentsByTrainingIds(trainingIds);
 
+            var startedTrainingIds = await db.UserProgresses
+                .Where(x => x.UserId == (int)userId && x.EndTime == null && x.TrainingContentId.HasValue)
+                .Select(x => x.TrainingContentId.Value)
+                .Distinct()
+                .ToListAsync();
+
+            var startedSet = new HashSet<int>(startedTrainingIds);
+
             var assignedTrainings = allTrainings
                 .Where(x => roleAssignments.ContainsKey(x.Id) && roleAssignments[x.Id].Intersect(userRoleIds).Any())
                 .Select(x => new
@@ -91,7 +197,8 @@ namespace newrisourcecenter.Controllers
                     x.Description,
                     x.PdfPath,
                     x.VideoPath,
-                    PassingPercentage = x.PassingPercentage ?? 0
+                    PassingPercentage = x.PassingPercentage ?? 0,
+                    IsStarted = startedSet.Contains(x.Id)
                 })
                 .OrderBy(x => x.Title)
                 .ToList();
@@ -379,6 +486,8 @@ namespace newrisourcecenter.Controllers
         [Authorize(Roles = "Super Admin")]
         public async Task<JsonResult> GetAdminTrainingDetails(int id)
         {
+            bool hasAttempts = await db.TrainingQuizAttempts.AnyAsync(x => x.TrainingContentId == id);
+
             var training = await db.TrainingContents
                 .Where(x => x.Id == id)
                 .Select(x => new
@@ -404,11 +513,141 @@ namespace newrisourcecenter.Controllers
                 return Json("Training not found.", JsonRequestBehavior.AllowGet);
             }
 
-            var roleIds = await db.Database.SqlQuery<string>(
-                "SELECT RoleId FROM dbo.TrainingRoleAssignment WHERE TrainingContentId = @p0",
-                id).ToListAsync();
+            var roleIds = await db.TrainingRoleAssignments
+                .Where(x => x.TrainingContentId == id)
+                .Select(x => x.RoleId)
+                .ToListAsync();
 
-            return Json(new { training, roleIds }, JsonRequestBehavior.AllowGet);
+            return Json(new { training, roleIds, hasAttempts }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Super Admin")]
+        public async Task<JsonResult> Update(TrainingUpdateViewModel model)
+        {
+            if (model == null)
+            {
+                Response.StatusCode = 400;
+                return Json("Invalid payload.");
+            }
+
+            var training = await db.TrainingContents.FindAsync(model.Id);
+            if (training == null)
+            {
+                Response.StatusCode = 404;
+                return Json("Training not found.");
+            }
+
+            bool hasAttempts = await db.TrainingQuizAttempts.AnyAsync(x => x.TrainingContentId == training.Id);
+
+            if (string.IsNullOrWhiteSpace(model.Title))
+            {
+                Response.StatusCode = 400;
+                return Json("Training title is required.");
+            }
+
+            if (model.PassingPercentage < 0 || model.PassingPercentage > 100)
+            {
+                Response.StatusCode = 400;
+                return Json("Passing percentage must be between 0 and 100.");
+            }
+
+            if (!hasAttempts)
+            {
+                if (model.Questions == null || model.Questions.Count == 0)
+                {
+                    Response.StatusCode = 400;
+                    return Json("At least one quiz question is required.");
+                }
+            }
+
+            if (hasAttempts)
+            {
+                if ((training.PassingPercentage ?? 0) != model.PassingPercentage)
+                {
+                    Response.StatusCode = 400;
+                    return Json("Passing percentage cannot be changed after users have attempted the quiz.");
+                }
+            }
+
+            var pdfPath = training.PdfPath;
+            var videoPath = training.VideoPath;
+            if (model.PdfFile != null)
+            {
+                pdfPath = SaveTrainingFile(model.PdfFile, "pdf");
+            }
+            if (model.VideoFile != null)
+            {
+                videoPath = SaveTrainingFile(model.VideoFile, "video");
+            }
+
+            if (string.IsNullOrWhiteSpace(pdfPath) && string.IsNullOrWhiteSpace(videoPath))
+            {
+                Response.StatusCode = 400;
+                return Json("Attach at least one training content file (pdf/video).");
+            }
+
+            training.Title = model.Title.Trim();
+            training.Description = model.Description;
+            training.PdfPath = pdfPath;
+            training.VideoPath = videoPath;
+            training.PassingPercentage = model.PassingPercentage;
+
+            if (!hasAttempts)
+            {
+                var existingQuestions = await db.QuizQuestions
+                    .Where(x => x.TrainingContentId == training.Id)
+                    .ToListAsync();
+
+                var existingQuestionIds = existingQuestions.Select(x => x.Id).ToList();
+                if (existingQuestionIds.Count > 0)
+                {
+                    var existingOptions = await db.QuizOptions
+                        .Where(x => x.QuestionId.HasValue && existingQuestionIds.Contains(x.QuestionId.Value))
+                        .ToListAsync();
+
+                    if (existingOptions.Count > 0)
+                    {
+                        db.QuizOptions.RemoveRange(existingOptions);
+                    }
+
+                    db.QuizQuestions.RemoveRange(existingQuestions);
+                    await db.SaveChangesAsync();
+                }
+
+                foreach (var question in model.Questions.Where(q => !string.IsNullOrWhiteSpace(q.QuestionText)))
+                {
+                    var quizQuestion = new QuizQuestion
+                    {
+                        TrainingContentId = training.Id,
+                        QuestionText = question.QuestionText.Trim()
+                    };
+                    db.QuizQuestions.Add(quizQuestion);
+                    await db.SaveChangesAsync();
+
+                    if (question.Options == null)
+                    {
+                        continue;
+                    }
+
+                    foreach (var option in question.Options.Where(o => !string.IsNullOrWhiteSpace(o.OptionText)))
+                    {
+                        db.QuizOptions.Add(new QuizOption
+                        {
+                            QuestionId = quizQuestion.Id,
+                            OptionText = option.OptionText.Trim(),
+                            IsCorrect = option.IsCorrect
+                        });
+                    }
+                }
+
+                await db.SaveChangesAsync();
+            }
+
+            await db.SaveChangesAsync();
+            await SaveRoleAssignments(training.Id, model.RoleIds ?? new List<string>());
+
+            return Json(new { trainingId = training.Id });
         }
 
         [HttpPost]
