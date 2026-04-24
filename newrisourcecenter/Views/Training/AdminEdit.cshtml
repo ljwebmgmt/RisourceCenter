@@ -208,14 +208,13 @@
                 var qText = $(this).find('.question-text').val();
                 fd.append('Questions[' + qIndex + '].QuestionText', qText);
 
-                $(this).find('.form-group').each(function (optIndex) {
-                    var optTextEl = $(this).find('.option-text');
-                    if (!optTextEl.length) {
-                        return;
-                    }
-                    var isCorrect = $(this).find('.option-correct').is(':checked');
+                var optIndex = 0;
+                $(this).find('.option-text').each(function () {
+                    var optTextEl = $(this);
+                    var isCorrect = optTextEl.closest('.form-group').find('.option-correct').is(':checked');
                     fd.append('Questions[' + qIndex + '].Options[' + optIndex + '].OptionText', optTextEl.val());
                     fd.append('Questions[' + qIndex + '].Options[' + optIndex + '].IsCorrect', isCorrect);
+                    optIndex++;
                 });
             });
 

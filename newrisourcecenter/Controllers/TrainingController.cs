@@ -77,6 +77,7 @@ namespace newrisourcecenter.Controllers
         [Authorize(Roles = "Super Admin")]
         public async Task<JsonResult> GetTrainingStatsAdmin(int trainingContentId)
         {
+            var localZone = TimeZoneInfo.Local;
             var trainingExists = await db.TrainingContents.AnyAsync(x => x.Id == trainingContentId);
             if (!trainingExists)
             {
@@ -126,6 +127,13 @@ namespace newrisourcecenter.Controllers
                     var end = p.EndTime ?? nowUtc;
                     var elapsed = end - p.StartTime;
 
+                    var startLocal = TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(p.StartTime, DateTimeKind.Utc), localZone);
+                    DateTime? endLocal = null;
+                    if (p.EndTime.HasValue)
+                    {
+                        endLocal = TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(p.EndTime.Value, DateTimeKind.Utc), localZone);
+                    }
+
                     object attempt;
                     if (!latestAttemptByUser.TryGetValue(p.UserId, out var last))
                     {
@@ -133,7 +141,8 @@ namespace newrisourcecenter.Controllers
                     }
                     else
                     {
-                        attempt = new { last.SubmittedAt, last.ScorePercentage, last.IsPassed };
+                        var submittedLocal = TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(last.SubmittedAt, DateTimeKind.Utc), localZone);
+                        attempt = new { SubmittedAt = submittedLocal.ToString("yyyy-MM-dd HH:mm"), last.ScorePercentage, last.IsPassed };
                     }
 
                     return new
@@ -142,8 +151,8 @@ namespace newrisourcecenter.Controllers
                         p.UserId,
                         UserName = u == null ? "" : (u.usr_fName + " " + u.usr_lName),
                         UserEmail = u == null ? "" : u.usr_email,
-                        p.StartTime,
-                        p.EndTime,
+                        StartTime = startLocal.ToString("yyyy-MM-dd HH:mm"),
+                        EndTime = endLocal.HasValue ? endLocal.Value.ToString("yyyy-MM-dd HH:mm") : "",
                         ElapsedSeconds = Math.Max(0, (int)elapsed.TotalSeconds),
                         LatestAttempt = attempt,
                         ProgressScorePercentage = p.ScorePercentage,
