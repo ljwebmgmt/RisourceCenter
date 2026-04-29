@@ -53,24 +53,101 @@ namespace newrisourcecenter.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Super Admin")]
-        public async Task<JsonResult> GetAllTrainingsAdmin()
+        public async Task<JsonResult> GetAllTrainingsAdmin(int page = 1, int pageSize = 25)
         {
-            var trainings = await db.TrainingContents
+            if (page < 1) page = 1;
+            if (pageSize < 1) pageSize = 25;
+            if (pageSize > 200) pageSize = 200;
+
+            var baseQuery = db.TrainingContents;
+            var totalCount = await baseQuery.CountAsync();
+
+            var trainings = await baseQuery
+                .OrderByDescending(x => x.Id)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .Select(x => new
                 {
                     x.Id,
                     x.Title,
                     x.Description,
+                    x.PdfPath,
+                    x.VideoPath,
                     PassingPercentage = x.PassingPercentage ?? 0,
                     HasPdf = x.PdfPath != null && x.PdfPath != "",
                     HasVideo = x.VideoPath != null && x.VideoPath != "",
                     QuestionCount = x.QuizQuestions.Count(),
+                    StartedCount = db.UserProgresses.Count(p => p.TrainingContentId == x.Id),
+                    CompletedCount = db.UserProgresses.Count(p => p.TrainingContentId == x.Id && p.EndTime != null),
+                    PassedCount = db.UserProgresses.Count(p => p.TrainingContentId == x.Id && p.IsPassed == true),
+                    AttemptCount = db.TrainingQuizAttempts.Count(a => a.TrainingContentId == x.Id),
                     RoleNames = x.TrainingRoleAssignments.Select(a => a.AspNetRole.Name)
                 })
-                .OrderByDescending(x => x.Id)
                 .ToListAsync();
 
-            return Json(trainings, JsonRequestBehavior.AllowGet);
+            return Json(new { items = trainings, totalCount, page, pageSize }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Super Admin")]
+        public async Task<JsonResult> DeleteTrainingAdmin(int id)
+        {
+            var training = await db.TrainingContents.FindAsync(id);
+            if (training == null)
+            {
+                Response.TrySkipIisCustomErrors = true;
+                Response.StatusCode = 404;
+                return Json("Training not found.");
+            }
+
+            bool hasAttempts = await db.TrainingQuizAttempts.AnyAsync(x => x.TrainingContentId == id);
+            if (hasAttempts)
+            {
+                Response.TrySkipIisCustomErrors = true;
+                Response.StatusCode = 400;
+                return Json("Training cannot be deleted because users have attempted the quiz.");
+            }
+
+            bool hasProgress = await db.UserProgresses.AnyAsync(x => x.TrainingContentId == id);
+            if (hasProgress)
+            {
+                Response.TrySkipIisCustomErrors = true;
+                Response.StatusCode = 400;
+                return Json("Training cannot be deleted because users have started or completed it.");
+            }
+
+            var roleAssignments = await db.TrainingRoleAssignments
+                .Where(x => x.TrainingContentId == id)
+                .ToListAsync();
+            if (roleAssignments.Count > 0)
+            {
+                db.TrainingRoleAssignments.RemoveRange(roleAssignments);
+                await db.SaveChangesAsync();
+            }
+
+            var questions = await db.QuizQuestions
+                .Where(x => x.TrainingContentId == id)
+                .ToListAsync();
+            var questionIds = questions.Select(x => x.Id).ToList();
+            if (questionIds.Count > 0)
+            {
+                var options = await db.QuizOptions
+                    .Where(x => x.QuestionId.HasValue && questionIds.Contains(x.QuestionId.Value))
+                    .ToListAsync();
+                if (options.Count > 0)
+                {
+                    db.QuizOptions.RemoveRange(options);
+                    await db.SaveChangesAsync();
+                }
+
+                db.QuizQuestions.RemoveRange(questions);
+                await db.SaveChangesAsync();
+            }
+
+            db.TrainingContents.Remove(training);
+            await db.SaveChangesAsync();
+
+            return Json("OK");
         }
 
         [HttpGet]
@@ -371,6 +448,8 @@ namespace newrisourcecenter.Controllers
                 return Json("Please start training before submitting the quiz.");
             }
 
+            bool wasPassed = progress.IsPassed.HasValue && progress.IsPassed.Value;
+
             var trainingQuestionIds = await db.QuizQuestions
                 .Where(x => x.TrainingContentId == submission.ContentId)
                 .Select(x => x.Id)
@@ -481,6 +560,17 @@ namespace newrisourcecenter.Controllers
                 }
             }
 
+            if (isPassed && !wasPassed)
+            {
+                try
+                {
+                    await SendTrainingPassedEmail((int)userId, submission.ContentId, training.Title, scorePercentage, passPercentage);
+                }
+                catch
+                {
+                }
+            }
+
             TimeSpan elapsed = progress.EndTime.Value - progress.StartTime;
             return Json(new
             {
@@ -489,6 +579,51 @@ namespace newrisourcecenter.Controllers
                 isPassed,
                 elapsedSeconds = Math.Max(0, (int)elapsed.TotalSeconds)
             });
+        }
+
+        private async Task SendTrainingPassedEmail(int userId, int trainingContentId, string trainingTitle, int scorePercentage, int passingPercentage)
+        {
+            var user = await db.usr_user
+                .Where(x => x.usr_ID == userId)
+                .Select(x => new { x.usr_email, x.usr_fName, x.usr_lName })
+                .FirstOrDefaultAsync();
+
+            if (user == null || string.IsNullOrWhiteSpace(user.usr_email))
+            {
+                return;
+            }
+
+            string hostBase = "https://www.risourcecenter.com";
+            if (Request != null && Request.Url != null)
+            {
+                hostBase = Request.Url.Port == 443
+                    ? ("https://" + Request.Url.Host)
+                    : ("http://" + Request.Url.Host + ":" + Request.Url.Port);
+            }
+
+            string to = user.usr_email.Trim();
+            string from = "webmaster@rittal.us";
+            string subject = "Training Completed: " + (trainingTitle ?? string.Empty);
+
+            string displayName = (user.usr_fName + " " + user.usr_lName).Trim();
+            if (string.IsNullOrWhiteSpace(displayName))
+            {
+                displayName = to;
+            }
+
+            string body = string.Format(
+                "Dear {0},<br/><br/>" +
+                "Congratulations! You have completed the training <b>{1}</b>.<br/><br/>" +
+                "Score: <b>{2}%</b><br/>" +
+                "Passing Requirement: <b>{3}%</b><br/><br/>" +
+                "You can view your trainings here: <a href=\"{4}/Training/Index\" target=\"_blank\">My Trainings</a><br/><br/>",
+                displayName,
+                trainingTitle ?? string.Empty,
+                scorePercentage,
+                passingPercentage,
+                hostBase);
+
+            new CommonController().email(from, to, subject, body, footer: "yes");
         }
 
         [HttpGet]
@@ -536,12 +671,14 @@ namespace newrisourcecenter.Controllers
         {
             if (model == null)
             {
+                Response.TrySkipIisCustomErrors = true;
                 Response.StatusCode = 400;
                 return Json("Invalid payload.");
             }
 
             if (!ModelState.IsValid)
             {
+                Response.TrySkipIisCustomErrors = true;
                 Response.StatusCode = 400;
                 var errors = ModelState
                     .Where(kvp => kvp.Value != null && kvp.Value.Errors != null && kvp.Value.Errors.Count > 0)
@@ -553,6 +690,7 @@ namespace newrisourcecenter.Controllers
             var training = await db.TrainingContents.FindAsync(model.Id);
             if (training == null)
             {
+                Response.TrySkipIisCustomErrors = true;
                 Response.StatusCode = 404;
                 return Json("Training not found.");
             }
@@ -561,12 +699,14 @@ namespace newrisourcecenter.Controllers
 
             if (string.IsNullOrWhiteSpace(model.Title))
             {
+                Response.TrySkipIisCustomErrors = true;
                 Response.StatusCode = 400;
                 return Json("Training title is required.");
             }
 
             if (model.PassingPercentage < 0 || model.PassingPercentage > 100)
             {
+                Response.TrySkipIisCustomErrors = true;
                 Response.StatusCode = 400;
                 return Json("Passing percentage must be between 0 and 100.");
             }
@@ -575,6 +715,7 @@ namespace newrisourcecenter.Controllers
             {
                 if (model.Questions == null || model.Questions.Count == 0)
                 {
+                    Response.TrySkipIisCustomErrors = true;
                     Response.StatusCode = 400;
                     return Json("At least one quiz question is required.");
                 }
@@ -592,6 +733,7 @@ namespace newrisourcecenter.Controllers
 
                 if (normalizedQuestions.Count == 0)
                 {
+                    Response.TrySkipIisCustomErrors = true;
                     Response.StatusCode = 400;
                     return Json("At least one quiz question is required.");
                 }
@@ -601,12 +743,14 @@ namespace newrisourcecenter.Controllers
                     var q = normalizedQuestions[i];
                     if (q.Options.Count < 2)
                     {
+                        Response.TrySkipIisCustomErrors = true;
                         Response.StatusCode = 400;
                         return Json(string.Format("Question {0} must have at least 2 options. Options received: {1}", i + 1, q.Options.Count));
                     }
 
                     if (!q.Options.Any(o => o.IsCorrect))
                     {
+                        Response.TrySkipIisCustomErrors = true;
                         Response.StatusCode = 400;
                         return Json(string.Format("Question {0} must have at least 1 correct option.", i + 1));
                     }
@@ -617,6 +761,7 @@ namespace newrisourcecenter.Controllers
             {
                 if ((training.PassingPercentage ?? 0) != model.PassingPercentage)
                 {
+                    Response.TrySkipIisCustomErrors = true;
                     Response.StatusCode = 400;
                     return Json("Passing percentage cannot be changed after users have attempted the quiz.");
                 }
@@ -635,6 +780,7 @@ namespace newrisourcecenter.Controllers
 
             if (string.IsNullOrWhiteSpace(pdfPath) && string.IsNullOrWhiteSpace(videoPath))
             {
+                Response.TrySkipIisCustomErrors = true;
                 Response.StatusCode = 400;
                 return Json("Attach at least one training content file (pdf/video).");
             }
@@ -708,12 +854,14 @@ namespace newrisourcecenter.Controllers
         {
             if (model == null)
             {
+                Response.TrySkipIisCustomErrors = true;
                 Response.StatusCode = 400;
                 return Json("Invalid payload.");
             }
 
             if (!ModelState.IsValid)
             {
+                Response.TrySkipIisCustomErrors = true;
                 Response.StatusCode = 400;
                 var errors = ModelState
                     .Where(kvp => kvp.Value != null && kvp.Value.Errors != null && kvp.Value.Errors.Count > 0)
@@ -724,24 +872,28 @@ namespace newrisourcecenter.Controllers
 
             if (string.IsNullOrWhiteSpace(model.Title))
             {
+                Response.TrySkipIisCustomErrors = true;
                 Response.StatusCode = 400;
                 return Json("Training title is required.");
             }
 
             if (model.PdfFile == null && model.VideoFile == null)
             {
+                Response.TrySkipIisCustomErrors = true;
                 Response.StatusCode = 400;
                 return Json("Attach at least one training content file (pdf/video).");
             }
 
             if (model.PassingPercentage < 0 || model.PassingPercentage > 100)
             {
+                Response.TrySkipIisCustomErrors = true;
                 Response.StatusCode = 400;
                 return Json("Passing percentage must be between 0 and 100.");
             }
 
             if (model.Questions == null || model.Questions.Count == 0)
             {
+                Response.TrySkipIisCustomErrors = true;
                 Response.StatusCode = 400;
                 return Json("At least one quiz question is required.");
             }
@@ -759,6 +911,7 @@ namespace newrisourcecenter.Controllers
 
             if (normalizedQuestions.Count == 0)
             {
+                Response.TrySkipIisCustomErrors = true;
                 Response.StatusCode = 400;
                 return Json("At least one quiz question is required.");
             }
@@ -768,12 +921,14 @@ namespace newrisourcecenter.Controllers
                 var q = normalizedQuestions[i];
                 if (q.Options.Count < 2)
                 {
+                    Response.TrySkipIisCustomErrors = true;
                     Response.StatusCode = 400;
                     return Json(string.Format("Question {0} must have at least 2 options. Options received: {1}", i + 1, q.Options.Count));
                 }
 
                 if (!q.Options.Any(o => o.IsCorrect))
                 {
+                    Response.TrySkipIisCustomErrors = true;
                     Response.StatusCode = 400;
                     return Json(string.Format("Question {0} must have at least 1 correct option.", i + 1));
                 }

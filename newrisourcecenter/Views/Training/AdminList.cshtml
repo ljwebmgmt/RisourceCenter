@@ -4,7 +4,7 @@
 }
 
 <div class="main_content" style="padding-top:20px; padding-bottom:20px;">
-    <div class="container">
+    <div class="container-fluid">
         <div class="row">
             <div class="col-xs-12">
                 <div class="clearfix">
@@ -22,16 +22,33 @@
                                     <tr>
                                         <th style="width:80px;">ID</th>
                                         <th>Title</th>
+                                        <th>Description</th>
                                         <th style="width:120px;">Passing %</th>
                                         <th style="width:90px;">PDF</th>
                                         <th style="width:90px;">Video</th>
                                         <th style="width:120px;">Questions</th>
+                                        <th style="width:110px;">Started</th>
+                                        <th style="width:120px;">Completed</th>
+                                        <th style="width:100px;">Passed</th>
+                                        <th style="width:110px;">Attempts</th>
                                         <th>Assigned Roles</th>
-                                        <th style="width:90px;">Edit</th>
+                                        <th style="width:110px;">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
                             </table>
+                        </div>
+
+                        <div class="row" style="margin-top:12px;">
+                            <div class="col-sm-6" style="padding-top:6px;">
+                                <span id="pagingInfo"></span>
+                            </div>
+                            <div class="col-sm-6 text-right">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default btn-sm" id="prevPageBtn">Prev</button>
+                                    <button type="button" class="btn btn-default btn-sm" id="nextPageBtn">Next</button>
+                                </div>
+                            </div>
                         </div>
                         <div id="listMessage" class="alert alert-info" style="display:none; margin-top:15px;"></div>
                     </div>
@@ -43,40 +60,108 @@
 
 <script>
     (function () {
+        var currentPage = 1;
+        var pageSize = 25;
+        var totalCount = 0;
+
         function htmlEncode(value) {
             return $('<div/>').text(value).html();
         }
 
+        function safeUrl(value) {
+            return htmlEncode((value || '').toString());
+        }
+
         function loadTrainings() {
-            $.getJSON('/Training/GetAllTrainingsAdmin', function (data) {
-                var trainings = data || [];
+            $.getJSON('/Training/GetAllTrainingsAdmin', { page: currentPage, pageSize: pageSize }, function (res) {
+                var trainings = (res && res.items) ? res.items : [];
+                totalCount = (res && res.totalCount) ? res.totalCount : 0;
                 var rows = '';
                 for (var i = 0; i < trainings.length; i++) {
                     var t = trainings[i];
                     var roles = (t.RoleNames || []).join(', ');
+
+                    var pdfPath = (t.PdfPath != null ? t.PdfPath : t.pdfPath) || '';
+                    var videoPath = (t.VideoPath != null ? t.VideoPath : t.videoPath) || '';
+                    pdfPath = $.trim(pdfPath);
+                    videoPath = $.trim(videoPath);
+
                     rows += '<tr>';
                     rows += '<td>' + t.Id + '</td>';
                     rows += '<td>' + htmlEncode(t.Title || '') + '</td>';
+                    rows += '<td>' + htmlEncode(t.Description || '') + '</td>';
                     rows += '<td>' + (t.PassingPercentage || 0) + '%</td>';
-                    rows += '<td>' + (t.HasPdf ? 'Yes' : 'No') + '</td>';
-                    rows += '<td>' + (t.HasVideo ? 'Yes' : 'No') + '</td>';
+                    rows += '<td>' + (pdfPath ? '<a href="' + safeUrl(pdfPath) + '" target="_blank">PDF</a>' : '-') + '</td>';
+                    rows += '<td>' + (videoPath ? '<a href="' + safeUrl(videoPath) + '" target="_blank">Video</a>' : '-') + '</td>';
                     rows += '<td>' + (t.QuestionCount || 0) + '</td>';
+                    rows += '<td>' + (t.StartedCount || 0) + '</td>';
+                    rows += '<td>' + (t.CompletedCount || 0) + '</td>';
+                    rows += '<td>' + (t.PassedCount || 0) + '</td>';
+                    rows += '<td>' + (t.AttemptCount || 0) + '</td>';
                     rows += '<td>' + htmlEncode(roles) + '</td>';
-                    rows += '<td><a class="btn btn-xs btn-default" href="/Training/AdminEdit/' + t.Id + '">Edit</a></td>';
+                    rows += '<td>' +
+                        '<a class="btn btn-default btn-xs" title="Edit" href="/Training/AdminEdit?id=' + t.Id + '">' +
+                            '<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>' +
+                        '</a> ' +
+                        '<button type="button" class="btn btn-danger btn-xs delete-training" title="Delete" data-id="' + t.Id + '">' +
+                            '<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>' +
+                        '</button>' +
+                    '</td>';
                     rows += '</tr>';
                 }
-
                 $('#trainingsTable tbody').html(rows);
 
-                if (!trainings.length) {
-                    $('#listMessage').text('No trainings found.').show();
-                } else {
-                    $('#listMessage').hide();
-                }
+                var start = totalCount === 0 ? 0 : ((currentPage - 1) * pageSize + 1);
+                var end = Math.min(currentPage * pageSize, totalCount);
+                $('#pagingInfo').text('Showing ' + start + ' - ' + end + ' of ' + totalCount);
+
+                $('#prevPageBtn').prop('disabled', currentPage <= 1);
+                $('#nextPageBtn').prop('disabled', end >= totalCount);
             }).fail(function (xhr) {
                 $('#listMessage').text(xhr.responseText || 'Unable to load trainings.').show();
             });
         }
+
+        function deleteTraining(id) {
+            if (!confirm('Delete training ID ' + id + '? This cannot be undone.')) {
+                return;
+            }
+
+            $('#listMessage').hide();
+            $.ajax({
+                url: '/Training/DeleteTrainingAdmin',
+                method: 'POST',
+                data: { id: id },
+                success: function () {
+                    loadTrainings();
+                },
+                error: function (xhr) {
+                    $('#listMessage').text(xhr.responseText || 'Unable to delete training.').show();
+                }
+            });
+        }
+
+        $('#trainingsTable').on('click', '.delete-training', function () {
+            var id = parseInt($(this).attr('data-id'), 10);
+            if (id) {
+                deleteTraining(id);
+            }
+        });
+
+        $('#prevPageBtn').on('click', function () {
+            if (currentPage > 1) {
+                currentPage--;
+                loadTrainings();
+            }
+        });
+
+        $('#nextPageBtn').on('click', function () {
+            var maxPage = Math.ceil((totalCount || 0) / pageSize);
+            if (currentPage < maxPage) {
+                currentPage++;
+                loadTrainings();
+            }
+        });
 
         loadTrainings();
     })();

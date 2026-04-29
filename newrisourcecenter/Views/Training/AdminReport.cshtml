@@ -68,9 +68,12 @@
         }
 
         function loadTrainings() {
-            $.getJSON('/Training/GetAllTrainingsAdmin', function (trainings) {
+            $.getJSON('/Training/GetAllTrainingsAdmin', { page: 1, pageSize: 200 }, function (trainings) {
                 var html = '<option value="">-- Select --</option>';
                 trainings = trainings || [];
+                if (trainings.items) {
+                    trainings = trainings.items;
+                }
                 for (var i = 0; i < trainings.length; i++) {
                     html += '<option value="' + trainings[i].Id + '">' + htmlEncode(trainings[i].Title || '') + '</option>';
                 }
