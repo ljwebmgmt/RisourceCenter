@@ -3,6 +3,20 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<style>
+    @@media (max-width: 767px) {
+        .training-actions .btn {
+            display: block;
+            width: 100%;
+            margin-bottom: 8px;
+        }
+
+        .training-actions .btn:last-child {
+            margin-bottom: 0;
+        }
+    }
+</style>
+
 <div class="main_content" style="padding-top:20px; padding-bottom:20px;">
     <div class="container">
         <div class="row">
@@ -25,7 +39,7 @@
                         <div class="panel-body">
                             <form id="quizForm">
                                 <div id="quizQuestions"></div>
-                                <button type="submit" class="btn btn-success">Submit Quiz</button>
+                                <button type="submit" class="btn btn-success btn-block">Submit Quiz</button>
                             </form>
                             <div id="resultContainer" style="display:none; margin-top:15px;" class="alert alert-info"></div>
                         </div>
@@ -71,19 +85,21 @@
                 html += '<div class="panel-body">';
                 html += '<p>' + htmlEncode(t.Description || '') + '</p>';
                 html += '<p>Pass Percentage: <strong>' + (t.PassingPercentage || 0) + '%</strong></p>';
-                html += '<button class="btn btn-primary btn-sm" onclick="startTraining(' + t.Id + ')">' + (isStarted ? 'Restart' : 'Start') + '</button> ';
+                html += '<div class="training-actions">';
+                html += '<button class="btn btn-primary btn-sm" onclick="startTraining(' + t.Id + ')">' + (isStarted ? 'Restart' : 'Start') + '</button>';
                 html += '<span id="contentLinks_' + t.Id + '" style="' + (isStarted ? '' : 'display:none;') + '">';
                 if (t.PdfPath) {
-                    html += '<button class="btn btn-default btn-sm" onclick="openContent(' + t.Id + ',\'pdf\')">Open PDF</button> ';
+                    html += '<button class="btn btn-default btn-sm" onclick="openContent(' + t.Id + ',\'pdf\')">Open PDF</button>';
                 }
                 if (t.VideoPath) {
-                    html += '<button class="btn btn-default btn-sm" onclick="openContent(' + t.Id + ',\'video\')">Open Video</button> ';
+                    html += '<button class="btn btn-default btn-sm" onclick="openContent(' + t.Id + ',\'video\')">Open Video</button>';
                 }
                 html += '</span>';
                 if (t.PdfPath || t.VideoPath) {
-                    html += '<span id="contentLocked_' + t.Id + '" class="text-muted" style="margin-left:8px;' + (isStarted ? 'display:none;' : '') + '">Start training to unlock content.</span> ';
+                    html += '<div id="contentLocked_' + t.Id + '" class="text-muted" style="' + (isStarted ? 'display:none;' : '') + '">Start training to unlock content.</div>';
                 }
                 html += '<button class="btn btn-info btn-sm" onclick="loadQuiz(' + t.Id + ')">Take Quiz</button>';
+                html += '</div>';
                 html += '</div></div>';
             }
             $('#trainingList').html(html);

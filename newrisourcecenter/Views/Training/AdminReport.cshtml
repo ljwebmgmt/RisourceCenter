@@ -3,13 +3,37 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<style>
+    @@media (max-width: 767px) {
+        .admin-header-actions .btn {
+            display: block;
+            width: 100%;
+            margin-bottom: 8px;
+        }
+
+        .admin-header-actions .btn {
+            margin-left: 0 !important;
+        }
+
+        .admin-header-actions .btn:last-child {
+            margin-bottom: 0;
+        }
+
+        #LoadBtn {
+            width: 100%;
+        }
+    }
+</style>
+
 <div class="main_content" style="padding-top:20px; padding-bottom:20px;">
-    <div class="container">
+    <div class="container-fluid">
         <div class="row">
             <div class="col-xs-12">
                 <div class="clearfix">
                     <h2 class="pull-left" style="margin-top:0;">Training Report</h2>
-                    <a href="/Training/AdminList" class="btn btn-default btn-sm pull-right" style="margin-top:3px;">Back to Listing</a>
+                    <div class="pull-right admin-header-actions" style="margin-top:3px;">
+                        <a href="/Training/AdminList" class="btn btn-default btn-sm">Back to Listing</a>
+                    </div>
                 </div>
 
                 <div class="panel panel-default" style="margin-top:15px;">

@@ -3,14 +3,30 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<style>
+    @@media (max-width: 767px) {
+        .admin-header-actions .btn {
+            display: block;
+            width: 100%;
+            margin-bottom: 8px;
+        }
+
+        .admin-header-actions .btn:last-child {
+            margin-bottom: 0;
+        }
+    }
+</style>
+
 <div class="main_content" style="padding-top:20px; padding-bottom:20px;">
     <div class="container-fluid">
         <div class="row">
             <div class="col-xs-12">
                 <div class="clearfix">
                     <h2 class="pull-left" style="margin-top:0;">All Trainings</h2>
-                    <a href="/Training/Admin" class="btn btn-primary btn-sm pull-right" style="margin-top:3px;">Create Training</a>
-                    <a href="/Training/AdminReport" class="btn btn-default btn-sm pull-right" style="margin-top:3px; margin-right:8px;">View Report</a>
+                    <div class="pull-right admin-header-actions" style="margin-top:3px;">
+                        <a href="/Training/Admin" class="btn btn-primary btn-sm">Create Training</a>
+                        <a href="/Training/AdminReport" class="btn btn-default btn-sm" style="margin-left:8px;">View Report</a>
+                    </div>
                 </div>
 
                 <div class="panel panel-default" style="margin-top:15px;">
@@ -28,9 +44,14 @@
                                         <th style="width:90px;">Video</th>
                                         <th style="width:120px;">Questions</th>
                                         <th style="width:110px;">Started</th>
+                                        <th style="width:120px;">In Progress</th>
                                         <th style="width:120px;">Completed</th>
                                         <th style="width:100px;">Passed</th>
                                         <th style="width:110px;">Attempts</th>
+                                        <th style="width:120px;">Avg Time</th>
+                                        <th style="width:90px;">Roles</th>
+                                        <th style="width:140px;">Unique Attempted</th>
+                                        <th style="width:120px;">Unique Passed</th>
                                         <th>Assigned Roles</th>
                                         <th style="width:110px;">Actions</th>
                                     </tr>
@@ -72,6 +93,18 @@
             return htmlEncode((value || '').toString());
         }
 
+        function formatDuration(seconds) {
+            if (seconds == null || isNaN(seconds)) {
+                return '-';
+            }
+            seconds = Math.max(0, Math.round(seconds));
+            var h = Math.floor(seconds / 3600);
+            var m = Math.floor((seconds % 3600) / 60);
+            var s = seconds % 60;
+            function pad(n) { return (n < 10 ? '0' : '') + n; }
+            return pad(h) + ':' + pad(m) + ':' + pad(s);
+        }
+
         function loadTrainings() {
             $.getJSON('/Training/GetAllTrainingsAdmin', { page: currentPage, pageSize: pageSize }, function (res) {
                 var trainings = (res && res.items) ? res.items : [];
@@ -95,9 +128,14 @@
                     rows += '<td>' + (videoPath ? '<a href="' + safeUrl(videoPath) + '" target="_blank">Video</a>' : '-') + '</td>';
                     rows += '<td>' + (t.QuestionCount || 0) + '</td>';
                     rows += '<td>' + (t.StartedCount || 0) + '</td>';
+                    rows += '<td>' + (t.InProgressCount || 0) + '</td>';
                     rows += '<td>' + (t.CompletedCount || 0) + '</td>';
                     rows += '<td>' + (t.PassedCount || 0) + '</td>';
                     rows += '<td>' + (t.AttemptCount || 0) + '</td>';
+                    rows += '<td>' + formatDuration(t.AvgCompletionSeconds) + '</td>';
+                    rows += '<td>' + (t.AssignedRoleCount || 0) + '</td>';
+                    rows += '<td>' + (t.UniqueUsersAttempted || 0) + '</td>';
+                    rows += '<td>' + (t.UniqueUsersPassed || 0) + '</td>';
                     rows += '<td>' + htmlEncode(roles) + '</td>';
                     rows += '<td>' +
                         '<a class="btn btn-default btn-xs" title="Edit" href="/Training/AdminEdit?id=' + t.Id + '">' +

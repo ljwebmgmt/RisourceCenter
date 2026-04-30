@@ -81,6 +81,22 @@ namespace newrisourcecenter.Controllers
                     CompletedCount = db.UserProgresses.Count(p => p.TrainingContentId == x.Id && p.EndTime != null),
                     PassedCount = db.UserProgresses.Count(p => p.TrainingContentId == x.Id && p.IsPassed == true),
                     AttemptCount = db.TrainingQuizAttempts.Count(a => a.TrainingContentId == x.Id),
+                    InProgressCount = db.UserProgresses.Count(p => p.TrainingContentId == x.Id && p.EndTime == null),
+                    AvgCompletionSeconds = db.UserProgresses
+                        .Where(p => p.TrainingContentId == x.Id && p.EndTime != null)
+                        .Select(p => DbFunctions.DiffSeconds(p.StartTime, p.EndTime))
+                        .Average(),
+                    AssignedRoleCount = x.TrainingRoleAssignments.Count(),
+                    UniqueUsersAttempted = db.TrainingQuizAttempts
+                        .Where(a => a.TrainingContentId == x.Id)
+                        .Select(a => a.UserId)
+                        .Distinct()
+                        .Count(),
+                    UniqueUsersPassed = db.UserProgresses
+                        .Where(p => p.TrainingContentId == x.Id && p.IsPassed == true)
+                        .Select(p => p.UserId)
+                        .Distinct()
+                        .Count(),
                     RoleNames = x.TrainingRoleAssignments.Select(a => a.AspNetRole.Name)
                 })
                 .ToListAsync();
