@@ -40,23 +40,16 @@
                     <div class="panel-heading"><strong>Filters</strong></div>
                     <div class="panel-body">
                         <div class="row">
-                            <div class="col-sm-4">
+                            <div class="col-sm-6">
                                 <div class="form-group">
                                     <label>Class</label>
                                     <select id="TrainingClassSelect" class="form-control"></select>
                                 </div>
-                            </div>
-                            <div class="col-sm-8">
                                 <div class="form-group">
-                                    <label>Trainings</label>
-                                    <select id="TrainingSelect" class="form-control" multiple size="8"></select>
-                                    <div class="help-block" style="margin-bottom:0;">Hold Ctrl (Windows) / Cmd (Mac) to select multiple.</div>
+                                    <label>Training</label>
+                                    <select id="TrainingSelect" class="form-control"></select>
+                                    <div class="help-block" style="margin-bottom:0;">Leave blank to load all trainings in the selected class.</div>
                                 </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-sm-2">
                                 <div class="form-group">
                                     <label>Completion</label>
                                     <select id="CompletionSelect" class="form-control">
@@ -65,8 +58,6 @@
                                         <option value="completed">Completed</option>
                                     </select>
                                 </div>
-                            </div>
-                            <div class="col-sm-2">
                                 <div class="form-group">
                                     <label>Passed</label>
                                     <select id="PassedSelect" class="form-control">
@@ -76,35 +67,38 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-sm-2">
-                                <div class="form-group">
-                                    <label>Start From</label>
-                                    <input type="date" id="StartFrom" class="form-control" />
+                            <div class="col-sm-6">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>Start From</label>
+                                            <input type="date" id="StartFrom" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>Start To</label>
+                                            <input type="date" id="StartTo" class="form-control" />
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-sm-2">
-                                <div class="form-group">
-                                    <label>Start To</label>
-                                    <input type="date" id="StartTo" class="form-control" />
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>End From</label>
+                                            <input type="date" id="EndFrom" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>End To</label>
+                                            <input type="date" id="EndTo" class="form-control" />
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-sm-2">
-                                <div class="form-group">
-                                    <label>End From</label>
-                                    <input type="date" id="EndFrom" class="form-control" />
+                                <div class="form-group text-right" style="margin-top:25px;">
+                                    <button class="btn btn-primary" id="LoadBtn" type="button">Load Report</button>
                                 </div>
-                            </div>
-                            <div class="col-sm-2">
-                                <div class="form-group">
-                                    <label>End To</label>
-                                    <input type="date" id="EndTo" class="form-control" />
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-sm-12 text-right">
-                                <button class="btn btn-primary" id="LoadBtn" type="button">Load Report</button>
                             </div>
                         </div>
                         <div id="reportMessage" class="alert alert-info" style="display:none; margin-top:10px;"></div>
@@ -219,7 +213,7 @@
         function rebuildTrainingOptions() {
             var selectedClass = ($('#TrainingClassSelect').val() || '').toString().trim().toLowerCase();
             var currentSelected = $('#TrainingSelect').val() || [];
-            var html = '';
+            var html = '<option value="">-- All Trainings --</option>';
             for (var i = 0; i < allTrainings.length; i++) {
                 var t = allTrainings[i];
                 var cls = (t.TrainingClass || '').toString().trim().toLowerCase();
@@ -315,15 +309,23 @@
         }
 
         function loadReport() {
-            var selected = $('#TrainingSelect').val() || [];
+            var selectedClass = ($('#TrainingClassSelect').val() || '').toString().trim().toLowerCase();
+            var trainingId = parseInt($('#TrainingSelect').val(), 10);
             var ids = [];
-            for (var i = 0; i < selected.length; i++) {
-                var id = parseInt(selected[i], 10);
-                if (id) ids.push(id);
+
+            if (trainingId) {
+                ids = [trainingId];
+            } else {
+                for (var i = 0; i < allTrainings.length; i++) {
+                    var t = allTrainings[i];
+                    var cls = (t.TrainingClass || '').toString().trim().toLowerCase();
+                    if (selectedClass && cls !== selectedClass) continue;
+                    ids.push(t.Id);
+                }
             }
 
             if (!ids.length) {
-                $('#reportMessage').text('Please select one or more trainings.').show();
+                $('#reportMessage').text('No trainings found for the selected class.').show();
                 return;
             }
 

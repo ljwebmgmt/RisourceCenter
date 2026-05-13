@@ -63,6 +63,21 @@
         line-height: 1.4;
     }
 
+    .training-meta {
+        font-size: 12px;
+    }
+
+    .training-meta-item {
+        display: inline-block;
+        margin-right: 12px;
+        margin-bottom: 2px;
+        white-space: nowrap;
+    }
+
+    .training-meta-item:last-child {
+        margin-right: 0;
+    }
+
     .training-meta-row:first-child {
         margin-top: 0;
     }
@@ -351,7 +366,7 @@
 
                 var className = (t.TrainingClass || '').toString().trim();
                 if (className) {
-                    html += '<span class="text-muted" style="margin-left:8px;">Class: </span><span class="text-muted">' + htmlEncode(toTitleCase(className)) + '</span>';
+                    html += '<span class="training-meta-item text-muted">Class: ' + htmlEncode(toTitleCase(className)) + '</span>';
                 }
 
                 html += '</div>';
@@ -360,19 +375,18 @@
                 var assignedAt = t.AssignedAtIso || t.AssignedAtUtc || '';
                 var assignedDate = parseDate(assignedAt);
                 if (assignedDate) {
-                    html += '<span class="text-muted" style="margin-left:8px;">Assigned: </span><span class="text-muted">' + htmlEncode(assignedDate.toLocaleDateString()) + '</span>';
+                    html += '<span class="training-meta-item text-muted">Assigned: ' + htmlEncode(assignedDate.toLocaleDateString()) + '</span>';
                 }
 
                 if (status === 'InProgress') {
                     var startedAt = t.StartedAtIso || t.StartedAtUtc || startedAtByTrainingId[t.Id] || '';
                     var startedDate = parseDate(startedAt);
 
-                    html += '<span class="text-muted" style="margin-left:8px;">Started: </span><span class="text-muted">' + htmlEncode(startedDate ? startedDate.toLocaleString() : '') + '</span>';
-                    html += '<span class="text-muted" style="margin-left:8px;">Elapsed: </span>';
-                    html += '<span class="text-muted" data-training-timer="1" data-started="' + htmlEncode(startedAt) + '"></span>';
+                    html += '<span class="training-meta-item text-muted">Started: ' + htmlEncode(startedDate ? startedDate.toLocaleString() : '') + '</span>';
+                    html += '<span class="training-meta-item text-muted">Elapsed: <span class="text-muted" data-training-timer="1" data-started="' + htmlEncode(startedAt) + '"></span></span>';
                 } else if (status === 'Completed' || status === 'Failed') {
                     if (t.LastScorePercentage != null) {
-                        html += '<span class="text-muted" style="margin-left:8px;">Score: ' + t.LastScorePercentage + '%</span>';
+                        html += '<span class="training-meta-item text-muted">Score: ' + t.LastScorePercentage + '%</span>';
                     }
                 }
 
