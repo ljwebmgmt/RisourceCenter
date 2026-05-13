@@ -221,7 +221,7 @@
 
         function rebuildTrainingOptions() {
             var selectedClass = ($('#TrainingClassSelect').val() || '').toString().trim().toLowerCase();
-            var currentSelected = $('#TrainingSelect').val() || [];
+            var currentSelected = ($('#TrainingSelect').val() || '').toString();
             var html = '<option value="">-- All Trainings --</option>';
             for (var i = 0; i < allTrainings.length; i++) {
                 var t = allTrainings[i];
@@ -234,7 +234,11 @@
                 html += '<option value="' + t.Id + '">' + htmlEncode(label) + '</option>';
             }
             $('#TrainingSelect').html(html);
-            $('#TrainingSelect').val(currentSelected);
+            if (currentSelected && $('#TrainingSelect option[value="' + currentSelected + '"]').length) {
+                $('#TrainingSelect').val(currentSelected);
+            } else {
+                $('#TrainingSelect').val('');
+            }
         }
 
         function renderRows(rows) {
