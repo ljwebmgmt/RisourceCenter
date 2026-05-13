@@ -7,6 +7,7 @@ namespace newrisourcecenter.Models
     {
         public string Title { get; set; }
         public string Description { get; set; }
+        public string TrainingClass { get; set; }
         public int PassingPercentage { get; set; }
         public HttpPostedFileBase PdfFile { get; set; }
         public HttpPostedFileBase VideoFile { get; set; }

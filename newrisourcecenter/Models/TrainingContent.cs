@@ -26,6 +26,7 @@ namespace newrisourcecenter.Models
         public int Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
+        public string TrainingClass { get; set; }
         public string PdfPath { get; set; }
         public string VideoPath { get; set; }
         public Nullable<int> PassingPercentage { get; set; }

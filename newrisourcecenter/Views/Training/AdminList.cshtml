@@ -44,6 +44,7 @@
                                     <tr>
                                         <th class="col-center" style="width:80px;">ID</th>
                                         <th>Title</th>
+                                        <th style="width:130px;">Class</th>
                                         <th>Description</th>
                                         <th class="col-center" style="width:120px;">Passing %</th>
                                         <th class="col-center" style="width:90px;">PDF</th>
@@ -107,6 +108,14 @@
             return pad(h) + ':' + pad(m) + ':' + pad(s);
         }
 
+        function toTitleCase(text) {
+            text = (text || '').toString().trim();
+            if (!text) return '';
+            return text.replace(/\w\S*/g, function (w) {
+                return w.charAt(0).toUpperCase() + w.substr(1).toLowerCase();
+            });
+        }
+
         function loadTrainings() {
             $.getJSON('/Training/GetAllTrainingsAdmin', { page: currentPage, pageSize: pageSize }, function (res) {
                 var trainings = (res && res.items) ? res.items : [];
@@ -124,6 +133,7 @@
                     rows += '<tr>';
                     rows += '<td class="col-center">' + t.Id + '</td>';
                     rows += '<td>' + htmlEncode(t.Title || '') + '</td>';
+                    rows += '<td>' + htmlEncode(toTitleCase(t.TrainingClass || '')) + '</td>';
                     rows += '<td>' + htmlEncode(t.Description || '') + '</td>';
                     rows += '<td class="col-center">' + (t.PassingPercentage || 0) + '%</td>';
                     rows += '<td class="col-center">' + (pdfPath ? '<a href="' + safeUrl(pdfPath) + '" target="_blank">View PDF</a>' : '-') + '</td>';

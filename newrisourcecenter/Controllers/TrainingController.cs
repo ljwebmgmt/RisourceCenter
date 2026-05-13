@@ -71,6 +71,7 @@ namespace newrisourcecenter.Controllers
                     x.Id,
                     x.Title,
                     x.Description,
+                    x.TrainingClass,
                     x.PdfPath,
                     x.VideoPath,
                     PassingPercentage = x.PassingPercentage ?? 0,
@@ -258,6 +259,110 @@ namespace newrisourcecenter.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Super Admin")]
+        public async Task<JsonResult> GetTrainingStatsAdminMulti(int[] trainingContentIds)
+        {
+            var localZone = TimeZoneInfo.Local;
+            trainingContentIds = trainingContentIds ?? new int[0];
+            var ids = trainingContentIds.Distinct().Where(x => x > 0).ToList();
+            if (ids.Count == 0)
+            {
+                return Json(new List<object>(), JsonRequestBehavior.AllowGet);
+            }
+
+            var trainings = await db.TrainingContents
+                .Where(x => ids.Contains(x.Id))
+                .Select(x => new { x.Id, x.Title, x.TrainingClass })
+                .ToListAsync();
+
+            var trainingById = trainings.ToDictionary(x => x.Id, x => x);
+
+            var progresses = await db.UserProgresses
+                .Where(x => x.TrainingContentId.HasValue && ids.Contains(x.TrainingContentId.Value))
+                .Select(x => new
+                {
+                    x.Id,
+                    x.UserId,
+                    TrainingContentId = x.TrainingContentId.Value,
+                    x.StartTime,
+                    x.EndTime,
+                    x.ScorePercentage,
+                    x.IsPassed
+                })
+                .ToListAsync();
+
+            var userIds = progresses.Select(x => x.UserId).Distinct().ToList();
+
+            var users = await db.usr_user
+                .Where(x => userIds.Contains(x.usr_ID))
+                .Select(x => new { x.usr_ID, x.usr_fName, x.usr_lName, x.usr_email })
+                .ToListAsync();
+
+            var userById = users.ToDictionary(x => x.usr_ID, x => x);
+
+            var attempts = await db.TrainingQuizAttempts
+                .Where(x => ids.Contains(x.TrainingContentId))
+                .Select(x => new { x.UserId, x.TrainingContentId, x.SubmittedAt, x.ScorePercentage, x.IsPassed })
+                .ToListAsync();
+
+            var latestAttemptByUserAndTraining = attempts
+                .GroupBy(x => new { x.UserId, x.TrainingContentId })
+                .Select(g => g.OrderByDescending(x => x.SubmittedAt).FirstOrDefault())
+                .Where(x => x != null)
+                .ToDictionary(x => Tuple.Create(x.UserId, x.TrainingContentId), x => x);
+
+            var nowUtc = DateTime.UtcNow;
+            var rows = progresses
+                .OrderByDescending(x => x.StartTime)
+                .Select(p =>
+                {
+                    var u = userById.ContainsKey(p.UserId) ? userById[p.UserId] : null;
+                    var end = p.EndTime ?? nowUtc;
+                    var elapsed = end - p.StartTime;
+
+                    var startLocal = TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(p.StartTime, DateTimeKind.Utc), localZone);
+                    DateTime? endLocal = null;
+                    if (p.EndTime.HasValue)
+                    {
+                        endLocal = TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(p.EndTime.Value, DateTimeKind.Utc), localZone);
+                    }
+
+                    trainingById.TryGetValue(p.TrainingContentId, out var t);
+
+                    object attempt;
+                    if (!latestAttemptByUserAndTraining.TryGetValue(Tuple.Create(p.UserId, p.TrainingContentId), out var last))
+                    {
+                        attempt = null;
+                    }
+                    else
+                    {
+                        var submittedLocal = TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(last.SubmittedAt, DateTimeKind.Utc), localZone);
+                        attempt = new { SubmittedAt = submittedLocal.ToString("yyyy-MM-dd HH:mm"), last.ScorePercentage, last.IsPassed };
+                    }
+
+                    return new
+                    {
+                        p.Id,
+                        p.UserId,
+                        p.TrainingContentId,
+                        TrainingTitle = t == null ? "" : t.Title,
+                        TrainingClass = t == null ? "" : t.TrainingClass,
+                        UserName = u == null ? "" : (u.usr_fName + " " + u.usr_lName),
+                        UserEmail = u == null ? "" : u.usr_email,
+                        StartTime = startLocal.ToString("yyyy-MM-dd HH:mm"),
+                        EndTime = endLocal.HasValue ? endLocal.Value.ToString("yyyy-MM-dd HH:mm") : "",
+                        ElapsedSeconds = Math.Max(0, (int)elapsed.TotalSeconds),
+                        LatestAttempt = attempt,
+                        ProgressScorePercentage = p.ScorePercentage,
+                        ProgressIsPassed = p.IsPassed
+                    };
+                })
+                .ToList();
+
+            return Json(rows, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
         public async Task<JsonResult> GetAssignedTrainings()
         {
             long userId = Convert.ToInt64(Session["userId"]);
@@ -282,13 +387,41 @@ namespace newrisourcecenter.Controllers
             var trainingIds = allTrainings.Select(x => x.Id).ToList();
             var roleAssignments = await GetAssignmentsByTrainingIds(trainingIds);
 
-            var startedTrainingIds = await db.UserProgresses
-                .Where(x => x.UserId == (int)userId && x.EndTime == null && x.TrainingContentId.HasValue)
-                .Select(x => x.TrainingContentId.Value)
-                .Distinct()
+            var assignmentRows = await db.TrainingRoleAssignments
+                .Where(x => trainingIds.Contains(x.TrainingContentId) && userRoleIds.Contains(x.RoleId))
+                .Select(x => new { x.TrainingContentId, x.CreatedAt })
                 .ToListAsync();
 
-            var startedSet = new HashSet<int>(startedTrainingIds);
+            var assignedAtByTrainingId = assignmentRows
+                .GroupBy(x => x.TrainingContentId)
+                .ToDictionary(g => g.Key, g => g.Min(r => r.CreatedAt));
+
+            var activeProgressRows = await db.UserProgresses
+                .Where(x => x.UserId == (int)userId && x.EndTime == null && x.TrainingContentId.HasValue)
+                .Select(x => new { TrainingContentId = x.TrainingContentId.Value, x.StartTime })
+                .ToListAsync();
+
+            var activeProgressByTrainingId = activeProgressRows
+                .GroupBy(x => x.TrainingContentId)
+                .ToDictionary(g => g.Key, g => g.OrderByDescending(p => p.StartTime).FirstOrDefault());
+
+            var completedProgressRows = await db.UserProgresses
+                .Where(x => x.UserId == (int)userId && x.EndTime != null && x.TrainingContentId.HasValue)
+                .Select(x => new
+                {
+                    TrainingContentId = x.TrainingContentId.Value,
+                    x.EndTime,
+                    x.ScorePercentage,
+                    x.IsPassed,
+                    x.Id
+                })
+                .ToListAsync();
+
+            var latestCompletedByTrainingId = completedProgressRows
+                .GroupBy(x => x.TrainingContentId)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.OrderByDescending(p => p.EndTime).ThenByDescending(p => p.Id).First());
 
             var assignedTrainings = allTrainings
                 .Where(x => roleAssignments.ContainsKey(x.Id) && roleAssignments[x.Id].Intersect(userRoleIds).Any())
@@ -297,12 +430,40 @@ namespace newrisourcecenter.Controllers
                     x.Id,
                     x.Title,
                     x.Description,
+                    x.TrainingClass,
                     x.PdfPath,
                     x.VideoPath,
                     PassingPercentage = x.PassingPercentage ?? 0,
-                    IsStarted = startedSet.Contains(x.Id)
+                    AssignedAtUtc = assignedAtByTrainingId.ContainsKey(x.Id) ? (DateTime?)assignedAtByTrainingId[x.Id] : null,
+                    AssignedAtIso = assignedAtByTrainingId.ContainsKey(x.Id)
+                        ? assignedAtByTrainingId[x.Id].ToString("o")
+                        : null,
+                    IsStarted = activeProgressByTrainingId.ContainsKey(x.Id),
+                    Status = activeProgressByTrainingId.ContainsKey(x.Id)
+                        ? "InProgress"
+                        : (latestCompletedByTrainingId.ContainsKey(x.Id)
+                            ? (latestCompletedByTrainingId[x.Id].IsPassed == true
+                                ? "Completed"
+                                : (latestCompletedByTrainingId[x.Id].IsPassed == false ? "Failed" : "Completed"))
+                            : "NotStarted"),
+                    StatusDisplay = activeProgressByTrainingId.ContainsKey(x.Id)
+                        ? "In Progress"
+                        : (latestCompletedByTrainingId.ContainsKey(x.Id)
+                            ? (latestCompletedByTrainingId[x.Id].IsPassed == false ? "Failed" : "Completed")
+                            : "Not Started"),
+                    StartedAtUtc = activeProgressByTrainingId.ContainsKey(x.Id) ? (DateTime?)activeProgressByTrainingId[x.Id].StartTime : null,
+                    StartedAtIso = activeProgressByTrainingId.ContainsKey(x.Id)
+                        ? activeProgressByTrainingId[x.Id].StartTime.ToString("o")
+                        : null,
+                    CompletedAtUtc = latestCompletedByTrainingId.ContainsKey(x.Id) ? (DateTime?)latestCompletedByTrainingId[x.Id].EndTime : null,
+                    CompletedAtIso = latestCompletedByTrainingId.ContainsKey(x.Id)
+                        ? latestCompletedByTrainingId[x.Id].EndTime.Value.ToString("o")
+                        : null,
+                    LastScorePercentage = latestCompletedByTrainingId.ContainsKey(x.Id) ? latestCompletedByTrainingId[x.Id].ScorePercentage : null,
+                    LastIsPassed = latestCompletedByTrainingId.ContainsKey(x.Id) ? latestCompletedByTrainingId[x.Id].IsPassed : null
                 })
-                .OrderBy(x => x.Title)
+                .OrderByDescending(x => x.AssignedAtUtc)
+                .ThenBy(x => x.Title)
                 .ToList();
 
             return Json(assignedTrainings, JsonRequestBehavior.AllowGet);
@@ -655,6 +816,7 @@ namespace newrisourcecenter.Controllers
                     x.Id,
                     x.Title,
                     x.Description,
+                    x.TrainingClass,
                     x.PdfPath,
                     x.VideoPath,
                     PassingPercentage = x.PassingPercentage ?? 0,
@@ -803,6 +965,7 @@ namespace newrisourcecenter.Controllers
 
             training.Title = model.Title.Trim();
             training.Description = model.Description;
+            training.TrainingClass = string.IsNullOrWhiteSpace(model.TrainingClass) ? "Basic" : model.TrainingClass.Trim();
             training.PdfPath = pdfPath;
             training.VideoPath = videoPath;
             training.PassingPercentage = model.PassingPercentage;
@@ -957,6 +1120,7 @@ namespace newrisourcecenter.Controllers
             {
                 Title = model.Title.Trim(),
                 Description = model.Description,
+                TrainingClass = string.IsNullOrWhiteSpace(model.TrainingClass) ? "Basic" : model.TrainingClass.Trim(),
                 PdfPath = pdfPath,
                 VideoPath = videoPath,
                 PassingPercentage = model.PassingPercentage

@@ -15,6 +15,90 @@
             margin-bottom: 0;
         }
     }
+
+    .training-card {
+        margin-bottom: 15px;
+    }
+
+    .panel-group .training-card {
+        margin-bottom: 15px;
+    }
+
+    .training-card .panel-heading {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .training-actions {
+        margin-top: 8px;
+    }
+
+    .training-actions .btn {
+        margin-right: 6px;
+        margin-bottom: 6px;
+    }
+
+    @@media (max-width: 767px) {
+        .training-actions .btn {
+            margin-right: 0;
+        }
+    }
+
+    .training-hint {
+        margin-top: 10px;
+        padding: 8px 10px;
+        background: #f7f7f7;
+        border: 1px solid #e5e5e5;
+        border-radius: 4px;
+    }
+
+    .training-meta {
+        margin-top: 6px;
+        margin-bottom: 10px;
+    }
+
+    .training-meta .label {
+        margin-right: 6px;
+    }
+
+    #videoModal {
+        z-index: 1060;
+    }
+
+    #videoModal .modal-body {
+        max-height: calc(100vh - 180px);
+        overflow: auto;
+    }
+
+    #videoModal .modal-content {
+        overflow-x: hidden;
+    }
+
+    @@media (min-width: 768px) {
+        #videoModal .modal-dialog {
+            width: 95vw;
+            max-width: 1200px;
+        }
+    }
+
+    #videoModal .embed-responsive {
+        max-width: 100%;
+    }
+
+    #videoModal #trainingVideo {
+        width: 100%;
+        max-width: 100%;
+        height: 100%;
+        max-height: calc(100vh - 240px);
+        object-fit: contain;
+        background: #000;
+        display: block;
+    }
+
+    .modal-backdrop {
+        z-index: 1055;
+    }
 </style>
 
 <div class="main_content" style="padding-top:20px; padding-bottom:20px;">
@@ -25,8 +109,13 @@
                     <h2 class="pull-left" style="margin-top:0;">My Trainings</h2>
                     @if (User.IsInRole("Super Admin"))
                     {
-                        <a class="btn btn-primary btn-sm pull-right" href="/Training/Admin" style="margin-top:3px;">Training Admin</a>
+                        <a class="btn btn-primary btn-sm pull-right" href="/Training/AdminList" style="margin-top:3px;">Training Admin</a>
                     }
+                </div>
+                <div class="row" style="margin-top:10px;">
+                    <div class="col-xs-12 col-sm-4">
+                        <select id="trainingClassFilter" class="form-control input-sm"></select>
+                    </div>
                 </div>
                 <div id="trainingList" style="margin-top:15px;"></div>
                 <hr />
@@ -45,6 +134,23 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="modal fade" id="videoModal" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="videoModalTitle">Video</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="embed-responsive embed-responsive-16by9">
+                                    <video id="trainingVideo" class="embed-responsive-item" controls playsinline></video>
+                                </div>
+                                <div id="videoModalMessage" class="alert alert-info" style="display:none; margin-top:10px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -55,17 +161,135 @@
         var activeTrainingId = 0;
         var trainings = [];
         var startedTrainingIds = {};
+        var startedAtByTrainingId = {};
+        var availableTrainingClasses = [];
+
+        if ($('#videoModal').length) {
+            $('#videoModal').appendTo('body');
+        }
 
         function loadAssignedTrainings() {
             $.getJSON('/Training/GetAssignedTrainings', function (data) {
                 trainings = data || [];
                 startedTrainingIds = {};
+                startedAtByTrainingId = {};
+                availableTrainingClasses = [];
                 for (var i = 0; i < trainings.length; i++) {
                     if (trainings[i].IsStarted) {
                         startedTrainingIds[trainings[i].Id] = true;
+                        if (trainings[i].StartedAtUtc) {
+                            startedAtByTrainingId[trainings[i].Id] = trainings[i].StartedAtUtc;
+                        }
+                    }
+
+                    var cls = (trainings[i].TrainingClass || '').toString().trim();
+                    if (cls) {
+                        availableTrainingClasses.push(cls);
                     }
                 }
+
+                availableTrainingClasses = dedupeStrings(availableTrainingClasses);
+                availableTrainingClasses.sort(function (a, b) { return a.localeCompare(b); });
+                $('#trainingClassFilter').data('initialized', false);
+                ensureTrainingClassFilter();
                 renderTrainingCards();
+            });
+        }
+
+        function dedupeStrings(items) {
+            var map = {};
+            var result = [];
+            for (var i = 0; i < items.length; i++) {
+                var key = (items[i] || '').toString();
+                if (!key) continue;
+                var lower = key.toLowerCase();
+                if (map[lower]) continue;
+                map[lower] = true;
+                result.push(key);
+            }
+            return result;
+        }
+
+        function toTitleCase(text) {
+            text = (text || '').toString().trim();
+            if (!text) return '';
+            return text.replace(/\w\S*/g, function (w) {
+                return w.charAt(0).toUpperCase() + w.substr(1).toLowerCase();
+            });
+        }
+
+        function ensureTrainingClassFilter() {
+            var $filter = $('#trainingClassFilter');
+            if (!$filter.length) return;
+
+            var selected = $filter.val() || '';
+            var isInitialized = $filter.data('initialized') === true;
+
+            var optionsHtml = '';
+            if (!availableTrainingClasses.length) {
+                optionsHtml += '<option value="Basic">Basic</option>';
+                optionsHtml += '<option value="Onboarding">Onboarding</option>';
+                optionsHtml += '<option value="Advanced">Advanced</option>';
+            } else {
+                for (var i = 0; i < availableTrainingClasses.length; i++) {
+                    var v = availableTrainingClasses[i];
+                    optionsHtml += '<option value="' + htmlEncode(v) + '">' + htmlEncode(toTitleCase(v)) + '</option>';
+                }
+            }
+            $filter.html(optionsHtml);
+
+            if (!selected) {
+                selected = $filter.find('option:first').val() || '';
+            }
+            $filter.val(selected);
+            $filter.data('initialized', true);
+
+            if (!isInitialized) {
+                $filter.on('change', function () {
+                    renderTrainingCards();
+                });
+            }
+        }
+
+        function parseDate(value) {
+            if (!value) return null;
+            if (typeof value === 'string') {
+                var match = /\/Date\((\d+)\)\//.exec(value);
+                if (match && match[1]) {
+                    var ticks = parseInt(match[1], 10);
+                    if (!isNaN(ticks)) {
+                        return new Date(ticks);
+                    }
+                }
+            }
+            var d = new Date(value);
+            if (!isNaN(d.getTime())) return d;
+            return null;
+        }
+
+        function pad(n) {
+            return (n < 10 ? '0' : '') + n;
+        }
+
+        function formatElapsed(seconds) {
+            seconds = Math.max(0, Math.floor(seconds));
+            var h = Math.floor(seconds / 3600);
+            var m = Math.floor((seconds % 3600) / 60);
+            var s = seconds % 60;
+            return pad(h) + ':' + pad(m) + ':' + pad(s);
+        }
+
+        function updateTimers() {
+            $('[data-training-timer="1"]').each(function () {
+                var $el = $(this);
+                var started = $el.attr('data-started');
+                var d = parseDate(started);
+                if (!d) {
+                    $el.text('');
+                    return;
+                }
+                var elapsedSeconds = (new Date().getTime() - d.getTime()) / 1000;
+                $el.text(formatElapsed(elapsedSeconds));
             });
         }
 
@@ -77,41 +301,132 @@
                 return;
             }
 
+            var selectedClass = ($('#trainingClassFilter').val() || 'all').toString().toLowerCase();
+
+            html += '<div class="panel-group" id="trainingAccordion" role="tablist" aria-multiselectable="true">';
             for (var i = 0; i < trainings.length; i++) {
                 var t = trainings[i];
+                var tClass = (t.TrainingClass || '').toString().trim().toLowerCase();
+                if (!selectedClass || !tClass || tClass !== selectedClass) {
+                    continue;
+                }
                 var isStarted = !!startedTrainingIds[t.Id];
-                html += '<div class="panel panel-default">';
-                html += '<div class="panel-heading"><strong>' + htmlEncode(t.Title || '') + '</strong></div>';
-                html += '<div class="panel-body">';
-                html += '<p>' + htmlEncode(t.Description || '') + '</p>';
-                html += '<p>Pass Percentage: <strong>' + (t.PassingPercentage || 0) + '%</strong></p>';
-                html += '<div class="training-actions">';
-                html += '<button class="btn btn-primary btn-sm" onclick="startTraining(' + t.Id + ')">' + (isStarted ? 'Restart' : 'Start') + '</button>';
-                html += '<span id="contentLinks_' + t.Id + '" style="' + (isStarted ? '' : 'display:none;') + '">';
-                if (t.PdfPath) {
-                    html += '<button class="btn btn-default btn-sm" onclick="openContent(' + t.Id + ',\'pdf\')">Open PDF</button>';
+                var status = t.Status || (isStarted ? 'InProgress' : 'NotStarted');
+                var statusDisplay = t.StatusDisplay || (status === 'InProgress' ? 'In Progress' : (status === 'NotStarted' ? 'Not Started' : status));
+                var primaryText = 'Start Training';
+                if (status === 'InProgress') {
+                    primaryText = 'Restart Training';
+                } else if (status === 'Failed' || status === 'Completed') {
+                    primaryText = 'Retake Training';
                 }
-                if (t.VideoPath) {
-                    html += '<button class="btn btn-default btn-sm" onclick="openContent(' + t.Id + ',\'video\')">Open Video</button>';
+
+                var statusLabelClass = 'label-default';
+                if (status === 'InProgress') statusLabelClass = 'label-warning';
+                if (status === 'Failed') statusLabelClass = 'label-danger';
+                if (status === 'Completed') statusLabelClass = 'label-success';
+
+                var panelId = 'trainingPanel_' + t.Id;
+                var headingId = 'trainingHeading_' + t.Id;
+                var collapseId = 'trainingCollapse_' + t.Id;
+
+                html += '<div class="panel panel-default training-card" id="' + panelId + '">';
+                html += '<div class="panel-heading" role="tab" id="' + headingId + '">';
+                html += '<h4 class="panel-title" style="margin:0;">';
+                html += '<a role="button" data-toggle="collapse" data-parent="#trainingAccordion" href="#' + collapseId + '" aria-expanded="false" aria-controls="' + collapseId + '" style="display:block; text-decoration:none;">';
+                html += '<strong>' + htmlEncode(t.Title || '') + '</strong>';
+                html += '</a>';
+                html += '</h4>';
+                html += '<div class="training-meta" style="margin-top:6px;">';
+                html += '<span class="label ' + statusLabelClass + '">' + htmlEncode(statusDisplay) + '</span>';
+
+                var className = (t.TrainingClass || '').toString().trim();
+                if (className) {
+                    html += '<span class="text-muted" style="margin-left:8px;">Class: </span><span class="text-muted">' + htmlEncode(toTitleCase(className)) + '</span>';
                 }
-                html += '</span>';
-                if (t.PdfPath || t.VideoPath) {
-                    html += '<div id="contentLocked_' + t.Id + '" class="text-muted" style="' + (isStarted ? 'display:none;' : '') + '">Start training to unlock content.</div>';
+
+                var assignedAt = t.AssignedAtIso || t.AssignedAtUtc || '';
+                var assignedDate = parseDate(assignedAt);
+                if (assignedDate) {
+                    html += '<span class="text-muted" style="margin-left:8px;">Assigned: </span><span class="text-muted">' + htmlEncode(assignedDate.toLocaleDateString()) + '</span>';
                 }
-                html += '<button class="btn btn-info btn-sm" onclick="loadQuiz(' + t.Id + ')">Take Quiz</button>';
+
+                if (status === 'InProgress') {
+                    var startedAt = t.StartedAtIso || t.StartedAtUtc || startedAtByTrainingId[t.Id] || '';
+                    var startedDate = parseDate(startedAt);
+                    html += '<span class="text-muted" style="margin-left:8px;">Started: </span><span class="text-muted">' + htmlEncode(startedDate ? startedDate.toLocaleString() : '') + '</span>';
+                    html += '<span class="text-muted" style="margin-left:8px;">Elapsed: </span>';
+                    html += '<span class="text-muted" data-training-timer="1" data-started="' + htmlEncode(startedAt) + '"></span>';
+                } else if (status === 'Completed' || status === 'Failed') {
+                    if (t.LastScorePercentage != null) {
+                        html += '<span class="text-muted">Score: ' + t.LastScorePercentage + '%</span>';
+                    }
+                }
                 html += '</div>';
+                html += '</div>';
+
+                html += '<div id="' + collapseId + '" class="panel-collapse collapse" role="tabpanel" aria-labelledby="' + headingId + '">';
+                html += '<div class="panel-body">';
+                html += '<p class="text-muted" style="margin-bottom:10px;">' + htmlEncode(t.Description || '') + '</p>';
+                html += '<p style="margin-bottom:12px;">Pass Percentage: <strong>' + (t.PassingPercentage || 0) + '%</strong></p>';
+
+                html += '<div class="training-actions">';
+                html += '<button class="btn btn-primary btn-sm" onclick="startTraining(' + t.Id + ')">' + htmlEncode(primaryText) + '</button>';
+
+                if (t.PdfPath) {
+                    if (isStarted) {
+                        html += '<button class="btn btn-default btn-sm" onclick="openContent(' + t.Id + ',\'pdf\')">Open PDF</button>';
+                    } else {
+                        html += '<button class="btn btn-default btn-sm" disabled>Open PDF</button>';
+                    }
+                }
+
+                if (t.VideoPath) {
+                    if (isStarted) {
+                        html += '<button class="btn btn-default btn-sm" onclick="openVideo(' + t.Id + ')">Watch Video</button>';
+                    } else {
+                        html += '<button class="btn btn-default btn-sm" disabled>Watch Video</button>';
+                    }
+                }
+
+                if (isStarted) {
+                    html += '<button class="btn btn-info btn-sm" onclick="loadQuiz(' + t.Id + ')">Take Quiz</button>';
+                } else {
+                    html += '<button class="btn btn-info btn-sm" disabled>Take Quiz</button>';
+                }
+                html += '</div>';
+
+                if (!isStarted) {
+                    html += '<div class="training-hint text-muted">'
+                        + '<strong>How to complete:</strong><br/>'
+                        + '1) Click <strong>Start Training</strong><br/>'
+                        + '2) Review the PDF/Video content<br/>'
+                        + '3) Take the quiz to finish'
+                        + '</div>';
+                }
                 html += '</div></div>';
+                html += '</div>';
+                html += '</div>';
             }
+            html += '</div>';
             $('#trainingList').html(html);
+
+            updateTimers();
         }
+
+        $('#videoModal').on('hidden.bs.modal', function () {
+            var video = document.getElementById('trainingVideo');
+            if (video) {
+                try { video.pause(); } catch (e) { }
+                $('#trainingVideo').removeAttr('src');
+                try { video.load(); } catch (e) { }
+            }
+        });
 
         window.startTraining = function (id) {
             $.post('/Training/StartTraining', { trainingContentId: id }, function () {
                 activeTrainingId = id;
                 startedTrainingIds[id] = true;
-                $('#contentLinks_' + id).show();
-                $('#contentLocked_' + id).hide();
-                alert('Training started. Content is now unlocked.');
+                renderTrainingCards();
             });
         };
 
@@ -123,6 +438,18 @@
 
             var url = '/Training/OpenContent?trainingContentId=' + id + '&contentType=' + encodeURIComponent(type);
             window.open(url, '_blank');
+        };
+
+        window.openVideo = function (id) {
+            if (!startedTrainingIds[id]) {
+                alert('Please click Start first.');
+                return;
+            }
+
+            var url = '/Training/OpenContent?trainingContentId=' + id + '&contentType=' + encodeURIComponent('video');
+            $('#videoModalMessage').hide();
+            $('#trainingVideo').attr('src', url);
+            $('#videoModal').modal('show');
         };
 
         window.loadQuiz = function (id) {
@@ -200,5 +527,7 @@
         }
 
         loadAssignedTrainings();
+
+        setInterval(updateTimers, 1000);
     })();
 </script>
