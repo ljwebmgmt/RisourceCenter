@@ -58,6 +58,15 @@
         margin-bottom: 10px;
     }
 
+    .training-meta-row {
+        margin-top: 4px;
+        line-height: 1.4;
+    }
+
+    .training-meta-row:first-child {
+        margin-top: 0;
+    }
+
     .training-meta .label {
         margin-right: 6px;
     }
@@ -336,13 +345,17 @@
                 html += '<strong>' + htmlEncode(t.Title || '') + '</strong>';
                 html += '</a>';
                 html += '</h4>';
-                html += '<div class="training-meta" style="margin-top:6px;">';
+                html += '<div class="training-meta">';
+                html += '<div class="training-meta-row">';
                 html += '<span class="label ' + statusLabelClass + '">' + htmlEncode(statusDisplay) + '</span>';
 
                 var className = (t.TrainingClass || '').toString().trim();
                 if (className) {
                     html += '<span class="text-muted" style="margin-left:8px;">Class: </span><span class="text-muted">' + htmlEncode(toTitleCase(className)) + '</span>';
                 }
+
+                html += '</div>';
+                html += '<div class="training-meta-row">';
 
                 var assignedAt = t.AssignedAtIso || t.AssignedAtUtc || '';
                 var assignedDate = parseDate(assignedAt);
@@ -353,14 +366,17 @@
                 if (status === 'InProgress') {
                     var startedAt = t.StartedAtIso || t.StartedAtUtc || startedAtByTrainingId[t.Id] || '';
                     var startedDate = parseDate(startedAt);
+
                     html += '<span class="text-muted" style="margin-left:8px;">Started: </span><span class="text-muted">' + htmlEncode(startedDate ? startedDate.toLocaleString() : '') + '</span>';
                     html += '<span class="text-muted" style="margin-left:8px;">Elapsed: </span>';
                     html += '<span class="text-muted" data-training-timer="1" data-started="' + htmlEncode(startedAt) + '"></span>';
                 } else if (status === 'Completed' || status === 'Failed') {
                     if (t.LastScorePercentage != null) {
-                        html += '<span class="text-muted">Score: ' + t.LastScorePercentage + '%</span>';
+                        html += '<span class="text-muted" style="margin-left:8px;">Score: ' + t.LastScorePercentage + '%</span>';
                     }
                 }
+
+                html += '</div>';
                 html += '</div>';
                 html += '</div>';
 
@@ -404,7 +420,6 @@
                         + '</div>';
                 }
                 html += '</div></div>';
-                html += '</div>';
                 html += '</div>';
             }
             html += '</div>';
