@@ -16,8 +16,10 @@ namespace newrisourcecenter.Models
     {
         public short id { get; set; }
         public string name { get; set; }
+        public short sort_order { get; set; }
         public short complete_days { get; set; }
         public string prize { get; set; }
+        public string image_url { get; set; }
         public string online_link { get; set; }
         public string person_link { get; set; }
     }

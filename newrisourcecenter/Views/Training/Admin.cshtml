@@ -24,7 +24,59 @@
             min-height: 160px;
         }
     }
+
+    .rc-loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.6);
+        z-index: 2000;
+        display: none;
+    }
+
+    .rc-loading-box {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 12px 16px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #333;
+    }
+
+    .rc-spinner {
+        width: 18px;
+        height: 18px;
+        border: 2px solid #ddd;
+        border-top-color: #337ab7;
+        border-radius: 50%;
+        animation: rcspin 0.9s linear infinite;
+    }
+
+    @@keyframes rcspin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .content-file {
+        margin-top: 6px;
+    }
 </style>
+
+<div id="rcLoading" class="rc-loading-overlay" aria-hidden="true">
+    <div class="rc-loading-box">
+        <div class="rc-spinner"></div>
+        <div>Loading…</div>
+    </div>
+</div>
 
 <div class="main_content" style="padding-top:20px; padding-bottom:20px;">
     <div class="container-fluid">
@@ -64,14 +116,9 @@
                         <div class="row">
                             <div class="col-sm-6">
                                 <div class="form-group">
-                                    <label for="TrainingClass" class="col-sm-4 control-label">Training Class</label>
+                                    <label for="TrainingClass" class="col-sm-4 control-label">Track</label>
                                     <div class="col-sm-8">
-                                        <input type="text" class="form-control" id="TrainingClass" list="trainingClassOptions" value="Basic" required />
-                                        <datalist id="trainingClassOptions">
-                                            <option value="Onboarding"></option>
-                                            <option value="Basic"></option>
-                                            <option value="Advanced"></option>
-                                        </datalist>
+                                        <select class="form-control" id="TrainingClass" required></select>
                                     </div>
                                 </div>
                             </div>
@@ -131,6 +178,15 @@
 
 <script>
     (function () {
+        var $rcLoading = $('#rcLoading');
+        if ($rcLoading.length) {
+            $(document)
+                .off('.rcLoading')
+                .on('ajaxStart.rcLoading', function () { $rcLoading.show(); })
+                .on('ajaxStop.rcLoading', function () { $rcLoading.hide(); })
+                .on('ajaxError.rcLoading', function () { $rcLoading.hide(); });
+        }
+
         function addQuestion() {
             var qIndex = $('#questionContainer .question-block').length;
             var html = '';
@@ -157,13 +213,26 @@
             $('#questionContainer').append(html);
         }
 
-        function loadRoles() {
+        function loadRoles(selectedRoleIds) {
             $.getJSON('/Training/GetRoles', function (roles) {
                 var html = '';
                 for (var i = 0; i < roles.length; i++) {
                     html += '<option value="' + roles[i].Id + '">' + roles[i].Name + '</option>';
                 }
                 $('#RoleIds').html(html);
+            });
+        }
+
+        function loadTracks() {
+            $.getJSON('/Training/GetTrainingTracksAdmin', function (tracks) {
+                tracks = tracks || [];
+                var html = '';
+                for (var i = 0; i < tracks.length; i++) {
+                    var t = (tracks[i] || '').toString().trim();
+                    if (!t) continue;
+                    html += '<option value="' + htmlEncode(t) + '">' + htmlEncode(t) + '</option>';
+                }
+                $('#TrainingClass').html(html);
             });
         }
 
@@ -222,6 +291,7 @@
         });
 
         addQuestion();
-        loadRoles();
+        loadTracks();
+        loadRoles([]);
     })();
 </script>

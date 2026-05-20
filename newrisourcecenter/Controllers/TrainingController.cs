@@ -398,7 +398,7 @@ namespace newrisourcecenter.Controllers
 
             var activeProgressRows = await db.UserProgresses
                 .Where(x => x.UserId == (int)userId && x.EndTime == null && x.TrainingContentId.HasValue)
-                .Select(x => new { TrainingContentId = x.TrainingContentId.Value, x.StartTime })
+                .Select(x => new { TrainingContentId = x.TrainingContentId.Value, x.StartTime, x.PdfOpenedAt, x.VideoOpenedAt })
                 .ToListAsync();
 
             var activeProgressByTrainingId = activeProgressRows
@@ -439,6 +439,14 @@ namespace newrisourcecenter.Controllers
                         ? assignedAtByTrainingId[x.Id].ToString("o")
                         : null,
                     IsStarted = activeProgressByTrainingId.ContainsKey(x.Id),
+                    HasOpenedPdf = activeProgressByTrainingId.ContainsKey(x.Id) && activeProgressByTrainingId[x.Id].PdfOpenedAt.HasValue,
+                    HasOpenedVideo = activeProgressByTrainingId.ContainsKey(x.Id) && activeProgressByTrainingId[x.Id].VideoOpenedAt.HasValue,
+                    CanTakeQuiz =
+                        activeProgressByTrainingId.ContainsKey(x.Id)
+                        && (
+                            (string.IsNullOrWhiteSpace(x.PdfPath) || activeProgressByTrainingId[x.Id].PdfOpenedAt.HasValue)
+                            && (string.IsNullOrWhiteSpace(x.VideoPath) || activeProgressByTrainingId[x.Id].VideoOpenedAt.HasValue)
+                        ),
                     Status = activeProgressByTrainingId.ContainsKey(x.Id)
                         ? "InProgress"
                         : (latestCompletedByTrainingId.ContainsKey(x.Id)
@@ -467,6 +475,148 @@ namespace newrisourcecenter.Controllers
                 .ToList();
 
             return Json(assignedTrainings, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> GetTrainingTrackSummary()
+        {
+            long userId = Convert.ToInt64(Session["userId"]);
+            if (!Request.IsAuthenticated || userId == 0)
+            {
+                Response.StatusCode = 401;
+                return Json("Please Login. Login has timed out", JsonRequestBehavior.AllowGet);
+            }
+
+            string identityUserId = User.Identity.GetUserId();
+            var userRoleIds = await identityDb.Users
+                .Where(x => x.Id == identityUserId)
+                .SelectMany(x => x.Roles.Select(r => r.RoleId))
+                .ToListAsync();
+
+            if (userRoleIds.Count == 0)
+            {
+                return Json(new List<object>(), JsonRequestBehavior.AllowGet);
+            }
+
+            var assignedTrainings = await db.TrainingRoleAssignments
+                .Where(x => userRoleIds.Contains(x.RoleId))
+                .Select(x => x.TrainingContent)
+                .Where(x => x != null)
+                .Select(x => new { x.Id, x.TrainingClass })
+                .Distinct()
+                .ToListAsync();
+
+            var assignedByClass = assignedTrainings
+                .Where(x => !string.IsNullOrWhiteSpace(x.TrainingClass))
+                .GroupBy(x => x.TrainingClass.Trim())
+                .ToDictionary(g => g.Key, g => g.Select(t => t.Id).Distinct().ToList(), StringComparer.OrdinalIgnoreCase);
+
+            var allAssignedIds = assignedTrainings.Select(x => x.Id).Distinct().ToList();
+            var passedIds = await db.UserProgresses
+                .Where(x => x.UserId == (int)userId
+                    && x.TrainingContentId.HasValue
+                    && allAssignedIds.Contains(x.TrainingContentId.Value)
+                    && x.EndTime != null
+                    && x.IsPassed == true)
+                .Select(x => x.TrainingContentId.Value)
+                .Distinct()
+                .ToListAsync();
+
+            List<UserTrainingTrackCompletionRow> completionRows = new List<UserTrainingTrackCompletionRow>();
+            try
+            {
+                completionRows = await db.Database.SqlQuery<UserTrainingTrackCompletionRow>(
+                    "SELECT UserId, TrainingClass, CompletedAt, EmailedAt FROM dbo.UserTrainingTrackCompletions WHERE UserId = @p0",
+                    (int)userId).ToListAsync();
+            }
+            catch
+            {
+            }
+
+            var completionByClass = completionRows
+                .Where(x => !string.IsNullOrWhiteSpace(x.TrainingClass))
+                .GroupBy(x => x.TrainingClass.Trim())
+                .ToDictionary(g => g.Key, g => g.FirstOrDefault(), StringComparer.OrdinalIgnoreCase);
+
+            var trackMeta = await db.trainingTracks
+                .OrderBy(x => x.sort_order)
+                .ThenBy(x => x.name)
+                .Select(x => new { x.name, x.sort_order, x.complete_days, x.prize, x.image_url })
+                .ToListAsync();
+
+            var metaByClass = trackMeta
+                .Where(x => !string.IsNullOrWhiteSpace(x.name))
+                .GroupBy(x => x.name.Trim())
+                .ToDictionary(g => g.Key, g => g.FirstOrDefault(), StringComparer.OrdinalIgnoreCase);
+
+            var result = new List<TrainingTrackSummaryItem>();
+            var allClasses = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var k in assignedByClass.Keys) allClasses.Add(k);
+            foreach (var k in metaByClass.Keys) allClasses.Add(k);
+
+            foreach (var clsKey in allClasses)
+            {
+                string cls = (clsKey ?? string.Empty).Trim();
+                List<int> ids;
+                if (!assignedByClass.TryGetValue(cls, out ids) || ids == null)
+                {
+                    ids = new List<int>();
+                }
+
+                int total = ids.Count;
+                int completed = ids.Count(id => passedIds.Contains(id));
+                bool isComplete = total > 0 && completed == total;
+
+                UserTrainingTrackCompletionRow completion;
+                completionByClass.TryGetValue(cls, out completion);
+
+                var meta = metaByClass.ContainsKey(cls) ? metaByClass[cls] : null;
+
+                result.Add(new TrainingTrackSummaryItem
+                {
+                    TrainingClass = cls,
+                    SortOrder = meta != null ? (short?)meta.sort_order : null,
+                    TotalCourses = total,
+                    CompletedCourses = completed,
+                    TotalPrizePoints = 0,
+                    CompleteDays = meta != null ? (int?)meta.complete_days : null,
+                    Prize = meta != null ? meta.prize : null,
+                    ImageUrl = meta != null ? meta.image_url : null,
+                    IsComplete = completion != null && completion.CompletedAt != null,
+                    CompletedAt = completion != null ? completion.CompletedAt : null,
+                    EmailedAt = completion != null ? completion.EmailedAt : null
+                });
+            }
+
+            var sorted = result
+                .OrderBy(x => x.SortOrder.HasValue ? x.SortOrder.Value : short.MaxValue)
+                .ThenBy(x => x.TrainingClass)
+                .ToList();
+
+            return Json(sorted, JsonRequestBehavior.AllowGet);
+        }
+
+        private class UserTrainingTrackCompletionRow
+        {
+            public int UserId { get; set; }
+            public string TrainingClass { get; set; }
+            public DateTime? CompletedAt { get; set; }
+            public DateTime? EmailedAt { get; set; }
+        }
+
+        private class TrainingTrackSummaryItem
+        {
+            public string TrainingClass { get; set; }
+            public short? SortOrder { get; set; }
+            public int TotalCourses { get; set; }
+            public int CompletedCourses { get; set; }
+            public int TotalPrizePoints { get; set; }
+            public int? CompleteDays { get; set; }
+            public string Prize { get; set; }
+            public string ImageUrl { get; set; }
+            public bool IsComplete { get; set; }
+            public DateTime? CompletedAt { get; set; }
+            public DateTime? EmailedAt { get; set; }
         }
 
         [HttpPost]
@@ -508,6 +658,8 @@ namespace newrisourcecenter.Controllers
                 progress.EndTime = null;
                 progress.ScorePercentage = null;
                 progress.IsPassed = null;
+                progress.PdfOpenedAt = null;
+                progress.VideoOpenedAt = null;
                 await db.SaveChangesAsync();
             }
 
@@ -539,14 +691,31 @@ namespace newrisourcecenter.Controllers
                 return new HttpStatusCodeResult(400, "Please start training first.");
             }
 
+            bool updated = false;
+
             string contentPath = null;
             if (string.Equals(contentType, "pdf", StringComparison.OrdinalIgnoreCase))
             {
                 contentPath = training.PdfPath;
+                if (!activeProgress.PdfOpenedAt.HasValue)
+                {
+                    activeProgress.PdfOpenedAt = DateTime.UtcNow;
+                    updated = true;
+                }
             }
             else if (string.Equals(contentType, "video", StringComparison.OrdinalIgnoreCase))
             {
                 contentPath = training.VideoPath;
+                if (!activeProgress.VideoOpenedAt.HasValue)
+                {
+                    activeProgress.VideoOpenedAt = DateTime.UtcNow;
+                    updated = true;
+                }
+            }
+
+            if (updated)
+            {
+                await db.SaveChangesAsync();
             }
 
             if (string.IsNullOrWhiteSpace(contentPath))
@@ -567,6 +736,13 @@ namespace newrisourcecenter.Controllers
                 return Json("Please Login. Login has timed out", JsonRequestBehavior.AllowGet);
             }
 
+            var training = await db.TrainingContents.FindAsync(trainingContentId);
+            if (training == null)
+            {
+                Response.StatusCode = 404;
+                return Json("Training not found.", JsonRequestBehavior.AllowGet);
+            }
+
             var activeProgress = await db.UserProgresses
                 .Where(x => x.UserId == (int)userId && x.TrainingContentId == trainingContentId && x.EndTime == null)
                 .OrderByDescending(x => x.Id)
@@ -576,6 +752,16 @@ namespace newrisourcecenter.Controllers
             {
                 Response.StatusCode = 400;
                 return Json("Please start training before attempting the quiz.", JsonRequestBehavior.AllowGet);
+            }
+
+            bool requiresPdf = !string.IsNullOrWhiteSpace(training.PdfPath);
+            bool requiresVideo = !string.IsNullOrWhiteSpace(training.VideoPath);
+            bool pdfOk = !requiresPdf || activeProgress.PdfOpenedAt.HasValue;
+            bool videoOk = !requiresVideo || activeProgress.VideoOpenedAt.HasValue;
+            if (!pdfOk || !videoOk)
+            {
+                Response.StatusCode = 400;
+                return Json("Please open all required training content before taking the quiz.", JsonRequestBehavior.AllowGet);
             }
 
             var quiz = await db.QuizQuestions
@@ -623,6 +809,16 @@ namespace newrisourcecenter.Controllers
             {
                 Response.StatusCode = 400;
                 return Json("Please start training before submitting the quiz.");
+            }
+
+            bool requiresPdf = !string.IsNullOrWhiteSpace(training.PdfPath);
+            bool requiresVideo = !string.IsNullOrWhiteSpace(training.VideoPath);
+            bool pdfOk = !requiresPdf || progress.PdfOpenedAt.HasValue;
+            bool videoOk = !requiresVideo || progress.VideoOpenedAt.HasValue;
+            if (!pdfOk || !videoOk)
+            {
+                Response.StatusCode = 400;
+                return Json("Please open all required training content before submitting the quiz.");
             }
 
             bool wasPassed = progress.IsPassed.HasValue && progress.IsPassed.Value;
@@ -748,6 +944,17 @@ namespace newrisourcecenter.Controllers
                 }
             }
 
+            if (isPassed)
+            {
+                try
+                {
+                    await TrySendTrackCompletionEmail((int)userId, training.TrainingClass);
+                }
+                catch
+                {
+                }
+            }
+
             TimeSpan elapsed = progress.EndTime.Value - progress.StartTime;
             return Json(new
             {
@@ -756,6 +963,116 @@ namespace newrisourcecenter.Controllers
                 isPassed,
                 elapsedSeconds = Math.Max(0, (int)elapsed.TotalSeconds)
             });
+        }
+
+        private async Task TrySendTrackCompletionEmail(int userId, string trainingClass)
+        {
+            trainingClass = (trainingClass ?? string.Empty).Trim();
+            if (string.IsNullOrWhiteSpace(trainingClass))
+            {
+                return;
+            }
+
+            bool isTrackComplete = await IsTrainingClassTrackComplete(userId, trainingClass);
+            if (!isTrackComplete)
+            {
+                return;
+            }
+
+            bool shouldSend = await TryMarkTrackCompletionEmailed(userId, trainingClass);
+            if (!shouldSend)
+            {
+                return;
+            }
+
+            string html = (Convert.ToString(Session["firstName"]) + " " + Convert.ToString(Session["lastName"]))
+                + " has completed a training track, details are given below: ";
+            html += "<br/><br/><strong>First Name: </strong>" + Convert.ToString(Session["firstName"]);
+            html += "<br/><strong>Last Name: </strong>" + Convert.ToString(Session["lastName"]);
+            html += "<br/><strong>Email Address: </strong>" + Convert.ToString(Session["userEmail"]);
+            html += "<br/><strong>Company: </strong>" + Convert.ToString(Session["comp_name"]);
+            html += "<br/><strong>Location: </strong>" + Convert.ToString(Session["location_name"]);
+            html += "<br/><strong>Training Track: </strong><span style='text-transform: capitalize;'>" + trainingClass + "</span>";
+
+            new CommonController().email(
+                "webmaster@rittal.us",
+                "channel@rittal.us",
+                "Rittal University's Training Track Completion Notice",
+                html);
+        }
+
+        private async Task<bool> IsTrainingClassTrackComplete(int userId, string trainingClass)
+        {
+            string identityUserId = User.Identity.GetUserId();
+            var userRoleIds = await identityDb.Users
+                .Where(x => x.Id == identityUserId)
+                .SelectMany(x => x.Roles.Select(r => r.RoleId))
+                .ToListAsync();
+
+            if (userRoleIds.Count == 0)
+            {
+                return false;
+            }
+
+            var requiredTrainingIds = await db.TrainingRoleAssignments
+                .Where(x => userRoleIds.Contains(x.RoleId))
+                .Select(x => x.TrainingContentId)
+                .Distinct()
+                .Join(
+                    db.TrainingContents,
+                    id => id,
+                    t => t.Id,
+                    (id, t) => new { t.Id, t.TrainingClass })
+                .Where(x => x.TrainingClass != null && x.TrainingClass.Trim() == trainingClass)
+                .Select(x => x.Id)
+                .Distinct()
+                .ToListAsync();
+
+            if (requiredTrainingIds.Count == 0)
+            {
+                return false;
+            }
+
+            var completedIds = await db.UserProgresses
+                .Where(x => x.UserId == userId
+                    && x.TrainingContentId.HasValue
+                    && requiredTrainingIds.Contains(x.TrainingContentId.Value)
+                    && x.EndTime != null
+                    && x.IsPassed == true)
+                .Select(x => x.TrainingContentId.Value)
+                .Distinct()
+                .ToListAsync();
+
+            return completedIds.Count == requiredTrainingIds.Count;
+        }
+
+        private async Task<bool> TryMarkTrackCompletionEmailed(int userId, string trainingClass)
+        {
+            try
+            {
+                int existing = await db.Database
+                    .SqlQuery<int>(
+                        "SELECT COUNT(1) FROM dbo.UserTrainingTrackCompletions WHERE UserId = @p0 AND TrainingClass = @p1",
+                        userId,
+                        trainingClass)
+                    .FirstOrDefaultAsync();
+
+                if (existing > 0)
+                {
+                    return false;
+                }
+
+                await db.Database.ExecuteSqlCommandAsync(
+                    "INSERT INTO dbo.UserTrainingTrackCompletions (UserId, TrainingClass, CompletedAt, EmailedAt) VALUES (@p0, @p1, GETUTCDATE(), GETUTCDATE())",
+                    userId,
+                    trainingClass);
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         private async Task SendTrainingPassedEmail(int userId, int trainingContentId, string trainingTitle, int scorePercentage, int passingPercentage)
@@ -889,6 +1206,15 @@ namespace newrisourcecenter.Controllers
                 return Json("Passing percentage must be between 0 and 100.");
             }
 
+            if (string.IsNullOrWhiteSpace(model.TrainingClass))
+            {
+                Response.TrySkipIisCustomErrors = true;
+                Response.StatusCode = 400;
+                return Json("Track is required.");
+            }
+
+            string normalizedTrack = model.TrainingClass.Trim();
+
             if (!hasAttempts)
             {
                 if (model.Questions == null || model.Questions.Count == 0)
@@ -965,7 +1291,7 @@ namespace newrisourcecenter.Controllers
 
             training.Title = model.Title.Trim();
             training.Description = model.Description;
-            training.TrainingClass = string.IsNullOrWhiteSpace(model.TrainingClass) ? "Basic" : model.TrainingClass.Trim();
+            training.TrainingClass = normalizedTrack;
             training.PdfPath = pdfPath;
             training.VideoPath = videoPath;
             training.PassingPercentage = model.PassingPercentage;
@@ -1070,6 +1396,15 @@ namespace newrisourcecenter.Controllers
                 return Json("Passing percentage must be between 0 and 100.");
             }
 
+            if (string.IsNullOrWhiteSpace(model.TrainingClass))
+            {
+                Response.TrySkipIisCustomErrors = true;
+                Response.StatusCode = 400;
+                return Json("Track is required.");
+            }
+
+            string normalizedTrack = model.TrainingClass.Trim();
+
             if (model.Questions == null || model.Questions.Count == 0)
             {
                 Response.TrySkipIisCustomErrors = true;
@@ -1120,7 +1455,7 @@ namespace newrisourcecenter.Controllers
             {
                 Title = model.Title.Trim(),
                 Description = model.Description,
-                TrainingClass = string.IsNullOrWhiteSpace(model.TrainingClass) ? "Basic" : model.TrainingClass.Trim(),
+                TrainingClass = normalizedTrack,
                 PdfPath = pdfPath,
                 VideoPath = videoPath,
                 PassingPercentage = model.PassingPercentage
@@ -1184,6 +1519,155 @@ namespace newrisourcecenter.Controllers
                 .OrderBy(x => x.Name)
                 .ToListAsync();
             return Json(roles, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Super Admin")]
+        public ActionResult TracksAdmin()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Super Admin")]
+        public async Task<JsonResult> GetTrainingTracksManage()
+        {
+            var tracks = await db.trainingTracks
+                .OrderBy(x => x.sort_order)
+                .ThenBy(x => x.name)
+                .Select(x => new TrainingTrackListItemViewModel
+                {
+                    Id = x.id,
+                    Name = x.name,
+                    SortOrder = x.sort_order,
+                    CompleteDays = x.complete_days,
+                    Prize = x.prize,
+                    ImageUrl = x.image_url
+                })
+                .ToListAsync();
+
+            return Json(tracks, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Super Admin")]
+        public async Task<JsonResult> SaveTrainingTrack(TrainingTrackSaveViewModel model)
+        {
+            if (model == null)
+            {
+                Response.TrySkipIisCustomErrors = true;
+                Response.StatusCode = 400;
+                return Json("Invalid payload.");
+            }
+
+            if (string.IsNullOrWhiteSpace(model.Name))
+            {
+                Response.TrySkipIisCustomErrors = true;
+                Response.StatusCode = 400;
+                return Json("Track name is required.");
+            }
+
+            string name = model.Name.Trim();
+            if (name.Length > 100)
+            {
+                Response.TrySkipIisCustomErrors = true;
+                Response.StatusCode = 400;
+                return Json("Track name is too long.");
+            }
+
+            if (model.CompleteDays < 0)
+            {
+                Response.TrySkipIisCustomErrors = true;
+                Response.StatusCode = 400;
+                return Json("Complete days must be 0 or greater.");
+            }
+
+            if (model.SortOrder < 0)
+            {
+                Response.TrySkipIisCustomErrors = true;
+                Response.StatusCode = 400;
+                return Json("Sort order must be 0 or greater.");
+            }
+
+            trainingTrack track;
+            if (model.Id.HasValue && model.Id.Value > 0)
+            {
+                short id = model.Id.Value;
+                track = await db.trainingTracks.FirstOrDefaultAsync(x => x.id == id);
+                if (track == null)
+                {
+                    Response.TrySkipIisCustomErrors = true;
+                    Response.StatusCode = 404;
+                    return Json("Track not found.");
+                }
+            }
+            else
+            {
+                track = new trainingTrack();
+                db.trainingTracks.Add(track);
+            }
+
+            track.name = name;
+            track.sort_order = model.SortOrder;
+            track.complete_days = model.CompleteDays;
+            track.prize = model.Prize;
+
+            if (model.RemoveImage)
+            {
+                track.image_url = null;
+            }
+
+            if (model.ImageFile != null && model.ImageFile.ContentLength > 0)
+            {
+                string safeFileName = Path.GetFileName(model.ImageFile.FileName);
+                string extension = Path.GetExtension(safeFileName) ?? string.Empty;
+                string generatedName = string.Format("{0}{1}", Guid.NewGuid().ToString("N"), extension);
+                string relativeFolder = "~/img/training";
+                string absoluteFolder = Server.MapPath(relativeFolder);
+                if (!Directory.Exists(absoluteFolder))
+                {
+                    Directory.CreateDirectory(absoluteFolder);
+                }
+
+                string absolutePath = Path.Combine(absoluteFolder, generatedName);
+                model.ImageFile.SaveAs(absolutePath);
+                track.image_url = generatedName;
+            }
+
+            await db.SaveChangesAsync();
+            return Json(new { ok = true, id = track.id });
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Super Admin")]
+        public async Task<JsonResult> DeleteTrainingTrack(short id)
+        {
+            var track = await db.trainingTracks.FirstOrDefaultAsync(x => x.id == id);
+            if (track == null)
+            {
+                Response.TrySkipIisCustomErrors = true;
+                Response.StatusCode = 404;
+                return Json("Track not found.");
+            }
+
+            db.trainingTracks.Remove(track);
+            await db.SaveChangesAsync();
+            return Json(new { ok = true });
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Super Admin")]
+        public async Task<JsonResult> GetTrainingTracksAdmin()
+        {
+            var tracks = await db.trainingTracks
+                .Where(x => x.name != null && x.name != "")
+                .OrderBy(x => x.sort_order)
+                .ThenBy(x => x.name)
+                .Select(x => x.name)
+                .Distinct()
+                .ToListAsync();
+
+            return Json(tracks, JsonRequestBehavior.AllowGet);
         }
 
         private string SaveTrainingFile(System.Web.HttpPostedFileBase file, string folder)

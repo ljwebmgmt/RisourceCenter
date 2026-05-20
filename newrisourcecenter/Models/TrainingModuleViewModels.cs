@@ -15,6 +15,28 @@ namespace newrisourcecenter.Models
         public List<TrainingQuestionCreateViewModel> Questions { get; set; }
     }
 
+    public class TrainingTrackSaveViewModel
+    {
+        public short? Id { get; set; }
+        public string Name { get; set; }
+        public short SortOrder { get; set; }
+        public short CompleteDays { get; set; }
+        public string Prize { get; set; }
+        public string ImageUrl { get; set; }
+        public HttpPostedFileBase ImageFile { get; set; }
+        public bool RemoveImage { get; set; }
+    }
+
+    public class TrainingTrackListItemViewModel
+    {
+        public short Id { get; set; }
+        public string Name { get; set; }
+        public short SortOrder { get; set; }
+        public short CompleteDays { get; set; }
+        public string Prize { get; set; }
+        public string ImageUrl { get; set; }
+    }
+
     public class TrainingUpdateViewModel : TrainingCreateViewModel
     {
         public int Id { get; set; }

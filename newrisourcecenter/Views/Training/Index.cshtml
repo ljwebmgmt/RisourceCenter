@@ -4,6 +4,47 @@
 }
 
 <style>
+    .rc-loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.6);
+        z-index: 1030;
+        display: none;
+    }
+
+    .rc-loading-box {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 12px 16px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #333;
+    }
+
+    .rc-spinner {
+        width: 18px;
+        height: 18px;
+        border: 2px solid #ddd;
+        border-top-color: #337ab7;
+        border-radius: 50%;
+        animation: rcspin 0.9s linear infinite;
+    }
+
+    @@keyframes rcspin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
     @@media (max-width: 767px) {
         .training-actions .btn {
             display: block;
@@ -121,9 +162,21 @@
     }
 
     .modal-backdrop {
-        z-index: 1055;
+        z-index: 2990;
+    }
+
+    #quizModal,
+    #videoModal {
+        z-index: 3000;
     }
 </style>
+
+<div id="rcLoading" class="rc-loading-overlay" aria-hidden="true">
+    <div class="rc-loading-box">
+        <div class="rc-spinner"></div>
+        <div>Loading…</div>
+    </div>
+</div>
 
 <div class="main_content" style="padding-top:20px; padding-bottom:20px;">
     <div class="container">
@@ -131,30 +184,25 @@
             <div class="col-xs-12">
                 <div class="clearfix">
                     <h2 class="pull-left" style="margin-top:0;">My Trainings</h2>
-                    @if (User.IsInRole("Super Admin"))
-                    {
-                        <a class="btn btn-primary btn-sm pull-right" href="/Training/AdminList" style="margin-top:3px;">Training Admin</a>
-                    }
                 </div>
-                <div class="row" style="margin-top:10px;">
-                    <div class="col-xs-12 col-sm-4">
-                        <select id="trainingClassFilter" class="form-control input-sm"></select>
-                    </div>
-                </div>
+                <div id="trackSummary" style="margin-top:15px;"></div>
                 <div id="trainingList" style="margin-top:15px;"></div>
-                <hr />
-                <div id="quizContainer" style="display:none;">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <strong>Quiz</strong>
-                            <span class="text-muted" style="margin-left:8px;">Select all that apply</span>
-                        </div>
-                        <div class="panel-body">
-                            <form id="quizForm">
-                                <div id="quizQuestions"></div>
-                                <button type="submit" class="btn btn-success btn-block">Submit Quiz</button>
-                            </form>
-                            <div id="resultContainer" style="display:none; margin-top:15px;" class="alert alert-info"></div>
+
+                <div class="modal fade" id="quizModal" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title">Quiz</h4>
+                                <div class="text-muted" style="margin-top:4px;">Select all that apply</div>
+                            </div>
+                            <div class="modal-body">
+                                <form id="quizForm">
+                                    <div id="quizQuestions"></div>
+                                    <button type="submit" class="btn btn-success btn-block">Submit Quiz</button>
+                                </form>
+                                <div id="resultContainer" style="display:none; margin-top:15px;" class="alert alert-info"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -182,21 +230,34 @@
 
 <script>
     (function () {
+        var $rcLoading = $('#rcLoading');
+        if ($rcLoading.length) {
+            $(document)
+                .off('.rcLoading')
+                .on('ajaxStart.rcLoading', function () { $rcLoading.show(); })
+                .on('ajaxStop.rcLoading', function () { $rcLoading.hide(); })
+                .on('ajaxError.rcLoading', function () { $rcLoading.hide(); });
+        }
+
         var activeTrainingId = 0;
         var trainings = [];
         var startedTrainingIds = {};
         var startedAtByTrainingId = {};
+        var quizSubmittedByTrainingId = {};
         var availableTrainingClasses = [];
+        var selectedTrainingClass = '';
 
         if ($('#videoModal').length) {
             $('#videoModal').appendTo('body');
         }
 
-        function loadAssignedTrainings() {
+        // ... rest of the code remains the same ...
+        function loadAssignedTrainings(done) {
             $.getJSON('/Training/GetAssignedTrainings', function (data) {
                 trainings = data || [];
                 startedTrainingIds = {};
                 startedAtByTrainingId = {};
+                quizSubmittedByTrainingId = {};
                 availableTrainingClasses = [];
                 for (var i = 0; i < trainings.length; i++) {
                     if (trainings[i].IsStarted) {
@@ -204,6 +265,11 @@
                         if (trainings[i].StartedAtUtc) {
                             startedAtByTrainingId[trainings[i].Id] = trainings[i].StartedAtUtc;
                         }
+                    }
+
+                    var st = (trainings[i].Status || '').toString();
+                    if (st === 'Completed' || st === 'Failed') {
+                        quizSubmittedByTrainingId[trainings[i].Id] = true;
                     }
 
                     var cls = (trainings[i].TrainingClass || '').toString().trim();
@@ -214,10 +280,122 @@
 
                 availableTrainingClasses = dedupeStrings(availableTrainingClasses);
                 availableTrainingClasses.sort(function (a, b) { return a.localeCompare(b); });
-                $('#trainingClassFilter').data('initialized', false);
-                ensureTrainingClassFilter();
+                loadTrackSummary();
                 renderTrainingCards();
+                if (typeof done === 'function') {
+                    done();
+                }
             });
+        }
+
+        var trackSummaryItems = [];
+        function loadTrackSummary(done) {
+            $.getJSON('/Training/GetTrainingTrackSummary', function (data) {
+                trackSummaryItems = data || [];
+                if (!selectedTrainingClass) {
+                    if (trackSummaryItems.length && trackSummaryItems[0].TrainingClass) {
+                        selectedTrainingClass = trackSummaryItems[0].TrainingClass;
+                    } else if (availableTrainingClasses.length) {
+                        selectedTrainingClass = availableTrainingClasses[0];
+                    }
+                }
+                renderTrackSummary();
+                if (typeof done === 'function') {
+                    done();
+                }
+            }).fail(function () {
+                trackSummaryItems = [];
+                renderTrackSummary();
+                if (typeof done === 'function') {
+                    done();
+                }
+            });
+        }
+
+        function renderTrackSummary() {
+            var $wrap = $('#trackSummary');
+            if (!$wrap.length) return;
+
+            var selectedClass = (selectedTrainingClass || '').toString();
+            if (!selectedClass) {
+                $wrap.html('');
+                return;
+            }
+
+            var items = trackSummaryItems || [];
+            if (!items.length) {
+                $wrap.html('');
+                return;
+            }
+
+            var selectedItem = null;
+            for (var i = 0; i < items.length; i++) {
+                if ((items[i].TrainingClass || '').toString().toLowerCase() === selectedClass.toLowerCase()) {
+                    selectedItem = items[i];
+                    break;
+                }
+            }
+            if (!selectedItem) {
+                $wrap.html('');
+                return;
+            }
+
+            var html = '';
+            html += '<div class="panel panel-default" style="margin-bottom:0;">';
+            html += '<div class="panel-heading"><strong>Training Track</strong></div>';
+            html += '<div class="panel-body">';
+
+            html += '<div style="margin-bottom:10px;">';
+            for (var j = 0; j < items.length; j++) {
+                var cls = (items[j].TrainingClass || '').toString();
+                if (!cls) continue;
+                var isActive = cls.toLowerCase() === selectedClass.toLowerCase();
+                html += '<button type="button" class="btn btn-sm ' + (isActive ? 'btn-primary' : 'btn-default') + '" style="margin-right:8px; margin-bottom:6px;" onclick="selectTrackClass(\'' + jsString(cls) + '\')">'
+                    + htmlEncode(toTitleCase(cls)) + '</button>';
+            }
+            html += '</div>';
+
+            if (selectedItem.CompleteDays && selectedItem.CompleteDays > 0) {
+                html += '<div class="text-muted" style="margin-bottom:6px;"><strong>Days to Complete:</strong> ' + selectedItem.CompleteDays + '</div>';
+            }
+
+            html += '<div class="text-muted" style="margin-bottom:10px;"><strong>Progress:</strong> '
+                + (selectedItem.CompletedCourses || 0) + ' / ' + (selectedItem.TotalCourses || 0)
+                + (selectedItem.IsComplete ? ' <span class="label label-success">Completed</span>' : '')
+                + '</div>';
+
+            if (selectedItem.Prize) {
+                html += '<div style="margin-bottom:10px;">';
+                html += '<div class="text-muted" style="margin-bottom:6px;"><strong>Reward:</strong></div>';
+                html += '<div class="row">';
+                html += '<div class="col-xs-12 col-sm-4">';
+                if (selectedItem.ImageUrl) {
+                    var imgSrc = '/img/training/' + selectedItem.ImageUrl;
+                    html += '<a href="' + htmlEncode(imgSrc) + '" target="_blank">'
+                        + '<img src="' + htmlEncode(imgSrc) + '" style="max-width:100%; height:auto; border:1px solid #eee;" />'
+                        + '</a>';
+                }
+                html += '</div>';
+                html += '<div class="col-xs-12 col-sm-8">';
+                html += '<div style="font-weight:bold;">' + htmlEncode(selectedItem.Prize).replace(/,/g, '<br/>') + '</div>';
+                html += '</div>';
+                html += '</div>';
+                html += '</div>';
+            }
+
+            html += '</div></div>';
+            $wrap.html(html);
+        }
+
+        window.selectTrackClass = function (cls) {
+            selectedTrainingClass = (cls || '').toString();
+            renderTrackSummary();
+            renderTrainingCards();
+        };
+
+        function jsString(value) {
+            value = (value || '').toString();
+            return value.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
         }
 
         function dedupeStrings(items) {
@@ -240,39 +418,6 @@
             return text.replace(/\w\S*/g, function (w) {
                 return w.charAt(0).toUpperCase() + w.substr(1).toLowerCase();
             });
-        }
-
-        function ensureTrainingClassFilter() {
-            var $filter = $('#trainingClassFilter');
-            if (!$filter.length) return;
-
-            var selected = $filter.val() || '';
-            var isInitialized = $filter.data('initialized') === true;
-
-            var optionsHtml = '';
-            if (!availableTrainingClasses.length) {
-                optionsHtml += '<option value="Basic">Basic</option>';
-                optionsHtml += '<option value="Onboarding">Onboarding</option>';
-                optionsHtml += '<option value="Advanced">Advanced</option>';
-            } else {
-                for (var i = 0; i < availableTrainingClasses.length; i++) {
-                    var v = availableTrainingClasses[i];
-                    optionsHtml += '<option value="' + htmlEncode(v) + '">' + htmlEncode(toTitleCase(v)) + '</option>';
-                }
-            }
-            $filter.html(optionsHtml);
-
-            if (!selected) {
-                selected = $filter.find('option:first').val() || '';
-            }
-            $filter.val(selected);
-            $filter.data('initialized', true);
-
-            if (!isInitialized) {
-                $filter.on('change', function () {
-                    renderTrainingCards();
-                });
-            }
         }
 
         function parseDate(value) {
@@ -303,6 +448,13 @@
             return pad(h) + ':' + pad(m) + ':' + pad(s);
         }
 
+        function formatHoursFromSeconds(seconds) {
+            var sec = parseInt(seconds, 10);
+            if (!isFinite(sec) || sec <= 0) return '0';
+            var hours = sec / 3600;
+            return (Math.round(hours * 100) / 100).toString();
+        }
+
         function updateTimers() {
             $('[data-training-timer="1"]').each(function () {
                 var $el = $(this);
@@ -325,7 +477,12 @@
                 return;
             }
 
-            var selectedClass = ($('#trainingClassFilter').val() || 'all').toString().toLowerCase();
+            var selectedClass = (selectedTrainingClass || '').toString().toLowerCase();
+            if (!selectedClass && availableTrainingClasses.length) {
+                selectedTrainingClass = availableTrainingClasses[0];
+                selectedClass = selectedTrainingClass.toLowerCase();
+                renderTrackSummary();
+            }
 
             html += '<div class="panel-group" id="trainingAccordion" role="tablist" aria-multiselectable="true">';
             for (var i = 0; i < trainings.length; i++) {
@@ -366,7 +523,7 @@
 
                 var className = (t.TrainingClass || '').toString().trim();
                 if (className) {
-                    html += '<span class="training-meta-item text-muted">Class: ' + htmlEncode(toTitleCase(className)) + '</span>';
+                    html += '<span class="training-meta-item text-muted">Track: ' + htmlEncode(toTitleCase(className)) + '</span>';
                 }
 
                 html += '</div>';
@@ -418,7 +575,9 @@
                     }
                 }
 
-                if (isStarted) {
+                var quizLocked = !!quizSubmittedByTrainingId[t.Id];
+                var canTakeQuiz = (t.CanTakeQuiz === true);
+                if (isStarted && !quizLocked && canTakeQuiz) {
                     html += '<button class="btn btn-info btn-sm" onclick="loadQuiz(' + t.Id + ')">Take Quiz</button>';
                 } else {
                     html += '<button class="btn btn-info btn-sm" disabled>Take Quiz</button>';
@@ -451,11 +610,42 @@
             }
         });
 
+        $('#quizModal').on('hidden.bs.modal', function () {
+            $('#quizQuestions').html('');
+            $('#resultContainer').hide().text('');
+
+            var id = activeTrainingId;
+            if (id && quizSubmittedByTrainingId[id]) {
+                loadAssignedTrainings(function () {
+                    var $collapse = $('#trainingCollapse_' + id);
+                    if ($collapse.length) {
+                        $collapse.collapse('show');
+                    }
+                });
+            }
+        });
+
+        function refreshTrainingPanel(id) {
+            if (!id) return;
+            loadAssignedTrainings(function () {
+                var $collapse = $('#trainingCollapse_' + id);
+                if ($collapse.length) {
+                    $collapse.collapse('show');
+                }
+            });
+        }
+
         window.startTraining = function (id) {
             $.post('/Training/StartTraining', { trainingContentId: id }, function () {
                 activeTrainingId = id;
                 startedTrainingIds[id] = true;
-                renderTrainingCards();
+                quizSubmittedByTrainingId[id] = false;
+                loadAssignedTrainings(function () {
+                    var $collapse = $('#trainingCollapse_' + id);
+                    if ($collapse.length) {
+                        $collapse.collapse('show');
+                    }
+                });
             });
         };
 
@@ -467,6 +657,10 @@
 
             var url = '/Training/OpenContent?trainingContentId=' + id + '&contentType=' + encodeURIComponent(type);
             window.open(url, '_blank');
+
+            setTimeout(function () {
+                refreshTrainingPanel(id);
+            }, 800);
         };
 
         window.openVideo = function (id) {
@@ -475,14 +669,31 @@
                 return;
             }
 
+            activeTrainingId = id;
             var url = '/Training/OpenContent?trainingContentId=' + id + '&contentType=' + encodeURIComponent('video');
             $('#videoModalMessage').hide();
             $('#trainingVideo').attr('src', url);
             $('#videoModal').modal('show');
+
+            setTimeout(function () {
+                refreshTrainingPanel(id);
+            }, 800);
         };
 
         window.loadQuiz = function (id) {
             activeTrainingId = id;
+            if (quizSubmittedByTrainingId[id]) {
+                alert('Quiz already submitted. Please retake the training to take the quiz again.');
+                return;
+            }
+            var t = null;
+            for (var i = 0; i < trainings.length; i++) {
+                if (trainings[i].Id === id) { t = trainings[i]; break; }
+            }
+            if (t && t.CanTakeQuiz !== true) {
+                alert('Please open all required training content before taking the quiz.');
+                return;
+            }
             $.getJSON('/Training/GetQuiz', { trainingContentId: id }, function (quiz) {
                 if (!quiz || !quiz.length) {
                     alert('No quiz configured for this training.');
@@ -505,9 +716,13 @@
                 }
 
                 $('#quizQuestions').html(qHtml);
-                $('#quizContainer').show();
                 $('#resultContainer').hide();
+                $('#quizQuestions input, #quizForm button[type=submit]').prop('disabled', false);
+                $('#quizForm button[type=submit]').text('Submit Quiz');
+                $rcLoading.hide();
+                $('#quizModal').modal('show');
             }).fail(function (xhr) {
+                $rcLoading.hide();
                 alert(xhr.responseText || 'Quiz is not available yet.');
             });
         };
@@ -542,8 +757,14 @@
                 success: function (result) {
                     var msg = 'Score: ' + result.scorePercentage + '% | Pass: ' + result.passPercentage + '% | ';
                     msg += result.isPassed ? 'Status: PASSED' : 'Status: FAILED';
-                    msg += ' | Time: ' + result.elapsedSeconds + ' seconds';
+                    msg += ' | Time: ' + formatHoursFromSeconds(result.elapsedSeconds) + ' hours';
                     $('#resultContainer').text(msg).show();
+
+                    quizSubmittedByTrainingId[activeTrainingId] = true;
+                    $('#quizQuestions input, #quizForm button[type=submit]').prop('disabled', true);
+                    $('#quizForm button[type=submit]').text('Submitted');
+
+                    refreshTrainingPanel(activeTrainingId);
                 },
                 error: function (xhr) {
                     alert(xhr.responseText || 'Unable to submit quiz.');

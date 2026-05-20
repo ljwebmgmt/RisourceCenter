@@ -2002,8 +2002,10 @@
           </Key>
           <Property Name="id" Type="smallint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="name" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="sort_order" Type="smallint" Nullable="false" />
           <Property Name="complete_days" Type="smallint" Nullable="false" />
           <Property Name="prize" Type="varchar" MaxLength="500" />
+          <Property Name="image_url" Type="varchar" MaxLength="500" />
           <Property Name="online_link" Type="varchar(max)" />
           <Property Name="person_link" Type="varchar(max)" />
         </EntityType>
@@ -2016,6 +2018,8 @@
           <Property Name="TrainingContentId" Type="int" />
           <Property Name="StartTime" Type="datetime" Nullable="false" />
           <Property Name="EndTime" Type="datetime" />
+          <Property Name="PdfOpenedAt" Type="datetime" />
+          <Property Name="VideoOpenedAt" Type="datetime" />
           <Property Name="ScorePercentage" Type="int" />
           <Property Name="IsPassed" Type="bit" />
         </EntityType>
@@ -4801,8 +4805,10 @@
           </Key>
           <Property Name="id" Type="Int16" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="sort_order" Type="Int16" Nullable="false" />
           <Property Name="complete_days" Type="Int16" Nullable="false" />
           <Property Name="prize" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="image_url" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="online_link" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="person_link" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
         </EntityType>
@@ -4967,6 +4973,8 @@
           <Property Name="TrainingContentId" Type="Int32" />
           <Property Name="StartTime" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="EndTime" Type="DateTime" Precision="3" />
+          <Property Name="PdfOpenedAt" Type="DateTime" Precision="3" />
+          <Property Name="VideoOpenedAt" Type="DateTime" Precision="3" />
           <Property Name="ScorePercentage" Type="Int32" />
           <Property Name="IsPassed" Type="Boolean" />
           <NavigationProperty Name="TrainingContent" Relationship="RisourceCenterMexicoModel.FK__UserProgr__Train__7BF04F28" FromRole="UserProgress" ToRole="TrainingContent" />
@@ -7263,8 +7271,10 @@
               <MappingFragment StoreEntitySet="trainingTracks">
                 <ScalarProperty Name="person_link" ColumnName="person_link" />
                 <ScalarProperty Name="online_link" ColumnName="online_link" />
+                <ScalarProperty Name="image_url" ColumnName="image_url" />
                 <ScalarProperty Name="prize" ColumnName="prize" />
                 <ScalarProperty Name="complete_days" ColumnName="complete_days" />
+                <ScalarProperty Name="sort_order" ColumnName="sort_order" />
                 <ScalarProperty Name="name" ColumnName="name" />
                 <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>
@@ -7346,6 +7356,8 @@
               <MappingFragment StoreEntitySet="UserProgress">
                 <ScalarProperty Name="IsPassed" ColumnName="IsPassed" />
                 <ScalarProperty Name="ScorePercentage" ColumnName="ScorePercentage" />
+                <ScalarProperty Name="VideoOpenedAt" ColumnName="VideoOpenedAt" />
+                <ScalarProperty Name="PdfOpenedAt" ColumnName="PdfOpenedAt" />
                 <ScalarProperty Name="EndTime" ColumnName="EndTime" />
                 <ScalarProperty Name="StartTime" ColumnName="StartTime" />
                 <ScalarProperty Name="TrainingContentId" ColumnName="TrainingContentId" />

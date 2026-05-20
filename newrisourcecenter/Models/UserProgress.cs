@@ -25,6 +25,8 @@ namespace newrisourcecenter.Models
         public Nullable<int> TrainingContentId { get; set; }
         public System.DateTime StartTime { get; set; }
         public Nullable<System.DateTime> EndTime { get; set; }
+        public Nullable<System.DateTime> PdfOpenedAt { get; set; }
+        public Nullable<System.DateTime> VideoOpenedAt { get; set; }
         public Nullable<int> ScorePercentage { get; set; }
         public Nullable<bool> IsPassed { get; set; }
     

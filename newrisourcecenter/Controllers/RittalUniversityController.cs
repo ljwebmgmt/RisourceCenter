@@ -1157,7 +1157,10 @@ namespace newrisourcecenter.Controllers
                 return RedirectToAction("Login", "Account");
             }
             RittalUniversityViewModels model = new RittalUniversityViewModels();
-            model.trainingTracks = await dbEntity.trainingTracks.ToListAsync();
+            model.trainingTracks = await dbEntity.trainingTracks
+                .OrderBy(x => x.sort_order)
+                .ThenBy(x => x.name)
+                .ToListAsync();
             model.trainingTrackNames = model.trainingTracks.Select(x => x.name).ToList();
             List<trainingClass> trainingClasses = await dbEntity.trainingClasses.ToListAsync();
             Dictionary<string,List<trainingClass>> classes = new Dictionary<string,List<trainingClass>>();
