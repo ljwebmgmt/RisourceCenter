@@ -97,10 +97,6 @@
         <EntityTypeShape EntityType="RisourceCenterMexicoModel.RFQ_New_Data" Width="1.5" PointX="31.375" PointY="0.75" />
         <EntityTypeShape EntityType="RisourceCenterMexicoModel.RFQ_New_Data_Extend" Width="1.5" PointX="5.375" PointY="31.75" />
         <EntityTypeShape EntityType="RisourceCenterMexicoModel.RFQ_New_Files" Width="1.5" PointX="23.375" PointY="31.75" />
-        <AssociationConnector Association="RisourceCenterMexicoModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" />
-        <AssociationConnector Association="RisourceCenterMexicoModel.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" />
-        <AssociationConnector Association="RisourceCenterMexicoModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" />
-        <AssociationConnector Association="RisourceCenterMexicoModel.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" />
         <EntityTypeShape EntityType="RisourceCenterMexicoModel.trainingClass" Width="1.5" PointX="25.375" PointY="31.75" />
         <EntityTypeShape EntityType="RisourceCenterMexicoModel.trainingTrack" Width="1.5" PointX="27.375" PointY="31.75" />
         <EntityTypeShape EntityType="RisourceCenterMexicoModel.usrClass" Width="1.5" PointX="33.375" PointY="0.75" />
