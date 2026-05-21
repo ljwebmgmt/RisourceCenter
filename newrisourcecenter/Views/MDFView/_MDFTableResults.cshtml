@@ -338,19 +338,6 @@
             });
         }
 
-        function toggleColumn(field, checkbox) {
-            if (gridApi) {
-                gridApi.applyColumnState({
-                    state: [
-                        {
-                            colId: field,
-                            hide: !checkbox.checked // In AG Grid, 'hide' is the property name
-                        }
-                    ]
-                });
-            }
-        }
-
         function generateFooterTotals() {
             let totalEstimated = 0;
             let totalActual = 0;
@@ -382,7 +369,20 @@
         }
     });
 
-    $(document).on('click', '#columnToggleMenu', function (e) {
+    $(document).on('click', '#columnToggleMenu.dropdown-menu', function (e) {
         e.stopPropagation(); // Prevents Bootstrap from closing the menu on internal clicks
     });
+
+    function toggleColumn(field, checkbox) {
+        if (gridApi) {
+            gridApi.applyColumnState({
+                state: [
+                    {
+                        colId: field,
+                        hide: !checkbox.checked // In AG Grid, 'hide' is the property name
+                    }
+                ]
+            });
+        }
+    }
 </script>

@@ -135,5 +135,6 @@ namespace newrisourcecenter.Models
         public virtual DbSet<TrainingQuizAttemptAnswer> TrainingQuizAttemptAnswers { get; set; }
         public virtual DbSet<UserProgress> UserProgresses { get; set; }
         public virtual DbSet<TrainingRoleAssignment> TrainingRoleAssignments { get; set; }
+        public virtual DbSet<UserTrainingTrackCompletion> UserTrainingTrackCompletions { get; set; }
     }
 }

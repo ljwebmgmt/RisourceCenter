@@ -657,6 +657,7 @@
           <Property Name="it_director" Type="nvarchar" MaxLength="100" />
           <Property Name="general_manager" Type="nvarchar" MaxLength="100" />
           <Property Name="comp_MKT_Limit" Type="float" />
+          <Property Name="approver_emails" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="partnerCompany_Archive">
           <Key>
@@ -1956,10 +1957,10 @@
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Title" Type="nvarchar" MaxLength="200" Nullable="false" />
           <Property Name="Description" Type="nvarchar(max)" />
-          <Property Name="TrainingClass" Type="nvarchar" MaxLength="50" />
           <Property Name="PdfPath" Type="nvarchar" MaxLength="500" />
           <Property Name="VideoPath" Type="nvarchar" MaxLength="500" />
           <Property Name="PassingPercentage" Type="int" />
+          <Property Name="TrainingClass" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="TrainingQuizAttempt">
           <Key>
@@ -2002,12 +2003,12 @@
           </Key>
           <Property Name="id" Type="smallint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="name" Type="varchar" MaxLength="100" Nullable="false" />
-          <Property Name="sort_order" Type="smallint" Nullable="false" />
           <Property Name="complete_days" Type="smallint" Nullable="false" />
           <Property Name="prize" Type="varchar" MaxLength="500" />
-          <Property Name="image_url" Type="varchar" MaxLength="500" />
           <Property Name="online_link" Type="varchar(max)" />
           <Property Name="person_link" Type="varchar(max)" />
+          <Property Name="sort_order" Type="smallint" Nullable="false" />
+          <Property Name="image_url" Type="varchar" MaxLength="500" />
         </EntityType>
         <EntityType Name="UserProgress">
           <Key>
@@ -2018,10 +2019,20 @@
           <Property Name="TrainingContentId" Type="int" />
           <Property Name="StartTime" Type="datetime" Nullable="false" />
           <Property Name="EndTime" Type="datetime" />
-          <Property Name="PdfOpenedAt" Type="datetime" />
-          <Property Name="VideoOpenedAt" Type="datetime" />
           <Property Name="ScorePercentage" Type="int" />
           <Property Name="IsPassed" Type="bit" />
+          <Property Name="PdfOpenedAt" Type="datetime" />
+          <Property Name="VideoOpenedAt" Type="datetime" />
+        </EntityType>
+        <EntityType Name="UserTrainingTrackCompletions">
+          <Key>
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="TrainingClass" />
+          </Key>
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="TrainingClass" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="CompletedAt" Type="datetime" />
+          <Property Name="EmailedAt" Type="datetime" />
         </EntityType>
         <EntityType Name="usr_user">
           <Key>
@@ -2081,6 +2092,7 @@
           <Property Name="last_warning" Type="datetime" />
           <Property Name="inactove_notified" Type="bit" />
           <Property Name="deleted" Type="bit" Nullable="false" />
+          <Property Name="reactivation_email_sent" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="usr_user_temp">
           <Key>
@@ -2454,6 +2466,7 @@
           <EntitySet Name="TrainingRoleAssignment" EntityType="Self.TrainingRoleAssignment" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="trainingTracks" EntityType="Self.trainingTracks" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserProgress" EntityType="Self.UserProgress" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserTrainingTrackCompletions" EntityType="Self.UserTrainingTrackCompletions" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="usr_user" EntityType="Self.usr_user" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="usr_user_temp" EntityType="Self.usr_user_temp" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="usr_user_test" EntityType="Self.usr_user_test" Schema="dbo" store:Type="Tables" />
@@ -2723,6 +2736,7 @@
             <End Role="TrainingContent" EntitySet="TrainingContents" />
             <End Role="TrainingRoleAssignment" EntitySet="TrainingRoleAssignments" />
           </AssociationSet>
+          <EntitySet Name="UserTrainingTrackCompletions" EntityType="RisourceCenterMexicoModel.UserTrainingTrackCompletion" />
           </EntityContainer>
         <EntityType Name="ReturnToolActionLog">
           <Key>
@@ -3996,6 +4010,7 @@
           <Property Name="last_warning" Type="DateTime" Precision="3" />
           <Property Name="inactove_notified" Type="Boolean" />
           <Property Name="deleted" Type="Boolean" Nullable="false" />
+          <Property Name="reactivation_email_sent" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="usr_user_temp">
           <Key>
@@ -4161,6 +4176,7 @@
           <Property Name="it_director" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="general_manager" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="comp_MKT_Limit" Type="Double" />
+          <Property Name="approver_emails" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="partnerStockCheck">
           <Key>
@@ -5039,6 +5055,16 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="UserTrainingTrackCompletion">
+          <Key>
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="TrainingClass" />
+          </Key>
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="TrainingClass" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CompletedAt" Type="DateTime" Precision="3" />
+          <Property Name="EmailedAt" Type="DateTime" Precision="3" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -6379,6 +6405,7 @@
           <EntitySetMapping Name="usr_user">
             <EntityTypeMapping TypeName="RisourceCenterMexicoModel.usr_user">
               <MappingFragment StoreEntitySet="usr_user">
+                <ScalarProperty Name="reactivation_email_sent" ColumnName="reactivation_email_sent" />
                 <ScalarProperty Name="deleted" ColumnName="deleted" />
                 <ScalarProperty Name="inactove_notified" ColumnName="inactove_notified" />
                 <ScalarProperty Name="last_warning" ColumnName="last_warning" />
@@ -6552,6 +6579,7 @@
           <EntitySetMapping Name="partnerCompanies">
             <EntityTypeMapping TypeName="RisourceCenterMexicoModel.partnerCompany">
               <MappingFragment StoreEntitySet="partnerCompany">
+                <ScalarProperty Name="approver_emails" ColumnName="approver_emails" />
                 <ScalarProperty Name="comp_MKT_Limit" ColumnName="comp_MKT_Limit" />
                 <ScalarProperty Name="general_manager" ColumnName="general_manager" />
                 <ScalarProperty Name="it_director" ColumnName="it_director" />
@@ -7345,6 +7373,16 @@
                 <ScalarProperty Name="RoleId" ColumnName="RoleId" />
                 <ScalarProperty Name="TrainingContentId" ColumnName="TrainingContentId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserTrainingTrackCompletions">
+            <EntityTypeMapping TypeName="RisourceCenterMexicoModel.UserTrainingTrackCompletion">
+              <MappingFragment StoreEntitySet="UserTrainingTrackCompletions">
+                <ScalarProperty Name="EmailedAt" ColumnName="EmailedAt" />
+                <ScalarProperty Name="CompletedAt" ColumnName="CompletedAt" />
+                <ScalarProperty Name="TrainingClass" ColumnName="TrainingClass" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

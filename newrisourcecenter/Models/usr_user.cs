@@ -68,5 +68,6 @@ namespace newrisourcecenter.Models
         public Nullable<System.DateTime> last_warning { get; set; }
         public Nullable<bool> inactove_notified { get; set; }
         public bool deleted { get; set; }
+        public bool reactivation_email_sent { get; set; }
     }
 }

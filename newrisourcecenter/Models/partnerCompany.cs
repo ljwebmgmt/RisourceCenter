@@ -50,5 +50,6 @@ namespace newrisourcecenter.Models
         public string it_director { get; set; }
         public string general_manager { get; set; }
         public Nullable<double> comp_MKT_Limit { get; set; }
+        public string approver_emails { get; set; }
     }
 }
