@@ -326,6 +326,7 @@ namespace newrisourcecenter.Controllers
                             //Response.Cookies["RISOURCEINDUSTRY"].Value = company.comp_industry.ToString();
 
                             Session["companyId"] = company.comp_ID;
+                            Session["locationId"] = item.usr_data.comp_loc_ID;
                             Session["userIndustry"] = company.comp_industry;
                             Session["userProducts"] = company.comp_products;
                             Session["companyType"] = company.comp_type;

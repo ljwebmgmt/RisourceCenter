@@ -985,20 +985,53 @@ namespace newrisourcecenter.Controllers
                 return;
             }
 
-            string html = (Convert.ToString(Session["firstName"]) + " " + Convert.ToString(Session["lastName"]))
-                + " has completed a training track, details are given below: ";
-            html += "<br/><br/><strong>First Name: </strong>" + Convert.ToString(Session["firstName"]);
-            html += "<br/><strong>Last Name: </strong>" + Convert.ToString(Session["lastName"]);
-            html += "<br/><strong>Email Address: </strong>" + Convert.ToString(Session["userEmail"]);
-            html += "<br/><strong>Company: </strong>" + Convert.ToString(Session["comp_name"]);
-            html += "<br/><strong>Location: </strong>" + Convert.ToString(Session["location_name"]);
-            html += "<br/><strong>Training Track: </strong><span style='text-transform: capitalize;'>" + trainingClass + "</span>";
+            string userEmail = Convert.ToString(Session["userEmail"]);
+            if (string.IsNullOrWhiteSpace(userEmail))
+            {
+                return;
+            }
 
-            new CommonController().email(
-                "webmaster@rittal.us",
-                "channel@rittal.us",
-                "Rittal University's Training Track Completion Notice",
-                html);
+            string storefrontUrl = "https://print1step.presswise.com/account/edit_profile.php?token=czFOag6AGV-tgczsbYcYXCwWM6ti6i9wZ3eDapA6Er8.6a8508950da6a25fad56fe5163930936e951abe6dfa653388cb73c6180c996f5";
+
+            string html;
+            string subject = "Rittal Partner Training - Track Completion";
+
+            string trainingClassLower = trainingClass.ToLowerInvariant();
+            html = "Congratulations!<br/><br/>";
+            html += "This email is to confirm that you have completed the Rittal Partner Training - " + trainingClass + " Tier. We appreciate your commitment to achieving this milestone and welcome you to log on to our Virtual Store to claim your certificate and swag!<br/><br/>";
+            html += "Please visit our virtual storefront to claim your awards. STOREFRONT (<a href=\"" + storefrontUrl + "\">" + storefrontUrl + "</a>)<br/><br/>";
+            html += "If you have any issues accessing the store, please inform us at Channel@rittal.us! Thank you for participating. We look forward to seeing your ccolades in completing the next step in our Partner Training Program - the Basic Tier!";
+            string rcmEmails = getRCMEmail(userId, Convert.ToInt32(Session["userCountryId"]), Convert.ToInt32(Session["companyId"]), Convert.ToInt32(Session["locationId"]), Session["zip"].ToString());
+            rcmEmails += (!string.IsNullOrEmpty(rcmEmails) ? "," : "") + rcmEmails;
+            new CommonController().email("webmaster@rittal.us",userEmail,subject,html,"yes",true,rcmEmails);
+        }
+
+        public function getRCMEmail(int userId, int countryId, int companyId, int locationId, string zipcode) {
+            string emails = "";
+            var company = db.partnerCompanies.Where(a => a.comp_ID == companyId).FirstOrDefault();
+            if (countryId == 228 && !string.IsNullOrEmpty(zipcode) && company != null && company.comp_type == 1)
+            {
+                List<string> companies = ConfigurationManager.AppSettings["NationalManagerCompanies"].Split(',').ToList();
+                List<string> companyLocations = ConfigurationManager.AppSettings["NationalManagerCompanyLocations"].Split(',').ToList();
+                if(companies.Contains(companyId.ToString()) || companyLocations.Contains(companyId + ":" + locationId))
+                {
+                    emails = ConfigurationManager.AppSettings["NationalChannelManagerEmail"];
+                }
+                else
+                {
+                    string zip = zipcode.TrimStart('0');
+                    List<string> approvers = db.RCMContacts.Where(a => a.zipcode == zip && !string.IsNullOrEmpty(a.email)).Select(x => x.email).ToList();
+                    if (approvers.Count() > 0)
+                    {
+                        emails = string.Join(",", approvers);
+                    }
+                    else
+                    {
+                        emails = ConfigurationManager.AppSettings["NationalChannelManagerEmail"];
+                    }
+                }
+            }
+            return emails;
         }
 
         private async Task<bool> IsTrainingClassTrackComplete(int userId, string trainingClass)
