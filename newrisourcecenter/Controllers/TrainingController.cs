@@ -1175,6 +1175,8 @@ namespace newrisourcecenter.Controllers
                     x.PdfPath,
                     x.VideoPath,
                     PassingPercentage = x.PassingPercentage ?? 0,
+                    x.SortOrder,
+                    x.IsActive,
                     Questions = x.QuizQuestions.Select(q => new
                     {
                         q.Id,
