@@ -2,7 +2,9 @@ using Microsoft.AspNet.Identity;
 using newrisourcecenter.Models;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.Entity;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -992,23 +994,22 @@ namespace newrisourcecenter.Controllers
             }
 
             string storefrontUrl = "https://print1step.presswise.com/account/edit_profile.php?token=czFOag6AGV-tgczsbYcYXCwWM6ti6i9wZ3eDapA6Er8.6a8508950da6a25fad56fe5163930936e951abe6dfa653388cb73c6180c996f5";
-
-            string html;
             string subject = "Rittal Partner Training - Track Completion";
-
-            string trainingClassLower = trainingClass.ToLowerInvariant();
-            html = "Congratulations!<br/><br/>";
-            html += "This email is to confirm that you have completed the Rittal Partner Training - " + trainingClass + " Tier. We appreciate your commitment to achieving this milestone and welcome you to log on to our Virtual Store to claim your certificate and swag!<br/><br/>";
+            string html = "Congratulations!<br/><br/>";
+            TextInfo textInfo = CultureInfo.CurrentCulture.TextInfo;
+            html += "This email is to confirm that you have completed the Rittal Partner Training - " + textInfo.ToTitleCase(trainingClass.ToLower()) + " Tier. We appreciate your commitment to achieving this milestone and welcome you to log on to our Virtual Store to claim your certificate and swag!<br/><br/>";
             html += "Please visit our virtual storefront to claim your awards. STOREFRONT (<a href=\"" + storefrontUrl + "\">" + storefrontUrl + "</a>)<br/><br/>";
             html += "If you have any issues accessing the store, please inform us at Channel@rittal.us! Thank you for participating. We look forward to seeing your ccolades in completing the next step in our Partner Training Program - the Basic Tier!";
-            string rcmEmails = getRCMEmail(userId, Convert.ToInt32(Session["userCountryId"]), Convert.ToInt32(Session["companyId"]), Convert.ToInt32(Session["locationId"]), Session["zip"].ToString());
-            rcmEmails += (!string.IsNullOrEmpty(rcmEmails) ? "," : "") + rcmEmails;
+            string rcmEmails = getRCMEmail(Convert.ToInt32(Session["userCountryId"]), Convert.ToInt32(Session["companyId"]), Convert.ToInt32(Session["locationId"]), Session["zip"].ToString());
+            rcmEmails += (!string.IsNullOrEmpty(rcmEmails) ? "," : "") + "Channel@rittal.us";
             new CommonController().email("webmaster@rittal.us",userEmail,subject,html,"yes",true,rcmEmails);
         }
 
-        public function getRCMEmail(int userId, int countryId, int companyId, int locationId, string zipcode) {
+        public string getRCMEmail(int countryId, int companyId, int locationId, string zipcode) {
             string emails = "";
             var company = db.partnerCompanies.Where(a => a.comp_ID == companyId).FirstOrDefault();
+            if (!string.IsNullOrEmpty(company.approver_emails))
+                return company.approver_emails;
             if (countryId == 228 && !string.IsNullOrEmpty(zipcode) && company != null && company.comp_type == 1)
             {
                 List<string> companies = ConfigurationManager.AppSettings["NationalManagerCompanies"].Split(',').ToList();

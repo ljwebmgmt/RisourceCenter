@@ -278,7 +278,8 @@ namespace newrisourcecenter.Controllers
                 string emailEnding = "";
                 if (footer=="yes")
                 {
-                    emailEnding = "<br /><br />RiSource Center Webmaster<br/>Rittal North America LLC • 425 N. Martingale Rd. Suite 400 • Schaumburg, IL 60173<br />Email: webmaster@rittal.us • www.rittal.us • www.friedhelm-loh-group.com";
+                    emailEnding = "<br /><br />Sincerely,";
+                    emailEnding += "<br />RiSource Center Support Team<br/>Rittal North America LLC • 425 N. Martingale Rd. Suite 400 • Schaumburg, IL 60173<br />Email: webmaster@rittal.us • www.rittal.us • www.friedhelm-loh-group.com";
                     emailEnding += "<br /><br /><b><u>Rittal – The System.</u> <br />Faster – better – everywhere.</b>";
                     emailEnding += "<br /><br />This email contains confidential information. You are not authorized to copy the contents without the consent of the sender.***";
                 }
