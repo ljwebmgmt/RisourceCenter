@@ -127,6 +127,18 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="IsActive" class="col-sm-4 control-label">Active</label>
+                                        <div class="col-sm-8">
+                                            <div class="checkbox" style="margin-top:7px;">
+                                                <label>
+                                                    <input type="checkbox" id="IsActive" checked />
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="form-group">
@@ -282,6 +294,7 @@
                 $('#TrainingClass').val(t.TrainingClass || 'Basic');
                 $('#PassingPercentage').val(t.PassingPercentage || 0);
                 $('#SortOrder').val(t.SortOrder || 0);
+                $('#IsActive').prop('checked', t.IsActive != false);
 
                 if (t.PdfPath) {
                     $('#ExistingPdf').html('Current: <a href="' + t.PdfPath + '" target="_blank">Open PDF</a>');
@@ -321,6 +334,7 @@
             fd.append('TrainingClass', $('#TrainingClass').val());
             fd.append('PassingPercentage', $('#PassingPercentage').val());
             fd.append('SortOrder', $('#SortOrder').val() || '0');
+            fd.append('IsActive', $('#IsActive').is(':checked') ? 'true' : 'false');
 
             var pdf = $('#PdfFile')[0].files[0];
             var video = $('#VideoFile')[0].files[0];

@@ -101,7 +101,8 @@ namespace newrisourcecenter.Controllers
                         .Select(p => p.UserId)
                         .Distinct()
                         .Count(),
-                    RoleNames = x.TrainingRoleAssignments.Select(a => a.AspNetRole.Name)
+                    RoleNames = x.TrainingRoleAssignments.Select(a => a.AspNetRole.Name),
+                    IsActive = x.IsActive
                 })
                 .ToListAsync();
 
@@ -386,7 +387,7 @@ namespace newrisourcecenter.Controllers
                 return Json(new List<object>(), JsonRequestBehavior.AllowGet);
             }
 
-            var allTrainings = await db.TrainingContents.ToListAsync();
+            var allTrainings = await db.TrainingContents.Where(x => x.IsActive).ToListAsync();
             var trainingIds = allTrainings.Select(x => x.Id).ToList();
             var roleAssignments = await GetAssignmentsByTrainingIds(trainingIds);
 
@@ -1333,6 +1334,7 @@ namespace newrisourcecenter.Controllers
             training.VideoPath = videoPath;
             training.PassingPercentage = model.PassingPercentage;
             training.SortOrder = model.SortOrder;
+            training.IsActive = model.IsActive;
 
             if (!hasAttempts)
             {
@@ -1497,7 +1499,8 @@ namespace newrisourcecenter.Controllers
                 PdfPath = pdfPath,
                 VideoPath = videoPath,
                 PassingPercentage = model.PassingPercentage,
-                SortOrder = model.SortOrder
+                SortOrder = model.SortOrder,
+                IsActive = model.IsActive
             };
             db.TrainingContents.Add(training);
             await db.SaveChangesAsync();

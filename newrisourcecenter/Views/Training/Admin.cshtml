@@ -130,6 +130,18 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="IsActive" class="col-sm-4 control-label">Active</label>
+                                    <div class="col-sm-8">
+                                        <div class="checkbox" style="margin-top:7px;">
+                                            <label>
+                                                <input type="checkbox" id="IsActive" checked />
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="form-group">
@@ -251,6 +263,7 @@
             fd.append('TrainingClass', $('#TrainingClass').val());
             fd.append('PassingPercentage', $('#PassingPercentage').val());
             fd.append('SortOrder', $('#SortOrder').val() || '0');
+            fd.append('IsActive', $('#IsActive').is(':checked') ? 'true' : 'false');
 
             var pdf = $('#PdfFile')[0].files[0];
             var video = $('#VideoFile')[0].files[0];

@@ -43,3 +43,7 @@ GO
 ALTER TABLE dbo.TrainingContents
 ADD sort_order SMALLINT NOT NULL CONSTRAINT DF_TrainingContents_sort_order DEFAULT (0);
 GO
+
+ALTER TABLE dbo.TrainingContents
+ADD is_active BIT NOT NULL CONSTRAINT DF_TrainingContents_is_active DEFAULT (1);
+GO
