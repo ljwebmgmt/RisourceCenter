@@ -39,3 +39,7 @@ GO
 ALTER TABLE dbo.trainingTracks
 ADD image_url VARCHAR(500) NULL;
 GO
+
+ALTER TABLE dbo.TrainingContents
+ADD sort_order SMALLINT NOT NULL CONSTRAINT DF_TrainingContents_sort_order DEFAULT (0);
+GO

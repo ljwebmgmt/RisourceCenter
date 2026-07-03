@@ -30,6 +30,7 @@ namespace newrisourcecenter.Models
         public string PdfPath { get; set; }
         public string VideoPath { get; set; }
         public Nullable<int> PassingPercentage { get; set; }
+        public short SortOrder { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<QuizQuestion> QuizQuestions { get; set; }

@@ -65,7 +65,8 @@ namespace newrisourcecenter.Controllers
             var totalCount = await baseQuery.CountAsync();
 
             var trainings = await baseQuery
-                .OrderByDescending(x => x.Id)
+                .OrderBy(x => x.TrainingClass)
+                .ThenBy(x => x.SortOrder)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .Select(x => new
@@ -427,6 +428,8 @@ namespace newrisourcecenter.Controllers
 
             var assignedTrainings = allTrainings
                 .Where(x => roleAssignments.ContainsKey(x.Id) && roleAssignments[x.Id].Intersect(userRoleIds).Any())
+                .OrderBy(x => x.TrainingClass)
+                .ThenBy(x => x.SortOrder)
                 .Select(x => new
                 {
                     x.Id,
@@ -1329,6 +1332,7 @@ namespace newrisourcecenter.Controllers
             training.PdfPath = pdfPath;
             training.VideoPath = videoPath;
             training.PassingPercentage = model.PassingPercentage;
+            training.SortOrder = model.SortOrder;
 
             if (!hasAttempts)
             {
@@ -1492,7 +1496,8 @@ namespace newrisourcecenter.Controllers
                 TrainingClass = normalizedTrack,
                 PdfPath = pdfPath,
                 VideoPath = videoPath,
-                PassingPercentage = model.PassingPercentage
+                PassingPercentage = model.PassingPercentage,
+                SortOrder = model.SortOrder
             };
             db.TrainingContents.Add(training);
             await db.SaveChangesAsync();

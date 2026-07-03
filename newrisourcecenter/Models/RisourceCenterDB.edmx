@@ -1961,6 +1961,7 @@
           <Property Name="VideoPath" Type="nvarchar" MaxLength="500" />
           <Property Name="PassingPercentage" Type="int" />
           <Property Name="TrainingClass" Type="nvarchar" MaxLength="50" />
+          <Property Name="sort_order" Type="smallint" Nullable="false" />
         </EntityType>
         <EntityType Name="TrainingQuizAttempt">
           <Key>
@@ -4789,6 +4790,7 @@
           <Property Name="PdfPath" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="VideoPath" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="PassingPercentage" Type="Int32" />
+          <Property Name="SortOrder" Type="Int16" Nullable="false" />
           <NavigationProperty Name="QuizQuestions" Relationship="RisourceCenterMexicoModel.FK__QuizQuest__Train__763775D2" FromRole="TrainingContent" ToRole="QuizQuestion" />
           <NavigationProperty Name="TrainingQuizAttempts" Relationship="RisourceCenterMexicoModel.FK_TrainingQuizAttempt_TrainingContent" FromRole="TrainingContent" ToRole="TrainingQuizAttempt" />
           <NavigationProperty Name="UserProgresses" Relationship="RisourceCenterMexicoModel.FK__UserProgr__Train__7BF04F28" FromRole="TrainingContent" ToRole="UserProgress" />
@@ -7231,6 +7233,7 @@
           <EntitySetMapping Name="TrainingContents">
             <EntityTypeMapping TypeName="RisourceCenterMexicoModel.TrainingContent">
               <MappingFragment StoreEntitySet="TrainingContents">
+                <ScalarProperty Name="SortOrder" ColumnName="sort_order" />
                 <ScalarProperty Name="PassingPercentage" ColumnName="PassingPercentage" />
                 <ScalarProperty Name="VideoPath" ColumnName="VideoPath" />
                 <ScalarProperty Name="PdfPath" ColumnName="PdfPath" />

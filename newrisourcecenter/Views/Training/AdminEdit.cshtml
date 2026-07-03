@@ -119,6 +119,14 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="SortOrder" class="col-sm-4 control-label">Sort Order</label>
+                                        <div class="col-sm-8">
+                                            <input type="number" class="form-control" id="SortOrder" value="0" />
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="form-group">
@@ -273,6 +281,7 @@
                 $('#Description').val(t.Description || '');
                 $('#TrainingClass').val(t.TrainingClass || 'Basic');
                 $('#PassingPercentage').val(t.PassingPercentage || 0);
+                $('#SortOrder').val(t.SortOrder || 0);
 
                 if (t.PdfPath) {
                     $('#ExistingPdf').html('Current: <a href="' + t.PdfPath + '" target="_blank">Open PDF</a>');
@@ -311,6 +320,7 @@
             fd.append('Description', $('#Description').val());
             fd.append('TrainingClass', $('#TrainingClass').val());
             fd.append('PassingPercentage', $('#PassingPercentage').val());
+            fd.append('SortOrder', $('#SortOrder').val() || '0');
 
             var pdf = $('#PdfFile')[0].files[0];
             var video = $('#VideoFile')[0].files[0];

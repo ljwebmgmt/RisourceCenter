@@ -9,6 +9,7 @@ namespace newrisourcecenter.Models
         public string Description { get; set; }
         public string TrainingClass { get; set; }
         public int PassingPercentage { get; set; }
+        public short SortOrder { get; set; }
         public HttpPostedFileBase PdfFile { get; set; }
         public HttpPostedFileBase VideoFile { get; set; }
         public List<string> RoleIds { get; set; }
