@@ -2238,18 +2238,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__UserProgr__Train__7BF04F28">
-          <End Role="TrainingContents" Type="Self.TrainingContents" Multiplicity="0..1" />
-          <End Role="UserProgress" Type="Self.UserProgress" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="TrainingContents">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="UserProgress">
-              <PropertyRef Name="TrainingContentId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_ChangeCommission">
           <End Role="ChangeCommission" Type="Self.ChangeCommission" Multiplicity="1" />
           <End Role="ChangeCommissionPart" Type="Self.ChangeCommissionPart" Multiplicity="*" />
@@ -2259,56 +2247,6 @@
             </Principal>
             <Dependent Role="ChangeCommissionPart">
               <PropertyRef Name="ChangeCommissionId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_dbo_AspNetUserRoles_dbo_AspNetRoles_RoleId">
-          <End Role="AspNetRoles" Type="Self.AspNetRoles" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="AspNetUserRoles" Type="Self.AspNetUserRoles" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="AspNetRoles">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="AspNetUserRoles">
-              <PropertyRef Name="RoleId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_TrainingQuizAttempt_TrainingContent">
-          <End Role="TrainingContents" Type="Self.TrainingContents" Multiplicity="1" />
-          <End Role="TrainingQuizAttempt" Type="Self.TrainingQuizAttempt" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="TrainingContents">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="TrainingQuizAttempt">
-              <PropertyRef Name="TrainingContentId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_TrainingQuizAttempt_UserProgress">
-          <End Role="UserProgress" Type="Self.UserProgress" Multiplicity="0..1" />
-          <End Role="TrainingQuizAttempt" Type="Self.TrainingQuizAttempt" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="UserProgress">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="TrainingQuizAttempt">
-              <PropertyRef Name="UserProgressId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_TrainingQuizAttemptAnswer_Attempt">
-          <End Role="TrainingQuizAttempt" Type="Self.TrainingQuizAttempt" Multiplicity="1" />
-          <End Role="TrainingQuizAttemptAnswer" Type="Self.TrainingQuizAttemptAnswer" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="TrainingQuizAttempt">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="TrainingQuizAttemptAnswer">
-              <PropertyRef Name="AttemptId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2480,29 +2418,9 @@
             <End Role="TrainingContents" EntitySet="TrainingContents" />
             <End Role="QuizQuestions" EntitySet="QuizQuestions" />
           </AssociationSet>
-          <AssociationSet Name="FK__UserProgr__Train__7BF04F28" Association="Self.FK__UserProgr__Train__7BF04F28">
-            <End Role="TrainingContents" EntitySet="TrainingContents" />
-            <End Role="UserProgress" EntitySet="UserProgress" />
-          </AssociationSet>
           <AssociationSet Name="FK_ChangeCommission" Association="Self.FK_ChangeCommission">
             <End Role="ChangeCommission" EntitySet="ChangeCommission" />
             <End Role="ChangeCommissionPart" EntitySet="ChangeCommissionPart" />
-          </AssociationSet>
-          <AssociationSet Name="FK_dbo_AspNetUserRoles_dbo_AspNetRoles_RoleId" Association="Self.FK_dbo_AspNetUserRoles_dbo_AspNetRoles_RoleId">
-            <End Role="AspNetRoles" EntitySet="AspNetRoles" />
-            <End Role="AspNetUserRoles" EntitySet="AspNetUserRoles" />
-          </AssociationSet>
-          <AssociationSet Name="FK_TrainingQuizAttempt_TrainingContent" Association="Self.FK_TrainingQuizAttempt_TrainingContent">
-            <End Role="TrainingContents" EntitySet="TrainingContents" />
-            <End Role="TrainingQuizAttempt" EntitySet="TrainingQuizAttempt" />
-          </AssociationSet>
-          <AssociationSet Name="FK_TrainingQuizAttempt_UserProgress" Association="Self.FK_TrainingQuizAttempt_UserProgress">
-            <End Role="UserProgress" EntitySet="UserProgress" />
-            <End Role="TrainingQuizAttempt" EntitySet="TrainingQuizAttempt" />
-          </AssociationSet>
-          <AssociationSet Name="FK_TrainingQuizAttemptAnswer_Attempt" Association="Self.FK_TrainingQuizAttemptAnswer_Attempt">
-            <End Role="TrainingQuizAttempt" EntitySet="TrainingQuizAttempt" />
-            <End Role="TrainingQuizAttemptAnswer" EntitySet="TrainingQuizAttemptAnswer" />
           </AssociationSet>
           <AssociationSet Name="FK_TrainingQuizAttemptAnswer_Option" Association="Self.FK_TrainingQuizAttemptAnswer_Option">
             <End Role="QuizOptions" EntitySet="QuizOptions" />
