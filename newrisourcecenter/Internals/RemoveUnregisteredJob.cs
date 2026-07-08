@@ -1,5 +1,8 @@
 ﻿using CsvHelper;
+using iTextSharp.tool.xml.html;
+using iTextSharp.tool.xml.html.head;
 using newrisourcecenter.Controllers;
+using newrisourcecenter.Migrations;
 using newrisourcecenter.Models;
 using newrisourcecenter.ViewModels;
 using Quartz;
@@ -23,11 +26,13 @@ namespace newrisourcecenter.Internals
         string fileName = "Users.csv";
 
 
-        public Task Execute(IJobExecutionContext context)
+        public async Task Execute(IJobExecutionContext context)
         {
-            Task.Factory.StartNew(CheckInactiveUsers);
-            Task.Factory.StartNew(UploadUserInfotoSTFP);
-            return Task.Factory.StartNew(SendEmail);
+            await Task.Run(() => CheckUsersforWarning());
+            await Task.Run(() => markUsersInactive());
+            await Task.Run(() => markUsersDeleted());
+            await Task.Run(() => UploadUserInfotoSTFP());
+            await Task.Run(() => SendEmail());
         }
 
         public void SendEmail()
@@ -99,7 +104,7 @@ namespace newrisourcecenter.Internals
             }
         }
 
-        public void CheckInactiveUsers()
+        public void CheckUsersforWarning()
         {
             try
             {
@@ -107,40 +112,94 @@ namespace newrisourcecenter.Internals
                 {
                     int notificationDays = Convert.ToInt32(ConfigurationManager.AppSettings["UserInactiveNotificationCutoff"]);
                     int inactiveDays = Convert.ToInt32(ConfigurationManager.AppSettings["UserInactiveCutoff"]);
-                    int deleteDays = Convert.ToInt32(ConfigurationManager.AppSettings["UserDeleteCutoff"]);
-
                     var cutoffNotification = DateTime.UtcNow.AddDays((notificationDays * -1));
-                    var cutoffInactive = DateTime.UtcNow.AddDays((inactiveDays * -1));
-                    var cutoffDelete = DateTime.UtcNow.AddDays((deleteDays * -1));
 
                     string From = "webmaster@rittal.us";
-                    var users = db.usr_user.Where(x => !x.deleted && !x.inactive && x.usr_lastLogin.HasValue && ((x.usr_lastLogin.Value <= cutoffNotification && x.last_warning == null) || (x.usr_lastLogin.Value <= cutoffInactive && !x.inactove_notified.Value) || (x.usr_lastLogin.Value <= cutoffDelete))).Take(50).ToList();
-
-                    foreach (var user in users)
+                    var users = db.usr_user.Where(x => !x.deleted && x.usr_lastLogin.HasValue && x.usr_lastLogin.Value <= cutoffNotification && x.last_warning == null).Take(495).ToList();
+                    if(users.Count > 0)
                     {
-                        if (user.usr_lastLogin.Value <= cutoffNotification && user.last_warning == null)   // only once
+                        List<string> emails = new List<string>();
+                        foreach (var user in users)
                         {
-                            common.email(From, user.usr_email, "RiSourceCenter - Inactivity Warning", "Your account has been inactive for " + notificationDays + " days. It will be disabled in " + (inactiveDays - notificationDays) + " days if you do not log in.<br/<br/><a href='https://www.risourcecenter.com/Account/Login'>Log in</a> now to keep your account active.", "yes", true, "henderson.r@rittal.us");
                             user.last_warning = DateTime.UtcNow;
+                            emails.Add(user.usr_email);
                         }
-                        else if (user.usr_lastLogin.Value <= cutoffInactive && !user.inactove_notified.Value)   // only once
-                        {
-                            user.inactive = true;
-                            user.inactove_notified = true;
-                            common.email(From, user.usr_email, "RiSourceCenter - Account Disabled", "Your account has been disabled due to " + inactiveDays + " days of inactivity. Please contact support to reactivate", "yes", true, "henderson.r@rittal.us");
-                        }
-                        else if (user.usr_lastLogin.Value <= cutoffDelete)   // only once
-                        {
-                            user.deleted = true;
-                            common.email(From, user.usr_email, "RiSourceCenter - Account Deleted", "Your account has been deleted due to " + deleteDays + " days of inactivity. Please contact support to reactivate", "yes", true, "henderson.r@rittal.us");
-                        }
+                        emails.Add("henderson.r@rittal.us");
+                        db.SaveChanges();
+                        common.email(From, "rittal@rittal.us", "RiSourceCenter - Inactivity Warning", "Your account has been inactive for " + notificationDays + " days. It will be disabled in " + (inactiveDays - notificationDays) + " days if you do not log in.<br/<br/><a href='https://www.risourcecenter.com/Account/Login'>Log in</a> now to keep your account active.", "yes", true, String.Join(",", emails));
                     }
-                    db.SaveChanges();
                 }
             }
             catch(Exception ex)
             {
                 common.FileLog("Exception : \n" + ex.Message + "\n" + ex.StackTrace, "Error in 'CheckInactiveUsers'");
+            }
+        }
+
+        public void markUsersInactive()
+        {
+            try
+            {
+                using (RisourceCenterMexicoEntities db = new RisourceCenterMexicoEntities())
+                {
+                    int inactiveDays = Convert.ToInt32(ConfigurationManager.AppSettings["UserInactiveCutoff"]);
+                    var cutoffInactive = DateTime.UtcNow.AddDays((inactiveDays * -1));
+                    int notificationDays = Convert.ToInt32(ConfigurationManager.AppSettings["UserInactiveNotificationCutoff"]);
+                    var cutoffNotification = DateTime.UtcNow.AddDays(((inactiveDays - notificationDays) * -1));
+
+                    string From = "webmaster@rittal.us";
+                    var users = db.usr_user.Where(x => !x.deleted && !x.inactive && x.usr_lastLogin.HasValue && x.usr_lastLogin.Value <= cutoffInactive && x.last_warning.HasValue && x.last_warning.Value <= cutoffNotification).Take(495).ToList();
+                    if(users.Count > 0)
+                    {
+                        List<string> emails = new List<string>();
+                        foreach (var user in users)
+                        {
+                            user.inactive = true;
+                            user.inactove_notified = true;
+                            user.reactivation_email_sent = false;
+                            emails.Add(user.usr_email);
+                        }
+                        emails.Add("henderson.r@rittal.us");
+                        db.SaveChanges();
+                        common.email(From, "rittal@rittal.us", "RiSourceCenter - Account Deactivated", "Your account has been deactivated due to inactivity.<br/><br/>If you'd like to reactivate your account, please go to our <a href=\"https://www.risourcecenter.com/Account/Login\">login page</a> and attempt to login for further instructions.", "yes", true, String.Join(",", emails));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                common.FileLog("Exception : \n" + ex.Message + "\n" + ex.StackTrace, "Error in 'markUsersInactive'");
+            }
+        }
+
+        public void markUsersDeleted()
+        {
+            try
+            {
+                using (RisourceCenterMexicoEntities db = new RisourceCenterMexicoEntities())
+                {
+                    int deleteDays = Convert.ToInt32(ConfigurationManager.AppSettings["UserDeleteCutoff"]);
+                    var cutoffDelete = DateTime.UtcNow.AddDays((deleteDays * -1));
+
+                    string From = "webmaster@rittal.us";
+                    var users = db.usr_user.Where(x => !x.deleted && x.inactive && x.usr_lastLogin.HasValue && x.usr_lastLogin.Value <= cutoffDelete).Take(495).ToList();
+                    if(users.Count > 0)
+                    {
+                        List<string> emails = new List<string>();
+                        foreach (var user in users)
+                        {
+                            user.deleted = true;
+                            emails.Add(user.usr_email);
+                        }
+                        emails.Add("henderson.r@rittal.us");
+                        db.SaveChanges();
+                        common.email(From, "rittal@rittal.us", "RiSourceCenter - Account Deleted", "Your account has been deleted due to " + deleteDays + " days of inactivity. Please contact support to reactivate", "yes", true, String.Join(",", emails));
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                common.FileLog("Exception : \n" + ex.Message + "\n" + ex.StackTrace, "Error in 'markUsersDeleted'");
             }
         }
         public void GetDataForCSV()

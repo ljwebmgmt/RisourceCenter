@@ -94,6 +94,11 @@ namespace newrisourcecenter.Models
         public string user {  get; set; }
         public string action { get; set; }
         public DateTime action_time { get; set; }
+        public string user_email { get; set; }
+        public string company { get; set; }
+        public string company_location { get; set; }
+        public string company_type { get; set; }
+
     }
 
     public class RisourceActivity

@@ -18,7 +18,6 @@ namespace newrisourcecenter.Models
         public AspNetRole()
         {
             this.AspNetUserRoles = new HashSet<AspNetUserRole>();
-            this.TrainingRoleAssignments = new HashSet<TrainingRoleAssignment>();
         }
     
         public string Id { get; set; }
@@ -26,7 +25,5 @@ namespace newrisourcecenter.Models
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AspNetUserRole> AspNetUserRoles { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TrainingRoleAssignment> TrainingRoleAssignments { get; set; }
     }
 }

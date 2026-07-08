@@ -131,7 +131,7 @@ namespace newrisourcecenter.Controllers
                 comp => comp.comp_ID,
                 loc => loc.comp_ID,
                 (loc, comp) => new { loc, comp }
-                ).Where(a => a.comp.comp_ID == compId);
+                ).Where(a => a.comp.comp_ID == compId).OrderBy(x => x.loc.loc_name).OrderBy(x => x.loc.loc_city);
                 
             List<SAPdata> loc_list = new List<SAPdata>();
             foreach (var item in locdata)

@@ -16,12 +16,12 @@
         <div style="background:#fff;color:#000;padding:20px;">
             @Html.Raw(Model.topdesc)
         </div>
-        <p style="color:red;padding:0 20px;font-weight:bold;">The last day to submit new MDF requests was November 15th, and the last day to provide supporting documentation for all MDF requests for 2025 was Monday, December 15th. Please contact <a href="mailto:mdfadmin@rittal.us">mdfadmin@rittal.us</a> with any questions/concerns.</p>
+        @*<p style="color:red;padding:0 20px;font-weight:bold;">The last day to submit new MDF requests was November 15th, and the last day to provide supporting documentation for all MDF requests for 2025 was Monday, December 15th. Please contact <a href="mailto:mdfadmin@rittal.us">mdfadmin@rittal.us</a> with any questions/concerns.</p>*@
         <hr>
         <p>
             <span>
-                @*<a href="/MDFView/ap?aA=@Model.mdf_parts.FirstOrDefault().totalMDFAva&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=Promotional Activity" data-transition="none" target="_self" class="btn btn-primary">Create MDF Request</a>*@
-                @*<a href="/MDFView/manage?&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=Manage MDFs" class="btn btn-info">Manage Requests</a>*@
+                <a href="/MDFView/ap?aA=@Model.mdf_parts.FirstOrDefault().totalMDFAva&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=Promotional Activity" data-transition="none" target="_self" class="btn btn-primary">Create MDF Request</a>
+                <a href="/MDFView/manage?&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=Manage MDFs" class="btn btn-info">Manage Requests</a>
             </span>
         </p>
         <div style="background:none;padding:1%;display:inline-block;width:98%;">

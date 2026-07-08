@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Helpers;
 using System.Web.Mvc;
@@ -23,7 +24,7 @@ namespace newrisourcecenter
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             AntiForgeryConfig.SuppressXFrameOptionsHeader = true;
 
-            EmailSchedular.Start();
+            Task.Run(() => EmailSchedular.Start());
         }
     }
 }

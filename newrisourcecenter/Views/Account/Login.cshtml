@@ -8,7 +8,22 @@
             @Html.AntiForgeryToken()
             <h3 style="color:#E50043;">Rittal RiSource Center</h3>
             <br />
-            <span> @Html.ValidationSummary(true, "", new { @class = "text-danger" })</span>
+            if (ViewData.ModelState.ContainsKey("UserInactiveError"))
+            {
+                <div class="alert alert-danger">
+                    Your account has been deactivated due to inactivity. If you'd like to reactivate your account,please <a href="#" class="reactivation-verify-email" data-email="@Model.Email">click here</a> to verify your email address. Once completed, a Rittal representative will be notified.
+                </div>
+            }
+            else if (ViewData.ModelState.ContainsKey("UserDeleteError"))
+            {
+                <div class="alert alert-danger">
+                    Your account has been deleted due to inactivity. If you'd like to reactivate your account,please <a href="#" class="reactivation-verify-email" data-email="@Model.Email">click here</a> to verify your email address. Once completed, a Rittal representative will be notified.
+                </div>
+            }
+            else
+            {
+                <span>@Html.ValidationSummary(true, "", new { @class = "text-danger" })</span>
+            }
             <div class="form-group">
                 @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })
                 <div class="col-md-10">
@@ -38,12 +53,12 @@
                 </div>
             </div>
             @*<div style="min-height: 10px;background:black;"></div>
-                <br clear="all" />
-                <div align="left" style="color: #fff;padding:20px;letter-spacing: none;background:#000;height:80px;font-weight:bolder;">
-                    Interested in having access to the RiSource Center?
-                    @Html.ActionLink("Click here", "RegisterTemp", null, htmlAttributes: new { @id = "access_id" })
-                    to request access.
-                </div>*@
+            <br clear="all" />
+            <div align="left" style="color: #fff;padding:20px;letter-spacing: none;background:#000;height:80px;font-weight:bolder;">
+                Interested in having access to the RiSource Center?
+                @Html.ActionLink("Click here", "RegisterTemp", null, htmlAttributes: new { @id = "access_id" })
+                to request access.
+            </div>*@
         }
     </div>
     @{ Html.RenderPartial("_Slider"); }
@@ -56,8 +71,24 @@
 <script>
     function pageLoad() {
         debugger;
-        alert('hello');
         $(".sidenav").add.attr("Display:none");
     }
+
+    $(document).on('click', '.reactivation-verify-email', function (e) {
+        e.preventDefault();
+        $.ajax({
+            url: 'ReactivationEmail?email=' + $(this).attr('data-email'),
+            type: 'POST',
+            dataType: 'json',
+            success: function (res) {
+                if (res.success) {
+                    $('.alert-danger').after('<div class="alert alert-warning">Verification email sent. Please verify your email address to proceed.</div>');
+                    $('.alert-danger').remove();
+                }
+                    
+            }
+        });
+        return false;
+    });
 </script>
 

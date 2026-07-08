@@ -13,7 +13,6 @@ using Newtonsoft.Json;
 using Ionic.Zip;
 using newrisourcecenter.ViewModels;
 using CsvHelper;
-using System.Globalization;
 
 namespace newrisourcecenter.Controllers
 {
@@ -192,27 +191,24 @@ namespace newrisourcecenter.Controllers
 
             //Add n1ID to the list of n1IDs for the drop down
             Dictionary<long,Nav1List> list_n2ID = new Dictionary<long,Nav1List>();
-            List<long> excludedIds = new List<long>() { 49, 46, 42, 78, 30177 };
             foreach (var n2dsitems in n2ids)
             {
-                if (excludedIds.Contains(n2dsitems.n2ID))
-                    continue;
-                list_n2ID.Add(n2dsitems.n2ID, new Nav1List { id = n2dsitems.n2ID, name = n2dsitems.n2_nameLong, img = n2dsitems.n2_headerImg, n3order = n2dsitems.n2order });    
+                if ( n2dsitems.n2ID != 49 ) {
+                    if ( n2dsitems.n2ID != 46 && n2dsitems.n2ID != 42 && n2dsitems.n2ID != 78)
+                    {
+                        list_n2ID.Add(n2dsitems.n2ID,new Nav1List { id = n2dsitems.n2ID, name = n2dsitems.n2_nameLong, img = n2dsitems.n2_headerImg,n3order=n2dsitems.n2order });
+                    }
+                }     
             }
-            ViewBag.list_n2ID = list_n2ID.OrderBy(a => a.Value.n3order);
-            List<RiSourcesViewModel> listRisources = null;
+            ViewBag.list_n2ID = list_n2ID.OrderBy(a=>a.Value.n3order);
+
             if (n2id == 0) {
-                listRisources = await db.RiSourcesViewModels.OrderByDescending(a => a.ris_ID).ToListAsync();
+                return View(await db.RiSourcesViewModels.OrderByDescending(a => a.ris_ID).ToListAsync());
             }
             else
             {
-                listRisources = await db.RiSourcesViewModels.OrderByDescending(a => a.ris_ID).Where(a => a.n2ID == n2id).ToListAsync();
+                return View(await db.RiSourcesViewModels.OrderByDescending(a => a.ris_ID).Where(a=>a.n2ID==n2id).ToListAsync());
             }
-            if(Request.IsAjaxRequest())
-            {
-                return PartialView("_RisourcesTable", listRisources);
-            }
-            return View(listRisources);
         }
 
         // GET: RiSources
@@ -1507,7 +1503,7 @@ namespace newrisourcecenter.Controllers
         }
 
         // GET: RiSources
-        [Authorize(Roles = "Super Admin")]
+        [Authorize(Roles = "Super Admin,Rittal User")]
         public async Task<ActionResult> RisourcesReport(int parentID = 2, int n2id = 0, string n1_name = null)
         {
             long userId = Convert.ToInt64(Session["userId"]);
@@ -1567,7 +1563,7 @@ namespace newrisourcecenter.Controllers
             return restunedString;
         }
 
-        [Authorize(Roles = "Super Admin")]
+        [Authorize(Roles = "Super Admin,Rittal User")]
         [HttpGet]
         public async Task<FileStreamResult> ExportRisourcesReport()
         {
@@ -1611,7 +1607,7 @@ namespace newrisourcecenter.Controllers
             return new FileStreamResult(memoryStream, "text/csv") { FileDownloadName = "risources_summary_report_export.csv" };
         }
 
-        [Authorize(Roles = "Super Admin")]
+        [Authorize(Roles = "Super Admin,Rittal User")]
         [HttpGet]
         public async Task<FileStreamResult> ExportRisourcesActivityReport()
         {
@@ -1623,7 +1619,17 @@ namespace newrisourcecenter.Controllers
             DateTime? endDate = null;
             if (Request.QueryString.AllKeys.Contains<string>("end_date") && !string.IsNullOrEmpty(Request.QueryString["end_date"]))
                 endDate = Convert.ToDateTime(Request.QueryString["end_date"]);
-            var query = dbEntity.RiSources_Action_Log.Join(dbEntity.RiSources, action => action.Form_ID, risource => risource.ris_ID, (action, risource) => new { action, risource }).Join(dbEntity.usr_user, a => a.action.Usr_ID, user => user.usr_ID.ToString(), (a, user) => new { a.action, a.risource, user });
+            var query = dbEntity.RiSources_Action_Log
+                .Join(dbEntity.RiSources, action => action.Form_ID, risource => risource.ris_ID, (action, risource) => new { action, risource })
+                .Join(dbEntity.usr_user, a => a.action.Usr_ID, user => user.usr_ID.ToString(), (a, user) => new { a.action, a.risource, user })
+                .Select(a => new
+                {
+                    a.action,
+                    a.risource,
+                    a.user,
+                    company = dbEntity.partnerCompanies.FirstOrDefault(x => x.comp_ID == a.user.comp_ID),
+                    location = dbEntity.partnerLocations.FirstOrDefault(x => x.loc_ID == a.user.comp_loc_ID)
+                });
             if (n2id > 0)
             {
                 query = query.Where(x => x.risource.n2ID == n2id);
@@ -1644,6 +1650,7 @@ namespace newrisourcecenter.Controllers
             Dictionary<long, string> types = await dbEntity.nav2.Where(a => a.n2_active == 1).Where(a => a.n1ID == 4).ToDictionaryAsync(x => x.n2ID, x => x.n2_nameLong);
             var items = await query.ToListAsync();
             List<ExportRisourceActivityReportModel> activities = new List<ExportRisourceActivityReportModel>();
+            Dictionary<int, string> companyTypes = await dbEntity.partnerTypes.ToDictionaryAsync(x => x.pt_ID, x => x.pt_type);
             foreach (var item in items)
             {
                 activities.Add(new ExportRisourceActivityReportModel()
@@ -1652,7 +1659,11 @@ namespace newrisourcecenter.Controllers
                     type = (item.risource.n2ID.HasValue && types.ContainsKey(item.risource.n2ID.Value) ? types[item.risource.n2ID.Value] : ""),
                     user = (item.user.usr_fName + " " + item.user.usr_lName).Trim(),
                     action = item.action.Action,
-                    action_time = item.action.Action_Time.Value
+                    action_time = item.action.Action_Time.Value,
+                    user_email = item.user.usr_email,
+                    company = item.company != null ? item.company.comp_name : "",
+                    company_location = item.location != null ? item.location.loc_name : "",
+                    company_type = item.company != null && companyTypes.ContainsKey(item.company.comp_type.Value) ? companyTypes[item.company.comp_type.Value] : ""
                 });
             }
 
@@ -1665,7 +1676,7 @@ namespace newrisourcecenter.Controllers
         {
             using (var memoryStream = new MemoryStream())
             using (var streamWriter = new StreamWriter(memoryStream))
-            using (var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture))
+            using (var csvWriter = new CsvWriter(streamWriter))
             {
                 csvWriter.WriteRecords(records);
                 streamWriter.Flush();

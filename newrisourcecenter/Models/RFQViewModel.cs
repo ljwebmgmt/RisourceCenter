@@ -727,6 +727,8 @@ namespace newrisourcecenter.Models
         public short check_project { get; set; }
         public List<RFQ_Action_Log> logs { get; set; }
         public double completion_time { get; set; }
+        public string variant_code { get; set; }
+        public string product_category { get; set; }
     }
 
     public class RFQNewReportModel
@@ -956,7 +958,7 @@ namespace newrisourcecenter.Models
         [Display(Name = "Requested By: *")]
         [Required]
         public string sales_engineer { get; set; }
-        [Display(Name = "Regional General Manager: *")]
+        [Display(Name = "Regional General Manager: ")]
         public string regional_director { get; set; }
         [Display(Name = "Rittal Account Manager: *")]
         [Required]
@@ -1296,8 +1298,6 @@ namespace newrisourcecenter.Models
         public string end_user_name { get; set; }
         [Display(Name = "End User Location (City/State):")]
         public string end_user_location { get; set; }
-        [NotMapped]
-        public string company_region { get; set; }
     }
 
     [Table("RFQ_Data_Extend")]

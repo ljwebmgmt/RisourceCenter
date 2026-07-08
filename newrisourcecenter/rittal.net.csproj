@@ -334,7 +334,6 @@
     <Compile Include="Controllers\SRPEmailFunctions.cs" />
     <Compile Include="Controllers\SRPViewController.cs" />
     <Compile Include="Controllers\SupportToolsController.cs" />
-    <Compile Include="Controllers\TrainingController.cs" />
     <Compile Include="Controllers\UserInfoUploadController.cs" />
     <Compile Include="Controllers\UserThemesController.cs" />
     <Compile Include="Controllers\UserViewModelsController.cs" />
@@ -664,12 +663,6 @@
     <Compile Include="Models\product_accessories.cs">
       <DependentUpon>RisourceCenterDB.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\QuizOption.cs">
-      <DependentUpon>RisourceCenterDB.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\QuizQuestion.cs">
-      <DependentUpon>RisourceCenterDB.tt</DependentUpon>
-    </Compile>
     <Compile Include="Models\RCMContact.cs">
       <DependentUpon>RisourceCenterDB.tt</DependentUpon>
     </Compile>
@@ -852,27 +845,7 @@
     <Compile Include="Models\trainingClass.cs">
       <DependentUpon>RisourceCenterDB.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\TrainingContent.cs">
-      <DependentUpon>RisourceCenterDB.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\TrainingModuleViewModels.cs" />
-    <Compile Include="Models\TrainingQuizAttempt.cs">
-      <DependentUpon>RisourceCenterDB.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\TrainingQuizAttemptAnswer.cs">
-      <DependentUpon>RisourceCenterDB.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\TrainingRoleAssignment.cs">
-      <DependentUpon>RisourceCenterDB.tt</DependentUpon>
-    </Compile>
     <Compile Include="Models\trainingTrack.cs">
-      <DependentUpon>RisourceCenterDB.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\TrainingViewModel.cs" />
-    <Compile Include="Models\UserProgress.cs">
-      <DependentUpon>RisourceCenterDB.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\UserTrainingTrackCompletion.cs">
       <DependentUpon>RisourceCenterDB.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\UserViewModel.cs" />
@@ -5598,19 +5571,7 @@
     <Content Include="Views\RittalUniversity\Training.cshtml" />
     <Content Include="Views\UserViewModels\LastLoginReport.cshtml" />
     <Content Include="Views\RiSources\RisourcesReport.cshtml" />
-    <Content Include="Views\MDFView\_MDFTableResults.cshtml" />
-    <Content Include="Views\Nav2ViewModel\_Nav2Table.cshtml" />
-    <Content Include="Views\Nav3ViewModel\_Nav3Table.cshtml" />
-    <Content Include="Views\partnerLocation\_PartnerLocationTable.cshtml" />
-    <Content Include="Views\RFQTool\_RfqAdminTable.cshtml" />
-    <Content Include="Views\RiSources\_RisourcesTable.cshtml" />
-    <Content Include="Views\SalesComm\_SalesCommTable.cshtml" />
-    <Content Include="Views\Training\Admin.cshtml" />
-    <Content Include="Views\Training\AdminEdit.cshtml" />
-    <Content Include="Views\Training\AdminList.cshtml" />
-    <Content Include="Views\Training\AdminReport.cshtml" />
-    <Content Include="Views\Training\Index.cshtml" />
-    <Content Include="Views\Training\TracksAdmin.cshtml" />
+    <Content Include="Views\Account\ReactivationVerify.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\uploads\" />

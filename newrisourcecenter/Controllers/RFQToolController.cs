@@ -38,7 +38,7 @@ namespace newrisourcecenter.Controllers
             new SelectListItem { Text = "Secarex (Discontinued, Select CT M or CT H)", Value = "Secarex" },
             new SelectListItem { Text = "Special Spare Part", Value = "Special Spare Part" },
             new SelectListItem { Text = "CT M - Cutting Terminal Manual", Value = "CT M - Cutting Terminal Manual" },
-            new SelectListItem { Text = "CT H - Cutting Terminal Hydraulic", Value = "CT M - Cutting Terminal Hydraulic" },
+            new SelectListItem { Text = "CT H - Cutting Terminal Hydraulic", Value = "CT H - Cutting Terminal Hydraulic" },
             new SelectListItem { Text = "PT S4 – Punching Terminal", Value = "PT S4 – Punching Terminal" },
             new SelectListItem { Text = "EHRT FlexPunch", Value = "EHRT FlexPunch" },
             new SelectListItem { Text = "EHRT FlexPunch Compact", Value = "EHRT FlexPunch Compact" },
@@ -204,8 +204,8 @@ namespace newrisourcecenter.Controllers
                     salesPerson = rfq.distro_name;
                     compName = rfq.distro_company;
                 }
-                string compRegion = await db.partnerCompanyViewModels.Where(x => x.comp_name == compName).Select(x => x.comp_region).FirstOrDefaultAsync();
-                if (!string.IsNullOrEmpty(filter_region) && compRegions.Count() > 0 && !compRegions.Contains(compName))
+
+                if(!string.IsNullOrEmpty(filter_region) && compRegions.Count() > 0 && !compRegions.Contains(compName))
                 {
                     continue;
                 }
@@ -290,8 +290,7 @@ namespace newrisourcecenter.Controllers
                             updated_quote = rfq.updated_quote,
                             part_type_other = rfq.part_type_other,
                             mods_it = rfq.mods_it,
-                            product_category = rfq.product_category,
-                            company_region = compRegion
+                            product_category = rfq.product_category
                         });
                     }
                 }
@@ -317,8 +316,7 @@ namespace newrisourcecenter.Controllers
                             updated_quote = rfq.updated_quote,
                             part_type_other = rfq.part_type_other,
                             mods_it = rfq.mods_it,
-                            product_category = rfq.product_category,
-                            company_region = compRegion
+                            product_category = rfq.product_category
                         });
                     }
                 }
@@ -343,11 +341,11 @@ namespace newrisourcecenter.Controllers
                         updated_quote = rfq.updated_quote,
                         part_type_other = rfq.part_type_other,
                         mods_it = rfq.mods_it,
-                        product_category = rfq.product_category,
-                        company_region = compRegion
+                        product_category = rfq.product_category
                     });
                 }
             }
+
             return View(list_rfqs);
         }
         #endregion

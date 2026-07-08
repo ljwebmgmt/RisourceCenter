@@ -1,4 +1,5 @@
-﻿using Quartz;
+﻿using newrisourcecenter.Controllers;
+using Quartz;
 using Quartz.Impl;
 using System;
 using System.Collections.Generic;
@@ -8,26 +9,42 @@ using System.Web;
 
 namespace newrisourcecenter.Internals
 {
-    public class EmailSchedular  
+    public class EmailSchedular
     {
-        public static void Start()
+        // Static reference to keep the scheduler alive in memory
+        private static IScheduler _scheduler;
+
+        public static async Task Start()
         {
-            IScheduler scheduler = StdSchedulerFactory.GetDefaultScheduler().Result;
-            scheduler.Start();
+            try
+            {
+                if (_scheduler != null && _scheduler.IsStarted) return;
 
-            IJobDetail job = JobBuilder.Create<RemoveUnregisteredJob>().Build();
+                ISchedulerFactory schedFact = new StdSchedulerFactory();
+                _scheduler = await schedFact.GetScheduler();
+                await _scheduler.Start();
 
-            ITrigger trigger = TriggerBuilder.Create()
-                .WithDailyTimeIntervalSchedule
-                  (s =>
-                  s.WithIntervalInHours(24)
-                  //s.WithIntervalInSeconds(30)
-                  .OnEveryDay()
-                  .StartingDailyAt(TimeOfDay.HourAndMinuteOfDay(0, 0))
-                  )
-                .Build();
+                IJobDetail job = JobBuilder.Create<RemoveUnregisteredJob>()
+                    .WithIdentity("dailyJob", "group1")
+                    .Build();
 
-            scheduler.ScheduleJob(job, trigger);
+                ITrigger trigger = TriggerBuilder.Create()
+                    .WithIdentity("dailyTrigger", "group1")
+                    .StartNow() // Fire immediately on app start
+                    .WithSimpleSchedule(x => x
+                        .WithIntervalInHours(24) // Run every 24 hours
+                        .RepeatForever())
+                    .Build();
+
+                await _scheduler.ScheduleJob(job, trigger);
+
+                // LOG THIS: To prove the scheduler actually reached this line
+                new CommonController().FileLog("Quartz Scheduler started successfully.", "System_Startup");
+            }
+            catch (Exception ex)
+            {
+                new CommonController().FileLog("Quartz Start Error: " + ex.Message, "System_Error");
+            }
         }
     }
 }

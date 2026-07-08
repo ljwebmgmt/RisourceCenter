@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data.Entity;
 using System.Data.Entity.Validation;
 using System.Data.SqlTypes;
 using System.Globalization;
@@ -16,13 +17,17 @@ using System.Web;
 using System.Web.Mvc;
 using System.Xml;
 using iTextSharp.text.pdf.qrcode;
+using iTextSharp.tool.xml.html.head;
 using Microsoft.Ajax.Utilities;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Office.Interop.Excel;
 using Microsoft.Owin.Security;
 using newrisourcecenter.Models;
 using Newtonsoft.Json.Linq;
+using NPOI.SS.Formula.Functions;
 using Org.BouncyCastle.Asn1.Ocsp;
+using Renci.SshNet.Common;
 using static iTextSharp.text.pdf.AcroFields;
 
 namespace newrisourcecenter.Controllers
@@ -326,7 +331,6 @@ namespace newrisourcecenter.Controllers
                             //Response.Cookies["RISOURCEINDUSTRY"].Value = company.comp_industry.ToString();
 
                             Session["companyId"] = company.comp_ID;
-                            Session["locationId"] = item.usr_data.comp_loc_ID;
                             Session["userIndustry"] = company.comp_industry;
                             Session["userProducts"] = company.comp_products;
                             Session["companyType"] = company.comp_type;
@@ -382,14 +386,25 @@ namespace newrisourcecenter.Controllers
             //string sqls = "SELECT * FROM AspNetUsers WHERE Email ='antwi.s@rittal.us'";
             var data = db.AspNetUsers.Where(m => m.Email == model.Email);
             //Set the user session variables
-            var usr = from usr_data in db.usr_user where usr_data.usr_email == model.Email && !usr_data.deleted && !usr_data.inactive select new { usr_data };
+            var usr = from usr_data in db.usr_user where usr_data.usr_email == model.Email select new { usr_data };
            // var usrContext = new usr_user();
            // var current_user = db.usr_user.Where(u => u.usr_email ==)
             var company = db.partnerCompanies.Where(a => a.comp_ID == usr.FirstOrDefault().usr_data.comp_ID).FirstOrDefault();
 
-            if (usr == null)
+            if (usr == null || usr.FirstOrDefault() == null || usr.FirstOrDefault().usr_data == null)
             {
                 ModelState.AddModelError("", "Your account does not exist or is disabled. Please contact the system administrator.");
+                return View(model);
+            }
+            var user = usr.FirstOrDefault().usr_data;
+            if(user.deleted)
+            {
+                ModelState.AddModelError("UserDeleteError", "Account is deleted.");
+                return View(model);
+            }
+            if (user.inactive)
+            {
+                ModelState.AddModelError("UserInactiveError", "Account is inactive.");
                 return View(model);
             }
 
@@ -528,13 +543,183 @@ namespace newrisourcecenter.Controllers
             }
         }
 
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<JsonResult> ReactivationEmail(string email)
+        {
+            try
+            {
+                string link = "";
+                if (Request.Url.Port != 443)
+                {
+                    link = "http://" + Request.Url.Host + ":" + Request.Url.Port;
+                }
+                else
+                {
+                    link = "https://" + Request.Url.Host;
+                }
+                if (string.IsNullOrEmpty(email)) { throw new ArgumentNullException("email"); }
+                var usr = await db.usr_user.Where(a => a.usr_email == email).FirstOrDefaultAsync();
+                if(usr == null) { throw new Exception("No user record found for this email."); }
+                long id = usr.usr_ID;
+                byte[] b = ASCIIEncoding.ASCII.GetBytes(id + "");
+                var Body_req = "Dear " + usr.usr_fName + " " + usr.usr_lName + ", \n" +
+                "<br /><br />" +
+                "Before we process your request for RiSource Center account reactivation, please click <a href=\"" + link + "/Account/ReactivationVerify?id=" + Convert.ToBase64String(b) + "\">this link</a> to open a new tab in your browser. This tab will contain an additional link that must be clicked in order for your request to be processed." +
+                "<br /><br />" +
+                "Once you've completed the verification step, your request will be forwarded to a Rittal representative for review. Please allow up to 48 hours for a decision to be made. You will receive an email indicating the decision to reactivate your account." +
+                "<br /><br />" +
+                "<b>Please note:</b> Email address verification is a required step! ";
+                commCtl.email("webmaster@rittal.us", email, "Action Required: Rittal RiSourceCenter Reactivation Account Request", Body_req, "yes", true, "henderson.r@rittal.us"); // call the email function
+            }
+            catch(Exception ex)
+            {
+                return Json(new { error = ex.Message, success = false });
+            }
+            return Json(new { success = true });
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        public ActionResult ReactivationVerify(string id = "")
+        {
+            byte[] b = Convert.FromBase64String(id);
+            int userid = Convert.ToInt32(ASCIIEncoding.ASCII.GetString(b));
+            ViewBag.userId = userid;
+            ViewBag.heading = "Email Verification";
+            var inactiveUser = db.usr_user.Where(x => x.usr_ID == userid && (x.deleted || x.inactive)).FirstOrDefault();
+            if (inactiveUser == null)
+                return RedirectToAction("Login", "Account");
+            return View();
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<ActionResult> ReactivationVerifyEmail(int userid = 0)
+        {
+            ViewBag.userId = userid;
+            var user = db.usr_user.Where(a => a.usr_ID == userid).FirstOrDefault();
+            if(user.reactivation_email_sent)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            //Get state data
+            var state = db.data_state.Where(a => a.stateid == user.usr_state);//Get state data
+            var stateName = state.FirstOrDefault().state_long;
+            //Get country data
+            var country = db.countries.Where(a => a.country_id == user.usr_country);//Get country data
+            var countryName = country.FirstOrDefault().country_long;
+            //Get company data
+            var company = db.partnerCompanies.Where(a => a.comp_ID == user.comp_ID).FirstOrDefault();//Get company data
+            var compName = company.comp_name;
+            Dictionary<int, string> companyIndustries = db.partnerIndustries.ToDictionary(x => x.pi_ID, x => x.pi_industry);
+            Dictionary<int, string> companyAudiences = db.partnerTypes.ToDictionary(x => x.pt_ID, x => x.pt_type);
+
+            //Get Location data
+            var location = db.partnerLocations.Where(a => a.loc_ID == user.comp_loc_ID);//Get company data
+            var locName = location.FirstOrDefault().loc_name;
+            var From = "webmaster@rittal.us";
+            var To = "";
+            StringBuilder AddtoEmail = new StringBuilder();
+            if(!string.IsNullOrEmpty(company.approver_emails))
+            {
+                AddtoEmail.Append(company.approver_emails);
+            }
+            else if (user.usr_country == 228 && !string.IsNullOrEmpty(user.usr_zip) && company != null && company.comp_type == 1)
+            {
+                List<string> companies = ConfigurationManager.AppSettings["NationalManagerCompanies"].Split(',').ToList();
+                List<string> companyLocations = ConfigurationManager.AppSettings["NationalManagerCompanyLocations"].Split(',').ToList();
+                if (companies.Contains(company.comp_ID.ToString()) || companyLocations.Contains(company.comp_ID + ":" + user.comp_loc_ID))
+                {
+                    AddtoEmail.Append(ConfigurationManager.AppSettings["NationalChannelManagerEmail"]);
+                }
+                else
+                {
+                    string zip = user.usr_zip.TrimStart('0');
+                    List<string> approvers = db.RCMContacts.Where(a => a.zipcode == zip && !string.IsNullOrEmpty(a.email)).Select(x => x.email).ToList();
+                    if (approvers.Count() > 0)
+                    {
+                        AddtoEmail.Append(string.Join(",", approvers));
+                    }
+                    else
+                    {
+                        AddtoEmail.Append(ConfigurationManager.AppSettings["NationalChannelManagerEmail"]);
+                    }
+                }
+            }
+            if (AddtoEmail.Length == 0)
+            {
+                var getsiteapprovers = db.SiteApprovers.Where(a => a.CountryId == user.usr_country);
+                if (getsiteapprovers.Count() > 0)//Has a approver
+                {
+                    int x = 0;
+                    foreach (var item in getsiteapprovers)
+                    {
+                        if (user.usr_country == 228)//It is a US company
+                        {
+                            if (company.comp_type == 5)//it is a Rittal Company
+                            {
+                                if (x < getsiteapprovers.Count() - 1)
+                                {
+                                    AddtoEmail.Append(item.Email + ",");
+                                }
+                                else
+                                {
+                                    AddtoEmail.Append(item.Email);
+                                }
+                            }
+                            else
+                            {
+                                AddtoEmail.Append("customerservice@rittal.us,anderson.a@rittal.us");//change it to the email address of the person who is admin
+                                break;
+                            }
+                        }
+                        else //It is not a US company
+                        {
+                            if (x < getsiteapprovers.Count() - 1)
+                            {
+                                AddtoEmail.Append(item.Email + ",");
+                            }
+                            else
+                            {
+                                AddtoEmail.Append(item.Email);
+                            }
+                        }
+                        x++;
+                    }
+                }
+                else
+                {
+                    AddtoEmail.Append("customerservice@rittal.us,anderson.a@rittal.us");//change it to the email address of the person who is admin
+                }
+            }
+            To = AddtoEmail.ToString();
+            var Subject = "Reactivation of RiSourceCenter Account";
+            var Body = "Dear " + To + ", <br /><br /> " + user.usr_fName + " " + user.usr_lName + " has just requested reactivation of RisourceCenter account:" +
+                "<br /><br /><strong>First Name</strong> :" + user.usr_fName +
+                "<br /><strong>Last Name </strong> :" + user.usr_lName +
+                "<br /><strong>Email </strong> :" + user.usr_email +
+                "<br /><strong>Company </strong> :" + compName +
+                "<br /><strong>Location </strong> :" + locName +
+                "<br /><br /> Please visit this <a href=\"" + Url.Action("Index", "UserViewModels", new { querystring = user.usr_email }, protocol: Request.Url.Scheme) + "\">link</a> to reactivate the user account";
+
+            commCtl.email(From, To, Subject, Body, "yes", true, "henderson.r@rittal.us"); // call the email function
+            user.reactivation_email_sent = true;
+            var usrContext = db.Entry(user);
+            usrContext.Property(p => p.reactivation_email_sent).IsModified = true;
+            await db.SaveChangesAsync();
+            return RedirectToAction("Login", "Account");
+        }
+
         public async Task updateUserLoggedIn(usr_user user)
         {
             user.usr_lastLogin = DateTime.Now;
             user.last_warning = null;
+            user.inactove_notified = null;
             var usrContext = db.Entry(user);
             usrContext.Property(p => p.usr_lastLogin).IsModified = true;
             usrContext.Property(p => p.last_warning).IsModified = true;
+            usrContext.Property(p => p.inactove_notified).IsModified = true;
             await db.SaveChangesAsync();
         }
 
@@ -1097,13 +1282,18 @@ namespace newrisourcecenter.Controllers
                 UserData.region_approver = model.region_approver;
                 UserData.inactive = false;
                 UserData.deleted = false;
+                UserData.reactivation_email_sent = false;
                 db.usr_user.Add(UserData); // pass InsertUserData to the database
                 db.SaveChanges(); //Save the data into the database 
                                    
                 var From = "webmaster@rittal.us";
                 var To = "";
                 StringBuilder AddtoEmail = new StringBuilder();
-                if (UserData.usr_country == 228 && !string.IsNullOrEmpty(UserData.usr_zip) && company != null && company.comp_type == 1)
+                if (!string.IsNullOrEmpty(company.approver_emails))
+                {
+                    AddtoEmail.Append(company.approver_emails);
+                }
+                else if (UserData.usr_country == 228 && !string.IsNullOrEmpty(UserData.usr_zip) && company != null && company.comp_type == 1)
                 {
                     List<string> companies = ConfigurationManager.AppSettings["NationalManagerCompanies"].Split(',').ToList();
                     List<string> companyLocations = ConfigurationManager.AppSettings["NationalManagerCompanyLocations"].Split(',').ToList();

@@ -190,5 +190,6 @@ namespace newrisourcecenter.ViewModels
         public string companyLocation { get; set; }
         public string status { get; set; }
         public string lastLogin { get; set; }
+        public string companyType { get; set; }
     }
 }

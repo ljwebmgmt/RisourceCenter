@@ -15,6 +15,7 @@ using iTextSharp.text.pdf;
 using iTextSharp.tool.xml;
 using newrisourcecenter.Models;
 using System.Globalization;
+using static iTextSharp.text.pdf.AcroFields;
 
 namespace newrisourcecenter.Controllers
 {
@@ -994,6 +995,8 @@ namespace newrisourcecenter.Controllers
                                 logs = rfq_action_log.ToList(),
                                 end_user = item.rfq.end_user_name + "<br/>" + item.rfq.end_user_location,
                                 check_project = checkProject,
+                                variant_code = (!string.IsNullOrEmpty(item.rfq.part_type_other) ? ((item.rfq.part_type_other == "Climate Control" || item.rfq.part_type_other == "Enclosure Spare Parts") ? "SP/CL" : item.rfq.part_type_other) : (!string.IsNullOrEmpty(item.rfq.mods_it) ? "V" + item.rfq.mods_it : "")),
+                                product_category = item.rfq.product_category
                             });
                         }
                     }                  
@@ -1088,7 +1091,9 @@ namespace newrisourcecenter.Controllers
                                 IsReturned = isReturned,
                                 logs = rfq_action_log.ToList(),
                                 end_user = item.rfq.end_user_name + "<br/>" + item.rfq.end_user_location,
-                                check_project = checkProject
+                                check_project = checkProject,
+                                variant_code = (!string.IsNullOrEmpty(item.rfq.part_type_other) ? ((item.rfq.part_type_other == "Climate Control" || item.rfq.part_type_other == "Enclosure Spare Parts") ? "SP/CL" : item.rfq.part_type_other) : (!string.IsNullOrEmpty(item.rfq.mods_it) ? "V" + item.rfq.mods_it : "")),
+                                product_category = item.rfq.product_category
                             });
                         }
                     }
@@ -1182,7 +1187,9 @@ namespace newrisourcecenter.Controllers
                                 IsReturned = isReturned,
                                 logs = rfq_action_log.ToList(),
                                 end_user = item.rfq.end_user_name + "<br/>" + item.rfq.end_user_location,
-                                check_project = checkProject
+                                check_project = checkProject,
+                                variant_code = (!string.IsNullOrEmpty(item.rfq.part_type_other) ? ((item.rfq.part_type_other == "Climate Control" || item.rfq.part_type_other == "Enclosure Spare Parts") ? "SP/CL" : item.rfq.part_type_other) : (!string.IsNullOrEmpty(item.rfq.mods_it) ? "V" + item.rfq.mods_it : "")),
+                                product_category = item.rfq.product_category
                             });
                         }
                     }
@@ -1287,7 +1294,9 @@ namespace newrisourcecenter.Controllers
                             IsReturned = isReturned,
                             logs = rfq_action_log.ToList(),
                             end_user = item.rfq.end_user_name + "<br/>" + item.rfq.end_user_location,
-                            check_project = checkProject
+                            check_project = checkProject,
+                            variant_code = (!string.IsNullOrEmpty(item.rfq.part_type_other) ? ((item.rfq.part_type_other == "Climate Control" || item.rfq.part_type_other == "Enclosure Spare Parts") ? "SP/CL" : item.rfq.part_type_other) : (!string.IsNullOrEmpty(item.rfq.mods_it) ? "V" + item.rfq.mods_it : "")),
+                            product_category = item.rfq.product_category
                         });
                     }
                 }
@@ -1561,28 +1570,25 @@ namespace newrisourcecenter.Controllers
                     admin_notes = rfq.admin_notes,
                     end_user = rfq.end_user,
                     check_project = rfq.check_project,
-                    completion_time = Math.Round(total_without_wait, 2)
-            });
+                    completion_time = Math.Round(total_without_wait, 2),
+                    variant_code = rfq.variant_code,
+                    product_category = rfq.product_category
+                });
             }
-
             if (totalForms!=0)
             {
                 percentReturned = (int)Math.Round((double)(100 * totalReturnedforms)/totalForms);
             }
-
             if (totalCompletedForms!=0 )
             {
                 averageHoursCalc = (int)Math.Round((double)(totalCompletedhours)/totalCompletedForms);
                 averageHoursCalcWithoutWait = (int)Math.Round((double)(totalCompletedhoursWithoutWait) / totalCompletedForms);
-
             }
-
             if (countUnder24>0)
             {
                 averageUnder24HoursCalc = Math.Round((double)(hoursUnder24)/countUnder24);
                 percUnder24HoursCalc = (int)Math.Round((double)(100 * countUnder24)/totalForms);
             }
-
             if(totalUnder24 > 0)
             {
                 averageUnder24HoursCalcWithoutWait = Math.Round((double)(hoursUnder24WithoutWait) / totalUnder24);
@@ -1621,6 +1627,7 @@ namespace newrisourcecenter.Controllers
         #region Function to export Excel
         public void exportRFQ(RFQViewModelReport RFQViewModelReport)
         {
+            Dictionary<string, string> productCategories = new Dictionary<string, string>() { { "ts8-ie", "TS8 INDUSTRIAL" }, { "vx-ie", "VX INDUSTRIAL" }, { "ts8-it", "TS8 DATA CENTER" }, { "WM_AE_JB", "WM/AE/AX/JB/KX" }, { "spare", "SPARE PARTS" }, { "other", "OTHER" } };
             var mdf_to_excel = new DataTable("ExpMDFs");
             mdf_to_excel.Columns.Add("Form ID", typeof(int));
             mdf_to_excel.Columns.Add("Qte Num", typeof(string));
@@ -1628,6 +1635,8 @@ namespace newrisourcecenter.Controllers
             mdf_to_excel.Columns.Add("Company Name", typeof(string));
             mdf_to_excel.Columns.Add("Project Name", typeof(string));
             mdf_to_excel.Columns.Add("End User", typeof(string));
+            mdf_to_excel.Columns.Add("Variant Code", typeof(string));
+            mdf_to_excel.Columns.Add("Product Category", typeof(string));
             mdf_to_excel.Columns.Add("Submission/Start Date", typeof(string));
             mdf_to_excel.Columns.Add("Completion Date", typeof(string));
             mdf_to_excel.Columns.Add("Total Time", typeof(string));
@@ -1669,6 +1678,8 @@ namespace newrisourcecenter.Controllers
                     item.comp_name,
                     item.qte_ref,
                     item.end_user,
+                    item.variant_code,
+                    (!string.IsNullOrEmpty(item.product_category) && productCategories.ContainsKey(item.product_category) ? productCategories[item.product_category] : ""),
                     string.Format("{0:d}", item.submission_date),
                     string.Format("{0:d}", item.completion_date),
                     item.total_time,

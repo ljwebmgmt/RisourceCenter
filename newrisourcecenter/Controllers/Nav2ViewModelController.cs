@@ -82,10 +82,7 @@ namespace newrisourcecenter.Controllers
                     nav2labels = nav2labels
                 });
             }  
-            if(Request.IsAjaxRequest())
-            {
-                return PartialView("_Nav2Table", nav2Model);
-            }
+
             return View(nav2Model);
         }
 

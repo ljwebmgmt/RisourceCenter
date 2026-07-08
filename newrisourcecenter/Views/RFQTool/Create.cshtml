@@ -83,6 +83,8 @@
     .cursor { cursor: pointer; }
     .popover { max-width: inherit; }
     .checkbox-lg { transform: scale(1.5); }
+    .form-group .col-md-10 { display: flex; }
+    .red { color:red; font-size: 75%; }
 </style>
 <script type="text/javascript">
     function showEnclosures() {
@@ -111,6 +113,7 @@
 
     $(document).ready(function () {
         $('[data-toggle="popover"]').popover();
+        changeLabels();
         const rfqType = $('input[name="rfq_type"]').val();
         if (rfqType != '') {
             if (rfqType == 'spare' || rfqType == "busbar") {
@@ -443,7 +446,7 @@
                     }
                 });
                 if (!bValid) {
-                    error = 'Fill all required fields (fields marked with "*" are required)';
+                    error = 'Fill all required fields';
                 }
             }
             if (error != '') {
@@ -453,6 +456,19 @@
             }
         });
     });
+
+    function changeLabels() {
+        $('label.control-label span.red').remove();
+        $('.required-field').each(function () {
+            const group = $(this).parents('.form-group');
+            var label = $('label',group);
+            if (label.length == 0)
+                return;
+            const cleanText = label.text().replace(/\*/g, "").trim();
+            label.text(cleanText);
+            label.append("<span class='red'>Required</span>");
+        });
+    }
 
     $(document).on('change', 'select[name="sap_account_num"]', function (e) {
         var val = $(this).val();
@@ -485,6 +501,15 @@
                 return false;
             }
         });
+        $('.variant-field-required').each(function () {
+            const variants = $(this).attr('data-variant').split('|');
+            $(this).removeClass('required-field');
+            if (variants.indexOf(variant) > -1) {
+                $(this).addClass('required-field');
+                return false;
+            }
+        });
+        changeLabels();
     });
 </script>
 
@@ -515,19 +540,6 @@
     <div class="enclosures-wrapper tabs-wrapper hide">
         <div>
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-            <div class="spare-wrapper hide">
-                <div class="form-group">
-                    <label class="control-label col-md-2">RFQ Type: *</label>
-                    <div class="col-md-10">
-                        <select name="part_type_other" class="form-control required-field">
-                            <option value="">Select Option</option>
-                            <option value="Climate Control" class="spare-option option" @(Model.part_type_other == "Climate Control" ? "selected" : "")>Climate Control</option>
-                            <option value="Enclosure Spare Parts" class="spare-option option" @(Model.part_type_other == "Enclosure Spare Parts" ? "selected" : "")>Enclosure Spare Parts</option>
-                            <option value="Busbar" class="busbar-option option hide" @(Model.part_type_other == "Busbar" ? "selected" : "")>Busbar</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
             <div id="details">
                 @if (comp_type == 1)
                 {
@@ -545,6 +557,7 @@
                         @Html.LabelFor(model => model.account_manager, htmlAttributes: new { @class = "control-label col-md-2" })
                         <div class="col-md-10">
                             @Html.EditorFor(model => model.account_manager, new { htmlAttributes = new { @class = "form-control required-field" } })
+                            <span class="help-text">Please provide us with the name of your Rittal sales representative, if you need assistance in finding who that is please contact customer service at 800-477-4000</span>
                         </div>
                     </div>
 
@@ -605,12 +618,12 @@
                     </div>
 
                     @*<div class="form-group">
-                    @Html.LabelFor(model => model.regional_director, htmlAttributes: new { @class = "control-label col-md-2" })
-                    <div class="col-md-10">
-                        @Html.EditorFor(model => model.regional_director, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.regional_director, "", new { @class = "text-danger" })
-                    </div>
-                </div>*@
+                @Html.LabelFor(model => model.regional_director, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.regional_director, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.regional_director, "", new { @class = "text-danger" })
+                </div>
+            </div>*@
 
                     <div class="form-group">
                         @Html.LabelFor(model => model.cell_phone, htmlAttributes: new { @class = "control-label col-md-2" })
@@ -652,6 +665,7 @@
                     @Html.LabelFor(model => model.distro_name, htmlAttributes: new { @class = "control-label col-md-2" })
                     <div class="col-md-10">
                         @Html.EditorFor(model => model.distro_name, new { htmlAttributes = new { @class = "form-control required-field" } })
+                        <span class="help-text">If the person to contact is someone other than the person submitting this request, please note that here.</span>
                         @Html.ValidationMessageFor(model => model.distro_name, "", new { @class = "text-danger" })
                     </div>
                 </div>
@@ -660,6 +674,7 @@
                     @Html.LabelFor(model => model.distro_company, htmlAttributes: new { @class = "control-label col-md-2" })
                     <div class="col-md-10">
                         @Html.EditorFor(model => model.distro_company, new { htmlAttributes = new { @class = "form-control required-field" } })
+                        <span class="help-text">Also, please provide your company name and location. This is important if your company has multiple locations as it allows us to correctly assign the RFQ.</span>
                         @Html.ValidationMessageFor(model => model.distro_company, "", new { @class = "text-danger" })
                     </div>
                 </div>
@@ -680,6 +695,7 @@
                                 }
                             }
                         </select>
+                        <span class="help-text">New quote: Has not been quoted or ordered.<br/>Re-validate existing quotes: This means that the quote is expired and the validity date needs to be extended but there are no changes on how the product is being modified. A change in quantity is Ok to request through this path.<br/>Change Configuration: This means that the way the product is being modified is being changed. If the base part you are using is changing submit as a new request. Example changing from 8806500 to 8608500</span>
                         @Html.ValidationMessageFor(model => model.updated_quote, "", new { @class = "text-danger" })
                     </div>
                 </div>
@@ -711,10 +727,11 @@
                 @if (comp_type == 1)
                 {
                     <div class="form-group">
-                        <label class="control-label col-md-2" for="sap_account_num">Rittal Account Number *: </label>
+                        <label class="control-label col-md-2" for="sap_account_num">Rittal Account Number: </label>
                         <div class="col-md-10">
                             @Html.DropDownListFor(model => model.sap_account_num, Model.listSAP, htmlAttributes: new { @class = "form-control required-field" })
                             @Html.EditorFor(model => model.other_sap_account_num, new { htmlAttributes = new { @class = "form-control hide", @placeholder = "Other Account Number" } })
+                            <span class="help-text">Enter your distributor or direct account number. Make sure you are not using a bill to account or potential account number as we are not able to quote to them.</span>
                             @Html.ValidationMessageFor(model => model.sap_account_num, "", new { @class = "text-danger" })
                         </div>
                     </div>
@@ -722,7 +739,7 @@
                 else
                 {
                     <div class="form-group">
-                        <label class="control-label col-md-2" for="sap_account_num">SAP Account Number *: </label>
+                        <label class="control-label col-md-2" for="sap_account_num">SAP Account Number: </label>
                         <div class="col-md-10">
 
                             @Html.DropDownListFor(model => model.sap_account_num, Model.listSAP, htmlAttributes: new { @class = "form-control required-field" })
@@ -741,7 +758,7 @@
                     <div class="form-group">
                         @Html.LabelFor(model => model.opportunity_num, htmlAttributes: new { @class = "control-label col-md-2" })
                         <div class="col-md-10">
-                            @Html.EditorFor(model => model.opportunity_num, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.EditorFor(model => model.opportunity_num, new { htmlAttributes = new { @class = "form-control variant-field-required", data_variant = "4|5" } })
                             @Html.ValidationMessageFor(model => model.opportunity_num, "", new { @class = "text-danger" })
                         </div>
                     </div>
@@ -750,23 +767,39 @@
                     @Html.LabelFor(model => model.end_user_name, htmlAttributes: new { @class = "control-label col-md-2" })
                     <div class="col-md-10">
                         @Html.EditorFor(model => model.end_user_name, new { htmlAttributes = new { @class = "form-control required-field" } })
+                        <span class="help-text">Provide the end user name this request is for.</span>
                         @Html.ValidationMessageFor(model => model.end_user_name, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="spare-wrapper hide">
+                    <div class="form-group">
+                        <label class="control-label col-md-2">RFQ Type:</label>
+                        <div class="col-md-10">
+                            <select name="part_type_other" class="form-control required-field">
+                                <option value="">Select Option</option>
+                                <option value="Climate Control" class="spare-option option" @(Model.part_type_other == "Climate Control" ? "selected" : "")>Climate Control</option>
+                                <option value="Enclosure Spare Parts" class="spare-option option" @(Model.part_type_other == "Enclosure Spare Parts" ? "selected" : "")>Enclosure Spare Parts</option>
+                                <option value="Busbar" class="busbar-option option hide" @(Model.part_type_other == "Busbar" ? "selected" : "")>Busbar</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
                 <div class="form-group">
                     @Html.LabelFor(model => model.qte_ref, htmlAttributes: new { @class = "control-label col-md-2" })
                     <div class="col-md-10">
                         @Html.EditorFor(model => model.qte_ref, new { htmlAttributes = new { @class = "form-control required-field" } })
+                        <span class="help-text">Provide the project name this request is for.</span>
                         @Html.ValidationMessageFor(model => model.qte_ref, "", new { @class = "text-danger" })
                     </div>
                 </div>
-                <div class="non-spare-wrapper">
+                <div>
                     <div class="product-wrapper">
                         <div>
                             <div class="form-group">
                                 @Html.LabelFor(model => model.total_qty, htmlAttributes: new { @class = "control-label col-md-2" })
                                 <div class="col-md-10">
                                     @Html.EditorFor(model => model.total_qty, new { htmlAttributes = new { @class = "form-control required-field" } })
+                                    <span class="help-text">Provide the total quantity or estimated annual usage along with desired release quantities.<br/>Note: Quantities are subject to minimums and maximums at Rittal discretion</span>
                                     @Html.ValidationMessageFor(model => model.total_qty, "", new { @class = "text-danger" })
                                 </div>
                             </div>
@@ -778,211 +811,225 @@
                                     @Html.ValidationMessageFor(model => model.release_qty, "", new { @class = "text-danger" })
                                 </div>
                             </div>
-                            <div class="form-group">
-                                @Html.LabelFor(model => model.product_category, htmlAttributes: new { @class = "control-label col-md-2" })
-                                <div class="col-md-10">
-                                    @Html.DropDownListFor(model => model.product_category, Model.list_prod_cat, htmlAttributes: new { @class = "form-control required-field" })
-                                    @Html.ValidationMessageFor(model => model.product_category, "", new { @class = "text-danger" })
+                            <div class="non-spare-wrapper">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.product_category, htmlAttributes: new { @class = "control-label col-md-2" })
+                                    <div class="col-md-10">
+                                        @Html.DropDownListFor(model => model.product_category, Model.list_prod_cat, htmlAttributes: new { @class = "form-control required-field" })
+                                        <span class="help-text">Select the product category of the product you are requesting to be quoted. This action launches the next part of the request tool.</span>
+                                        @Html.ValidationMessageFor(model => model.product_category, "", new { @class = "text-danger" })
+                                    </div>
                                 </div>
-                            </div>
+                                <div class="box category-box hide">
+                                    <h3>
+                                        How is your selected enclosure to be modified?
+                                        @*<span class="help"><span class="cursor" role="button" data-toggle="popover" tabindex="0" data-trigger="focus" data-content="<div><img src='/images/rfq-help-1.png' /></div>" data-html="true" data-title="Help Instructions and Examples"><i class="glyphicon glyphicon-question-sign"></i></span></span>*@
+                                        <span class="help"><span class="cursor" role="button" data-toggle="popover" data-trigger="focus" tabindex="0" data-html="true" data-content="<div style='font-size:75%;font-weight:normal;'>Choose the level of modification you need Rittal to perform on the product you have selected. Rittal uses a variant level scaling system to define the level of complexity. Variants 0 to 5. Choosing this at the time of RFQ will allow the quotations team to prioritize the requests and assign them to the appropriate team member<br/>Example:  8808500 with a door added to the rear of the enclosure and back-to-back mounting panels would the second check box from the top."><i class="glyphicon glyphicon-question-sign"></i></span></span>
 
-                            <div class="box category-box hide">
-                                <h3>
-                                    How is your selected enclosure to be modified?
-                                    @*<span class="help"><span class="cursor" role="button" data-toggle="popover" tabindex="0" data-trigger="focus" data-content="<div><img src='/images/rfq-help-1.png' /></div>" data-html="true" data-title="Help Instructions and Examples"><i class="glyphicon glyphicon-question-sign"></i></span></span>*@
-                                    <span class="help"><span class="cursor" role="button" data-toggle="popover" data-trigger="focus" tabindex="0" data-html="true" data-content="<div style='font-size:75%;font-weight:normal;'>Choose the level of modification you need Rittal to perform on the product you have selected. Rittal uses a variant level scaling system to define the level of complexity. Variants 0 to 5. Choosing this at the time of RFQ will allow the quotations team to prioritize the requests and assign them to the appropriate team member<br/>Example:  8808500 with a door added to the rear of the enclosure and back-to-back mounting panels would the second check box from the top."><i class="glyphicon glyphicon-question-sign"></i></span></span>
+                                    </h3>
+                                    <div class="form-group variants-table">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>Variant</th>
+                                                    <th>Description</th>
+                                                    @*<th colspan="2">Dimensions</th>
+                                                    <th colspan="2">Assembly</th>
+                                                    <th colspan="2">Fabrication</th>
+                                                    <th>Paint</th>*@
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="text-center"><input type="radio" name="mods_it" class="variant-chkbox" value="0" @(Model.mods_it == "0" ? "checked" : "") /></td>
+                                                    <td class="text-center">0</td>
+                                                    <td>A standard Rittal product with no accessories added and no holes or cutouts to be added. If you are choosing this you may just be need to be contacting customer service for pricing on standard items.</td>
+                                                    @*<td>Standard dimensions</td>
+                                                    <td class="text-center">and/or</td>
+                                                    <td>No assembly</td>
+                                                    <td class="text-center">and/or</td>
+                                                    <td>No fabrication</td>
+                                                    <td class="text-center">and/or</td>
+                                                    <td>Standard color</td>*@
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center"><input type="radio" name="mods_it" class="variant-chkbox" value="1" @(Model.mods_it == "1" ? "checked" : "") /></td>
+                                                    <td class="text-center">1</td>
+                                                    <td>A standard Rittal product with standard catalog accessories installed that don't require the enclosure to be drilled or cut in anyway. A request like this is eligible for PrimeXpress and therefore a quote is not required.</td>
+                                                    @*<td>Standard dimensions</td>
+                                                    <td class="text-center">and/or</td>
+                                                    <td>Standard accessories</td>
+                                                    <td class="text-center">and/or</td>
+                                                    <td>No fabrication</td>
+                                                    <td class="text-center">and/or</td>
+                                                    <td>Standard color</td>*@
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center"><input type="radio" name="mods_it" class="variant-chkbox" value="2" @(Model.mods_it == "2" ? "checked" : "") /></td>
+                                                    <td class="text-center">2</td>
+                                                    <td>A standard Rittal product with standard catalog accessories installed along with holes and cutouts. Like variant 1, this may also be eligible for PrimeXpress and therefore a quote is not required.</td>
+                                                    @*<td>Standard dimensions</td>
+                                                    <td class="text-center">and/or</td>
+                                                    <td>Standard accessories</td>
+                                                    <td class="text-center">and/or</td>
+                                                    <td>Holes, cutouts, and threads</td>
+                                                    <td class="text-center">and/or</td>
+                                                    <td>Standard color</td>*@
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center"><input type="radio" name="mods_it" class="variant-chkbox" value="3" @(Model.mods_it == "3" ? "checked" : "") /></td>
+                                                    <td class="text-center">3</td>
+                                                    <td>A standard product but in one of Rittal's stock colors. May or may not also need modifications in the variant 1 or 2 categories.</td>
+                                                    @*<td>Standard dimensions</td>
+                                                    <td class="text-center">and/or</td>
+                                                    <td>Standard accessories</td>
+                                                    <td class="text-center">and/or</td>
+                                                    <td>Holes, cutouts, and threads</td>
+                                                    <td class="text-center">and/or</td>
+                                                    <td>Special stock color</td>*@
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center"><input type="radio" name="mods_it" class="variant-chkbox" value="4" @(Model.mods_it == "4" ? "checked" : "") /></td>
+                                                    <td class="text-center">4</td>
+                                                    <td>A non-standard product size or standard with special sourced accessories installed. This also includes stocked weld or pressed in nuts and studs.</td>
+                                                    @*<td>Standard dimensions</td>
+                                                    <td class="text-center">and/or</td>
+                                                    <td>Special accessories</td>
+                                                    <td class="text-center">and/or</td>
+                                                    <td>Bolts and nuts</td>
+                                                    <td class="text-center">and/or</td>
+                                                    <td>Non-stock special color</td>*@
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center"><input type="radio" name="mods_it" class="variant-chkbox" value="5" @(Model.mods_it == "5" ? "checked" : "") /></td>
+                                                    <td class="text-center">5</td>
+                                                    <td>A non-standard product size and/or specially sourced accessories.</td>
+                                                    @*<td>Special dimensions</td>
+                                                    <td class="text-center">and/or</td>
+                                                    <td>Special accessories</td>
+                                                    <td class="text-center">and/or</td>
+                                                    <td>Special fabrication</td>
+                                                    <td class="text-center">and/or</td>
+                                                    <td>Non-stock special color</td>*@
+                                                </tr>
+                                                @*<tr>
+                                                    <td class="text-center"><input type="radio" name="mods_it" class="variant-chkbox" value="-1" @(Model.mods_it == "-1" ? "checked" : "") /></td>
+                                                    <td colspan="7">Variant Unknown</td>
+                                                </tr>*@
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="variant-tabs-wrapper">
+                                        <div class="variant-tab hide" data-variant="0">
+                                            <div><h3>It seems that you are requesting a price for a non-modified catalog item. You can contact Rittal customer service at <a href="tel:800-477-4000">800-477-4000</a> or <a href="mailto:customerservice@rittal.us">customerservice@rittal.us</a> for price and availability.</h3></div>
+                                        </div>
+                                        <div class="variant-tab hide" data-variant="1|2">
+                                            <div class="not-datacenter">
+                                                <h3>
+                                                    With the level of modifications that you have requested this may be eligible for the Rittal PrimeXpress program.
+                                                    @*<span class="help"><span class="cursor" role="button" data-toggle="popover" tabindex="0" data-trigger="focus" data-content="<div><img src='/images/rfq-help-2.png' /></div>" data-placement="left" data-html="true" data-title="Help Instructions and Examples"><i class="glyphicon glyphicon-question-sign"></i></span></span>*@
+                                                    <span class="help"><span class="cursor" role="button" data-toggle="popover" data-trigger="focus" tabindex="0" data-html="true" data-content="<div style='font-size:75%;font-weight:normal;'>What you have selected may qualify for processing as a PrimeXpress order and not require a quotation. Prime Express orders are flat rated and may have a shorter lead time. Contact customer service with any questions.<br/>Ph: 800-477-4000<br/>email: customerservice@rittal.us</div>"><i class="glyphicon glyphicon-question-sign"></i></span></span>
+                                                </h3>
+                                            </div>
 
-                                </h3>
-                                <div class="form-group variants-table">
-                                    <table class="table">
-                                        <thead>
-                                            <tr>
-                                                <th></th>
-                                                <th colspan="2">Dimensions</th>
-                                                <th colspan="2">Assembly</th>
-                                                <th colspan="2">Fabrication</th>
-                                                <th>Paint</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td class="text-center"><input type="radio" name="mods_it" class="variant-chkbox" value="0" @(Model.mods_it == "0" ? "checked" : "") /></td>
-                                                <td>Standard dimensions</td>
-                                                <td class="text-center">and/or</td>
-                                                <td>No assembly</td>
-                                                <td class="text-center">and/or</td>
-                                                <td>No fabrication</td>
-                                                <td class="text-center">and/or</td>
-                                                <td>Standard color</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-center"><input type="radio" name="mods_it" class="variant-chkbox" value="1" @(Model.mods_it == "1" ? "checked" : "") /></td>
-                                                <td>Standard dimensions</td>
-                                                <td class="text-center">and/or</td>
-                                                <td>Standard accessories</td>
-                                                <td class="text-center">and/or</td>
-                                                <td>No fabrication</td>
-                                                <td class="text-center">and/or</td>
-                                                <td>Standard color</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-center"><input type="radio" name="mods_it" class="variant-chkbox" value="2" @(Model.mods_it == "2" ? "checked" : "") /></td>
-                                                <td>Standard dimensions</td>
-                                                <td class="text-center">and/or</td>
-                                                <td>Standard accessories</td>
-                                                <td class="text-center">and/or</td>
-                                                <td>Holes, cutouts, and threads</td>
-                                                <td class="text-center">and/or</td>
-                                                <td>Standard color</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-center"><input type="radio" name="mods_it" class="variant-chkbox" value="3" @(Model.mods_it == "3" ? "checked" : "") /></td>
-                                                <td>Standard dimensions</td>
-                                                <td class="text-center">and/or</td>
-                                                <td>Standard accessories</td>
-                                                <td class="text-center">and/or</td>
-                                                <td>Holes, cutouts, and threads</td>
-                                                <td class="text-center">and/or</td>
-                                                <td>Special stock color</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-center"><input type="radio" name="mods_it" class="variant-chkbox" value="4" @(Model.mods_it == "4" ? "checked" : "") /></td>
-                                                <td>Standard dimensions</td>
-                                                <td class="text-center">and/or</td>
-                                                <td>Special accessories</td>
-                                                <td class="text-center">and/or</td>
-                                                <td>Bolts and nuts</td>
-                                                <td class="text-center">and/or</td>
-                                                <td>Non-stock special color</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-center"><input type="radio" name="mods_it" class="variant-chkbox" value="5" @(Model.mods_it == "5" ? "checked" : "") /></td>
-                                                <td>Special dimensions</td>
-                                                <td class="text-center">and/or</td>
-                                                <td>Special accessories</td>
-                                                <td class="text-center">and/or</td>
-                                                <td>Special fabrication</td>
-                                                <td class="text-center">and/or</td>
-                                                <td>Non-stock special color</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-center"><input type="radio" name="mods_it" class="variant-chkbox" value="-1" @(Model.mods_it == "-1" ? "checked" : "") /></td>
-                                                <td colspan="7">Variant Unknown</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class="variant-tabs-wrapper">
-                                    <div class="variant-tab hide" data-variant="0">
-                                        <div><h3>It seems that you are requesting a price for a non-modified catalog item. You can contact Rittal customer service at <a href="tel:800-477-4000">800-477-4000</a> or <a href="mailto:customerservice@rittal.us">customerservice@rittal.us</a> for price and availability.</h3></div>
-                                    </div>
-                                    <div class="variant-tab hide" data-variant="1|2">
-                                        <div class="not-datacenter">
-                                            <h3>
-                                                With the level of modifications that you have requested this may be eligible for the Rittal PrimeXpress program.
-                                                @*<span class="help"><span class="cursor" role="button" data-toggle="popover" tabindex="0" data-trigger="focus" data-content="<div><img src='/images/rfq-help-2.png' /></div>" data-placement="left" data-html="true" data-title="Help Instructions and Examples"><i class="glyphicon glyphicon-question-sign"></i></span></span>*@
-                                                <span class="help"><span class="cursor" role="button" data-toggle="popover" data-trigger="focus" tabindex="0" data-html="true" data-content="<div style='font-size:75%;font-weight:normal;'>What you have selected may qualify for processing as a PrimeXpress order and not require a quotation. Prime Express orders are flat rated and may have a shorter lead time. Contact customer service with any questions.<br/>Ph: 800-477-4000<br/>email: customerservice@rittal.us</div>"><i class="glyphicon glyphicon-question-sign"></i></span></span>
-                                            </h3>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label class="control-label col-md-2">List part numbers and quantities to be quoted</label>
-                                            <div class="col-md-10">
-                                                <textarea data-name="part_num_ie">@Model.part_num_ie</textarea>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label col-md-2">Modifications to be performed and Additional Information</label>
-                                            <div class="col-md-10">
-                                                <textarea data-name="additional_info_footer">@Model.additional_info_footer</textarea>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="variant-tab hide" data-variant="3">
-                                        <div class="form-group">
-                                            <label class="control-label col-md-2">List part numbers and quantities to be quoted. Minimum order quantities will apply.</label>
-                                            <div class="col-md-10">
-                                                <textarea data-name="part_num_ie">@Model.part_num_ie</textarea>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label col-md-2">Special Stocking color</label>
-                                            <div class="col-md-10" id="color_ie">
-                                                <select data-name="color_mod_ie" class="form-control">
-                                                    <option value="">Select Option</option>
-                                                    <option value='RAL9003TX'>RAL9003TX - SIGNAL WHITE</option>
-                                                    <option value='RAL9010TX'>RAL9010TX - PURE WHITE</option>
-                                                    <option value='RAL9016TX'>RAL9016TX - TRAFFIC WHITE</option>
-                                                    <option value='ANSI61TX'>ANSI61TX - GRAY</option>
-                                                    <option value='RAL9005FN'>RAL9005FN - BLACK</option>
-                                                    <option value='RAL9005TX'>RAL9005TX - BLACK</option>
-                                                    <option value='RAL3020TX'>RAL3020TX - TRAFFIC RED</option>
-                                                    <option value='RAL9010SM'>RAL9010SM - PURE WHITE (MOUNTING PANELS ONLY)</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label col-md-2">Modifications to be performed and Additional Information</label>
-                                            <div class="col-md-10">
-                                                <textarea data-name="additional_info_footer">@Model.additional_info_footer</textarea>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="variant-tab hide" data-variant="4|5">
-                                        <div><h3>Since you have a requested a special size enclosure we will have an account representative contact you to assist.  Please provide a basic description of what you are looking for below and make sure that your contact information is correct. Minimum order quantities required if approved.</h3></div>
-                                        @if (isRittalUser)
-                                        {
-                                            <div class="form-group form-group-lg">
-                                                <label class="control-label col-md-6"><h4 style="margin:0;">Since this enclosure is not a catalog item, has your territory system consultant reviewed for possible alternatives?</h4></label>
-                                                <div class="col-md-6">
-                                                    <div class="checkbox">
-                                                        <label>
-                                                            <input data-name="check_project" type="checkbox" class="checkbox-lg" value="1">
-                                                        </label>
-                                                    </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-md-2">List part numbers and quantities to be quoted</label>
+                                                <div class="col-md-10">
+                                                    <textarea data-name="part_num_ie">@Model.part_num_ie</textarea>
                                                 </div>
                                             </div>
                                             <div class="form-group">
-                                                <label class="control-label col-md-2">Explanation of Decision *:</label>
+                                                <label class="control-label col-md-2">Modifications to be performed and Additional Information</label>
                                                 <div class="col-md-10">
-                                                    <textarea data-name="part_num_it" class="required-field">@Model.part_num_it</textarea>
+                                                    <textarea data-name="additional_info_footer">@Model.additional_info_footer</textarea>
                                                 </div>
                                             </div>
-                                        }
-                                        <div class="form-group">
-                                            <label class="control-label col-md-2">Describe the Changes</label>
-                                            <div class="col-md-10">
-                                                <textarea data-name="part_num_ie">@Model.part_num_ie</textarea>
+                                        </div>
+                                        <div class="variant-tab hide" data-variant="3">
+                                            <div class="form-group">
+                                                <label class="control-label col-md-2">List part numbers and quantities to be quoted. Minimum order quantities will apply.</label>
+                                                <div class="col-md-10">
+                                                    <textarea data-name="part_num_ie">@Model.part_num_ie</textarea>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-md-2">Special Stocking color</label>
+                                                <div class="col-md-10" id="color_ie">
+                                                    <select data-name="color_mod_ie" class="form-control">
+                                                        <option value="">Select Option</option>
+                                                        <option value='RAL9003TX'>RAL9003TX - SIGNAL WHITE</option>
+                                                        <option value='RAL9010TX'>RAL9010TX - PURE WHITE</option>
+                                                        <option value='RAL9016TX'>RAL9016TX - TRAFFIC WHITE</option>
+                                                        <option value='ANSI61TX'>ANSI61TX - GRAY</option>
+                                                        <option value='RAL9005FN'>RAL9005FN - BLACK</option>
+                                                        <option value='RAL9005TX'>RAL9005TX - BLACK</option>
+                                                        <option value='RAL3020TX'>RAL3020TX - TRAFFIC RED</option>
+                                                        <option value='RAL9010SM'>RAL9010SM - PURE WHITE (MOUNTING PANELS ONLY)</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-md-2">Modifications to be performed and Additional Information</label>
+                                                <div class="col-md-10">
+                                                    <textarea data-name="additional_info_footer">@Model.additional_info_footer</textarea>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="form-group">
-                                            <label class="control-label col-md-2">Modifications to be performed and Additional Information</label>
-                                            <div class="col-md-10">
-                                                <textarea data-name="additional_info_footer">@Model.additional_info_footer</textarea>
+                                        <div class="variant-tab hide" data-variant="4|5">
+                                            <div><h3>Since you have a requested a special size enclosure we will have an account representative contact you to assist.  Please provide a basic description of what you are looking for below and make sure that your contact information is correct. Minimum order quantities required if approved.</h3></div>
+                                            @if (isRittalUser)
+                                            {
+                                                <div class="form-group form-group-lg">
+                                                    <label class="control-label col-md-6"><h4 style="margin:0;">Since this enclosure is not a catalog item, has your territory system consultant reviewed for possible alternatives?</h4></label>
+                                                    <div class="col-md-6">
+                                                        <div class="checkbox">
+                                                            <label>
+                                                                <input data-name="check_project" type="checkbox" class="checkbox-lg" value="1">
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-2">Explanation of Decision:</label>
+                                                    <div class="col-md-10">
+                                                        <textarea data-name="part_num_it" class="required-field">@Model.part_num_it</textarea>
+                                                    </div>
+                                                </div>
+                                            }
+                                            <div class="form-group">
+                                                <label class="control-label col-md-2">Describe the Changes</label>
+                                                <div class="col-md-10">
+                                                    <textarea data-name="part_num_ie">@Model.part_num_ie</textarea>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-md-2">Modifications to be performed and Additional Information</label>
+                                                <div class="col-md-10">
+                                                    <textarea data-name="additional_info_footer">@Model.additional_info_footer</textarea>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="variant-tab hide" data-variant="-1">
-                                        <div class="form-group">
-                                            <label class="control-label col-md-2">List part numbers and quantities to be quoted</label>
-                                            <div class="col-md-10">
-                                                <textarea data-name="part_num_ie">@Model.part_num_ie</textarea>
+                                        <div class="variant-tab hide" data-variant="-1">
+                                            <div class="form-group">
+                                                <label class="control-label col-md-2">List part numbers and quantities to be quoted</label>
+                                                <div class="col-md-10">
+                                                    <textarea data-name="part_num_ie">@Model.part_num_ie</textarea>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label col-md-2">Modifications to be performed and Additional Information</label>
-                                            <div class="col-md-10">
-                                                <textarea data-name="additional_info_footer">@Model.additional_info_footer</textarea>
+                                            <div class="form-group">
+                                                <label class="control-label col-md-2">Modifications to be performed and Additional Information</label>
+                                                <div class="col-md-10">
+                                                    <textarea data-name="additional_info_footer">@Model.additional_info_footer</textarea>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-
-
                             </div>
                         </div>
                     </div>
-                    <div class="revalidate-wrapper">
+                    <div class="revalidate-wrapper non-spare-wrapper">
                         <div class="form-group">
                             <label class="control-label col-md-2">Notes</label>
                             <div class="col-md-10">
@@ -1014,6 +1061,7 @@
                     <div class="col-md-10">
                         <input type="file" name="fileupload" id="fileupload" class="makethispretty" multiple style="display:inline-block;" accept=".doc,.docx,.xls,.xlsx,.dwg,.dxf,.jpg,.jpeg,.png,.ppt,.pptx,.eml,.pdf" />
                         <span class="help"><span class="cursor" role="button" data-toggle="popover" data-trigger="hover" tabindex="0" data-content="Here is where you can provide the quote team with any drawings or larger BOM's. Acceptable file types are Documents, Spreadsheets, CAD files, and Images (.doc, .docx, .xls, .xlsx, .dwg, .dxf, .jpg, .jpeg, .png, .ppt, .pptx, .eml) "><i class="glyphicon glyphicon-question-sign"></i></span></span>
+                        <span class="help-text">File upload acceptable formats .doc,.docx,.xls,.xlsx,.dwg,.dxf,.jpg,.jpeg,.png,.ppt,.pptx,.eml,.pdf.<br/>If you find the format you need to upload is not supported, note it in the text fields below and we will contact you to have them emailed to us.<br/> To upload multiple files you must click "Save Progress" between each file and then click "edit" to add your next file.</span>
                         @Html.ValidationMessageFor(model => model.fileupload, "", new { @class = "text-danger" })
                     </div>
                 </div>
