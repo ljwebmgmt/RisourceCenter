@@ -1793,6 +1793,185 @@ namespace newrisourcecenter.Controllers
             await db.SaveChangesAsync();
         }
 
+        [HttpGet]
+        [Authorize(Roles = "Super Admin")]
+        public async Task<ActionResult> ExportAdminReportCsv(string trainingClass, int? trainingId, string completion, string passed, DateTime? startFrom, DateTime? startTo, DateTime? endFrom, DateTime? endTo, int companyId = 0)
+        {
+            // 1. Determine Training IDs to Query
+            var query = db.TrainingContents.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(trainingClass))
+            {
+                string normalizedClass = trainingClass.Trim().ToLower();
+                query = query.Where(x => x.TrainingClass != null && x.TrainingClass.Trim().ToLower() == normalizedClass);
+            }
+
+            if (trainingId.HasValue && trainingId.Value > 0)
+            {
+                query = query.Where(x => x.Id == trainingId.Value);
+            }
+
+            var ids = await query.Select(x => x.Id).ToListAsync();
+            if (ids.Count == 0)
+            {
+                return Content("No training records found matching the specified criteria.");
+            }
+
+            // 2. Query Progress Data
+            var trainings = await db.TrainingContents
+                .Where(x => ids.Contains(x.Id))
+                .Select(x => new { x.Id, x.Title, x.TrainingClass })
+                .ToListAsync();
+            var trainingById = trainings.ToDictionary(x => x.Id, x => x);
+
+            var progressesObj = db.UserProgresses
+                .Where(x => x.TrainingContentId.HasValue && ids.Contains(x.TrainingContentId.Value))
+                .Join(db.usr_user,x => x.UserId,u => u.usr_ID,(x, u) => new {x,u})
+                .Select(combined => new
+                {
+                    combined.x.Id,
+                    combined.x.UserId,
+                    TrainingContentId = combined.x.TrainingContentId.Value,
+                    combined.x.StartTime,
+                    combined.x.EndTime,
+                    combined.x.ScorePercentage,
+                    combined.x.IsPassed,
+                    combined.u.comp_ID
+                });
+            if(companyId > 0) {
+                progressesObj = progressesObj.Where(x => x.comp_ID == companyId);
+            }
+            var progresses = await progressesObj.ToListAsync();
+
+            var userIds = progresses.Select(x => x.UserId).Distinct().ToList();
+            var users = await db.usr_user
+                .Where(x => userIds.Contains(x.usr_ID))
+                .Select(x => new { x.usr_ID, x.usr_fName, x.usr_lName, x.usr_email })
+                .ToListAsync();
+            var userById = users.ToDictionary(x => x.usr_ID, x => x);
+
+            var attempts = await db.TrainingQuizAttempts
+                .Where(x => ids.Contains(x.TrainingContentId))
+                .Select(x => new { x.UserId, x.TrainingContentId, x.SubmittedAt, x.ScorePercentage, x.IsPassed })
+                .ToListAsync();
+
+            var latestAttemptByUserAndTraining = attempts
+                .GroupBy(x => new { x.UserId, x.TrainingContentId })
+                .Select(g => g.OrderByDescending(x => x.SubmittedAt).FirstOrDefault())
+                .Where(x => x != null)
+                .ToDictionary(x => Tuple.Create(x.UserId, x.TrainingContentId), x => x);
+
+            var localZone = TimeZoneInfo.Local;
+            var nowUtc = DateTime.UtcNow;
+
+            // 3. Process & Apply Filters
+            var rows = progresses
+                .OrderByDescending(x => x.StartTime)
+                .Select(p =>
+                {
+                    var u = userById.ContainsKey(p.UserId) ? userById[p.UserId] : null;
+                    var end = p.EndTime ?? nowUtc;
+                    var elapsed = end - p.StartTime;
+
+                    var startLocal = TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(p.StartTime, DateTimeKind.Utc), localZone);
+                    DateTime? endLocal = null;
+                    if (p.EndTime.HasValue)
+                    {
+                        endLocal = TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(p.EndTime.Value, DateTimeKind.Utc), localZone);
+                    }
+
+                    trainingById.TryGetValue(p.TrainingContentId, out var t);
+                    latestAttemptByUserAndTraining.TryGetValue(Tuple.Create(p.UserId, p.TrainingContentId), out var last);
+
+                    return new
+                    {
+                        TrainingTitle = t == null ? "" : t.Title,
+                        TrainingClass = t == null ? "" : t.TrainingClass,
+                        UserName = u == null ? "" : (u.usr_fName + " " + u.usr_lName),
+                        UserEmail = u == null ? "" : u.usr_email,
+                        StartTime = startLocal,
+                        EndTime = endLocal,
+                        StartTimeStr = startLocal.ToString("yyyy-MM-dd HH:mm"),
+                        EndTimeStr = endLocal.HasValue ? endLocal.Value.ToString("yyyy-MM-dd HH:mm") : "",
+                        ElapsedHours = Math.Round(Math.Max(0, (double)elapsed.TotalSeconds) / 3600.0, 2),
+                        LatestScore = last != null ? (last.ScorePercentage + "%") : "",
+                        IsPassed = last != null ? (last.IsPassed ? "Yes" : "No") : "",
+                        RawIsPassed = last != null ? (bool?)last.IsPassed : null
+                    };
+                });
+
+            // Apply Completion Filter
+            if (string.Equals(completion, "completed", StringComparison.OrdinalIgnoreCase))
+            {
+                rows = rows.Where(r => r.EndTime.HasValue);
+            }
+            else if (string.Equals(completion, "started", StringComparison.OrdinalIgnoreCase))
+            {
+                rows = rows.Where(r => r.StartTime != null);
+            }
+
+            // Apply Passed Filter
+            if (string.Equals(passed, "yes", StringComparison.OrdinalIgnoreCase))
+            {
+                rows = rows.Where(r => r.RawIsPassed == true);
+            }
+            else if (string.Equals(passed, "no", StringComparison.OrdinalIgnoreCase))
+            {
+                rows = rows.Where(r => r.RawIsPassed == false);
+            }
+
+            // Apply Date Range Filters
+            if (startFrom.HasValue)
+            {
+                rows = rows.Where(r => r.StartTime.Date >= startFrom.Value.Date);
+            }
+            if (startTo.HasValue)
+            {
+                rows = rows.Where(r => r.StartTime.Date <= startTo.Value.Date);
+            }
+            if (endFrom.HasValue)
+            {
+                rows = rows.Where(r => r.EndTime.HasValue && r.EndTime.Value.Date >= endFrom.Value.Date);
+            }
+            if (endTo.HasValue)
+            {
+                rows = rows.Where(r => r.EndTime.HasValue && r.EndTime.Value.Date <= endTo.Value.Date);
+            }
+
+            // 4. Build CSV String
+            var builder = new System.Text.StringBuilder();
+            builder.AppendLine("Training,Track,User,Email,Started,Ended,Time (hrs),Latest Score,Passed");
+
+            foreach (var r in rows)
+            {
+                builder.AppendLine(string.Format(
+                    "\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\",\"{7}\",\"{8}\"",
+                    EscapeCsv(r.TrainingTitle),
+                    EscapeCsv(r.TrainingClass),
+                    EscapeCsv(r.UserName),
+                    EscapeCsv(r.UserEmail),
+                    EscapeCsv(r.StartTimeStr),
+                    EscapeCsv(r.EndTimeStr),
+                    r.ElapsedHours,
+                    EscapeCsv(r.LatestScore),
+                    EscapeCsv(r.IsPassed)
+                ));
+            }
+
+            byte[] buffer = System.Text.Encoding.UTF8.GetPreamble()
+                .Concat(System.Text.Encoding.UTF8.GetBytes(builder.ToString()))
+                .ToArray();
+
+            string fileName = string.Format("Training_Report_{0:yyyyMMdd_HHmmss}.csv", DateTime.Now);
+            return File(buffer, "text/csv", fileName);
+        }
+
+        private string EscapeCsv(string str)
+        {
+            if (string.IsNullOrEmpty(str)) return "";
+            return str.Replace("\"", "\"\"");
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)

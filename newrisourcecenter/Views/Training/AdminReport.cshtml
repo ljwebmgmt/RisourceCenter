@@ -153,6 +153,9 @@
                                     <div class="form-group">
                                         <div class="col-sm-offset-4 col-sm-8 text-right">
                                             <button class="btn btn-primary" id="LoadBtn" type="button">Load Report</button>
+                                            <button class="btn btn-success" id="ExportBtn" type="button" style="margin-left:5px;">
+                                                <i class="glyphicon glyphicon-export"></i> Export CSV
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -438,6 +441,21 @@
         }
 
         $('#LoadBtn').on('click', loadReport);
+        $('#ExportBtn').on('click', function () {
+            var params = $.param({
+                trainingClass: $('#TrainingClassSelect').val() || '',
+                trainingId: $('#TrainingSelect').val() || '',
+                completion: $('#CompletionSelect').val() || 'all',
+                passed: $('#PassedSelect').val() || 'all',
+                startFrom: $('#StartFrom').val() || '',
+                startTo: $('#StartTo').val() || '',
+                endFrom: $('#EndFrom').val() || '',
+                endTo: $('#EndTo').val() || '',
+                companyId: $('#userCompany').val() || 0
+            });
+
+            window.location.href = '/Training/ExportAdminReportCsv?' + params;
+        });
         $('#TrainingClassSelect').on('change', function () {
             rebuildTrainingOptions();
         });
