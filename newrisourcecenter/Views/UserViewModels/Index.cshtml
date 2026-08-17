@@ -14,6 +14,28 @@
 }
 <style type="text/css">
     .btn.btn-xs { padding: 1px 5px !important; height: auto !important; }
+    .filter-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 15px;
+        align-items: center;
+    }
+    .filter-item {
+        flex: 1 1 200px; /* Responsive grid for filter controls */
+    }
+    .filter-item .bootstrap-select, 
+    .filter-item .input-group {
+        width: 100% !important;
+    }
+    .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
+    #userTableGrid {
+        height: 70vh; /* Scalable view height for mobile screens */
+        width: 100%;
+    }
 </style>
 <script>
     let gridApi = null;
@@ -56,49 +78,41 @@
             {
                 headerName: "",
                 field: "user_role",
-                width: 50,
+                width: 40,
+                pinned: 'left',
                 sortable: false,
                 filter: false,
-                cellRenderer: params => {
-                    // Replicates your Admin Star logic
-                    if (params.value === "Admin") {
-                        return '<span class="glyphicon glyphicon-star" style="color:red;"></span>';
-                    }
-                    return '';
-                }
+                cellRenderer: params => params.value === "Admin" ? '<span class="glyphicon glyphicon-star" style="color:red;"></span>' : ''
             },
-            { headerName: "User ID", field: "usr_ID", width: 100 },
-            { headerName: "First Name", field: "usr_fName" },
-            { headerName: "Last Name", field: "usr_lName" },
-            { headerName: "Email", field: "usr_email", flex: 1 },
+            { headerName: "User ID", field: "usr_ID", minWidth: 90, flex: 0 },
+            { headerName: "First Name", field: "usr_fName", minWidth: 120 },
+            { headerName: "Last Name", field: "usr_lName", minWidth: 120 },
+            { headerName: "Email", field: "usr_email", minWidth: 200 },
             {
                 headerName: "Actions",
-                width: 450, // Wider to accommodate multiple buttons
+                minWidth: 280,
                 sortable: false,
                 filter: false,
                 cellRenderer: params => {
-                    if (!params.data) {
-                        return '<span class="text-muted">Loading...</span>';
-                    }
+                    if (!params.data) return '<span class="text-muted">Loading...</span>';
                     const item = params.data;
                     const fullName = `${item.usr_fName} ${item.usr_lName}`;
-                    let html = '<div style="display: flex; gap: 5px; align-items: center; height: 100%;">';
+                    
+                    // Flex wrapping allows buttons to stack neatly if space is constrained
+                    let html = '<div style="display: flex; gap: 4px; align-items: center; flex-wrap: wrap;">';
 
-                    // 1. Online Shop & SAP Accounts (Permission Based)
                     if (canViewAccounts) {
                         html += `
-                            <a href="/Webshop/Index?n1_name=${currentN1}&n2_name=Online Shop Accounts&msg=${fullName}&user_ID=${item.usr_ID}&compid=${item.comp_ID}" class="btn btn-info btn-xs">Online Shop Accounts</a>
-                            <a href="/partnerStockCheck/Index?n1_name=${currentN1}&n2_name=SAP Accounts&msg=${fullName}&user_ID=${item.usr_ID}&compid=${item.comp_ID}" class="btn btn-info btn-xs">SAP Accounts</a>
+                            <a href="/Webshop/Index?n1_name=${currentN1}&n2_name=Online Shop Accounts&msg=${fullName}&user_ID=${item.usr_ID}&compid=${item.comp_ID}" class="btn btn-info btn-xs" title="Online Shop">Shop</a>
+                            <a href="/partnerStockCheck/Index?n1_name=${currentN1}&n2_name=SAP Accounts&msg=${fullName}&user_ID=${item.usr_ID}&compid=${item.comp_ID}" class="btn btn-info btn-xs" title="SAP Accounts">SAP</a>
                         `;
                     }
 
-                    // 2. Edit Button (Logic for CompID)
                     const activeCompId = queryCompId || defaultCompId;
                     html += `<a href="/UserViewModels/Edit?id=${item.usr_ID}&n1_name=${currentN1}&msg=${fullName}&compid=${activeCompId}&user_ID=${item.usr_ID}&n2_name=User Account" class="btn btn-success btn-xs">Edit</a>`;
 
-                    // 3. Delete Button (Permission Based)
                     if (canDeleteUser) {
-                        html += `<a href="/UserViewModels/Delete?id=${item.usr_ID}&n1_name=${currentN1}" class="btn btn-danger btn-xs btn-delete-user" id="delete">Delete</a>`;
+                        html += `<a href="/UserViewModels/Delete?id=${item.usr_ID}&n1_name=${currentN1}" class="btn btn-danger btn-xs btn-delete-user">Delete</a>`;
                     }
 
                     html += '</div>';
@@ -106,6 +120,7 @@
                 }
             }
         ];
+
         const gridOptions = {
             rowModelType: 'infinite',
             cacheBlockSize: 20,
@@ -113,12 +128,11 @@
             pagination: true,
             paginationPageSize: 20,
             onGridReady: (params) => {
-                gridApi = params.api
+                gridApi = params.api;
                 params.api.setGridOption('datasource', userDataSource);
-                params.api.sizeColumnsToFit();
             },
-            overlayLoadingTemplate: '<span class="ag-overlay-loading-center">Please wait while your users are loading...</span>',
-            overlayNoRowsTemplate: '<span style="padding: 10px; border: 2px solid #444; background: lightgoldenrodyellow;">No users found for this filter.</span>'
+            overlayLoadingTemplate: '<span class="ag-overlay-loading-center">Please wait...</span>',
+            overlayNoRowsTemplate: '<span style="padding: 10px; background: lightgoldenrodyellow;">No users found.</span>'
         };
         const gridDiv = document.querySelector('#userTableGrid');
         gridApi = agGrid.createGrid(gridDiv, gridOptions);
@@ -212,50 +226,44 @@
     });
 </script>
 
-
-<table>
-    <tr>
-        @if (User.IsInRole("Super Admin") || User.IsInRole("Local Admin") && User.IsInRole("Rittal User") || User.IsInRole("Global Admin"))
-        {
-        <td>
+<div class="filter-bar">
+    @if (User.IsInRole("Super Admin") || User.IsInRole("Local Admin") && User.IsInRole("Rittal User") || User.IsInRole("Global Admin"))
+    {
+        <div class="filter-item">
             <select id="compFilter" class="selectpicker select-dropdown" data-live-search="true" title="Filter By Companies" onchange="loadLocations()">
                 <option value="0">All Companies</option>
                 @foreach (var item in ViewBag.compData)
                 {
-                    if (string.IsNullOrEmpty(item.name))
-                    {
-                        continue;
-                    }
+                    if (string.IsNullOrEmpty(item.name)) continue;
                     <option value="@item.id" @(Convert.ToInt64(item.id.ToString()) == defaultCompId ? "selected" : "")>@item.name</option>
                 }
             </select>
-        </td>
-        <td>
+        </div>
+        <div class="filter-item">
             <select id="locFilter" class="selectpicker select-dropdown" data-live-search="true" title="Filter By Locations" onchange="onFilterChange()" disabled>
                 <option value="0">Select Location</option>
             </select>
-        </td>
-        <td>
-            @Html.ActionLink("Add Users", "AddUser", "Account", new { n1_name = "Add Users" }, htmlAttributes: new { @class = "btn btn-primary" })
-        </td>
-        }
-        <td>
-            <form onsubmit="onFilterChange(); return false;">
-                <span class="input-group stylish-input-group" style="width:300px;">
-                    <input type="text" id="gridSearch" value="@Request.QueryString["querystring"]" placeholder="first or last names or email" class="form-control" />
-                    <span class="input-group-addon" >
-                        <button type="button" onclick="onFilterChange()">
-                            <span class="glyphicon glyphicon-search"></span>
-                        </button>
-                    </span>
+        </div>
+        <div class="filter-item">
+            @Html.ActionLink("Add Users", "AddUser", "Account", new { n1_name = "Add Users" }, htmlAttributes: new { @class = "btn btn-primary btn-block" })
+        </div>
+    }
+    <div class="filter-item search-item">
+        <form onsubmit="onFilterChange(); return false;">
+            <div class="input-group stylish-input-group">
+                <input type="text" id="gridSearch" value="@Request.QueryString["querystring"]" placeholder="Search name or email" class="form-control" />
+                <span class="input-group-addon">
+                    <button type="button" onclick="onFilterChange()">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
                 </span>
-            </form>
-        </td>
-        <td>
-            <button type="button" class="btn btn-primary btn-reset" onclick="resetFilters()">Reset</button>
-        </td>
-    </tr>
-</table>
+            </div>
+        </form>
+    </div>
+    <div class="filter-item">
+        <button type="button" class="btn btn-primary btn-reset" onclick="resetFilters()">Reset</button>
+    </div>
+</div>
 <p class="glyphicon glyphicon-star" style="color:#E50043;font-size:14px;"> - Administrator</p>
 
 <div class="table-wrapper" style="clear:both;">
