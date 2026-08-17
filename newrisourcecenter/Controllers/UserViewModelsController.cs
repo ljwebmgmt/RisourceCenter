@@ -14,6 +14,7 @@ using Microsoft.AspNet.Identity.Owin;
 using CsvHelper;
 using System.IO;
 using newrisourcecenter.ViewModels;
+using System.Globalization;
 
 namespace newrisourcecenter.Controllers
 {
@@ -78,7 +79,7 @@ namespace newrisourcecenter.Controllers
             var UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
 
             // 1. Base Query
-            IQueryable<UserViewModel> query = db.UserViewModels.Where(a => !a.deleted);
+            IQueryable<UserViewModel> query = db.UserViewModels;
 
             // 2. Apply your existing filtering logic
             if (User.IsInRole("Super Admin") || User.IsInRole("Local Admin") || User.IsInRole("Global Admin"))
@@ -104,16 +105,14 @@ namespace newrisourcecenter.Controllers
             // 3. Apply Search String (querystring)
             if (!string.IsNullOrEmpty(querystring))
             {
-                query = query.Where(a => querystring.Contains(a.usr_fName) ||
-                                         querystring.Contains(a.usr_lName) ||
-                                         a.usr_email.Contains(querystring));
+                query = query.Where(a => a.usr_fName == querystring || a.usr_lName == querystring || a.usr_email.Contains(querystring));
             }
 
             // 4. Get Total Count for Pagination
             int totalCount = await query.CountAsync();
 
             // 5. Paginate and Fetch
-            var rawData = await query.OrderBy(a => a.usr_fName)
+            var rawData = await query.OrderBy(a => a.usr_fName).ThenBy(a => a.usr_lName)
                                      .Skip(start)
                                      .Take(limit)
                                      .ToListAsync();
@@ -130,7 +129,8 @@ namespace newrisourcecenter.Controllers
                 user_role = GetAdminRole(item.system_ID, UserManager),
                 item.inactive,
                 companyName = item.comp_ID.HasValue && companyMap.ContainsKey(item.comp_ID.Value) ? companyMap[item.comp_ID.Value] : "N/A",
-                item.usr_lastLogin
+                item.usr_lastLogin,
+                item.deleted
             }).ToList();
 
             return Json(new { rows = resultList, total = totalCount }, JsonRequestBehavior.AllowGet);
@@ -197,7 +197,7 @@ namespace newrisourcecenter.Controllers
             long userId = Convert.ToInt64(Session["userId"]);
             long companyId = Convert.ToInt64(Session["companyId"]);
             List<UserExport> usr_list = new List<UserExport>();
-            IQueryable<UserViewModel> user_data = db.UserViewModels.Where(a => !a.deleted);
+            IQueryable<UserViewModel> user_data = db.UserViewModels;
 
             if (User.IsInRole("Super Admin") || User.IsInRole("Local Admin") || User.IsInRole("Global Admin") || (User.IsInRole("Local Admin") && User.IsInRole("Channel User")))
             {
@@ -226,7 +226,7 @@ namespace newrisourcecenter.Controllers
                     email = item.usr_email,
                     companyName = (item.comp_ID.HasValue && companyNames.ContainsKey(item.comp_ID.Value) ? companyNames[item.comp_ID.Value] : ""),
                     companyLocation = (item.comp_loc_ID.HasValue && locationNames.ContainsKey(item.comp_loc_ID.Value) ? locationNames[item.comp_loc_ID.Value] : ""),
-                    status = (item.inactive ? "In-Active" : "Active")
+                    status = (item.deleted ? "Deleted" : (item.inactive ? "In-Active" : "Active"))
                 });
             }
             var result = WriteCsvToMemory(usr_list);
@@ -238,7 +238,7 @@ namespace newrisourcecenter.Controllers
         {
             using (var memoryStream = new MemoryStream())
             using (var streamWriter = new StreamWriter(memoryStream))
-            using (var csvWriter = new CsvWriter(streamWriter))
+            using (var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture))
             {
                 csvWriter.WriteRecords(records);
                 streamWriter.Flush();
@@ -277,29 +277,31 @@ namespace newrisourcecenter.Controllers
             long userId = Convert.ToInt64(Session["userId"]);
             long companyId = Convert.ToInt64(Session["companyId"]);
             List<UserExport> usr_list = new List<UserExport>();
-            IQueryable<UserViewModel> user_data = db.UserViewModels.Where(a => !a.deleted);
+            IQueryable<UserViewModel> user_data;
 
             if (User.IsInRole("Super Admin") || User.IsInRole("Local Admin") || User.IsInRole("Global Admin"))
             {
-                if(compid > 0)
+                if (compid == 0)
                 {
-                    user_data = user_data.Where(a => a.comp_ID == compid);
+                    user_data = db.UserViewModels;
                 }
-                if(locid > 0)
+                else
                 {
-                    user_data = user_data.Where(a => a.comp_loc_ID == locid);
+                    user_data = db.UserViewModels.Where(a => a.comp_ID == compid);
                 }
             }
-            else if(User.IsInRole("Channel User"))
+            else if (User.IsInRole("Channel User"))
             {
-                user_data = user_data.Where(a => a.comp_ID == companyId);
+                user_data = db.UserViewModels.Where(a => a.comp_ID == companyId);
             }
             else
             {
-                user_data = user_data.Where(a => a.usr_ID == userId);
+                user_data = db.UserViewModels.Where(a => a.usr_ID == userId);
             }
             Dictionary<long, string> companyNames = await db.partnerCompanyViewModels.ToDictionaryAsync(x => x.comp_ID, x => x.comp_name);
             Dictionary<long, string> locationNames = await db.partnerLocationViewModels.ToDictionaryAsync(x => x.loc_ID, x => x.loc_name);
+            Dictionary<int, string> partnerTypes = await db.partnerTypeViewModels.ToDictionaryAsync(x => x.pt_ID, x => x.pt_type);
+            Dictionary<long, string> companyTypes = await db.partnerCompanyViewModels.ToDictionaryAsync(x => x.comp_ID, x => partnerTypes[x.comp_type.Value]);
             foreach (var item in await user_data.ToListAsync())
             {
                 usr_list.Add(new UserExport
@@ -310,8 +312,9 @@ namespace newrisourcecenter.Controllers
                     email = item.usr_email,
                     companyName = (item.comp_ID.HasValue && companyNames.ContainsKey(item.comp_ID.Value) ? companyNames[item.comp_ID.Value] : ""),
                     companyLocation = (item.comp_loc_ID.HasValue && locationNames.ContainsKey(item.comp_loc_ID.Value) ? locationNames[item.comp_loc_ID.Value] : ""),
+                    companyType = (item.comp_ID.HasValue && companyTypes.ContainsKey(item.comp_ID.Value) ? companyTypes[item.comp_ID.Value] : ""),
                     lastLogin = (item.usr_lastLogin.HasValue ? item.usr_lastLogin.Value.ToString() : ""),
-                    status = (item.inactive ? "In-Active" : "Active")
+                    status = (item.deleted ? "Deleted" : (item.inactive ? "In-Active" : "Active"))
                 });
             }
             var result = WriteCsvToMemory(usr_list);
@@ -341,13 +344,13 @@ namespace newrisourcecenter.Controllers
                 var form_data = form_value.Split(' ');
                 if (form_data.Count()==1)
                 {
-                    user_data = await db.UserViewModels.Where(a => !a.deleted && (a.usr_fName == form_value || a.usr_lName == form_value || a.usr_email.Contains(form_value))).ToListAsync();
+                    user_data = await db.UserViewModels.Where(a => (a.usr_fName == form_value || a.usr_lName == form_value || a.usr_email.Contains(form_value))).ToListAsync();
                 }
                 else
                 {
                     var firstname = form_data[0].ToString();
                     var lastname = form_data[1].ToString();
-                    user_data = await db.UserViewModels.Where(a => !a.deleted && a.usr_fName.Contains(firstname) && a.usr_lName.Contains(lastname)).ToListAsync();
+                    user_data = await db.UserViewModels.Where(a => a.usr_fName.Contains(firstname) && a.usr_lName.Contains(lastname)).ToListAsync();
                 }
 
                 foreach (var item in user_data)
@@ -1005,6 +1008,52 @@ namespace newrisourcecenter.Controllers
                 return Json("Ok");
             }
             catch(Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
+        // GET: UserViewModels/Reactivate/5
+        [HttpPost]
+        public async Task<ActionResult> Reactivate(int? id)
+        {
+            try
+            {
+                long userId = Convert.ToInt64(Session["userId"]);
+                if (!Request.IsAuthenticated || userId == 0)
+                {
+                    return Json("Please Login. Session has timed out");
+                }
+
+                if (id == null)
+                {
+                    return Json("An error occurred while processing your request");
+                }
+                UserViewModel userViewModel = await db.UserViewModels.FindAsync(id);
+                if (userViewModel == null)
+                {
+                    return Json("An error occurred while processing your request");
+                }
+                string userEmail = userViewModel.usr_email;
+                userViewModel.inactive = false;
+                if (userViewModel.deleted)
+                {
+                    var userStore = new UserStore<ApplicationUser>(db);
+                    var UserManager = new UserManager<ApplicationUser>(userStore);
+                    var userdata = await UserManager.Users.Where(a => a.Email == userViewModel.usr_email).FirstOrDefaultAsync();
+                    userdata.EmailConfirmed = true;
+                    await userStore.UpdateAsync(userdata);
+                }
+                userViewModel.deleted = false;
+                userViewModel.inactove_notified = false;
+                await db.SaveChangesAsync();
+                var Body_req = "Dear " + userViewModel.usr_fName + " " + userViewModel.usr_lName + ", <br /><br /> " +
+                    "Your RiSource Center account has been successfully reactivated. You may now log in using your existing credentials.<br/><br/><b>Please Note:</b> To keep your account active, a login is required at least once every 90 days. Accounts with no activity during this period will be automatically deactivated for security.<br/><br/>" +
+                    "<a href='" + Url.Action("Login", "Account") + "'>Login to Risource Center</a><br /><br />";
+                commCtl.email("webmaster@rittal.us", userViewModel.usr_email, "Rittal RiSourceCenter Account Reactivated", Body_req); // call the email function
+                return Json("Ok");
+            }
+            catch (Exception ex)
             {
                 return Json(ex.Message);
             }

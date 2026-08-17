@@ -11,6 +11,7 @@
     }
 </style>
 <script>
+    const rowData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
     let gridApi;
     const adminUser = @((User.IsInRole("Super Admin") || User.IsInRole("Global Admin")).ToString().ToLower());
     const columnDefs = [
@@ -71,13 +72,12 @@
 
     const gridOptions = {
         columnDefs: columnDefs,
-        rowModelType: 'infinite',
+        rowData: rowData,
         pagination: true,
         paginationPageSize: 20,
-        cacheBlockSize: 20,
         onGridReady: params => {
             gridApi = params.api;
-            params.api.setGridOption('datasource', companyDataSource);
+            params.api.sizeColumnsToFit();
         }
     };
 
@@ -97,12 +97,20 @@
     };
 
     function onSearchChange() {
-        gridApi.refreshInfiniteCache();
+        const searchText = $('#companySearchInput').val();
+        gridApi.setGridOption('quickFilterText', searchText);
     }
 
-    // Handle Enter Key in Search
-    $('#companySearchInput').on('keypress', function (e) {
-        if (e.which === 13) onSearchChange();
+    $(document).on('input', '#companySearchInput', function () {
+        onSearchChange();
+    });
+
+    // Maintain Enter key support just in case
+    $(document).on('keypress', '#companySearchInput', function (e) {
+        if (e.which === 13) {
+            e.preventDefault();
+            onSearchChange();
+        }
     });
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -134,7 +142,14 @@
                 else {
                     messageContainer.before('<div class="alert alert-success">Company successfully deleted</div>');
                     if (gridApi) {
-                        gridApi.refreshInfiniteCache();
+                        const targetId = obj.attr('href').split('/').pop();
+                        const rowNode = gridApi.getRowNode(targetId) || gridApi.getRenderedNodes().find(node => node.data.comp_ID == targetId);
+
+                        if (rowNode) {
+                            gridApi.applyTransaction({ remove: [rowNode.data] });
+                        } else {
+                            location.reload();
+                        }
                     }
                 }
 
@@ -146,7 +161,7 @@
                 alert("An error occurred while deleting the user.");
             },
             complete: function () {
-                gridApi.hideOverlay();
+                gridApi.setGridOption('loading', false);
                 obj.text(originalText).prop('disabled', false);
             }
         });
@@ -160,13 +175,8 @@
             @Html.ActionLink("Add Company", "Create", new { n1_name = Request.QueryString["n1_name"], msg = "Add Company" }, htmlAttributes: new { @class = "btn btn-primary" })
         </div>
 
-        <div class="input-group" style="margin-left:20px;width:350px;">
-            <input type="text" id="companySearchInput" class="form-control" placeholder="Search by ID or Company Name..." />
-            <span class="input-group-btn">
-                <button class="btn btn-default" type="button" onclick="onSearchChange()">
-                    <span class="glyphicon glyphicon-search"></span>
-                </button>
-            </span>
+        <div style="margin-left:20px;width:350px;">
+            <input type="text" id="companySearchInput" class="form-control" placeholder="Search by Company Name..." />
         </div>
     </div>
 }

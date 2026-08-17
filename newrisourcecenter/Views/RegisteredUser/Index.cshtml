@@ -62,6 +62,7 @@
                 headerName: "Actions",
                 sortable: false,
                 filter: false,
+                width: 400,
                 cellRenderer: params => {
                     if (!adminUser) {
                         return '';
@@ -146,6 +147,7 @@
         var originalText = obj.text();
         $.ajax({
             url: obj.attr('href'),
+            type: 'POST',
             dataType: 'json',
             beforeSend: function () {
                 gridApi.setGridOption('loading', true);
@@ -154,7 +156,7 @@
             success: function (res) {
                 const messageContainer = $('.table-wrapper');
 
-                if (res !== 'Ok') {
+                if (res !== 'OK') {
                     messageContainer.before('<div class="alert alert-danger">' + res + '</div>');
                 }
                 else {
@@ -171,7 +173,7 @@
                 alert("An error occurred while deleting the user.");
             },
             complete: function () {
-                gridApi.hideOverlay();
+                gridApi.setGridOption('loading', false);
                 obj.text(originalText).prop('disabled', false);
             }
         });

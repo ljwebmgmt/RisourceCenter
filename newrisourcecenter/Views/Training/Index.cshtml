@@ -188,7 +188,7 @@
                 <div id="trackSummary" style="margin-top:15px;"></div>
                 <div id="trainingList" style="margin-top:15px;"></div>
 
-                <div class="modal fade" id="quizModal" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal fade" id="quizModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">>
                     <div class="modal-dialog modal-lg" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -207,7 +207,7 @@
                     </div>
                 </div>
 
-                <div class="modal fade" id="videoModal" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal fade" id="videoModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
                     <div class="modal-dialog modal-lg" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -601,16 +601,30 @@
             updateTimers();
         }
 
-        $('#videoModal').on('hidden.bs.modal', function () {
+        $(document).on('mousedown click', '#videoModal [data-dismiss="modal"],#quizModal [data-dismiss="modal"]', function () {
+            if (document.activeElement) {
+                document.activeElement.blur();
+            }
+        });
+
+        $('#videoModal').on('hidden.bs.modal hide.bs.modal', function () {
+            closeVideoPopup();
+        });
+
+        $(document).on('click', '#videoModal [data-dismiss="modal"]', function (e) {
+            closeVideoPopup();
+        });
+
+        function closeVideoPopup() {
             var video = document.getElementById('trainingVideo');
             if (video) {
                 try { video.pause(); } catch (e) { }
                 $('#trainingVideo').removeAttr('src');
                 try { video.load(); } catch (e) { }
             }
-        });
+        }
 
-        $('#quizModal').on('hidden.bs.modal', function () {
+        function closeQuizPopup() {
             $('#quizQuestions').html('');
             $('#resultContainer').hide().text('');
 
@@ -623,6 +637,14 @@
                     }
                 });
             }
+        }
+
+        $('#quizModal').on('hidden.bs.modal', function () {
+            closeQuizPopup();
+        });
+
+        $(document).on('click', '#quizModal [data-dismiss="modal"]', function (e) {
+            closeQuizPopup();
         });
 
         function refreshTrainingPanel(id) {

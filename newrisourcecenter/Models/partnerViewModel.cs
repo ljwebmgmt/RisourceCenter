@@ -119,6 +119,8 @@ namespace newrisourcecenter.Models
         [NotMapped]
         [Display(Name = "Total MKT Funds Remaining")]
         public string MKT_remaining { get; set; }
+        [Display(Name = "Approver Email(s)")]
+        public string approver_emails { get; set; }
     }
 
     [Table("partnerLocation")]

@@ -3,6 +3,8 @@
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    string userId = Session["userId"].ToString();
+    Dictionary<string, string> productCategories = new Dictionary<string, string>() { { "ts8-ie", "TS8 INDUSTRIAL" }, { "vx-ie", "VX INDUSTRIAL" }, { "ts8-it", "TS8 DATA CENTER" }, { "WM_AE_JB", "WM/AE/AX/JB/KX" }, { "spare", "SPARE PARTS" }, { "other", "OTHER" } };
 }
 <script>
     let gridApi = null;
@@ -35,7 +37,7 @@
                 field: "mods_it",
                 headerName: 'Variant Code',
                 filter: true,
-                cellRenderer: params => {
+                valueGetter: params => {
                     const partType = params.data.part_type_other;
                     var variantCode = '';
                     if (partType != null && partType != '') {
@@ -50,7 +52,7 @@
                         variantCode = 'V' + params.data.mods_it;
                     }
                     return variantCode;
-                },
+                }
             },
             {
                 field: "product_category",
@@ -68,11 +70,10 @@
             },
             {
                 field: "list_RFQ_logs", headerName: "Status", filter: 'agTextColumnFilter',
-                cellRenderer: params => {
-                    const logs = params.value;
-                    const rowId = params.data.id;
+                valueGetter: params => {
+                    const logs = params.data.list_RFQ_logs;
                     if (!logs || logs.length === 0) {
-                        return `<span id="status_${rowId}">-</span>`;
+                        return '';
                     }
                     const lastLog = logs[logs.length - 1];
                     let displayValue = "";
@@ -81,7 +82,10 @@
                     } else {
                         displayValue = lastLog.Action;
                     }
-                    return `<span id="status_${rowId}">${displayValue}</span>`;
+                    return displayValue;
+                },
+                cellRenderer: params => {
+                    return "<span id='status_" + params.data.ID + "'>" + (params.value.trim() != '' ? params.value.trim() : "-") + "</span>";
                 }
             },
             {
@@ -119,8 +123,7 @@
 
                     // --- 3. Manage Link (Log Logic check) ---
                     const excludedActions = ["Assigned", "Assigned-Returned", "Completed", "Admin Saved with Notes"];
-
-                    if (lastLog && !excludedActions.includes(lastLog.action)) {
+                    if (lastLog && !excludedActions.includes(lastLog.Action)) {
                         const manageUrl = `${assignUrlBase}?rfq_id=${id}&n1_name=${n1_name}&n2_name=${n2_name}&usr_id=${currentUserId}`;
                         html += `<a href="${manageUrl}" id="${id}" class="${id}" onclick="processRFQs.manage(this.href, this.id); return false;" title="Manage">
                         <img src="/images/manage.png" class="img-icon" />
@@ -196,21 +199,21 @@
        //get the form id and asign it to the modal done button class id
         getid:function(id){
             $('#modal').show();
-            $('#quote_id').html(id);
-            $('.done').attr('id', id);
+            $('#quote_id').html(id);		
+            $('.done').attr('id', id);		
         },
         //now assign all the different parameters that would be passed to the new_manage_manually.cfm page
         assign: function (id) {
-            var new_assigned = $('#'+id).text();
+            var new_assigned = $('#'+id).text();	
             $('.done').attr('title', id);// create attr title on done class
-            $('.done').attr('name', new_assigned);// create attr name on done class
-            // change display title on modal by showing the name of
-            $('#assigned').html('You are assigning this quote to <b style="color:red">'+new_assigned+'</b>');
+            $('.done').attr('name', new_assigned);// create attr name on done class	
+            // change display title on modal by showing the name of 		
+            $('#assigned').html('You are assigning this quote to <b style="color:red">'+new_assigned+'</b>');	
         },
         //close the modal
-        close_modal: function (id,title,name){
-            var assignee = name.split(' ', 1);
-            if(title!="" && id!=""){
+        close_modal: function (id,title,name){	
+            var assignee = name.split(' ', 1);	
+            if(title!="" && id!=""){	
                 var url = '/RFQTool/ManageAssignRFQ/?rfq_id=' + id + '&usr_id=' + title+"&assign=yes";
                 //make ajax call to new_manage_manually.cfm when the Done button is clicked
                 $.ajax({
@@ -220,23 +223,23 @@
                         $("." + id).hide();
                         $('#status_' + id).html('Assigned To - ' + data);// on success change the name of the assignee
                     },
-                });
+                });		
                 $('#modal').hide();//finally hide modal
             }else{
                 alert('please selet an assignee');//display if modal is not completed
-            }
+            }	
         },
         //auto search for user names
-        searchAdmin: function (querystring) {
+        searchAdmin: function (querystring) {		
             var url = '/RFQTool/GetRFQAdmins/?querystring=' + querystring;
-            //make ajax call to list_admin.cfm with the user name
+            //make ajax call to list_admin.cfm with the user name  
             $.ajax({
                 type:"GET",
                 url:url,
                 success: function (data) {
                     $('#RFQ_list').html(data);//on success add the list of names to be selected
                 },
-            });
+            });	
         },
         toggleNotes: function (id) {
             $("#notes_" + id).toggle();
@@ -249,7 +252,7 @@
             }
         }
    }
-    jQuery(document).ready(processRFQs.init);
+   jQuery(document).ready(processRFQs.init);
 
     function toggleColumn(field, checkbox) {
         if (gridApi) {
@@ -280,25 +283,26 @@
         left: 20%;
         right: 20%;
         display: none;
+        z-index: 2;
     }
 
-        #modal span {
-            float: right;
-        }
+    #modal span {
+        float: right;
+    }
 
-        #modal > div:first-child {
-            margin-top: 20px;
-            padding: 20px;
-            background: white;
-            width: 90%;
-            height: 70%;
-            position: relative;
-            top: 10px;
-            margin-left: auto;
-            margin-right: auto;
-            color: black;
-            overflow: auto;
-        }
+    #modal > div:first-child {
+        margin-top: 20px;
+        padding: 20px;
+        background: white;
+        width: 90%;
+        height: 70%;
+        position: relative;
+        top: 10px;
+        margin-left: auto;
+        margin-right: auto;
+        color: black;
+        overflow: auto;
+    }
 
     #search {
         text-align: center;
@@ -314,11 +318,11 @@
         overflow-y: auto;
     }
 
-        #RFQ_list li {
-            margin-left: 200px;
-            margin-bottom: 20px;
-            list-style: none;
-        }
+    #RFQ_list li {
+        margin-left: 200px;
+        margin-bottom: 20px;
+        list-style: none;
+    }
 
     #close {
         top: 30px;
@@ -400,18 +404,18 @@
         </div>
     </div>
 
-    @if (!string.IsNullOrEmpty(Request.QueryString["success"]))
-    {
-        <h2 style="color:green;">@Request.QueryString["success"]</h2>
-    }
+@if (!string.IsNullOrEmpty(Request.QueryString["success"]))
+{
+    <h2 style="color:green;">@Request.QueryString["success"]</h2>
+}
     <div class="table-wrapper" style="clear:both;">
         <div id="rfqTableGrid" class="ag-theme-quartz" style="height: 1000px; width: 100%;"></div>
-    </div>
+                </div>
 
     <div id="modal">
+        <span style="float:left;">Queue id is <strong id="quote_id"></strong></span>
+        <span style="float:right;">Search to assign a quote <input type="text" onkeyup="processRFQs.searchAdmin(this.value);" id="searchusers" value="" placeholder="search admin name"></span>
         <div>
-            <span style="float:left;">Queue id is <strong id="quote_id"></strong></span>
-            <span style="float:right;">Search to assign a quote <input type="text" onkeyup="processRFQs.searchAdmin(this.value);" id="searchusers" value="" placeholder="search admin name"></span>
             <br clear="all" />
             <h4 align="center" id="assigned"></h4>
             <div id="RFQ_list"></div>

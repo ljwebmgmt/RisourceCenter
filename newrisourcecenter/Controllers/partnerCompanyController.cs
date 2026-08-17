@@ -8,6 +8,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using newrisourcecenter.Controllers;
+using Microsoft.Office.Interop.Excel;
 
 namespace newrisourcecenter.Models
 {
@@ -19,7 +20,7 @@ namespace newrisourcecenter.Models
         CommonController locController = new CommonController();
 
         // GET: partnerCompany
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
 
             long companyId = Convert.ToInt64(Session["companyId"]);
@@ -28,12 +29,18 @@ namespace newrisourcecenter.Models
             {
                 return RedirectToAction("Login", "Account");
             }
-            return View();
+            var query = db.partnerCompanyViewModels.AsQueryable();
+            if (!(User.IsInRole("Super Admin") || (User.IsInRole("Local Admin") && User.IsInRole("Rittal User")) || User.IsInRole("Global Admin")))
+            {
+                query = query.Where(a => a.comp_ID == companyId);
+            }
+            var rows = await query.OrderBy(a => a.comp_name).ToListAsync();
+            return View(rows);
         }
 
         [HttpGet]
         public async Task<JsonResult> GetCompaniesPaged(int start, int limit, string search = "")
-        {
+            {
             long companyId = Convert.ToInt64(Session["companyId"]);
             long userId = Convert.ToInt64(Session["userId"]);
 
@@ -162,7 +169,7 @@ namespace newrisourcecenter.Models
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "comp_ID,comp_name,comp_industry,comp_type,comp_level,comp_products,comp_SAP,comp_POS,comp_SPA,comp_project_reg,comp_MDF,comp_MDF_amount,comp_MDF_tLimit,comp_MDF_aLimit,comp_MDF_mLimit,comp_FX,comp_active,comp_dateCreated,comp_dateUpdated,comp_createdBy,comp_updatedBy,old_ID,comp_RiCRM,comp_region,bid_registration,it_territory_manager,general_manager,comp_MKT_Limit")] partnerCompanyViewModel partnerCompanyViewModel)
+        public async Task<ActionResult> Create([Bind(Include = "comp_ID,comp_name,comp_industry,comp_type,comp_level,comp_products,comp_SAP,comp_POS,comp_SPA,comp_project_reg,comp_MDF,comp_MDF_amount,comp_MDF_tLimit,comp_MDF_aLimit,comp_MDF_mLimit,comp_FX,comp_active,comp_dateCreated,comp_dateUpdated,comp_createdBy,comp_updatedBy,old_ID,comp_RiCRM,comp_region,bid_registration,it_territory_manager,general_manager,comp_MKT_Limit,approver_emails")] partnerCompanyViewModel partnerCompanyViewModel)
         {
             if (ModelState.IsValid)
             {
@@ -303,7 +310,7 @@ namespace newrisourcecenter.Models
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "comp_ID,comp_name,comp_industry,comp_type,comp_level,comp_products,comp_SAP,comp_POS,comp_SPA,comp_project_reg,comp_MDF,comp_MDF_amount,comp_MDF_tLimit,comp_MDF_aLimit,comp_MDF_mLimit,comp_FX,comp_active,comp_dateCreated,comp_dateUpdated,comp_createdBy,comp_updatedBy,old_ID,comp_RiCRM,comp_region,bid_registration,it_territory_manager,general_manager,comp_MKT_Limit")] partnerCompanyViewModel partnerCompanyViewModel)
+        public async Task<ActionResult> Edit([Bind(Include = "comp_ID,comp_name,comp_industry,comp_type,comp_level,comp_products,comp_SAP,comp_POS,comp_SPA,comp_project_reg,comp_MDF,comp_MDF_amount,comp_MDF_tLimit,comp_MDF_aLimit,comp_MDF_mLimit,comp_FX,comp_active,comp_dateCreated,comp_dateUpdated,comp_createdBy,comp_updatedBy,old_ID,comp_RiCRM,comp_region,bid_registration,it_territory_manager,general_manager,comp_MKT_Limit,approver_emails")] partnerCompanyViewModel partnerCompanyViewModel)
         {
             if (ModelState.IsValid)
             {
@@ -348,24 +355,25 @@ namespace newrisourcecenter.Models
             try
             {
                 if (id == null)
-                {
+        {
                     throw new Exception("An error occurred while processing your request.");
                 }
-                long userId = Convert.ToInt64(Session["userId"]);
-                if (!Request.IsAuthenticated || userId == 0)
-                {
+            long userId = Convert.ToInt64(Session["userId"]);
+            if (!Request.IsAuthenticated || userId == 0)
+            {
                     throw new Exception("Please Login. Login has timed out");
-                }
-                partnerCompanyViewModel partnerCompanyViewModel = await db.partnerCompanyViewModels.FindAsync(id);
-                if (partnerCompanyViewModel == null)
-                {
+            }
+            partnerCompanyViewModel partnerCompanyViewModel = await db.partnerCompanyViewModels.FindAsync(id);
+            if (partnerCompanyViewModel == null)
+            {
                     throw new Exception("Company not found");
-                }
-                db.partnerCompanyViewModels.Remove(partnerCompanyViewModel);
-                await db.SaveChangesAsync();
+            }
 
-                //Log the action by the user
-                await locController.siteActionLog(Convert.ToInt32(partnerCompanyViewModel.comp_ID), "PartnerCompany", DateTime.Now, " Partner Company was deleted by user " + userId, "Delete", Convert.ToInt32(userId));
+            db.partnerCompanyViewModels.Remove(partnerCompanyViewModel);
+            await db.SaveChangesAsync();
+
+            //Log the action by the user
+            await locController.siteActionLog(Convert.ToInt32(partnerCompanyViewModel.comp_ID), "PartnerCompany", DateTime.Now, " Partner Company was deleted by user " + userId, "Delete", Convert.ToInt32(userId));
                 return Json("OK");
             }
             catch (Exception e)

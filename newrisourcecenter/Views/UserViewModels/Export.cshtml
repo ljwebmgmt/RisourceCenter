@@ -30,7 +30,7 @@
                 return params.value ?
                     '<span class="label label-default">In-active</span>' :
                     '<span class="label label-success">Active</span>';
-            }
+    }
         }
     ];
 
@@ -68,7 +68,7 @@
                 .catch(() => {
                     gridApi.setGridOption('loading', false);
                     params.failCallback();
-                });
+    });
         }
     };
 
@@ -87,7 +87,7 @@
                     data.forEach(l => locSelect.append(`<option value="${l.id}">${l.name}</option>`));
                     $('#locContainer').show();
                     onFilterChange();
-                });
+    });
         } else {
             $('#locContainer').hide();
             onFilterChange();
@@ -115,12 +115,12 @@
     <div class="filter-header" style="margin-bottom: 15px; display: flex; gap: 10px; align-items: center;">
         <div style="display:flex; gap: 5px;">
             <input type="text" id="companySearch" class="form-control" placeholder="Search Company...." list="companies" style="width:300px;" />
-            <datalist id="companies">
+                        <datalist id="companies">
                 @foreach (var item in ViewBag.compData)
-                {
+                            {
                     <option value="@item.name" data-id="@item.id">@item.name</option>
-                }
-            </datalist>
+                            }
+                        </datalist>
             <button class="btn btn-primary" onclick="onCompanyFilterChange()">Filter</button>
         </div>
 
@@ -128,10 +128,10 @@
             <select id="locFilter" class="form-control" onchange="onFilterChange()">
                 <option value="0">All Locations</option>
             </select>
-        </div>
+                    </div>
 
         <button class="btn btn-primary" onclick="downloadCSV()">Download CSV</button>
-    </div>
+                        </div>
 }
 
 <p class="glyphicon glyphicon-star" style="color:#E50043;font-size:14px;"> - Administrator</p>

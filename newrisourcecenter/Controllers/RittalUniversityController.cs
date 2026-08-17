@@ -27,6 +27,7 @@ namespace newrisourcecenter.Controllers
         // GET: RittalUniversity
         public ActionResult Index()
         {
+            return RedirectToAction("Index", "Training");
             long userId = Convert.ToInt64(Session["userId"]);
             if (!Request.IsAuthenticated || userId == 0)
             {
@@ -193,7 +194,7 @@ namespace newrisourcecenter.Controllers
         // GET: RittalUniversity
         public ActionResult Courses()
         {
-            return RedirectToAction("Index", "RittalUniversity");
+            return RedirectToAction("Index", "Training");
             long userId = Convert.ToInt64(Session["userId"]);
             if (!Request.IsAuthenticated || userId == 0)
             {
@@ -233,7 +234,7 @@ namespace newrisourcecenter.Controllers
         // GET: RittalUniversity/Allclasses
         public ActionResult Allclasses(int childId = 0)
         {
-            return RedirectToAction("Index", "RittalUniversity");
+            return RedirectToAction("Index", "Training");
             long userId = Convert.ToInt64(Session["userId"]);
             if (!Request.IsAuthenticated || userId == 0)
             {
@@ -276,7 +277,7 @@ namespace newrisourcecenter.Controllers
         // GET: SalesComm
         public async Task<ActionResult> AllSalesComms(int parentID = 2, int childId = 0, string n2_name = null, int n3id = 0, string n3_name = null)
         {
-            return RedirectToAction("Index", "RittalUniversity");
+            return RedirectToAction("Index", "Training");
             long userId = Convert.ToInt64(Session["userId"]);
             if (!Request.IsAuthenticated || userId == 0)
             {
@@ -337,7 +338,7 @@ namespace newrisourcecenter.Controllers
         // GET: RittalUniversity/clases
         public ActionResult Classes(int childId = 0)
         {
-            return RedirectToAction("Index", "RittalUniversity");
+            return RedirectToAction("Index", "Training");
             long userId = Convert.ToInt64(Session["userId"]);
             if (!Request.IsAuthenticated || userId == 0)
             {
@@ -378,7 +379,7 @@ namespace newrisourcecenter.Controllers
         [HttpGet]
         public ActionResult Results(bool export = false)
         {
-            return RedirectToAction("Index", "RittalUniversity");
+            return RedirectToAction("Index", "Training");
             long userId = Convert.ToInt64(Session["userId"]);
             if (!Request.IsAuthenticated || userId == 0)
             {
@@ -472,7 +473,7 @@ namespace newrisourcecenter.Controllers
 
         public ActionResult Filterresults(string className=null, int userid=0, int companyid=0, int count=1000000, int date=0, bool export = false,int location=0,string search=null)
         {
-            return RedirectToAction("Index", "RittalUniversity");
+            return RedirectToAction("Index", "Training");
             long userId = Convert.ToInt64(Session["userId"]);
             if (!Request.IsAuthenticated || userId == 0)
             {
@@ -776,7 +777,7 @@ namespace newrisourcecenter.Controllers
         // GET: RittalUniversity/Details/5
         public ActionResult Test(string dir_name)
         {
-            return RedirectToAction("Index", "RittalUniversity");
+            return RedirectToAction("Index", "Training");
             long userId = Convert.ToInt64(Session["userId"]);
             if (!Request.IsAuthenticated || userId == 0)
             {
@@ -790,7 +791,7 @@ namespace newrisourcecenter.Controllers
         //POST: /RittalUniversity/score
         public ActionResult score()
         {
-            return RedirectToAction("Index", "RittalUniversity");
+            return RedirectToAction("Index", "Training");
             long userId = Convert.ToInt64(Session["userId"]);
             if (!Request.IsAuthenticated || userId == 0)
             {
@@ -824,7 +825,7 @@ namespace newrisourcecenter.Controllers
         [HttpGet]
         public ActionResult Create()
         {
-            return RedirectToAction("Index", "RittalUniversity");
+            return RedirectToAction("Index", "Training");
             long userId = Convert.ToInt64(Session["userId"]);
             if (!Request.IsAuthenticated || userId == 0)
             {
@@ -927,7 +928,7 @@ namespace newrisourcecenter.Controllers
         // GET: RittalUniversity/Edit/5
         public async Task<ActionResult> Edit(long? id)
         {
-            return RedirectToAction("Index", "RittalUniversity");
+            return RedirectToAction("Index", "Training");
             long userId = Convert.ToInt64(Session["userId"]);
             if (!Request.IsAuthenticated || userId == 0)
             {
@@ -1151,16 +1152,14 @@ namespace newrisourcecenter.Controllers
         [HttpGet]
         public async Task<ActionResult> Training()
         {
+            return RedirectToAction("Index", "Training");
             long userId = Convert.ToInt64(Session["userId"]);
             if (!Request.IsAuthenticated || userId == 0)
             {
                 return RedirectToAction("Login", "Account");
             }
             RittalUniversityViewModels model = new RittalUniversityViewModels();
-            model.trainingTracks = await dbEntity.trainingTracks
-                .OrderBy(x => x.sort_order)
-                .ThenBy(x => x.name)
-                .ToListAsync();
+            model.trainingTracks = await dbEntity.trainingTracks.ToListAsync();
             model.trainingTrackNames = model.trainingTracks.Select(x => x.name).ToList();
             List<trainingClass> trainingClasses = await dbEntity.trainingClasses.ToListAsync();
             Dictionary<string,List<trainingClass>> classes = new Dictionary<string,List<trainingClass>>();
@@ -1235,6 +1234,11 @@ namespace newrisourcecenter.Controllers
                 response = new { Message = ex.Message, Success = false };
             }
             return Json(response);
+        }
+        [HttpGet]
+        public ActionResult LandingPage()
+        {
+            return View();
         }
 
         protected override void Dispose(bool disposing)

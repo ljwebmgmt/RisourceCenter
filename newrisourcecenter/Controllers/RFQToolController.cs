@@ -33,12 +33,20 @@ namespace newrisourcecenter.Controllers
             new SelectListItem { Text = "MT 2201 S with Pedestal", Value = "MT 2201 S with Pedestal" },
             new SelectListItem { Text = "MT 2201 S with Pendant Arm", Value = "MT 2201 S with Pendant Arm" },
             new SelectListItem { Text = "LC3035", Value = "LC3035" },
-            new SelectListItem { Text = "WT C5", Value = "WT C5" },
-            new SelectListItem { Text = "WT C10", Value = "WT C10" },
+            new SelectListItem { Text = "WT C5 with Rails", Value = "WT C5 with Rails" },
+            new SelectListItem { Text = "WT C5 with Rails+Chain Bundler", Value = "WT C5 with Rails+Chain Bundler" },
+            new SelectListItem { Text = "WT C5 with Rails+Chain Bundler+External Printer", Value = "WT C5 with Rails+Chain Bundler+External Printer" },
+            new SelectListItem { Text = "WT C10 with Rails", Value = "WT C10 with Rails" },
+            new SelectListItem { Text = "WT C10 with Rails+Chain Bundler", Value = "WT C10 with Rails+Chain Bundler" },
+            new SelectListItem { Text = "WT C10 with Rails+Chain Bundler+External Printer", Value = "WT C10 with Rails+Chain Bundler+External Printer" },
+            new SelectListItem { Text = "WT L5 R Rails", Value = "WT L5 R Rails" },
+            new SelectListItem { Text = "WT L5 B Chain Bundler", Value = "WT L5 B Chain Bundler" },
+            new SelectListItem { Text = "WT L10 R Rails", Value = "WT L10 R Rails" },
+            new SelectListItem { Text = "WT L10 B Chain Bundler", Value = "WT L10 B Chain Bundler" },
             new SelectListItem { Text = "Secarex (Discontinued, Select CT M or CT H)", Value = "Secarex" },
             new SelectListItem { Text = "Special Spare Part", Value = "Special Spare Part" },
             new SelectListItem { Text = "CT M - Cutting Terminal Manual", Value = "CT M - Cutting Terminal Manual" },
-            new SelectListItem { Text = "CT H - Cutting Terminal Hydraulic", Value = "CT M - Cutting Terminal Hydraulic" },
+            new SelectListItem { Text = "CT H - Cutting Terminal Hydraulic", Value = "CT H - Cutting Terminal Hydraulic" },
             new SelectListItem { Text = "PT S4 – Punching Terminal", Value = "PT S4 – Punching Terminal" },
             new SelectListItem { Text = "EHRT FlexPunch", Value = "EHRT FlexPunch" },
             new SelectListItem { Text = "EHRT FlexPunch Compact", Value = "EHRT FlexPunch Compact" },
@@ -348,6 +356,7 @@ namespace newrisourcecenter.Controllers
                     });
                 }
             }
+
             return View(list_rfqs);
         }
         #endregion
@@ -1936,16 +1945,24 @@ namespace newrisourcecenter.Controllers
         public StringBuilder GetRFQAdmins(string querystring = "")
         {
             StringBuilder string_admins = new StringBuilder();
-            string_admins.Append("<ul id=\"admin_list\" >");
             try
             {
-                var user_data = db.UserViewModels.Where(a => a.usr_fName.Contains(querystring));
-                foreach (var part in user_data)
+                List<int> admins = new List<int>();
+                foreach (string item in ConfigurationManager.AppSettings["RFQToolAdmins"].ToString().Split(','))
+                {
+                    admins.Add(Convert.ToInt32(item));
+                }
+                var userObj = db.UserViewModels.Where(a => admins.Contains(a.usr_ID));
+                string_admins.Append("<ul id=\"admin_list\" >");
+                if(!string.IsNullOrEmpty(querystring))
+                {
+                    userObj = userObj.Where(a => a.usr_fName.Contains(querystring) || a.usr_lName.Contains(querystring));
+                }
+                foreach (var part in userObj.OrderBy(a => a.usr_fName).ThenBy(a => a.usr_lName).ToList())
                 {
                     string_admins.Append("<li><a href=\"#\" id=\"" + part.usr_ID + "\" onclick=\"processRFQs.assign(this.id); return false;\">" + part.usr_fName + " " + part.usr_lName + "</a></li>");
                 }
                 string_admins.Append("</ul>");
-
                 return string_admins;
             }
             catch (Exception)

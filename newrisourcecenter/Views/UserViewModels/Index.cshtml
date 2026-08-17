@@ -5,8 +5,7 @@
 
     long siteRole = Convert.ToInt64(Session["siteRole"]);
     long adminRole = Convert.ToInt64(Session["userRole"]);
-    long companyId = Convert.ToInt64(Session["companyId"]);
-    long defaultCompId = companyId;
+    long defaultCompId = 0;
     if (!string.IsNullOrEmpty(Request.QueryString["compid"]))
     {
         defaultCompId = Convert.ToInt64(Request.QueryString["compid"]);
@@ -21,17 +20,21 @@
         margin-bottom: 15px;
         align-items: center;
     }
+
     .filter-item {
         flex: 1 1 200px; /* Responsive grid for filter controls */
     }
-    .filter-item .bootstrap-select, 
-    .filter-item .input-group {
-        width: 100% !important;
-    }
+
+        .filter-item .bootstrap-select,
+        .filter-item .input-group {
+            width: 100% !important;
+        }
+
     .table-wrapper {
         width: 100%;
         overflow-x: auto;
     }
+
     #userTableGrid {
         height: 70vh; /* Scalable view height for mobile screens */
         width: 100%;
@@ -70,9 +73,10 @@
     document.addEventListener('DOMContentLoaded', () => {
         const canViewAccounts = @((User.IsInRole("Super Admin") || User.IsInRole("Local Admin") || User.IsInRole("Global Admin")).ToString().ToLower());
         const canDeleteUser = @((User.IsInRole("Super Admin") || User.IsInRole("Global Admin")).ToString().ToLower());
+        const canActivateUser = @((User.IsInRole("Super Admin") || User.IsInRole("Global Admin") || User.IsInRole("Rittal User")).ToString().ToLower());
         const currentN1 = '@Request.QueryString["n1_name"]';
         const queryCompId = '@Request.QueryString["compid"]';
-        const defaultCompId = '@companyId';
+        const defaultCompId = '@defaultCompId';
         // 2. Define Columns with Filtering, Sorting, and Hiding
         const columnDefs = [
             {
@@ -84,26 +88,26 @@
                 filter: false,
                 cellRenderer: params => params.value === "Admin" ? '<span class="glyphicon glyphicon-star" style="color:red;"></span>' : ''
             },
-            { headerName: "User ID", field: "usr_ID", minWidth: 90, flex: 0 },
-            { headerName: "First Name", field: "usr_fName", minWidth: 120 },
-            { headerName: "Last Name", field: "usr_lName", minWidth: 120 },
-            { headerName: "Email", field: "usr_email", minWidth: 200 },
+            { headerName: "User ID", field: "usr_ID", minWidth: 90, flex: 1 },
+            { headerName: "First Name", field: "usr_fName", minWidth: 120, flex: 2 },
+            { headerName: "Last Name", field: "usr_lName", minWidth: 120, flex: 2 },
+            { headerName: "Email", field: "usr_email", minWidth: 200, flex: 3 },
             {
                 headerName: "Actions",
-                minWidth: 280,
+                minWidth: 350,
                 sortable: false,
                 filter: false,
                 cellRenderer: params => {
                     if (!params.data) return '<span class="text-muted">Loading...</span>';
                     const item = params.data;
                     const fullName = `${item.usr_fName} ${item.usr_lName}`;
-                    
+
                     // Flex wrapping allows buttons to stack neatly if space is constrained
                     let html = '<div style="display: flex; gap: 4px; align-items: center; flex-wrap: wrap;">';
 
                     if (canViewAccounts) {
                         html += `
-                            <a href="/Webshop/Index?n1_name=${currentN1}&n2_name=Online Shop Accounts&msg=${fullName}&user_ID=${item.usr_ID}&compid=${item.comp_ID}" class="btn btn-info btn-xs" title="Online Shop">Shop</a>
+                            <a href="/Webshop/Index?n1_name=${currentN1}&n2_name=Online Shop Accounts&msg=${fullName}&user_ID=${item.usr_ID}&compid=${item.comp_ID}" class="btn btn-info btn-xs" title="Online Shop">Online Shop</a>
                             <a href="/partnerStockCheck/Index?n1_name=${currentN1}&n2_name=SAP Accounts&msg=${fullName}&user_ID=${item.usr_ID}&compid=${item.comp_ID}" class="btn btn-info btn-xs" title="SAP Accounts">SAP</a>
                         `;
                     }
@@ -130,10 +134,19 @@
             onGridReady: (params) => {
                 gridApi = params.api;
                 params.api.setGridOption('datasource', userDataSource);
+                if (window.innerWidth > 768) {
+                    params.api.sizeColumnsToFit();
+                }
+            },
+            onGridSizeChanged: (params) => {
+                if (window.innerWidth > 768) {
+                    params.api.sizeColumnsToFit();
+                }
             },
             overlayLoadingTemplate: '<span class="ag-overlay-loading-center">Please wait...</span>',
             overlayNoRowsTemplate: '<span style="padding: 10px; background: lightgoldenrodyellow;">No users found.</span>'
         };
+
         const gridDiv = document.querySelector('#userTableGrid');
         gridApi = agGrid.createGrid(gridDiv, gridOptions);
         if (queryCompId > 0 || defaultCompId > 0) {
@@ -182,7 +195,7 @@
     $(document).on('click', '.btn-delete-user', function (e) {
         e.preventDefault();
 
-        if (!window.confirm('Are you sure you want to delete this user?')) {
+        if (!window.confirm('Are you sure you want to delete this user? user will be permanently deleted from the system.')) {
             return false;
         }
 
@@ -224,7 +237,44 @@
         });
         return false;
     });
+
+    $(document).on('click', '.btn-reactivate-user', function (e) {
+        e.preventDefault();
+        if (!window.confirm('Are you sure you want to re-activate this user?')) {
+            return false;
+        }
+        var obj = $(this);
+        $.ajax({
+            url: obj.attr('href'),
+            type: 'POST',
+            dataType: 'json',
+            beforeSend: function () {
+                obj.text('Loading....');
+            },
+            success: function (res) {
+                const messageContainer = $('.table-wrapper');
+                if (res != 'Ok') {
+                    messageContainer.before('<div class="alert alert-danger">' + res + '</div>');
+                }
+                else {
+                    messageContainer.before('<div class="alert alert-success">User successfully re-activated</div>');
+                    obj.remove();
+                    if (gridApi) {
+                        gridApi.refreshInfiniteCache();
+                    }
+                }
+                setTimeout(function () {
+                    $('.alert').remove();
+                }, 3000);
+            },
+            complete: function () {
+                obj.text('Re-Activate');
+            }
+        });
+        return false;
+    });
 </script>
+
 
 <div class="filter-bar">
     @if (User.IsInRole("Super Admin") || User.IsInRole("Local Admin") && User.IsInRole("Rittal User") || User.IsInRole("Global Admin"))
@@ -234,7 +284,10 @@
                 <option value="0">All Companies</option>
                 @foreach (var item in ViewBag.compData)
                 {
-                    if (string.IsNullOrEmpty(item.name)) continue;
+                    if (string.IsNullOrEmpty(item.name))
+                    {
+                        continue;
+                    }
                     <option value="@item.id" @(Convert.ToInt64(item.id.ToString()) == defaultCompId ? "selected" : "")>@item.name</option>
                 }
             </select>

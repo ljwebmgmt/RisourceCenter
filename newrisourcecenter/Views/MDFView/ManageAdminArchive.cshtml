@@ -9,27 +9,7 @@
 	    $('#showMDF').click(function () {
 			$('#mdftypes').toggleClass('showMDF');
 		});
-    });
-
-    $(document).on('click', '.ajax-filter', function (e) {
-        e.preventDefault();
-        var url = $(this).attr('href');
-        $(this).closest('.dropdown').removeClass('open');
-        $('.mdf-data-container').css('opacity', '0.5');
-        $.ajax({
-            url: url,
-            type: 'GET',
-            success: function (result) {
-                $('.mdf-data-container').html(result);
-                window.history.pushState({ path: url }, '', url);
-                $('.mdf-data-container').css('opacity', '1');
-            },
-            error: function () {
-                alert("Error loading data. Please try again.");
-                $('.mdf-data-container').css('opacity', '1');
-            }
-        });
-    });
+	});
 </script>
 
 <div class="main_content">
@@ -135,11 +115,11 @@
                 </button>
                 <ul class="dropdown-menu" id="columnToggleMenu" style="max-height: 400px; overflow-y: auto; padding: 10px 0;">
                 </ul>
-            </div>
+        </div>
         </div>
         <div class="mdf-data-container">
             @Html.Partial("_MDFTableResults", Model)
         </div>
         <hr>
     </section>
-</div>
+        </div>

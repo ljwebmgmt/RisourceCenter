@@ -9,6 +9,7 @@
     {
         userpages = pages.Split(',');
     }
+    Dictionary<string, string> productCategories = new Dictionary<string, string>() { { "ts8-ie", "TS8 INDUSTRIAL" }, { "vx-ie", "VX INDUSTRIAL" }, { "ts8-it", "TS8 DATA CENTER" }, { "WM_AE_JB", "WM/AE/AX/JB/KX" }, { "spare", "SPARE PARTS" }, { "other", "OTHER" } };
 }
 
 @using (Html.BeginForm("RFQReport", "RFQTool", FormMethod.Get, new { enctype = "multipart/form-data" }))
@@ -192,6 +193,8 @@
                             <th width="150px" align="left" class="header">Company Name</th>
                             <th width="150px" align="left" class="header">Project Name</th>
                             <th width="150px" align="left" class="header">End User</th>
+                            <th width="100px" align="center" class="header">Variant Code</th>
+                            <th width="100px" align="center" class="header">Product Category</th>
                             <th width="150px" align="center" class="header">Submission/Start Date</th>
                             <th width="150px" align="center" class="header">Completion Date</th>
                             <th width="100px" align="center" class="header">Total Time</th>
@@ -223,6 +226,10 @@
                             </td>
                             <td align="center">@reprots.qte_ref</td>
                             <td align="center">@Html.Raw(reprots.end_user)</td>
+                            <td align="center">@reprots.variant_code</td>
+                            <td align="center">
+                                @(!string.IsNullOrEmpty(reprots.product_category) && productCategories.ContainsKey(reprots.product_category) ? productCategories[reprots.product_category] : "")
+                            </td>
                             <td align="center">
                                 @String.Format("{0:d}", @reprots.submission_date)
                             </td>

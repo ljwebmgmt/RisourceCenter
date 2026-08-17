@@ -25,21 +25,21 @@ namespace newrisourcecenter.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Super Admin")]
+        [Authorize(Roles = "Super Admin,Rittal User")]
         public ActionResult Admin()
         {
             return View();
         }
 
         [HttpGet]
-        [Authorize(Roles = "Super Admin")]
+         [Authorize(Roles = "Super Admin,Rittal User")]
         public ActionResult AdminList()
         {
             return View();
         }
 
         [HttpGet]
-        [Authorize(Roles = "Super Admin")]
+         [Authorize(Roles = "Super Admin,Rittal User")]
         public ActionResult AdminEdit(int id)
         {
             ViewBag.TrainingId = id;
@@ -47,14 +47,15 @@ namespace newrisourcecenter.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Super Admin")]
+         [Authorize(Roles = "Super Admin,Rittal User")]
         public ActionResult AdminReport()
         {
+            ViewBag.companies = db.partnerCompanies.Where(x => x.comp_active == 1).OrderBy(x => x.comp_name).ToDictionary(x => x.comp_ID, x => x.comp_name);
             return View();
         }
 
         [HttpGet]
-        [Authorize(Roles = "Super Admin")]
+         [Authorize(Roles = "Super Admin,Rittal User")]
         public async Task<JsonResult> GetAllTrainingsAdmin(int page = 1, int pageSize = 25)
         {
             if (page < 1) page = 1;
@@ -110,7 +111,7 @@ namespace newrisourcecenter.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Super Admin")]
+         [Authorize(Roles = "Super Admin,Rittal User")]
         public async Task<JsonResult> DeleteTrainingAdmin(int id)
         {
             var training = await db.TrainingContents.FindAsync(id);
@@ -172,7 +173,7 @@ namespace newrisourcecenter.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Super Admin")]
+         [Authorize(Roles = "Super Admin,Rittal User")]
         public async Task<JsonResult> GetTrainingStatsAdmin(int trainingContentId)
         {
             var localZone = TimeZoneInfo.Local;
@@ -263,8 +264,8 @@ namespace newrisourcecenter.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Super Admin")]
-        public async Task<JsonResult> GetTrainingStatsAdminMulti(int[] trainingContentIds)
+         [Authorize(Roles = "Super Admin,Rittal User")]
+        public async Task<JsonResult> GetTrainingStatsAdminMulti(int[] trainingContentIds, int companyId = 0)
         {
             var localZone = TimeZoneInfo.Local;
             trainingContentIds = trainingContentIds ?? new int[0];
@@ -281,25 +282,31 @@ namespace newrisourcecenter.Controllers
 
             var trainingById = trainings.ToDictionary(x => x.Id, x => x);
 
-            var progresses = await db.UserProgresses
+            var progressesObj = db.UserProgresses
                 .Where(x => x.TrainingContentId.HasValue && ids.Contains(x.TrainingContentId.Value))
-                .Select(x => new
+                .Join(db.usr_user, x => x.UserId, u => u.usr_ID, (x, u) => new { x, u })
+                .Select(combined => new
                 {
-                    x.Id,
-                    x.UserId,
-                    TrainingContentId = x.TrainingContentId.Value,
-                    x.StartTime,
-                    x.EndTime,
-                    x.ScorePercentage,
-                    x.IsPassed
-                })
-                .ToListAsync();
+                    combined.x.Id,
+                    combined.x.UserId,
+                    TrainingContentId = combined.x.TrainingContentId.Value,
+                    combined.x.StartTime,
+                    combined.x.EndTime,
+                    combined.x.ScorePercentage,
+                    combined.x.IsPassed,
+                    combined.u.comp_ID
+                });
+            if(companyId > 0)
+            {
+                progressesObj = progressesObj.Where(x => x.comp_ID == companyId);
+            }
+            var progresses = await progressesObj.ToListAsync();
 
             var userIds = progresses.Select(x => x.UserId).Distinct().ToList();
 
             var users = await db.usr_user
                 .Where(x => userIds.Contains(x.usr_ID))
-                .Select(x => new { x.usr_ID, x.usr_fName, x.usr_lName, x.usr_email })
+                .Select(x => new { x.usr_ID, x.usr_fName, x.usr_lName, x.usr_email, x.comp_ID })
                 .ToListAsync();
 
             var userById = users.ToDictionary(x => x.usr_ID, x => x);
@@ -978,6 +985,12 @@ namespace newrisourcecenter.Controllers
             {
                 return;
             }
+            int companyType = Convert.ToInt32(Session["companyType"].ToString());
+            var company = await db.partnerTypes.Where(x => x.pt_ID == companyType).FirstOrDefaultAsync();
+            if(company == null || string.IsNullOrEmpty(company.pt_type) || company.pt_type.ToLower() != "distributor")
+            {
+                return;
+            }
 
             bool isTrackComplete = await IsTrainingClassTrackComplete(userId, trainingClass);
             if (!isTrackComplete)
@@ -1001,11 +1014,16 @@ namespace newrisourcecenter.Controllers
             string subject = "Rittal Partner Training - Track Completion";
             string html = "Congratulations!<br/><br/>";
             TextInfo textInfo = CultureInfo.CurrentCulture.TextInfo;
+            Dictionary<string, string> nextClass = new Dictionary<string, string>() { { "onboarding", "Basic" },{ "basic", "Advanced" } };
             html += "This email is to confirm that you have completed the Rittal Partner Training - " + textInfo.ToTitleCase(trainingClass.ToLower()) + " Tier. We appreciate your commitment to achieving this milestone and welcome you to log on to our Virtual Store to claim your certificate and swag!<br/><br/>";
-            html += "Please visit our virtual storefront to claim your awards. STOREFRONT (<a href=\"" + storefrontUrl + "\">" + storefrontUrl + "</a>)<br/><br/>";
-            html += "If you have any issues accessing the store, please inform us at Channel@rittal.us! Thank you for participating. We look forward to seeing your ccolades in completing the next step in our Partner Training Program - the Basic Tier!";
+            html += "Please visit our virtual storefront to claim your awards. <a href=\"" + storefrontUrl + "\">STOREFRONT</a><br/><br/>";
+            html += "If you have any issues accessing the store, please inform us at Channel@rittal.us! Thank you for participating.";
+            if(nextClass.ContainsKey(trainingClass.ToLower()))
+            {
+                html += " We look forward to seeing your accolades in completing the next step in our Partner Training Program - the " + nextClass[trainingClass.ToLower()] + " Tier!";
+            }
             string rcmEmails = getRCMEmail(Convert.ToInt32(Session["userCountryId"]), Convert.ToInt32(Session["companyId"]), Convert.ToInt32(Session["locationId"]), Session["zip"].ToString());
-            rcmEmails += (!string.IsNullOrEmpty(rcmEmails) ? "," : "") + "Channel@rittal.us";
+            rcmEmails += (!string.IsNullOrEmpty(rcmEmails) ? "," : "") + "channel@rittal.us";
             new CommonController().email("webmaster@rittal.us",userEmail,subject,html,"yes",true,rcmEmails);
         }
 
@@ -1159,7 +1177,7 @@ namespace newrisourcecenter.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Super Admin")]
+         [Authorize(Roles = "Super Admin,Rittal User")]
         public async Task<JsonResult> GetAdminTrainingDetails(int id)
         {
             bool hasAttempts = await db.TrainingQuizAttempts.AnyAsync(x => x.TrainingContentId == id);
@@ -1201,7 +1219,7 @@ namespace newrisourcecenter.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Super Admin")]
+         [Authorize(Roles = "Super Admin,Rittal User")]
         public async Task<JsonResult> Update(TrainingUpdateViewModel model)
         {
             if (model == null)
@@ -1396,7 +1414,7 @@ namespace newrisourcecenter.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Super Admin")]
+         [Authorize(Roles = "Super Admin,Rittal User")]
         public async Task<JsonResult> Create(TrainingCreateViewModel model)
         {
             if (model == null)
@@ -1540,7 +1558,7 @@ namespace newrisourcecenter.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Super Admin")]
+         [Authorize(Roles = "Super Admin,Rittal User")]
         public async Task<JsonResult> UpdateRoles(int trainingContentId, List<string> roleIds)
         {
             var training = await db.TrainingContents.FindAsync(trainingContentId);
@@ -1555,7 +1573,7 @@ namespace newrisourcecenter.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Super Admin")]
+         [Authorize(Roles = "Super Admin,Rittal User")]
         public async Task<JsonResult> GetRoles()
         {
             var roles = await db.AspNetRoles
@@ -1566,14 +1584,14 @@ namespace newrisourcecenter.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Super Admin")]
+         [Authorize(Roles = "Super Admin,Rittal User")]
         public ActionResult TracksAdmin()
         {
             return View();
         }
 
         [HttpGet]
-        [Authorize(Roles = "Super Admin")]
+         [Authorize(Roles = "Super Admin,Rittal User")]
         public async Task<JsonResult> GetTrainingTracksManage()
         {
             var tracks = await db.trainingTracks
@@ -1594,7 +1612,7 @@ namespace newrisourcecenter.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Super Admin")]
+         [Authorize(Roles = "Super Admin,Rittal User")]
         public async Task<JsonResult> SaveTrainingTrack(TrainingTrackSaveViewModel model)
         {
             if (model == null)
@@ -1683,7 +1701,7 @@ namespace newrisourcecenter.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Super Admin")]
+         [Authorize(Roles = "Super Admin,Rittal User")]
         public async Task<JsonResult> DeleteTrainingTrack(short id)
         {
             var track = await db.trainingTracks.FirstOrDefaultAsync(x => x.id == id);
@@ -1700,7 +1718,7 @@ namespace newrisourcecenter.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Super Admin")]
+         [Authorize(Roles = "Super Admin,Rittal User")]
         public async Task<JsonResult> GetTrainingTracksAdmin()
         {
             var tracks = await db.trainingTracks
@@ -1826,7 +1844,7 @@ namespace newrisourcecenter.Controllers
 
             var progressesObj = db.UserProgresses
                 .Where(x => x.TrainingContentId.HasValue && ids.Contains(x.TrainingContentId.Value))
-                .Join(db.usr_user,x => x.UserId,u => u.usr_ID,(x, u) => new {x,u})
+                .Join(db.usr_user, x => x.UserId, u => u.usr_ID, (x, u) => new { x, u })
                 .Select(combined => new
                 {
                     combined.x.Id,
@@ -1838,7 +1856,8 @@ namespace newrisourcecenter.Controllers
                     combined.x.IsPassed,
                     combined.u.comp_ID
                 });
-            if(companyId > 0) {
+            if (companyId > 0)
+            {
                 progressesObj = progressesObj.Where(x => x.comp_ID == companyId);
             }
             var progresses = await progressesObj.ToListAsync();
@@ -1846,7 +1865,8 @@ namespace newrisourcecenter.Controllers
             var userIds = progresses.Select(x => x.UserId).Distinct().ToList();
             var users = await db.usr_user
                 .Where(x => userIds.Contains(x.usr_ID))
-                .Select(x => new { x.usr_ID, x.usr_fName, x.usr_lName, x.usr_email })
+                .Join(db.partnerCompanies, x => x.comp_ID, c => c.comp_ID, (x, c) => new { x, c.comp_name })
+                .Select(y => new { y.x.usr_ID, y.x.usr_fName, y.x.usr_lName, y.x.usr_email, y.comp_name })
                 .ToListAsync();
             var userById = users.ToDictionary(x => x.usr_ID, x => x);
 
@@ -1889,6 +1909,7 @@ namespace newrisourcecenter.Controllers
                         TrainingClass = t == null ? "" : t.TrainingClass,
                         UserName = u == null ? "" : (u.usr_fName + " " + u.usr_lName),
                         UserEmail = u == null ? "" : u.usr_email,
+                        CompanyName = u == null ? "" : u.comp_name,
                         StartTime = startLocal,
                         EndTime = endLocal,
                         StartTimeStr = startLocal.ToString("yyyy-MM-dd HH:mm"),
@@ -1940,15 +1961,16 @@ namespace newrisourcecenter.Controllers
 
             // 4. Build CSV String
             var builder = new System.Text.StringBuilder();
-            builder.AppendLine("Training,Track,User,Email,Started,Ended,Time (hrs),Latest Score,Passed");
+            builder.AppendLine("Training,Track,User,Company,Email,Started,Ended,Time (hrs),Latest Score,Passed");
 
             foreach (var r in rows)
             {
                 builder.AppendLine(string.Format(
-                    "\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\",\"{7}\",\"{8}\"",
+                    "\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\",\"{7}\",\"{8}\",\"{9}\"",
                     EscapeCsv(r.TrainingTitle),
                     EscapeCsv(r.TrainingClass),
                     EscapeCsv(r.UserName),
+                    EscapeCsv(r.CompanyName),
                     EscapeCsv(r.UserEmail),
                     EscapeCsv(r.StartTimeStr),
                     EscapeCsv(r.EndTimeStr),
@@ -1971,6 +1993,7 @@ namespace newrisourcecenter.Controllers
             if (string.IsNullOrEmpty(str)) return "";
             return str.Replace("\"", "\"\"");
         }
+
 
         protected override void Dispose(bool disposing)
         {

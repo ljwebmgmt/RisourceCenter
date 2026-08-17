@@ -11,10 +11,11 @@ using newrisourcecenter.Models;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
-using CsvHelper;
 using System.IO;
 using newrisourcecenter.ViewModels;
 using Microsoft.Office.Interop.Excel;
+using CsvHelper;
+using System.Globalization;
 
 namespace newrisourcecenter.Controllers
 {
@@ -132,9 +133,10 @@ namespace newrisourcecenter.Controllers
             return Json(new { rows = resultList, total = totalCount }, JsonRequestBehavior.AllowGet);
         }
 
+
         [HttpGet]
         public JsonResult GetLocations(int compid)
-        {
+                    {
             var locations = db.partnerLocationViewModels
                 .Where(a => a.comp_ID == compid)
                 .Select(l => new { id = l.loc_ID, name = l.loc_name }) // Adjust names to match your model
@@ -284,11 +286,73 @@ namespace newrisourcecenter.Controllers
         {
             using (var memoryStream = new MemoryStream())
             using (var streamWriter = new StreamWriter(memoryStream))
-            using (var csvWriter = new CsvWriter(streamWriter))
+            using (var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture))
             {
                 csvWriter.WriteRecords(records);
                 streamWriter.Flush();
                 return memoryStream.ToArray();
+            }
+        }
+        #endregion
+
+        #region Search User
+        public async Task<ActionResult> searchUsers(string form_value = null, int selected_comp_id = 0, int selected_loc_id = 0)
+        {
+            try
+            {
+                long userId = Convert.ToInt64(Session["userId"]);
+                long companyId = Convert.ToInt64(Session["companyId"]);
+
+                if (!Request.IsAuthenticated || userId == 0)
+                {
+                    return Json("Please Login. Login has timed out");
+                }
+
+                var roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(db));
+                var UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));//get the users and roles
+                List<UserViewModel> usr_list = new List<UserViewModel>();
+
+                //Get the combined data for user and form
+                List<UserViewModel> user_data;
+                var form_data = form_value.Split(' ');
+                if (form_data.Count() == 1)
+                {
+                    user_data = await db.UserViewModels.Where(a => (a.usr_fName == form_value || a.usr_lName == form_value || a.usr_email.Contains(form_value)) && string.IsNullOrEmpty(a.system_ID)).ToListAsync();
+                }
+                else
+                {
+                    var firstname = form_data[0].ToString();
+                    var lastname = form_data[1].ToString();
+                    user_data = await db.UserViewModels.Where(a => a.usr_fName.Contains(firstname) && a.usr_lName.Contains(lastname) && string.IsNullOrEmpty(a.system_ID)).ToListAsync();
+                }
+
+                foreach (var item in user_data)
+                {
+                    if (selected_comp_id > 0 && item.comp_ID != selected_comp_id)
+                    {
+                        continue;
+                    }
+                    if (selected_loc_id > 0 && item.comp_loc_ID != selected_loc_id)
+                    {
+                        continue;
+                    }
+                    usr_list.Add(new UserViewModel
+                    {
+                        usr_ID = item.usr_ID,
+                        usr_fName = item.usr_fName,
+                        usr_lName = item.usr_lName,
+                        comp_ID = item.comp_ID,
+                        usr_email = item.usr_email,
+                        user_role = ""
+                    });
+                }
+
+                return View(usr_list.OrderByDescending(a => a.usr_ID));
+            }
+            catch (Exception)
+            {
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return Json("Upload failed");
             }
         }
         #endregion
@@ -340,34 +404,38 @@ namespace newrisourcecenter.Controllers
             try
             {
                 if(id == null)
-                {
+        {
                     throw new Exception("An error occurred while processing your request.");
                 }
-                long userId = Convert.ToInt64(Session["userId"]);
-                if (!Request.IsAuthenticated || userId == 0)
-                {
+            long userId = Convert.ToInt64(Session["userId"]);
+            if (!Request.IsAuthenticated || userId == 0)
+            {
                     throw new Exception("Please Login. Login has timed out");
-                }
+            }
                 UserViewModel userViewModel = await db.UserViewModels.Where(a => a.usr_ID == id).FirstOrDefaultAsync();
-                if (userViewModel == null)
-                {
+            if (userViewModel == null)
+            {
                     throw new Exception("User not found");
-                }
-                string userEmail = userViewModel.usr_email;
-                db.UserViewModels.Remove(userViewModel);
-                await db.SaveChangesAsync();
-                var checkuser_temp = await dbEntity.usr_user_temp.Where(a => a.usr_email == userEmail).FirstOrDefaultAsync();
-                if (checkuser_temp != null)
-                {
-                    dbEntity.usr_user_temp.Remove(checkuser_temp);
-                }
-                var userdata = await UserManager.Users.Where(a => a.Email == userEmail).FirstOrDefaultAsync();
-                if (userdata != null)
-                {
-                    await UserManager.DeleteAsync(userdata);
-                }
-                //Log the action by the user
-                await commCtl.siteActionLog(0, "RegisteredUser", DateTime.Now, " The user id =" + userViewModel.usr_email + " was deleted by user " + userId, "Delete", Convert.ToInt32(userId));
+            }
+            string userEmail = userViewModel.usr_email;
+
+            db.UserViewModels.Remove(userViewModel);
+            await db.SaveChangesAsync();
+
+            var checkuser_temp = await dbEntity.usr_user_temp.Where(a => a.usr_email == userEmail).FirstOrDefaultAsync();
+            if (checkuser_temp != null)
+            {
+                dbEntity.usr_user_temp.Remove(checkuser_temp);
+            }
+
+            var userdata = await UserManager.Users.Where(a => a.Email == userEmail).FirstOrDefaultAsync();
+            if (userdata != null)
+            {
+                await UserManager.DeleteAsync(userdata);
+            }
+
+            //Log the action by the user
+            await commCtl.siteActionLog(0, "RegisteredUser", DateTime.Now, " The user id =" + userViewModel.usr_email + " was deleted by user " + userId, "Delete", Convert.ToInt32(userId));
                 return Json("OK");
             }
             catch (Exception e)

@@ -30,7 +30,7 @@
                 alert("Error loading data. Please try again.");
                 $('table.table').css('opacity', '1');
             }
-        });
+    });
     });
 </script>
 @if (@Model != null)
@@ -58,25 +58,25 @@
         <br/>
         <div class="clearfix"></div>
     }
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.loc_name)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.loc_phone)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.loc_logo)
-                </th>
-                <th></th>
-            </tr>
-        </thead>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.loc_name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.loc_phone)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.loc_logo)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
         <tbody id="tbody">
             @Html.Partial("_PartnerLocationTable",Model)
-        </tbody>
-    </table>
+    </tbody>
+</table>
 }else{
 <div>You are not allowed here</div>
 }

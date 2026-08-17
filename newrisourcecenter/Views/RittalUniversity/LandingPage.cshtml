@@ -1,0 +1,90 @@
+﻿@{
+    ViewBag.Title = "Rittal University";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style type="text/css">
+    /* Base Container Grid */
+    .landing-grid {
+        display: grid;
+        grid-template-columns: 70% 30%;
+        gap: 20px;
+        padding: 25px;
+    }
+
+    /* Grid placement for Desktop */
+    .landing-header {
+        grid-column: 1;
+    }
+
+    .landing-body {
+        grid-column: 1;
+        font-size: 20px;
+        line-height: 1.6;
+    }
+
+    .landing-image-wrapper {
+        grid-column: 2;
+        grid-row: 1 / span 2; /* Spans alongside both the header and body */
+        padding-top: 25px;
+    }
+
+    .landing-image-wrapper img {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    /* Mobile & Tablet Layout (Screen sizes below 992px) */
+    @@media (max-width: 992px) {
+        .landing-grid {
+            display: flex;
+            flex-direction: column; /* Stacks everything vertically in HTML order */
+            padding: 20px;
+        }
+
+        .landing-body {
+            font-size: 16px; /* Optimized font size for mobile reading */
+        }
+
+        .landing-image-wrapper {
+            padding-top: 0;
+            margin: 0;
+        }
+    }
+</style>
+
+<div class="main_content">
+    <div class="landing-grid">
+
+        <div class="landing-header">
+            <h2>Rittal University</h2>
+            <hr style="border: 1px solid #ccc; margin-bottom: 10px;" />
+        </div>
+
+        <div class="landing-image-wrapper">
+            <img src="~/images/Training-image.png" alt="Rittal University Training" />
+        </div>
+
+        <div class="landing-body">
+            <p>
+                <strong>Expand your knowledge. Build your expertise. Grow your business.</strong>
+                <br /><br />
+                Rittal University is an online training platform designed exclusively for our distributor partners. Whether you're new to Rittal or looking to deepen your product knowledge, Rittal University provides the resources you need to confidently recommend, specify, and support Rittal solutions.
+                <br /><br />
+                Through engaging video-based courses and brief knowledge checks, you'll gain valuable insights into Rittal products, distributor tools, and the company behind the solutions. Training is organized into three progressive learning tracks, allowing you to develop your expertise at your own pace:
+                <ul style="list-style: none; padding-left: 20px; margin-top: 15px; margin-bottom: 15px;">
+                    <li style="margin-bottom: 10px;"><b>Onboarding</b> – Get started with the fundamentals of Rittal and the resources available to support your success.</li>
+                    <li style="margin-bottom: 10px;"><b>Basic</b> – Build a solid understanding of key product lines and applications.</li>
+                    <li style="margin-bottom: 15px;"><b>Advanced</b> – Expand your technical knowledge with in-depth training designed to help you become a trusted Rittal expert.</li>
+                </ul>
+                Each class consists of a short training video followed by a brief quiz to reinforce key concepts. Upon successfully completing an entire training track, participants will receive an official Rittal University Certificate of Completion along with a Rittal-branded congratulatory gift recognizing their achievement.
+                <br /><br />
+                Start your learning journey today and discover how Rittal University can help you increase your product knowledge, better support your customers, and strengthen your partnership with Rittal.
+                <br /><br />
+                @Html.ActionLink("Start My Training >>", "Index", "Training", routeValues: null, htmlAttributes: new { @class = "btn btn-primary" })
+            </p>
+        </div>
+
+    </div>
+</div>

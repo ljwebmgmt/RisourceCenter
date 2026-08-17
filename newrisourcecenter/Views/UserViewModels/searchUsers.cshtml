@@ -43,13 +43,13 @@
                     </td>
                     <td>
                         @if (User.IsInRole("Super Admin") || User.IsInRole("Local Admin") || User.IsInRole("Global Admin"))
-                {
+                        {
                             @Html.ActionLink("Online Shop Accounts", controllerName: "Webshop", actionName: "Index", routeValues: new { n1_name = Request.QueryString["n1_name"], n2_name = "Webshop Accounts", msg = item.usr_fName + " " + item.usr_lName, user_ID = item.usr_ID, compid = item.comp_ID }, htmlAttributes: new { @class = "btn btn-info" })
                             <span> </span>@Html.ActionLink("SAP Accounts", controllerName: "partnerStockCheck", actionName: "Index", routeValues: new { n1_name = Request.QueryString["n1_name"], n2_name = "SAP Accounts", msg = item.usr_fName + " " + item.usr_lName, user_ID = item.usr_ID, compid = item.comp_ID }, htmlAttributes: new { @class = "btn btn-info" })
                         }
 
                         @if (@Request.QueryString["compid"] != null)
-                {
+                        {
                             @Html.ActionLink("Edit", "Edit", new { id = item.usr_ID, n1_name = Request.QueryString["n1_name"], msg = item.usr_fName + " " + item.usr_lName, compid = Request.QueryString["compid"], user_ID = item.usr_ID, n2_name = "SAP Accounts" }, new { @class = "btn btn-info" })
                         }
                         else
@@ -59,7 +59,11 @@
 
                         @if (User.IsInRole("Super Admin") || User.IsInRole("Global Admin"))
                         {
-                            @Html.ActionLink("Delete", "Delete", new { id = item.usr_ID, n1_name = Request.QueryString["n1_name"] }, htmlAttributes: new { id = "delete", @class = "btn btn-info btn-delete-user" })
+                            @Html.ActionLink("Permanent Delete", "Delete", new { id = item.usr_ID, n1_name = Request.QueryString["n1_name"] }, htmlAttributes: new { id = "delete", @class = "btn btn-info btn-delete-user" })
+                        }
+                        @if (item.inactive && (User.IsInRole("Super Admin") || User.IsInRole("Global Admin") || User.IsInRole("Rittal User")))
+                        {
+                            @Html.ActionLink("Reactivate", "Reactivate", new { id = item.usr_ID, n1_name = Request.QueryString["n1_name"] }, htmlAttributes: new { id = "reactivate", @class = "btn btn-info btn-reactivate-user" })
                         }
                     </td>
 

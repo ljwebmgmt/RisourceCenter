@@ -123,6 +123,7 @@ namespace newrisourcecenter.Models
         public string region_approver_name {  get; set; }
         public bool deleted { get; set; }
         public bool inactive { get; set; }
+        public bool? inactove_notified { get; set; }
     }
 
     public class Userlabels
@@ -217,5 +218,6 @@ namespace newrisourcecenter.Models
     {
         public List<UserViewModel> users { get; set; }
         public Dictionary<long, string> companyNames { get; set; }
+        public Dictionary<long,string> companyTypes { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 @{
     ViewBag.Title = "Training Admin - Report";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    Dictionary<long, string> companies = ViewBag.companies as Dictionary<long, string>;
 }
 
 <style>
@@ -119,6 +120,18 @@
                                                 <option value="all">All</option>
                                                 <option value="yes">Yes</option>
                                                 <option value="no">No</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4">User Company</label>
+                                        <div class="col-sm-8">
+                                            <select id="userCompany" class="form-control selectpicker select-dropdown" data-live-search="true">
+                                                <option value="">All Companies</option>
+                                                @foreach(var dict in companies)
+                                                {
+                                                    <option value="@dict.Key">@dict.Value</option>
+                                                }
                                             </select>
                                         </div>
                                     </div>
@@ -410,7 +423,7 @@
                 method: 'GET',
                 dataType: 'json',
                 traditional: true,
-                data: { trainingContentIds: ids },
+                data: { trainingContentIds: ids, companyId: ($('select#userCompany').val() != '' ? $('select#userCompany').val() : 0) },
                 success: function (rows) {
                     rows = rows || [];
                     allRows = rows;

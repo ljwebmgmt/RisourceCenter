@@ -42,7 +42,7 @@ namespace newrisourcecenter.Controllers
             List<Nav1List> list_n1ID = new List<Nav1List>();
             foreach (var n11dsitems in n1ids)
             {
-                var n2ids = dbEntity.nav2.Where(a => a.n2_active == 1).Where(a => a.n1ID == n11dsitems.n1ID && a.n2ID != 12 && a.n2ID != 13 && a.n2ID != 16 && a.n2ID != 64 && a.n2ID != 65);
+                var n2ids = dbEntity.nav2.Where(a => a.n2_active == 1).Where(a => a.n1ID == n11dsitems.n1ID && a.n2ID!=12 && a.n2ID!=13 && a.n2ID!=16 && a.n2ID != 64 && a.n2ID != 65);
 
                 foreach (var n12dsitems in n2ids)
                 {
@@ -141,7 +141,7 @@ namespace newrisourcecenter.Controllers
             IOrderedEnumerable<Nav3ViewModel> listNav3 = nav3ViewModel.OrderByDescending(a => a.n3ID);
             if (Request.IsAjaxRequest())
             {
-                return PartialView(listNav3);
+                return PartialView("_Nav3Table", listNav3);
             }
             return View(listNav3);
         }

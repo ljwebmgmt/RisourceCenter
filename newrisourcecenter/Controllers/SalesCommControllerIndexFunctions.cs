@@ -411,7 +411,7 @@ namespace newrisourcecenter.Controllers
             if (recent == "latest")
             {
                 date = Convert.ToDateTime(DateTime.Now.Year + "-12-31 00:00:00.000");//format the date for the table request
-                dateStart = Convert.ToDateTime((DateTime.Now.Year) + "-01-01 00:00:00.000");//format the date for the table request
+                dateStart = Convert.ToDateTime((DateTime.Now.Year - 1) + "-01-01 00:00:00.000");//format the date for the table request
             }
 
             dynamic salescom;

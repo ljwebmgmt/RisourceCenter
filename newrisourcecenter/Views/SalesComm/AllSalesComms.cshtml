@@ -77,7 +77,7 @@
 
     function onQuickFilterChanged() {
         gridApi.setGridOption('quickFilterText', document.getElementById('form_value').value);
-    }
+                            }
 
     function applyNavFilter(n3idValue) {
         if (!gridApi) return;
@@ -89,67 +89,67 @@
             filter: n3idValue
         }).then(() => {
             gridApi.onFilterChanged();
-        });
-    }
+                        });
+                    }
 
     function resetGrid() {
         document.getElementById('form_value').value = '';
         gridApi.setGridOption('quickFilterText', '');
         gridApi.setFilterModel(null);
-    }
+                }
 
     document.addEventListener('DOMContentLoaded', () => {
         const gridDiv = document.querySelector('#salesCommGrid');
         gridApi = agGrid.createGrid(gridDiv, gridOptions);
-    });
+            });
 </script>
-<table>
-    <tr>
-        <td>
-            <div class="dropdown">
-                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-                    Filter Communications By
-                    <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu">
-                    @foreach (var item in @ViewBag.nav_Menu)
-                    {
+    <table>
+        <tr>
+            <td>
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                        Filter Communications By
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        @foreach (var item in @ViewBag.nav_Menu)
+                        {
                         <li><a href="javascript:void(0);" onclick="applyNavFilter(@item.n3id)">@item.name - @item.n3name</a></li>
-                    }
-                </ul>
-            </div>
-        </td>
-        <td>
-            <div class="dropdown">
-                <span class="input-group stylish-input-group">
+                        }
+                    </ul>
+                </div>
+            </td>
+            <td>
+                <div class="dropdown">
+                    <span class="input-group stylish-input-group">
                     <input type="text" id="form_value" placeholder="search by doc name" class="form-control" oninput="onQuickFilterChanged()" />
                     <span class="input-group-addon">
                         <button type="button" onclick="onQuickFilterChanged()">
                             <span class="glyphicon glyphicon-search"></span>
-                        </button>
+                            </button>
+                        </span>
                     </span>
-                </span>
-            </div>
-        </td>
-        <td>
-            <div class="dropdown">
-                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-                    Add Sales Communication
-                    <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu">
-                    @foreach (var item in @ViewBag.nav_Menu)
-                    {
-                        <li><a href="Create?n2id=@item.id&img=@item.img&n3id=@item.n3id&n1_name=@Request.QueryString["n1_name"]&n2_name=@item.name&n3_name=@item.n3name">@item.name - @item.n3name</a></li>
-                    }
-                </ul>
-            </div>
-        </td>
-        <td>
+                </div>
+            </td>
+            <td>
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                        Add Sales Communication
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        @foreach (var item in @ViewBag.nav_Menu)
+                        {
+                            <li><a href="Create?n2id=@item.id&img=@item.img&n3id=@item.n3id&n1_name=@Request.QueryString["n1_name"]&n2_name=@item.name&n3_name=@item.n3name">@item.name - @item.n3name</a></li>
+                        }
+                    </ul>
+                </div>
+            </td>
+                    <td>
             <button class="btn btn-default" onclick="resetGrid()">Reset</button>
-        </td>
-    </tr>
-</table>
+                    </td>
+                </tr>
+    </table>
 <br/>
 <div class="table-wrapper" style="clear:both;">
     <div id="salesCommGrid" class="ag-theme-quartz" style="height: 1000px; width: 100%;"></div>

@@ -1,4 +1,5 @@
 ﻿@model newrisourcecenter.Models.MDFViewModel
+
 @{
     ViewBag.Title = "Manage";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -8,29 +9,7 @@
 	    $('#showMDF').click(function () {
 			$('#mdftypes').toggleClass('showMDF');
 		});
-    });
-
-    $(document).on('click', '.ajax-filter', function (e) {
-        e.preventDefault();
-        var url = $(this).attr('href');
-        $(this).closest('.dropdown').removeClass('open');
-        $.ajax({
-            url: url,
-            type: 'GET',
-            beforeSend: function () {
-                $('.mdf-data-container').css('opacity', '0.5');
-            },
-            success: function (result) {
-                $('.mdf-data-container').html(result);
-                window.history.pushState({ path: url }, '', url);
-                $('.mdf-data-container').css('opacity', '1');
-            },
-            error: function () {
-                alert("Error loading data. Please try again.");
-                $('.mdf-data-container').css('opacity', '1');
-            }
-        });
-    });
+	});
 </script>
 
 <div class="main_content">
