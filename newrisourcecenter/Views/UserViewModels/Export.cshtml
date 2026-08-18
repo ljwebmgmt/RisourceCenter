@@ -7,30 +7,63 @@
     long adminRole = Convert.ToInt64(Session["userRole"]);
     long companyId = Convert.ToInt64(Session["companyId"]);
 }
-<script>
+
+<style type="text/css">
+    /* Responsive Filter Layout */
+    .filter-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 15px;
+        align-items: center;
+    }
+    .filter-item {
+        flex: 1 1 200px;
+    }
+    .filter-item .form-control,
+    .filter-item .input-group {
+        width: 100% !important;
+    }
+    .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
+    #userTableGrid {
+        height: 75vh;
+        width: 100%;
+    }
+</style>
+
+<script type="text/javascript">
     let gridApi;
 
+    // Responsive Column Definitions using flex and minWidth
     const columnDefs = [
         {
             headerName: "",
             field: "user_role",
             width: 50,
+            pinned: 'left', // Keep the star visible while horizontal scrolling on mobile
+            sortable: false,
+            filter: false,
             cellRenderer: params => params.value === "Admin" ?
                 '<span class="glyphicon glyphicon-star" style="color:red;"></span>' : ''
         },
-        { headerName: "User ID", field: "usr_ID", width: 100 },
-        { headerName: "First Name", field: "usr_fName", flex: 1 },
-        { headerName: "Last Name", field: "usr_lName", flex: 1 },
-        { headerName: "Email", field: "usr_email", flex: 1.5 },
+        { headerName: "User ID", field: "usr_ID", minWidth: 90, flex: 1 },
+        { headerName: "First Name", field: "usr_fName", minWidth: 120, flex: 2 },
+        { headerName: "Last Name", field: "usr_lName", minWidth: 120, flex: 2 },
+        { headerName: "Email", field: "usr_email", minWidth: 200, flex: 3 },
         {
             headerName: "Status",
             field: "inactive",
+            minWidth: 110,
+            flex: 1,
             cellRenderer: params => {
                 if (!params.data) return '';
                 return params.value ?
                     '<span class="label label-default">In-active</span>' :
                     '<span class="label label-success">Active</span>';
-    }
+            }
         }
     ];
 
@@ -43,14 +76,25 @@
         onGridReady: params => {
             gridApi = params.api;
             params.api.setGridOption('datasource', userDataSource);
-        }
+
+            // Fit columns on wide screens, allow natural scroll on mobile
+            if (window.innerWidth > 768) {
+                params.api.sizeColumnsToFit();
+            }
+        },
+        onGridSizeChanged: params => {
+            if (window.innerWidth > 768) {
+                params.api.sizeColumnsToFit();
+            }
+        },
+        overlayLoadingTemplate: '<span class="ag-overlay-loading-center">Please wait while users load...</span>',
+        overlayNoRowsTemplate: '<span style="padding: 10px; border: 2px solid #444; background: lightgoldenrodyellow;">No users found for this filter.</span>'
     };
 
     const userDataSource = {
         getRows: (params) => {
             gridApi.setGridOption('loading', true);
 
-            // Find selected company ID from datalist
             const compName = $('#companySearch').val();
             const compId = $(`#companies option[value="${compName}"]`).attr('data-id') || 0;
             const locId = $('#locFilter').val() || 0;
@@ -68,17 +112,15 @@
                 .catch(() => {
                     gridApi.setGridOption('loading', false);
                     params.failCallback();
-    });
+                });
         }
     };
 
-    // Functions to handle UI interactions
     function onCompanyFilterChange() {
         const compName = $('#companySearch').val();
         const compId = $(`#companies option[value="${compName}"]`).attr('data-id');
 
         if (compId) {
-            // Fetch locations for the selected company
             fetch(`/UserViewModels/GetLocations?compid=${compId}`)
                 .then(res => res.json())
                 .then(data => {
@@ -87,7 +129,7 @@
                     data.forEach(l => locSelect.append(`<option value="${l.id}">${l.name}</option>`));
                     $('#locContainer').show();
                     onFilterChange();
-    });
+                });
         } else {
             $('#locContainer').hide();
             onFilterChange();
@@ -95,7 +137,9 @@
     }
 
     function onFilterChange() {
-        gridApi.refreshInfiniteCache();
+        if (gridApi) {
+            gridApi.refreshInfiniteCache();
+        }
     }
 
     function downloadCSV() {
@@ -104,38 +148,44 @@
         window.location.href = `/UserViewModels/ExportCSV?compid=${compId}&locid=${$('#locFilter').val() || 0}`;
     }
 
-    // Initialize
     document.addEventListener('DOMContentLoaded', () => {
         const gridDiv = document.querySelector('#userTableGrid');
         gridApi = agGrid.createGrid(gridDiv, gridOptions);
     });
 </script>
+
 @if (User.IsInRole("Super Admin") || User.IsInRole("Local Admin") || User.IsInRole("Global Admin"))
 {
-    <div class="filter-header" style="margin-bottom: 15px; display: flex; gap: 10px; align-items: center;">
-        <div style="display:flex; gap: 5px;">
-            <input type="text" id="companySearch" class="form-control" placeholder="Search Company...." list="companies" style="width:300px;" />
-                        <datalist id="companies">
+    <div class="filter-bar">
+        <div class="filter-item">
+            <div class="input-group">
+                <input type="text" id="companySearch" class="form-control" placeholder="Search Company...." list="companies" />
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" onclick="onCompanyFilterChange()">Filter</button>
+                </span>
+            </div>
+            <datalist id="companies">
                 @foreach (var item in ViewBag.compData)
-                            {
+                {
                     <option value="@item.name" data-id="@item.id">@item.name</option>
-                            }
-                        </datalist>
-            <button class="btn btn-primary" onclick="onCompanyFilterChange()">Filter</button>
+                }
+            </datalist>
         </div>
 
-        <div id="locContainer" style="display:none;">
+        <div id="locContainer" class="filter-item" style="display:none;">
             <select id="locFilter" class="form-control" onchange="onFilterChange()">
                 <option value="0">All Locations</option>
             </select>
-                    </div>
+        </div>
 
-        <button class="btn btn-primary" onclick="downloadCSV()">Download CSV</button>
-                        </div>
+        <div class="filter-item" style="flex: 0 0 auto;">
+            <button class="btn btn-primary" onclick="downloadCSV()">Download CSV</button>
+        </div>
+    </div>
 }
 
 <p class="glyphicon glyphicon-star" style="color:#E50043;font-size:14px;"> - Administrator</p>
 
 <div class="table-wrapper" style="clear:both;">
-    <div id="userTableGrid" class="ag-theme-quartz" style="height: 1000px; width: 100%;"></div>
+    <div id="userTableGrid" class="ag-theme-quartz"></div>
 </div>

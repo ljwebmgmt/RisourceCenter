@@ -13,26 +13,35 @@
         padding: 1px 5px !important;
         height: auto !important;
     }
+    .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
+    #risourcesGrid {
+        height: 75vh;
+        width: 100%;
+    }
 </style>
 <script>
     let gridApi;
-    // Map of ID to Name for the "Document Type" column
     const typeListLookup = @Html.Raw(Json.Encode(typeList));
 
     const columnDefs = [
-        { headerName: "RiSource Headline", field: "ris_headline", sortable: true, filter: true, flex: 2 },
-        { headerName: "RiSource Teaser", field: "ris_teaser", sortable: true, filter: true, flex: 3 },
+        { headerName: "RiSource Headline", field: "ris_headline", minWidth: 200, flex: 2, sortable: true, filter: true },
+        { headerName: "RiSource Teaser", field: "ris_teaser", minWidth: 250, flex: 3, sortable: true, filter: true },
         {
             headerName: "Document Type",
             field: "n2ID",
-            filter: 'agTextColumnFilter',
+            minWidth: 150,
             flex: 1,
+            filter: 'agTextColumnFilter',
             valueFormatter: params => typeListLookup[params.value] || params.value,
             filterValueGetter: params => typeListLookup[params.data.n2ID] || params.data.n2ID
         },
         {
             headerName: "Actions",
-            width: 160,
+            minWidth: 160,
+            flex: 1,
             sortable: false,
             filter: false,
             cellRenderer: params => {
@@ -54,18 +63,29 @@
         rowData: @Html.Raw(Json.Encode(Model)),
         pagination: true,
         paginationPageSize: 20,
-        defaultColDef: { resizable: true }
+        defaultColDef: { resizable: true },
+        onGridReady: (params) => {
+            gridApi = params.api;
+            if (window.innerWidth > 768) {
+                params.api.sizeColumnsToFit();
+            }
+        },
+        onGridSizeChanged: (params) => {
+            if (window.innerWidth > 768) {
+                params.api.sizeColumnsToFit();
+            }
+        },
+        overlayLoadingTemplate: '<span class="ag-overlay-loading-center">Loading resources...</span>',
+        overlayNoRowsTemplate: '<span style="padding: 10px; border: 2px solid #444; background: lightgoldenrodyellow;">No resources found.</span>'
     };
 
-    // 1. Handle Quick Search
     function onFilterChanged() {
         gridApi.setGridOption('quickFilterText', document.getElementById('quickFilter').value);
     }
 
-    // 2. Handle the Dropdown "Filter By Type"
     function applyTypeFilter(typeName) {
         if (!gridApi) return;
-        const currentModel = gridApi.getFilterModel();
+        const currentModel = gridApi.getFilterModel() || {};
         currentModel.n2ID = {
             filterType: 'text',
             type: 'equals',
@@ -74,7 +94,6 @@
         gridApi.setFilterModel(currentModel);
     }
 
-    // 3. Reset All
     function resetFilters() {
         document.getElementById('quickFilter').value = '';
         gridApi.setGridOption('quickFilterText', '');
@@ -103,11 +122,11 @@
             </div>
         </td>
         <td>
-            <form>
+            <form onsubmit="return false;">
                 <span class="input-group stylish-input-group">
                     <input type="text" id="quickFilter" placeholder="Search by doc name..." class="form-control" oninput="onFilterChanged()" />
                     <span class="input-group-addon" id="submit_search">
-                        <button type="submit">
+                        <button type="button" onclick="onFilterChanged()">
                             <span class="glyphicon glyphicon-search"></span>
                         </button>
                     </span>
@@ -135,5 +154,5 @@
 </table>
 <br />
 <div class="table-wrapper" style="clear:both;">
-    <div id="risourcesGrid" class="ag-theme-quartz" style="height: 1000px; width: 100%;"></div>
+    <div id="risourcesGrid" class="ag-theme-quartz"></div>
 </div>

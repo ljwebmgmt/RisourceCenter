@@ -9,15 +9,24 @@
         padding: 1px 5px !important;
         height: auto !important;
     }
+    .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
+    #salesCommGrid {
+        height: 75vh;
+        width: 100%;
+    }
 </style>
 <script>
     let gridApi;
 
     const columnDefs = [
-        { headerName: "Headline", field: "sc_headline", flex: 2, sortable: true, filter: true },
+        { headerName: "Headline", field: "sc_headline", minWidth: 200, flex: 2, sortable: true, filter: true },
         {
             headerName: "Start Date",
             field: "sc_startDate",
+            minWidth: 130,
             flex: 1,
             sortable: true,
             filter: 'agDateColumnFilter',
@@ -26,18 +35,19 @@
         {
             headerName: "End Date",
             field: "sc_endDate",
+            minWidth: 130,
             flex: 1,
             sortable: true,
             filter: 'agDateColumnFilter',
             valueFormatter: params => {
-                // Your logic: hide date if it's 1/1/1900
                 const formatted = formatDate(params.value);
                 return (formatted === "1/1/1900" || formatted === "01/01/1900") ? "" : formatted;
             }
         },
         {
             headerName: "Actions",
-            width: 160,
+            minWidth: 160,
+            flex: 1,
             sortable: false,
             filter: false,
             cellRenderer: params => {
@@ -51,7 +61,6 @@
                 `;
             }
         },
-        // Hidden column to support your "Filter By" dropdown logic
         { field: "n3ID", hide: true, filter: 'agNumberColumnFilter' }
     ];
 
@@ -62,10 +71,19 @@
         paginationPageSize: 20,
         onGridReady: (params) => {
             gridApi = params.api;
-        }
+            if (window.innerWidth > 768) {
+                params.api.sizeColumnsToFit();
+            }
+        },
+        onGridSizeChanged: (params) => {
+            if (window.innerWidth > 768) {
+                params.api.sizeColumnsToFit();
+            }
+        },
+        overlayLoadingTemplate: '<span class="ag-overlay-loading-center">Loading communications...</span>',
+        overlayNoRowsTemplate: '<span style="padding: 10px; border: 2px solid #444; background: lightgoldenrodyellow;">No sales communications found.</span>'
     };
 
-    // Helper to format C# JSON dates
     function formatDate(dateStr) {
         if (!dateStr) return "";
         if (dateStr.indexOf('/Date') !== -1) {
@@ -77,80 +95,79 @@
 
     function onQuickFilterChanged() {
         gridApi.setGridOption('quickFilterText', document.getElementById('form_value').value);
-                            }
+    }
 
     function applyNavFilter(n3idValue) {
         if (!gridApi) return;
 
-        // Set the filter model specifically for the n3ID column
         gridApi.setColumnFilterModel('n3ID', {
             filterType: 'number',
             type: 'equals',
             filter: n3idValue
         }).then(() => {
             gridApi.onFilterChanged();
-                        });
-                    }
+        });
+    }
 
     function resetGrid() {
         document.getElementById('form_value').value = '';
         gridApi.setGridOption('quickFilterText', '');
         gridApi.setFilterModel(null);
-                }
+    }
 
     document.addEventListener('DOMContentLoaded', () => {
         const gridDiv = document.querySelector('#salesCommGrid');
         gridApi = agGrid.createGrid(gridDiv, gridOptions);
-            });
+    });
 </script>
-    <table>
-        <tr>
-            <td>
-                <div class="dropdown">
-                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-                        Filter Communications By
-                        <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu">
-                        @foreach (var item in @ViewBag.nav_Menu)
-                        {
+<table>
+    <tr>
+        <td>
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                    Filter Communications By
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    @foreach (var item in @ViewBag.nav_Menu)
+                    {
                         <li><a href="javascript:void(0);" onclick="applyNavFilter(@item.n3id)">@item.name - @item.n3name</a></li>
-                        }
-                    </ul>
-                </div>
-            </td>
-            <td>
-                <div class="dropdown">
-                    <span class="input-group stylish-input-group">
+                    }
+                </ul>
+            </div>
+        </td>
+        <td>
+            <div class="dropdown">
+                <span class="input-group stylish-input-group">
                     <input type="text" id="form_value" placeholder="search by doc name" class="form-control" oninput="onQuickFilterChanged()" />
                     <span class="input-group-addon">
                         <button type="button" onclick="onQuickFilterChanged()">
                             <span class="glyphicon glyphicon-search"></span>
-                            </button>
-                        </span>
+                        </button>
                     </span>
-                </div>
-            </td>
-            <td>
-                <div class="dropdown">
-                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-                        Add Sales Communication
-                        <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu">
-                        @foreach (var item in @ViewBag.nav_Menu)
-                        {
-                            <li><a href="Create?n2id=@item.id&img=@item.img&n3id=@item.n3id&n1_name=@Request.QueryString["n1_name"]&n2_name=@item.name&n3_name=@item.n3name">@item.name - @item.n3name</a></li>
-                        }
-                    </ul>
-                </div>
-            </td>
-                    <td>
+                </span>
+            </div>
+        </td>
+        <td>
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                    Add Sales Communication
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    @foreach (var item in @ViewBag.nav_Menu)
+                    {
+                        <li><a href="Create?n2id=@item.id&img=@item.img&n3id=@item.n3id&n1_name=@Request.QueryString["n1_name"]&n2_name=@item.name&n3_name=@item.n3name">@item.name - @item.n3name</a></li>
+                    }
+                </ul>
+            </div>
+        </td>
+        <td>
             <button class="btn btn-default" onclick="resetGrid()">Reset</button>
-                    </td>
-                </tr>
-    </table>
+        </td>
+    </tr>
+</table>
 <br/>
 <div class="table-wrapper" style="clear:both;">
-    <div id="salesCommGrid" class="ag-theme-quartz" style="height: 1000px; width: 100%;"></div>
+    <div id="salesCommGrid" class="ag-theme-quartz"></div>
 </div>

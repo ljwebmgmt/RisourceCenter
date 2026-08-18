@@ -4,122 +4,203 @@
     ViewBag.Title = "Manage";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
+<style type="text/css">
+    /* Responsive Toolbar Layout */
+    .filter-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .filter-bar .dropdown {
+        display: inline-block;
+    }
+
+    .filter-bar .dropdown-toggle {
+        width: 100%;
+        text-align: left;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .filter-item {
+        flex: 1 1 auto;
+        min-width: 130px;
+    }
+
+    /* Floating / Collapsible Options Bar */
+    .mdf-actions-wrapper {
+        position: relative;
+        display: inline-block;
+    }
+
+    #mdftypes {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        z-index: 1000;
+        background: #fff;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-shadow: 0 6px 12px rgba(0,0,0,0.175);
+        padding: 10px;
+        min-width: 160px;
+    }
+
+    #mdftypes.showMDF {
+        display: block !important;
+    }
+
+    #mdftypes ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    #mdftypes ul li {
+        padding: 5px 0;
+    }
+
+    .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
+</style>
+
 <script type="text/javascript">
 	$(document).ready(function($){
-	    $('#showMDF').click(function () {
+	    $('#showMDF').click(function (e) {
+			e.stopPropagation();
 			$('#mdftypes').toggleClass('showMDF');
+		});
+
+		$(document).click(function() {
+			$('#mdftypes').removeClass('showMDF');
 		});
 	});
 </script>
 
 <div class="main_content">
     <section>
-        <div style="padding-bottom:0px;margin-bottom:0px;font-weight:bolder;font-size:20px;">
+        <div style="padding-bottom:10px; font-weight:bolder; font-size:20px;">
             Brand Central - Admin
             @if (!string.IsNullOrEmpty(@Request.QueryString["msg"]))
             {
                 <span> - </span>@Request.QueryString["msg"]
-
             }
             - Archive Year @Request.QueryString["year"]
         </div>
-        <span><a class="btn btn-primary ajax-filter" href="~/MDFView/ManageAdminArchive?n1_name=@Request.QueryString["n1_name"]&year=@Request.QueryString["year"]">Reset</a></span>&nbsp;
-        Filter By:
-        <div id="dropdown">
-            <div class="dropdown">
-                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-                    Company Name
-                    <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu">
-                    @foreach (var item in @Model.list_comp.GroupBy(a => new { a.comp_ID, a.comp_name }).OrderBy(b => b.Key.comp_name))
-                    {
-                        <li><a class="ajax-filter" href="~/MDFView/ManageAdminArchive?comp_id=@item.Key.comp_ID&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=@item.Key.comp_name&year=@Request.QueryString["year"]">@item.Key.comp_name</a></li>
-                    }
-                </ul>
+
+        <div class="filter-bar">
+            <div>
+                <a class="btn btn-primary ajax-filter" href="~/MDFView/ManageAdminArchive?n1_name=@Request.QueryString["n1_name"]&year=@Request.QueryString["year"]">Reset</a>
+            </div>
+
+            <div class="filter-item">
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                        Company Name <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        @foreach (var item in @Model.list_comp.GroupBy(a => new { a.comp_ID, a.comp_name }).OrderBy(b => b.Key.comp_name))
+                        {
+                            <li><a class="ajax-filter" href="~/MDFView/ManageAdminArchive?comp_id=@item.Key.comp_ID&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=@item.Key.comp_name&year=@Request.QueryString["year"]">@item.Key.comp_name</a></li>
+                        }
+                    </ul>
+                </div>
+            </div>
+
+            <div class="filter-item">
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                        MDF Type <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        @foreach (var item in @ViewBag.type)
+                        {
+                            <li><a class="ajax-filter" href="~/MDFView/ManageAdminArchive?comp_id=@Request.QueryString["comp_id"]&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&status=@Request.QueryString["status"]&type=@item.mdf_type_ID&msg=@item.mdf_subType_name&year=@Request.QueryString["year"]">@item.mdf_subType_name</a></li>
+                        }
+                    </ul>
+                </div>
+            </div>
+
+            <div class="filter-item">
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                        MDF Status <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="ajax-filter" href="/MDFView/ManageAdminArchive?&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&year=@Request.QueryString["year"]&comp_id=@Request.QueryString["comp_id"]&type=@Request.QueryString["type"]&status=1&msg=Pending">Pending</a></li>
+                        <li><a class="ajax-filter" href="/MDFView/ManageAdminArchive?&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=Denied&year=@Request.QueryString["year"]&comp_id=@Request.QueryString["comp_id"]&type=@Request.QueryString["type"]&status=2">Denied</a></li>
+                        <li><a class="ajax-filter" href="/MDFView/ManageAdminArchive?&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=Approved&year=@Request.QueryString["year"]&comp_id=@Request.QueryString["comp_id"]&type=@Request.QueryString["type"]&status=3">Approved</a></li>
+                        <li><a class="ajax-filter" href="/MDFView/ManageAdminArchive?&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=Completed&year=@Request.QueryString["year"]&comp_id=@Request.QueryString["comp_id"]&type=@Request.QueryString["type"]&status=4">Completed</a></li>
+                        <li><a class="ajax-filter" href="/MDFView/ManageAdminArchive?&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=Credit Issued&year=@Request.QueryString["year"]&comp_id=@Request.QueryString["comp_id"]&type=@Request.QueryString["type"]&status=5">Credit Issued</a></li>
+                        <li><a class="ajax-filter" href="/MDFView/ManageAdminArchive?&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=Cancelled&year=@Request.QueryString["year"]&comp_id=@Request.QueryString["comp_id"]&type=@Request.QueryString["type"]&status=6">Cancelled</a></li>
+                        <li><a class="ajax-filter" href="/MDFView/ManageAdminArchive?&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=In Progress&year=@Request.QueryString["year"]&comp_id=@Request.QueryString["comp_id"]&type=@Request.QueryString["type"]&status=6">In Progress</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="filter-item">
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                        Archived Requests <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a href="/MDFView/ManageAdmin?&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=Manage MDFs&comp_id=@Request.QueryString["comp_id"]&status=@Request.QueryString["status"]">Current Year</a></li>
+                        @for (int i = DateTime.Now.Year - 1; i >= 2013; i--)
+                        {
+                            <li><a class="ajax-filter" href="/MDFView/ManageAdminArchive?&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=Manage MDFs&year=@i&comp_id=@Request.QueryString["comp_id"]&status=@Request.QueryString["status"]">@i</a></li>
+                        }
+                    </ul>
+                </div>
+            </div>
+
+            <div class="filter-item">
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                        Assigned RCM <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        @foreach (KeyValuePair<string, string> rcm in @Model.rcmNames)
+                        {
+                            <li><a class="ajax-filter" href="~/MDFView/ManageAdminArchive?rcm=@rcm.Key&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&year=@Request.QueryString["year"]&comp_id=@Request.QueryString["comp_id"]&type=@Request.QueryString["type"]&status=@Request.QueryString["status"]">@rcm.Value</a></li>
+                        }
+                    </ul>
+                </div>
+            </div>
+
+            <div class="filter-item">
+                <div class="dropdown">
+                    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+                        <img src="/images/manage.png" style="width:15px; margin-right:5px;" /> Columns <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" id="columnToggleMenu" style="max-height: 400px; overflow-y: auto; padding: 10px 0;"></ul>
+                </div>
+            </div>
+
+            <div class="mdf-actions-wrapper">
+                <button id="showMDF" type="button" class="btn btn-primary">More <span class="caret"></span></button>
+                <div id="mdftypes">
+                    <ul>
+                        <li><a class="ajax-filter" href="~/MDFView/ManualEntry?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=Manual Entry">Manual Entry</a></li>
+                        <li><a class="ajax-filter" href="~/MDFView/ExpExcl?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=Reports">Reports</a></li>
+                        <li>@Html.ActionLink("Manage MDF Users", "MDFusers", "MDFView", new { compid = Request.QueryString["compid"], n1_name = "Support Tools", n2_name = "MDF Users" }, htmlAttributes: new { @class = "ajax-filter" })</li>
+                    </ul>
+                </div>
             </div>
         </div>
-        <div id="dropdown">
-            <div class="dropdown">
-                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-                    MDF Type
-                    <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu">
-                    @foreach (var item in @ViewBag.type)
-                    {
-                        <li><a class="ajax-filter" href="~/MDFView/ManageAdminArchive?comp_id=@Request.QueryString["comp_id"]&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&status=@Request.QueryString["status"]&type=@item.mdf_type_ID&msg=@item.mdf_subType_name&year=@Request.QueryString["year"]">@item.mdf_subType_name</a></li>
-                    }
-                </ul>
+
+        <div class="table-wrapper" style="clear:both;">
+            <div class="mdf-data-container">
+                @Html.Partial("_MDFTableResults", Model)
             </div>
-        </div>
-        <div id="dropdown">
-            <div class="dropdown">
-                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-                    MDF Status
-                    <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu">
-                    <li><a class="ajax-filter" href="/MDFView/ManageAdminArchive?&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&year=@Request.QueryString["year"]&comp_id=@Request.QueryString["comp_id"]&type=@Request.QueryString["type"]&status=1&msg=Pending">Pending</a></li>
-                    <li><a class="ajax-filter" href="/MDFView/ManageAdminArchive?&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=Denied&year=@Request.QueryString["year"]&comp_id=@Request.QueryString["comp_id"]&type=@Request.QueryString["type"]&status=2">Denied</a></li>
-                    <li><a class="ajax-filter" href="/MDFView/ManageAdminArchive?&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=Approved&year=@Request.QueryString["year"]&comp_id=@Request.QueryString["comp_id"]&type=@Request.QueryString["type"]&status=3">Approved</a></li>
-                    <li><a class="ajax-filter" href="/MDFView/ManageAdminArchive?&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=Completed&year=@Request.QueryString["year"]&comp_id=@Request.QueryString["comp_id"]&type=@Request.QueryString["type"]&status=4">Completed</a></li>
-                    <li><a class="ajax-filter" href="/MDFView/ManageAdminArchive?&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=Credit Issued&year=@Request.QueryString["year"]&comp_id=@Request.QueryString["comp_id"]&type=@Request.QueryString["type"]&status=5">Credit Issued</a></li>
-                    <li><a class="ajax-filter" href="/MDFView/ManageAdminArchive?&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=Cancelled&year =@Request.QueryString["year"]&comp_id=@Request.QueryString["comp_id"]&type=@Request.QueryString["type"]&status=6">Cancelled</a></li>
-                    <li><a class="ajax-filter" href="/MDFView/ManageAdminArchive?&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=In Progress&year=@Request.QueryString["year"]&comp_id=@Request.QueryString["comp_id"]&type=@Request.QueryString["type"]&status=6">In Progress</a></li>
-                </ul>
-            </div>
-        </div>
-        <div id="dropdown">
-            <div class="dropdown">
-                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-                    Archived Requests
-                    <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu">
-                    <li><a href="/MDFView/ManageAdmin?&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg =Manage MDFs&comp_id=@Request.QueryString["comp_id"]&status =@Request.QueryString["status"]">Current Year</a></li>
-                    @for (int i = DateTime.Now.Year - 1; i >= 2013; i--)
-                    {
-                        <li><a class="ajax-filter" href="/MDFView/ManageAdminArchive?&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=Manage MDFs&year=@i&comp_id=@Request.QueryString["comp_id"]&status=@Request.QueryString["status"]">@i</a></li>
-                    }
-                </ul>
-            </div>
-        </div>
-        <div id="dropdown">
-            <div class="dropdown">
-                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-                    Assigned RCM
-                    <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu">
-                    @foreach (KeyValuePair<string, string> rcm in @Model.rcmNames)
-                    {
-                        <li><a class="ajax-filter" href="~/MDFView/ManageAdminArchive?rcm=@rcm.Key&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&year=@Request.QueryString["year"]&comp_id=@Request.QueryString["comp_id"]&type=@Request.QueryString["type"]&status=@Request.QueryString["status"]">@rcm.Value</a></li>
-                    }
-                </ul>
-            </div>
-        </div>
-        &nbsp;<span id="showMDF" class="btn btn-primary">More</span>
-        <div id="mdftypes" class="showMDF">
-            <ul>
-                <li><a class="ajax-filter" href="~/MDFView/ManualEntry?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=Manual Entry">Manual Entry</a></li>
-                <li><a class="ajax-filter" href="~/MDFView/ExpExcl?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=Reports">Reports</a></li>
-                <li>@Html.ActionLink("Manage MDF Users", "MDFusers", "MDFView", new { compid = Request.QueryString["compid"], n1_name = "Support Tools", n2_name = "MDF Users" }, htmlAttributes: new { @class = "ajax-filter" })</li>
-            </ul>
-        </div>
-        <div style="display:inline-block; float:left; margin-left:20px;">
-            <div class="dropdown">
-                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
-                    <img src="/images/manage.png" style="width:15px; margin-right:5px;" /> Hide/Show Columns
-                    <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu" id="columnToggleMenu" style="max-height: 400px; overflow-y: auto; padding: 10px 0;">
-                </ul>
-        </div>
-        </div>
-        <div class="mdf-data-container">
-            @Html.Partial("_MDFTableResults", Model)
         </div>
         <hr>
     </section>
-        </div>
+</div>

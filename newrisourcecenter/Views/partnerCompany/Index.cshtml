@@ -9,62 +9,100 @@
         padding: 1px 5px !important;
         height: auto !important;
     }
+
+    /* Responsive Filter Layout */
+    .filter-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 15px;
+        align-items: center;
+    }
+    .filter-item {
+        flex: 1 1 200px;
+    }
+    .filter-item .form-control {
+        width: 100% !important;
+    }
+    .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
+    #companyGrid {
+        height: 75vh;
+        width: 100%;
+    }
 </style>
-<script>
+<script type="text/javascript">
     const rowData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
     let gridApi;
     const adminUser = @((User.IsInRole("Super Admin") || User.IsInRole("Global Admin")).ToString().ToLower());
+
+    // Responsive Column Definitions using minWidth and flex
     const columnDefs = [
-        { headerName: "Company Name", field: "comp_name", flex: 2 },
-        { headerName: "MDF Program?", field: "comp_MDF", width: 100 },
+        { headerName: "Company Name", field: "comp_name", minWidth: 180, flex: 2, pinned: 'left' },
+        { headerName: "MDF Program?", field: "comp_MDF", minWidth: 120, flex: 1 },
         {
             headerName: "Total MDF Funds",
             field: "comp_MDF_amount",
+            minWidth: 140,
+            flex: 1.5,
             valueFormatter: p => p.value ? '$' + p.value.toLocaleString() : '$0',
             cellClass: 'text-right'
         },
         {
             headerName: "Funds For Training",
             field: "comp_MDF_tLimit",
+            minWidth: 150,
+            flex: 1.5,
             valueFormatter: p => p.value ? '$' + p.value.toLocaleString() : '$0',
             cellClass: 'text-right'
         },
         {
             headerName: "Funds For Promotional Activity",
             field: "comp_MDF_aLimit",
+            minWidth: 200,
+            flex: 1.8,
             valueFormatter: p => p.value ? '$' + p.value.toLocaleString() : '$0',
             cellClass: 'text-right'
         },
         {
             headerName: "Funds For Merchandise",
             field: "comp_MDF_mLimit",
+            minWidth: 170,
+            flex: 1.5,
             valueFormatter: p => p.value ? '$' + p.value.toLocaleString() : '$0',
             cellClass: 'text-right'
         },
         {
             headerName: "Total MKT Funds",
             field: "comp_MKT_Limit",
+            minWidth: 140,
+            flex: 1.5,
             valueFormatter: p => p.value ? '$' + p.value.toLocaleString() : '$0',
             cellClass: 'text-right'
         },
         {
             headerName: "Region",
             field: "comp_region",
-            width: 120
+            minWidth: 110,
+            flex: 1
         },
         {
             headerName: "Actions",
-            width: 180,
+            width: 140,
             sortable: false,
+            filter: false,
             cellRenderer: params => {
                 if (!params.data) {
                     return '<span class="text-muted">Loading...</span>';
                 }
-                const id = params.data.comp_ID
-                let html = `<a href="/partnerCompany/Edit/${id}" class="btn btn-xs btn-info">Edit</a> `;
+                const id = params.data.comp_ID;
+                let html = `<div style="display: flex; gap: 5px; align-items: center; height: 100%;"><a href="/partnerCompany/Edit/${id}" class="btn btn-xs btn-info">Edit</a>`;
                 if (adminUser) {
                     html += `<a href="/partnerCompany/Delete/${id}" class="btn btn-xs btn-danger delete-company">Delete</a>`;
                 }
+                html += `</div>`;
                 return html;
             }
         }
@@ -77,13 +115,26 @@
         paginationPageSize: 20,
         onGridReady: params => {
             gridApi = params.api;
-            params.api.sizeColumnsToFit();
-        }
+            
+            // Fit columns on desktop screens, allow horizontal scroll on mobile
+            if (window.innerWidth > 768) {
+                params.api.sizeColumnsToFit();
+            }
+        },
+        onGridSizeChanged: params => {
+            if (window.innerWidth > 768) {
+                params.api.sizeColumnsToFit();
+            }
+        },
+        overlayLoadingTemplate: '<span class="ag-overlay-loading-center">Please wait while companies load...</span>',
+        overlayNoRowsTemplate: '<span style="padding: 10px; border: 2px solid #444; background: lightgoldenrodyellow;">No companies found.</span>'
     };
 
     const companyDataSource = {
         getRows: (params) => {
-            gridApi.setGridOption('loading', true);
+            if (gridApi) {
+                gridApi.setGridOption('loading', true);
+            }
             const searchText = $('#companySearchInput').val();
 
             fetch(`/partnerCompany/GetCompaniesPaged?start=${params.startRow}&limit=20&search=${searchText}`)
@@ -91,21 +142,27 @@
                 .then(data => {
                     gridApi.setGridOption('loading', false);
                     params.successCallback(data.rows, data.total);
+                    if (data.total === 0) gridApi.showNoRowsOverlay();
+                    else gridApi.hideOverlay();
                 })
-                .catch(() => params.failCallback());
+                .catch(() => {
+                    if (gridApi) gridApi.setGridOption('loading', false);
+                    params.failCallback();
+                });
         }
     };
 
     function onSearchChange() {
-        const searchText = $('#companySearchInput').val();
-        gridApi.setGridOption('quickFilterText', searchText);
+        if (gridApi) {
+            const searchText = $('#companySearchInput').val();
+            gridApi.setGridOption('quickFilterText', searchText);
+        }
     }
 
     $(document).on('input', '#companySearchInput', function () {
         onSearchChange();
     });
 
-    // Maintain Enter key support just in case
     $(document).on('keypress', '#companySearchInput', function (e) {
         if (e.which === 13) {
             e.preventDefault();
@@ -158,29 +215,30 @@
                 }, 3000);
             },
             error: function () {
-                alert("An error occurred while deleting the user.");
+                alert("An error occurred while deleting the company.");
             },
             complete: function () {
-                gridApi.setGridOption('loading', false);
+                if (gridApi) gridApi.setGridOption('loading', false);
                 obj.text(originalText).prop('disabled', false);
             }
         });
         return false;
     });
 </script>
+
 @if (User.IsInRole("Super Admin") || User.IsInRole("Local Admin") && User.IsInRole("Rittal User") || User.IsInRole("Global Admin"))
 {
-    <div class="header-container" style="display:flex; align-items: center; margin-bottom: 20px;">
-        <div>
+    <div class="filter-bar">
+        <div class="filter-item" style="flex: 0 0 auto;">
             @Html.ActionLink("Add Company", "Create", new { n1_name = Request.QueryString["n1_name"], msg = "Add Company" }, htmlAttributes: new { @class = "btn btn-primary" })
         </div>
 
-        <div style="margin-left:20px;width:350px;">
+        <div class="filter-item">
             <input type="text" id="companySearchInput" class="form-control" placeholder="Search by Company Name..." />
         </div>
     </div>
 }
 
 <div class="table-wrapper" style="clear:both;">
-    <div id="companyGrid" class="ag-theme-quartz" style="height: 1000px; width: 100%;"></div>
+    <div id="companyGrid" class="ag-theme-quartz"></div>
 </div>

@@ -17,6 +17,30 @@
         padding: 1px 5px !important;
         height: auto !important;
     }
+    
+    /* Responsive Filter Layout */
+    .filter-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 15px;
+        align-items: center;
+    }
+    .filter-item {
+        flex: 1 1 200px;
+    }
+    .filter-item .bootstrap-select, 
+    .filter-item .input-group {
+        width: 100% !important;
+    }
+    .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
+    #userTableGrid {
+        height: 75vh;
+        width: 100%;
+    }
 </style>
 <script type="text/javascript">
     let gridApi = null;
@@ -26,7 +50,6 @@
             const locId = $('#locFilter').val() || 0;
             const search = $('#gridSearch').val() || "";
 
-            // Send parameters to your new GetUsersPaged action
             const url = `/RegisteredUser/GetUsersPaged?start=${params.startRow}&limit=20&compid=${compId}&locid=${locId}&querystring=${encodeURIComponent(search)}`;
             if (gridApi) {
                 gridApi.setGridOption('loading', true);
@@ -52,17 +75,18 @@
         const adminUser = @((User.IsInRole("Super Admin") || User.IsInRole("Global Admin")).ToString().ToLower());
         const queryCompId = '@Request.QueryString["compid"]';
         const defaultCompId = '@companyId';
-        // 2. Define Columns with Filtering, Sorting, and Hiding
+
+        // Responsive Column Definitions using flex and minWidth
         const columnDefs = [
-            { headerName: "User ID", field: "usr_ID", width: 100 },
-            { headerName: "First Name", field: "usr_fName", filter: 'agTextColumnFilter' },
-            { headerName: "Last Name", field: "usr_lName", filter: 'agTextColumnFilter' },
-            { headerName: "Email", field: "usr_email", filter: 'agTextColumnFilter', flex: 1 },
+            { headerName: "User ID", field: "usr_ID", minWidth: 90, flex: 1 },
+            { headerName: "First Name", field: "usr_fName", filter: 'agTextColumnFilter', minWidth: 120, flex: 2 },
+            { headerName: "Last Name", field: "usr_lName", filter: 'agTextColumnFilter', minWidth: 120, flex: 2 },
+            { headerName: "Email", field: "usr_email", filter: 'agTextColumnFilter', minWidth: 200, flex: 3 },
             {
                 headerName: "Actions",
                 sortable: false,
                 filter: false,
-                width: 400,
+                width: 200,
                 cellRenderer: params => {
                     if (!adminUser) {
                         return '';
@@ -86,9 +110,18 @@
             pagination: true,
             paginationPageSize: 20,
             onGridReady: (params) => {
-                gridApi = params.api
+                gridApi = params.api;
                 params.api.setGridOption('datasource', userDataSource);
-                params.api.sizeColumnsToFit();
+                
+                // Fit columns only if viewing on a desktop viewport
+                if (window.innerWidth > 768) {
+                    params.api.sizeColumnsToFit();
+                }
+            },
+            onGridSizeChanged: (params) => {
+                if (window.innerWidth > 768) {
+                    params.api.sizeColumnsToFit();
+                }
             },
             overlayLoadingTemplate: '<span class="ag-overlay-loading-center">Please wait while your users are loading...</span>',
             overlayNoRowsTemplate: '<span style="padding: 10px; border: 2px solid #444; background: lightgoldenrodyellow;">No users found for this filter.</span>'
@@ -110,7 +143,6 @@
             return;
         }
 
-        // Call the JSON endpoint we created earlier
         fetch(`/RegisteredUser/GetLocations?compid=${compId}`)
             .then(res => res.json())
             .then(data => {
@@ -124,8 +156,6 @@
     }
 
     function onFilterChange() {
-        // This tells the Infinite row model to purge its cache and start from page 1
-        // it will automatically call your datasource.getRows()
         if (gridApi) {
             gridApi.setGridOption('datasource', userDataSource);
         }
@@ -223,51 +253,51 @@
         return false;
     });
 </script>
-<table>
-    <tr>
-        @if (User.IsInRole("Super Admin") || User.IsInRole("Local Admin") && User.IsInRole("Rittal User") || User.IsInRole("Global Admin"))
-        {
-            <td>
-                <select id="compFilter" class="selectpicker select-dropdown" data-live-search="true" title="Filter By Companies" onchange="loadLocations()">
-                    <option value="0">All Companies</option>
-                    @foreach (var item in ViewBag.compData)
+
+<div class="filter-bar">
+    @if (User.IsInRole("Super Admin") || User.IsInRole("Local Admin") && User.IsInRole("Rittal User") || User.IsInRole("Global Admin"))
+    {
+        <div class="filter-item">
+            <select id="compFilter" class="selectpicker select-dropdown" data-live-search="true" title="Filter By Companies" onchange="loadLocations()">
+                <option value="0">All Companies</option>
+                @foreach (var item in ViewBag.compData)
+                {
+                    if (string.IsNullOrEmpty(item.name))
                     {
-                        if (string.IsNullOrEmpty(item.name))
-                        {
-                            continue;
-                        }
-                        <option value="@item.id" @(Convert.ToInt64(item.id.ToString()) == defaultCompId ? "selected" : "")>@item.name</option>
+                        continue;
                     }
-                </select>
-            </td>
-            <td>
-                <select id="locFilter" class="selectpicker select-dropdown" data-live-search="true" title="Filter By Locations" onchange="onFilterChange()" disabled>
-                    <option value="0">Select Location</option>
-                </select>
-            </td>
-            <td>
-                @Html.ActionLink("Add Users", "AddUser", "Account", new { n1_name = "Add Users" }, htmlAttributes: new { @class = "btn btn-primary" })
-            </td>
-        }
-        <td>
-            <form onsubmit="onFilterChange(); return false;">
-                <span class="input-group stylish-input-group" style="width:300px;">
-                    <input type="text" id="gridSearch" value="@Request.QueryString["querystring"]" placeholder="first or last names or email" class="form-control" />
-                    <span class="input-group-addon">
-                        <button type="button" onclick="onFilterChange()">
-                            <span class="glyphicon glyphicon-search"></span>
-                        </button>
-                    </span>
+                    <option value="@item.id" @(Convert.ToInt64(item.id.ToString()) == defaultCompId ? "selected" : "")>@item.name</option>
+                }
+            </select>
+        </div>
+        <div class="filter-item">
+            <select id="locFilter" class="selectpicker select-dropdown" data-live-search="true" title="Filter By Locations" onchange="onFilterChange()" disabled>
+                <option value="0">Select Location</option>
+            </select>
+        </div>
+        <div class="filter-item">
+            @Html.ActionLink("Add Users", "AddUser", "Account", new { n1_name = "Add Users" }, htmlAttributes: new { @class = "btn btn-primary btn-block" })
+        </div>
+    }
+    <div class="filter-item">
+        <form onsubmit="onFilterChange(); return false;">
+            <div class="input-group stylish-input-group">
+                <input type="text" id="gridSearch" value="@Request.QueryString["querystring"]" placeholder="first or last names or email" class="form-control" />
+                <span class="input-group-addon">
+                    <button type="button" onclick="onFilterChange()">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
                 </span>
-            </form>
-        </td>
-        <td>
-            <button type="button" class="btn btn-primary btn-reset" onclick="resetFilters()">Reset</button>
-        </td>
-    </tr>
-</table>
+            </div>
+        </form>
+    </div>
+    <div class="filter-item">
+        <button type="button" class="btn btn-primary btn-reset" onclick="resetFilters()">Reset</button>
+    </div>
+</div>
+
 <p class="glyphicon glyphicon-star" style="color:#E50043;font-size:14px;"> - Administrator</p>
 
 <div class="table-wrapper" style="clear:both;">
-    <div id="userTableGrid" class="ag-theme-quartz" style="height: 1000px; width: 100%;"></div>
+    <div id="userTableGrid" class="ag-theme-quartz"></div>
 </div>
