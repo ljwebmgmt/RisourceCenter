@@ -15,6 +15,42 @@
         height: 75vh;
         width: 100%;
     }
+    .rfq-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 15px;
+    }
+    .rfq-toolbar-left, .rfq-toolbar-right {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+    }
+    .rfq-count-text {
+        font-size: 20px;
+        font-weight: bold;
+    }
+    @media (max-width: 768px) {
+        .rfq-toolbar, .rfq-toolbar-left, .rfq-toolbar-right {
+            width: 100%;
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .rfq-toolbar .btn, 
+        .rfq-toolbar .dropdown {
+            width: 100%;
+        }
+        .rfq-toolbar .dropdown-toggle {
+            width: 100%;
+        }
+        .rfq-count-text {
+            text-align: center;
+            font-size: 18px;
+        }
+    }
     #modal {
         background: #CCC;
         width: 60%;
@@ -356,16 +392,16 @@
 </script>
 
 <div class="main_content">
-    <div>
-        <div style="display:inline-block;float:left;margin-bottom:10px;">
+    @{ Dictionary<string, string> list_status = new Dictionary<string, string>();
+        list_status.Add("Not Assigned", "Not Assigned");
+        list_status.Add("Assigned", "Assigned");
+        list_status.Add("Completed this month", "Completed this month");
+    }
+
+    <div class="rfq-toolbar">
+        <div class="rfq-toolbar-left">
             @Html.ActionLink("RFQ Report >>", "RFQReport", new { n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], msg = "RFQ Report" }, htmlAttributes: new { @class = "btn btn-primary" })
-        </div>
-        @{ Dictionary<string, string> list_status = new Dictionary<string, string>();
-            list_status.Add("Not Assigned", "Not Assigned");
-            list_status.Add("Assigned", "Assigned");
-            list_status.Add("Completed this month", "Completed this month");
-        }
-        <div style="display:inline-block;float:left;margin-left:20px;">
+
             <div class="dropdown">
                 <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
                     Filter By Status
@@ -379,8 +415,7 @@
                     <li><a class="ajax-filter" href="~/RFQTool/RfqAdmin?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=@Request.QueryString["msg"]">No Filter</a></li>
                 </ul>
             </div>
-        </div>
-        <div style="display:inline-block;float:left;margin-left:20px;">
+
             <div class="dropdown">
                 <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
                     @(Request.QueryString["filter_region"] != null ? Request.QueryString["filter_region"] : "Filter By Region")
@@ -394,8 +429,7 @@
                     <li><a class="ajax-filter" href="~/RFQTool/RfqAdmin?n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&msg=@Request.QueryString["msg"]">No Filter</a></li>
                 </ul>
             </div>
-        </div>
-        <div style="display:inline-block; float:left; margin-left:20px;">
+
             <div class="dropdown">
                 <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
                     <img src="/images/manage.png" style="width:15px; margin-right:5px;" /> Hide/Show Columns
@@ -405,11 +439,12 @@
                 </ul>
             </div>
         </div>
-        <div style="display:inline-block;float:right;">
-            @Html.ActionLink("<< RFQ Home", "Index", new { n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"] }, htmlAttributes: new { @class = "btn btn-primary", @style = "float:right;" })
-        </div>
-        <div style="float:right;margin-right:15px;font-size:28px;line-height:50px;">
-            <strong>No. of RFQs: <span id="rfq-count" style="color:red;">@Model.Count()</span></strong>
+
+        <div class="rfq-toolbar-right">
+            <span class="rfq-count-text">
+                No. of RFQs: <span id="rfq-count" style="color:red;">@Model.Count()</span>
+            </span>
+            @Html.ActionLink("<< RFQ Home", "Index", new { n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"] }, htmlAttributes: new { @class = "btn btn-primary" })
         </div>
     </div>
 
@@ -417,7 +452,8 @@
     {
         <h2 style="color:green;">@Request.QueryString["success"]</h2>
     }
-    <div class="table-wrapper" style="clear:both;">
+
+    <div class="table-wrapper">
         <div id="rfqTableGrid" class="ag-theme-quartz"></div>
     </div>
 

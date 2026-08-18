@@ -19,6 +19,34 @@
         height: 75vh;
         width: 100%;
     }
+    .rfq-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 15px;
+    }
+    .rfq-toolbar-left, .rfq-toolbar-right {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+    }
+    @media (max-width: 768px) {
+        .rfq-toolbar, .rfq-toolbar-left, .rfq-toolbar-right {
+            width: 100%;
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .rfq-toolbar .btn, 
+        .rfq-toolbar .dropdown {
+            width: 100%;
+        }
+        .rfq-toolbar .dropdown-toggle {
+            width: 100%;
+        }
+    }
 </style>
 <script>
     let gridApi = null;
@@ -260,39 +288,39 @@
         e.stopPropagation();
     });
 </script>
+
 <div class="main_content">
     @if (!string.IsNullOrEmpty(Request.QueryString["success"]))
     {
         <div class="alert alert-success">@Request.QueryString["success"]</div>
     }
-    @if (ViewBag.readonlyView == "false")
-    {
-        <div style="display:inline-block;float:left;">
-            @Html.ActionLink("Create RFQ >>", "Create", new { n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], msg = "Create RFQ" }, htmlAttributes: new { @class = "btn btn-primary" })
+
+    <div class="rfq-toolbar">
+        <div class="rfq-toolbar-left">
+            @if (ViewBag.readonlyView == "false")
+            {
+                @Html.ActionLink("Create RFQ >>", "Create", new { n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], msg = "Create RFQ" }, htmlAttributes: new { @class = "btn btn-primary" })
+            }
+
+            <div class="dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+                    <img src="/images/manage.png" style="width:15px; margin-right:5px;" /> Hide/Show Columns
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" id="columnToggleMenu" style="max-height: 400px; overflow-y: auto; padding: 10px 0;">
+                </ul>
+            </div>
         </div>
-    }
-    @*<div style="display:inline-block;width:70%;margin: 0px 0px 5px 20px;">
-        <div style="display:inline-block;color:red;margin-right:100px;vertical-align:top;">New Features:  </div>
-        <marquee behavior="scroll" loop="infinite" style="color:red;display:inline-block;width:60%;" scrolldelay="190">Click on the <font color="blue" size="2">Clone With Changes</font> button to modify old requests.<strong><font color="red" size="2"> RFQs older than December 2016 cannot be cloned.</font></strong></marquee>
-    </div>*@
-    
-    <div style="display:inline-block;float:right;">
-        @if (userpages.Contains("20121") || userpages.Contains("10122"))
-        {
-            @Html.ActionLink("RFQ Admin >>", "RfqAdmin", new { n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], msg = "RFQ Admin" }, htmlAttributes: new { @class = "btn btn-primary" })
-        }
-    </div>
-    <div style="display:inline-block; float:left; margin-left:20px;">
-        <div class="dropdown">
-            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
-                <img src="/images/manage.png" style="width:15px; margin-right:5px;" /> Hide/Show Columns
-                <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu" id="columnToggleMenu" style="max-height: 400px; overflow-y: auto; padding: 10px 0;">
-            </ul>
+
+        <div class="rfq-toolbar-right">
+            @if (userpages.Contains("20121") || userpages.Contains("10122"))
+            {
+                @Html.ActionLink("RFQ Admin >>", "RfqAdmin", new { n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], msg = "RFQ Admin" }, htmlAttributes: new { @class = "btn btn-primary" })
+            }
         </div>
     </div>
-    <div class="table-wrapper" style="clear:both;margin-top:60px;">
+
+    <div class="table-wrapper">
         <div id="rfqTableGrid" class="ag-theme-quartz"></div>
     </div>
 </div>

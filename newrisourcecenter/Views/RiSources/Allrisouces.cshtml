@@ -21,6 +21,24 @@
         height: 75vh;
         width: 100%;
     }
+    .toolbar-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    .toolbar-container .form-control {
+        min-width: 180px;
+    }
+    @media (max-width: 768px) {
+        .toolbar-container > div,
+        .toolbar-container > form,
+        .toolbar-container button,
+        .toolbar-container .input-group {
+            width: 100%;
+        }
+    }
 </style>
 <script>
     let gridApi;
@@ -105,54 +123,50 @@
         gridApi = agGrid.createGrid(gridDiv, gridOptions);
     });
 </script>
-<table>
-    <tr>
-        <td>
-            <div class="dropdown">
-                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-                    Filter ReSources By
-                    <span class="caret"></span>
+
+<div class="toolbar-container">
+    <div class="dropdown">
+        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+            Filter ReSources By
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            @foreach (var item in @ViewBag.list_n2ID)
+            {
+                <li><a href="javascript:void(0);" onclick="applyTypeFilter('@item.Value.name')">@item.Value.name</a></li>
+            }
+        </ul>
+    </div>
+
+    <form onsubmit="return false;">
+        <span class="input-group stylish-input-group">
+            <input type="text" id="quickFilter" placeholder="Search by doc name..." class="form-control" oninput="onFilterChanged()" />
+            <span class="input-group-addon" id="submit_search">
+                <button type="button" onclick="onFilterChanged()">
+                    <span class="glyphicon glyphicon-search"></span>
                 </button>
-                <ul class="dropdown-menu">
-                    @foreach (var item in @ViewBag.list_n2ID)
-                    {
-                        <li><a href="javascript:void(0);" onclick="applyTypeFilter('@item.Value.name')">@item.Value.name</a></li>
-                    }
-                </ul>
-            </div>
-        </td>
-        <td>
-            <form onsubmit="return false;">
-                <span class="input-group stylish-input-group">
-                    <input type="text" id="quickFilter" placeholder="Search by doc name..." class="form-control" oninput="onFilterChanged()" />
-                    <span class="input-group-addon" id="submit_search">
-                        <button type="button" onclick="onFilterChanged()">
-                            <span class="glyphicon glyphicon-search"></span>
-                        </button>
-                    </span>
-                </span>
-            </form>
-        </td>
-        <td>
-            <div class="dropdown">
-                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-                    Add a ReSource
-                    <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu">
-                    @foreach (var item in @ViewBag.list_n2ID)
-                    {
-                        <li><a href="~/RiSources/Create?parentID=&n2Id=@item.Key&n1_name=@Request.QueryString["n1_name"]&n2_name=@item.Value.name&img=@item.Value.img">@item.Value.name</a></li>
-                    }
-                </ul>
-            </div>
-        </td>
-        <td>
-            <button class="btn btn-default" onclick="resetFilters()">Reset</button>
-        </td>
-    </tr>
-</table>
-<br />
+            </span>
+        </span>
+    </form>
+
+    <div class="dropdown">
+        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+            Add a ReSource
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            @foreach (var item in @ViewBag.list_n2ID)
+            {
+                <li><a href="~/RiSources/Create?parentID=&n2Id=@item.Key&n1_name=@Request.QueryString["n1_name"]&n2_name=@item.Value.name&img=@item.Value.img">@item.Value.name</a></li>
+            }
+        </ul>
+    </div>
+
+    <div>
+        <button class="btn btn-default" onclick="resetFilters()">Reset</button>
+    </div>
+</div>
+
 <div class="table-wrapper" style="clear:both;">
     <div id="risourcesGrid" class="ag-theme-quartz"></div>
 </div>

@@ -15,23 +15,79 @@
         padding: 1px 5px !important;
         height: auto !important;
     }
+    .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
+    #returnGrid {
+        height: 75vh;
+        width: 100%;
+    }
+    .filter-radio-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 15px;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    .filter-radio-group label {
+        font-weight: normal;
+        margin: 0;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+    .dynamic-filter-container {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 4px;
+        border: 1px solid #e9ecef;
+        margin-bottom: 15px;
+    }
+    .action-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+    @media (max-width: 768px) {
+        .filter-radio-group {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .action-bar {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .action-bar .btn {
+            width: 100%;
+            text-align: center;
+        }
+    }
 </style>
 <script>
     var gridApi;
 
-    // 1. Initialize AG Grid on page load
     document.addEventListener('DOMContentLoaded', function () {
         var gridOptions = {
             columnDefs: [
-                { field: "form_id", headerName: "Form ID", sortable: true, filter: true },
-                { field: "name", headerName: "Name", sortable: true, filter: true },
-                { field: "company", headerName: "Company Name", sortable: true, filter: true },
-                { field: "submission_date", headerName: "Date Submitted", sortable: true, valueFormatter: params => formatDate(params.value) },
-                { field: "completion_date", headerName: "Date Completed", sortable: true, valueFormatter: params => formatDate(params.value) },
-                { field: "status", headerName: "Status", sortable: true },
-                { field: "authonumber", headerName: "Auth Number", sortable: true },
+                { field: "form_id", headerName: "Form ID", sortable: true, filter: true, minWidth: 100, flex: 0.8 },
+                { field: "name", headerName: "Name", sortable: true, filter: true, minWidth: 130, flex: 1 },
+                { field: "company", headerName: "Company Name", sortable: true, filter: true, minWidth: 150, flex: 1.2 },
+                { field: "submission_date", headerName: "Date Submitted", sortable: true, minWidth: 130, flex: 1, valueFormatter: params => formatDate(params.value) },
+                { field: "completion_date", headerName: "Date Completed", sortable: true, minWidth: 130, flex: 1, valueFormatter: params => formatDate(params.value) },
+                { field: "status", headerName: "Status", sortable: true, minWidth: 120, flex: 1 },
+                { field: "authonumber", headerName: "Auth Number", sortable: true, minWidth: 120, flex: 1 },
                 {
                     headerName: "Actions",
+                    pinned: 'right',
+                    minWidth: 140,
+                    flex: 1,
+                    sortable: false,
+                    filter: false,
                     cellRenderer: params => {
                         const id = params.data.form_id;
                         return `
@@ -42,10 +98,21 @@
                     }
                 }
             ],
-            defaultColDef: { flex: 1, minWidth: 100 },
+            defaultColDef: { resizable: true },
             rowData: @Html.Raw(Json.Encode(Model)),
             pagination: true,
-            paginationPageSize: 20
+            paginationPageSize: 20,
+            onGridReady: (params) => {
+                gridApi = params.api;
+                if (window.innerWidth > 768) {
+                    params.api.sizeColumnsToFit();
+                }
+            },
+            onGridSizeChanged: (params) => {
+                if (window.innerWidth > 768) {
+                    params.api.sizeColumnsToFit();
+                }
+            }
         };
         const gridDiv = document.querySelector('#returnGrid');
         gridApi = agGrid.createGrid(gridDiv, gridOptions);
@@ -55,148 +122,117 @@
         init: function () {
             var formID = $('#formID'), filter = $('#filter'), inputfilter = $('input[name=filter]'), adminform = $('#adminform'), filter_form = $("#filterform");
             adminform.hide();
-            //create the forms content on the selection of the radio buttons
-            inputfilter.on("click", { adminform: adminform, filter: filter }, adminpanel.filters);
-            //submit the forms
+            inputfilter.on("change", { adminform: adminform, filter: filter }, adminpanel.filters);
             filter_form.on('submit', adminpanel.submit_filter_form);
         },
         filters: function (e) {
-            if ($(this).val() == "formdata") {
-                e.data.adminform.show();
-                e.data.filter.html(
-                    '<div class="form-group" >' +
-                        '<input type="hidden" name="filterType" id="filterType" value="' + $(this).val() + '" />' +
-                        '<div style="float:left;" ><label class="control-label col-md-2">Form ID</label></div>' +
-                        '<div style="float:left;" ><input type="text" name="form_id" value="" id="form_value" placeholder="Search by form id" class="form-control" /></div>' +
-                        '<div style="float:left;" >&nbsp;&nbsp;<input type="submit" name="post" value="Filter" class="btn btn-default" /></div>' +
-                    '</div>'
-               );
-            }else if ($(this).val() == "rma") {
-                e.data.adminform.show();
-                e.data.filter.html(
-                    '<div class="form-group" >' +
-                        '<input type="hidden" name="filterType" id="filterType" value="' + $(this).val() + '" />' +
-                        '<div style="float:left;" ><label class="control-label col-md-2">Enter RMA#</label></div>' +
-                        '<div style="float:left;" ><input type="text" name="rma_num" value="" id="form_value" placeholder="Search by RMA#" class="form-control" /></div>' +
-                        '<div style="float:left;" >&nbsp;&nbsp;<input type="submit" name="post" value="Filter" class="btn btn-default" /></div>' +
-                    '</div>'
-               );
-            }
-            else if ($(this).val() == "companyName") {
-                e.data.adminform.show();
-                e.data.filter.html(
-                   '<div class="form-group">' +
-                        '<div style="float:left;" ><label class="control-label col-md-2">Company Name</label></div>' +
-                        '<input type="hidden" name="filterType" id="filterType" value="' + $(this).val() + '" />' +
-                        '<div style="float:left;" >' +
-                        '<select class="form-control" name="companyName" id="form_value" >' +
-                            '<option>Select a company</option>' +
-                             @Html.Raw(ViewBag.list_companys)
-                        '</select>' +
-                        '</div>' +
-                        '<div style="float:left;" >&nbsp;&nbsp;<input type="submit" name="post" value="Filter" class="btn btn-default" /></div>' +
-                    '</div>'
-               );
-            } else if ($(this).val() == "returnType") {
-                e.data.adminform.show();
-                e.data.filter.html(
-                   '<div class="form-group">' +
-                        '<input type="hidden" name="filterType" id="filterType" value="' + $(this).val() + '" />' +
-                        '<div style="float:left;" ><label class="control-label col-md-2">Request Type</label></div>' +
-                        '<div style="float:left;" >' +
-                        '<select class="form-control" name="returnType" id="form_value" >' +
-                            '<option>Select a Return Type</option>' +
-                            '<option value="4">Planned Stock Rotations</option>'+
-                            '<option value="1">Product Return</option>'+
-                            '<option selected="selected" value="2">Missing or Defective Product</option>'+
-                            '<option value="3">Transportation Damage</option>'+
-                        '</select>' +
-                        '</div>' +
-                        '<div style="float:left;" >&nbsp;&nbsp;<input type="submit" name="post" value="Filter" class="btn btn-default" /></div>' +
-                    '</div>'
-               );
-            } else if ($(this).val() == "status") {
-                e.data.adminform.show();
-                e.data.filter.html(
-                   '<div class="form-group">' +
-                        '<input type="hidden" name="filterType" id="filterType" value="' + $(this).val() + '" />' +
-                        '<div style="float:left;" ><label class="control-label col-md-2">Status</label></div>' +
-                        '<div style="float:left;" >' +
-                            '<select class="form-control" name="status" id="form_value">' +
-                                '<option>Select a status</option>' +
-                                '<option value="RA Issued" >RA Issued</option>' +
-                                '<option value="Under Review" >Under Review</option>' +
-                                '<option value="Cancel" >Canceled</option>' +
-                                '<option value="Saved" >Submitted Or Saved</option>' +
+            var selectedVal = $(this).val();
+            e.data.adminform.show();
+            
+            var filterHtml = '<input type="hidden" name="filterType" id="filterType" value="' + selectedVal + '" />';
+
+            if (selectedVal === "formdata") {
+                filterHtml += 
+                    '<div class="row" style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">' +
+                        '<div class="col-xs-12 col-sm-3"><label class="control-label" style="margin:0;">Form ID</label></div>' +
+                        '<div class="col-xs-12 col-sm-6"><input type="text" name="form_id" value="" id="form_value" placeholder="Search by form id" class="form-control" /></div>' +
+                        '<div class="col-xs-12 col-sm-2"><input type="submit" name="post" value="Filter" class="btn btn-default" style="width:100%;" /></div>' +
+                    '</div>';
+            } else if (selectedVal === "rma") {
+                filterHtml += 
+                    '<div class="row" style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">' +
+                        '<div class="col-xs-12 col-sm-3"><label class="control-label" style="margin:0;">Enter RMA#</label></div>' +
+                        '<div class="col-xs-12 col-sm-6"><input type="text" name="rma_num" value="" id="form_value" placeholder="Search by RMA#" class="form-control" /></div>' +
+                        '<div class="col-xs-12 col-sm-2"><input type="submit" name="post" value="Filter" class="btn btn-default" style="width:100%;" /></div>' +
+                    '</div>';
+            } else if (selectedVal === "companyName") {
+                filterHtml += 
+                    '<div class="row" style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">' +
+                        '<div class="col-xs-12 col-sm-3"><label class="control-label" style="margin:0;">Company Name</label></div>' +
+                        '<div class="col-xs-12 col-sm-6">' +
+                            '<select class="form-control" name="companyName" id="form_value">' +
+                                '<option>Select a company</option>' +
+                                 @Html.Raw(ViewBag.list_companys)
                             '</select>' +
                         '</div>' +
-                        '<div style="float:left;" >&nbsp;&nbsp;<input type="submit" name="post" value="Filter" class="btn btn-default" /></div>' +
-                    '</div>'
-               );
-            }
-            else if ($(this).val() == "requester") {
-                e.data.adminform.show();
-                var theusers = $("#theusers").html();
-                console.log(theusers);
-                e.data.filter.html(
-                    '<div class="form-group">' +
-                        '<input type="hidden" name="filterType" id="filterType" value="' + $(this).val() + '" />' +
-                        '<div style="float:left;" ><label class="control-label col-md-2" >Requester</label></div>' +
-                    '<div style="float:left;" >' +
-                    '<select class="form-control getrequester" name="requester" id="form_value"></select>'+
-
+                        '<div class="col-xs-12 col-sm-2"><input type="submit" name="post" value="Filter" class="btn btn-default" style="width:100%;" /></div>' +
+                    '</div>';
+            } else if (selectedVal === "returnType") {
+                filterHtml += 
+                    '<div class="row" style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">' +
+                        '<div class="col-xs-12 col-sm-3"><label class="control-label" style="margin:0;">Request Type</label></div>' +
+                        '<div class="col-xs-12 col-sm-6">' +
+                            '<select class="form-control" name="returnType" id="form_value">' +
+                                '<option>Select a Return Type</option>' +
+                                '<option value="4">Planned Stock Rotations</option>'+
+                                '<option value="1">Product Return</option>'+
+                                '<option selected="selected" value="2">Missing or Defective Product</option>'+
+                                '<option value="3">Transportation Damage</option>'+
+                            '</select>' +
                         '</div>' +
-                        '<div style="float:left;" >&nbsp;&nbsp;<input type="submit" name="post" value="Filter" class="btn btn-default" style="inline-block;" /></div>' +
-                    '</div>'
-               );
+                        '<div class="col-xs-12 col-sm-2"><input type="submit" name="post" value="Filter" class="btn btn-default" style="width:100%;" /></div>' +
+                    '</div>';
+            } else if (selectedVal === "status") {
+                filterHtml += 
+                    '<div class="row" style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">' +
+                        '<div class="col-xs-12 col-sm-3"><label class="control-label" style="margin:0;">Status</label></div>' +
+                        '<div class="col-xs-12 col-sm-6">' +
+                            '<select class="form-control" name="status" id="form_value">' +
+                                '<option>Select a status</option>' +
+                                '<option value="RA Issued">RA Issued</option>' +
+                                '<option value="Under Review">Under Review</option>' +
+                                '<option value="Cancel">Canceled</option>' +
+                                '<option value="Saved">Submitted Or Saved</option>' +
+                            '</select>' +
+                        '</div>' +
+                        '<div class="col-xs-12 col-sm-2"><input type="submit" name="post" value="Filter" class="btn btn-default" style="width:100%;" /></div>' +
+                    '</div>';
+            } else if (selectedVal === "requester") {
+                var theusers = $("#theusers").html();
+                filterHtml += 
+                    '<div class="row" style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">' +
+                        '<div class="col-xs-12 col-sm-3"><label class="control-label" style="margin:0;">Requester</label></div>' +
+                        '<div class="col-xs-12 col-sm-6">' +
+                            '<select class="form-control getrequester" name="requester" id="form_value"></select>' +
+                        '</div>' +
+                        '<div class="col-xs-12 col-sm-2"><input type="submit" name="post" value="Filter" class="btn btn-default" style="width:100%;" /></div>' +
+                    '</div>';
+                e.data.filter.html(filterHtml);
                 $(".getrequester").append(theusers);
+                return;
+            } else if (selectedVal === "request_date" || selectedVal === "date_completed") {
+                var titleText = selectedVal === "request_date" ? "Date Requested" : "Date Completed";
+                filterHtml += 
+                    '<div><strong>' + titleText + '</strong></div><br/>' +
+                    '<div class="row" style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">' +
+                        '<div class="col-xs-12 col-sm-2"><label class="control-label" style="margin:0;">Start Date</label></div>' +
+                        '<div class="col-xs-12 col-sm-3"><input type="text" name="request_date" value="" placeholder="Enter start date" class="form-control date-picker" id="form_value" /></div>' +
+                        '<div class="col-xs-12 col-sm-2"><label class="control-label" style="margin:0;">End Date</label></div>' +
+                        '<div class="col-xs-12 col-sm-3"><input type="text" name="completed_date" value="" placeholder="Enter end date" class="form-control date-picker" id="form_value1" /></div>' +
+                        '<div class="col-xs-12 col-sm-2"><input type="submit" name="post" value="Filter" class="btn btn-default" style="width:100%;" /></div>' +
+                    '</div>';
+            }
 
-            }else if($(this).val() == "request_date"){
-                e.data.adminform.show();
-                e.data.filter.html(
-                '<div class="form-group" >' +
-                    '<br /><strong>Date Requested</strong><br /><br/>'+
-                    '<input type="hidden" name="filterType" id="filterType" value="' + $(this).val() + '" />' +
-                    '<div style="float:left;" ><label class="control-label col-md-2">Start Date</label></div>' +
-                    '<div style="float:left;" ><input type="text" name="request_date" value="" placeholder="Enter end date" class="form-control date-picker" id="form_value" style="float:left;inline-block;" /></div>' +
-                    '<div style="float:left;" ><label class="control-label col-md-2">End Date</label></div>' +
-                    '<div style="float:left;" ><input type="text" name="completed_date" value="" placeholder="Enter end date" class="form-control date-picker" id="form_value1" style="float:left;inline-block;"  /></div>' +
-                    '<div style="float:left;" >&nbsp;&nbsp;<input type="submit" name="post" value="Filter" class="btn btn-default" /></div>' +
-                '</div>'
-               );
-                //implement data picker
+            e.data.filter.html(filterHtml);
+            if ($(".date-picker").length > 0) {
                 $(".date-picker").datepicker();
-            }else{
-                e.data.adminform.show();
-                e.data.filter.html(
-                '<div class="form-group" >' +
-                    '<br/><strong>Date Completed</strong><br /><br/>' +
-                    '<input type="hidden" name="filterType" id="filterType" value="' + $(this).val() + '" />' +
-                    '<div style="float:left;" ><label class="control-label col-md-2">Start Date</label></div>' +
-                    '<div style="float:left;" ><input type="text" name="request_date" value="" placeholder="Enter end date" class="form-control date-picker" id="form_value" style="float:left;inline-block;" /></div>' +
-                    '<div style="float:left;" ><label class="control-label col-md-2">End Date</label></div>' +
-                    '<div style="float:left;" ><input type="text" name="completed_date" value="" placeholder="Enter end date" class="form-control date-picker" id="form_value1" style="float:left;inline-block;"  /></div>' +
-                    '<div style="float:left;" >&nbsp;&nbsp;<input type="submit" name="post" value="Filter" class="btn btn-default" /></div>' +
-                '</div>'
-               );
-               //implement data picker
-               $(".date-picker").datepicker();
             }
         },
-        submit_filter_form:function(e){
+        submit_filter_form: function (e) {
             e.preventDefault();
             gridApi.setGridOption('loading', true);
-            var url = "/ReturnTool/AdminPanelFilter/?form_value1=" + $("#form_value1").val() +
-                "&form_value=" + $("#form_value").val() +
-                "&filterType=" + $("#filterType").val() +
+            var url = "/ReturnTool/AdminPanelFilter/?form_value1=" + ($("#form_value1").val() || "") +
+                "&form_value=" + ($("#form_value").val() || "") +
+                "&filterType=" + ($("#filterType").val() || "") +
                 "&n1_name=Return Request";
 
             $.post(url, function (result) {
                 gridApi.setGridOption('rowData', result);
                 gridApi.setGridOption('loading', false);
             });
-        },
-    }
+        }
+    };
+
     jQuery(document).ready(adminpanel.init);
 
     function formatDate(dateStr) {
@@ -205,43 +241,40 @@
         return new Date(ms).toLocaleDateString();
     }
 </script>
+
 <div id="theusers" style="display:none;">
     <option>Select a requester</option>
     @Html.Raw(ViewBag.list_users)
-
 </div>
+
 <div class="main_content">
-    <div>
-        <strong>Filter By</strong>
-        <input type="radio" name="filter" value="formdata" id="formdata" />Form ID#&nbsp;&nbsp;
-        <input type="radio" name="filter" value="rma" id="rma" />RMA#&nbsp;&nbsp;
-        <input type="radio" name="filter" value="companyName" />Company Name&nbsp;&nbsp;
-        <input type="radio" name="filter" value="returnType" />Return Type&nbsp;&nbsp;
-        <input type="radio" name="filter" value="status" />Status&nbsp;&nbsp;
-        <input type="radio" name="filter" value="requester" />Requester&nbsp;&nbsp;
-        <input type="radio" name="filter" value="request_date" />Request date&nbsp;&nbsp;
-        <input type="radio" name="filter" value="date_completed" />Date Completed&nbsp;&nbsp;
-        <input type="button" value="Clear Filters" class="btn btn-default" onclick="window.location.reload();" />
+    <div style="margin-bottom:15px;">
+        <strong style="display:block; margin-bottom:8px;">Filter By:</strong>
+        <div class="filter-radio-group">
+            <label><input type="radio" name="filter" value="formdata" id="formdata" /> Form ID#</label>
+            <label><input type="radio" name="filter" value="rma" id="rma" /> RMA#</label>
+            <label><input type="radio" name="filter" value="companyName" /> Company Name</label>
+            <label><input type="radio" name="filter" value="returnType" /> Return Type</label>
+            <label><input type="radio" name="filter" value="status" /> Status</label>
+            <label><input type="radio" name="filter" value="requester" /> Requester</label>
+            <label><input type="radio" name="filter" value="request_date" /> Request date</label>
+            <label><input type="radio" name="filter" value="date_completed" /> Date Completed</label>
+            <input type="button" value="Clear Filters" class="btn btn-default btn-sm" onclick="window.location.reload();" />
+        </div>
     </div>
 
-    <form action="~/ReturnTool/AdminPanel" align="left" id="filterform">
-        <span id="filter"></span>
+    <form action="~/ReturnTool/AdminPanel" id="filterform" class="dynamic-filter-container">
+        <span id="filter"><em>Select a filter option above to begin.</em></span>
     </form>
-    <br clear="left" /><br />
-    <table style="width:100%;text-align:center !important;" align="center">
-        <tr>
-            <td>
-                @Html.ActionLink("Submit a Return Request >>", "Create", new { n1_name = @Request.QueryString["n1_name"], msg = "Submit a Return Request" }, htmlAttributes: new { @style = "float:left;", @class = "btn btn-primary" })
-            </td>
-            <td>
-            </td>
-            <td>
-                @Html.ActionLink("<< Back", "Index", new { n1_name = @Request.QueryString["n1_name"], msg = "" }, htmlAttributes: new { @class = "btn btn-primary", @style = "float:right;", @onclick = "javascript:history.back()" })
-            </td>
-        </tr>
-    </table>
+
+    <div class="action-bar">
+        @Html.ActionLink("Submit a Return Request >>", "Create", new { n1_name = @Request.QueryString["n1_name"], msg = "Submit a Return Request" }, htmlAttributes: new { @class = "btn btn-primary" })
+        @Html.ActionLink("<< Back", "Index", new { n1_name = @Request.QueryString["n1_name"], msg = "" }, htmlAttributes: new { @class = "btn btn-primary", @onclick = "javascript:history.back()" })
+    </div>
+
     <hr />
-    <div class="table-wrapper" style="clear:both;">
-        <div id="returnGrid" class="ag-theme-quartz" style="height: 1000px; width: 100%;"></div>
+
+    <div class="table-wrapper">
+        <div id="returnGrid" class="ag-theme-quartz"></div>
     </div>
 </div>

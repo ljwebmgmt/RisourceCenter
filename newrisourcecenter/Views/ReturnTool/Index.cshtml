@@ -13,24 +13,52 @@
 <div id="theusers" style="display:none;">
     <option>Select a requester</option>
     @Html.Raw(ViewBag.list_users)
-
 </div>
+
 <style type="text/css">
     .btn.btn-xs {
         padding: 1px 5px !important;
         height: auto !important;
+    }
+    .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
+    #returnGrid {
+        height: 70vh;
+        width: 100%;
+    }
+    .action-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+    @media (max-width: 768px) {
+        .action-bar {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .action-bar .btn {
+            width: 100%;
+            text-align: center;
+        }
     }
 </style>
 <script>
     let gridApi;
 
     const columnDefs = [
-        { headerName: "Form ID", field: "form_id", sortable: true, filter: true, width: 120 },
+        { headerName: "Form ID", field: "form_id", sortable: true, filter: true, minWidth: 100, flex: 0.8 },
         {
             headerName: "Date Submitted",
             field: "submission_date",
             sortable: true,
             filter: 'agDateColumnFilter',
+            minWidth: 140,
+            flex: 1,
             valueFormatter: params => formatDate(params.value)
         },
         {
@@ -38,19 +66,24 @@
             field: "completion_date",
             sortable: true,
             filter: 'agDateColumnFilter',
+            minWidth: 140,
+            flex: 1,
             valueFormatter: params => formatDate(params.value)
         },
-        { headerName: "Status", field: "status", sortable: true, filter: true },
+        { headerName: "Status", field: "status", sortable: true, filter: true, minWidth: 130, flex: 1 },
         {
             headerName: "Actions",
             sortable: false,
             filter: false,
+            pinned: 'right',
+            minWidth: 130,
+            flex: 1,
             cellRenderer: params => {
                 const id = params.data.form_id;
                 const n1 = "@Request.QueryString["n1_name"]";
                 return `
                     <a href="/ReturnTool/Edit?id=${id}&n1_name=${n1}" class="btn btn-xs btn-info">Edit</a>
-                    <a href="/ReturnTool/Delete?id=${id}&n1_name=${n1}" onclick="deletef(this.href);return false" class="btn btn-xs btn-danger">Delete</button>
+                    <a href="/ReturnTool/Delete?id=${id}&n1_name=${n1}" onclick="deletef(this.href);return false" class="btn btn-xs btn-danger">Delete</a>
                 `;
             }
         }
@@ -58,12 +91,22 @@
 
     const gridOptions = {
         columnDefs: columnDefs,
-        rowData: @Html.Raw(Json.Encode(Model)), // Direct serialization of your list
+        rowData: @Html.Raw(Json.Encode(Model)),
         pagination: true,
         paginationPageSize: 15,
         defaultColDef: {
-            flex: 1,
             resizable: true
+        },
+        onGridReady: (params) => {
+            gridApi = params.api;
+            if (window.innerWidth > 768) {
+                params.api.sizeColumnsToFit();
+            }
+        },
+        onGridSizeChanged: (params) => {
+            if (window.innerWidth > 768) {
+                params.api.sizeColumnsToFit();
+            }
         }
     };
 
@@ -78,21 +121,17 @@
         gridApi = agGrid.createGrid(gridDiv, gridOptions);
     });
 </script>
+
 <div class="main_content">
-    <table style="width:100%;text-align:center !important;margin-bottom:10px;" align="center">
-        <tr>
-            <td>
-                @Html.ActionLink("Submit a Return Request >>", "Create", new { n1_name = @Request.QueryString["n1_name"], msg = "Submit a Return Request" }, htmlAttributes: new { @style = "float:left;", @class = "btn btn-primary" })
-            </td>
-            <td>
-                @if (userpages.Contains("74") || userpages.Contains("76"))
-                {
-                    @Html.ActionLink("Admin Panel >>", "AdminPanel", new { n1_name = @Request.QueryString["n1_name"], msg = "Admin Panel" }, htmlAttributes: new { @style = "float:right;", @class = "btn btn-primary" })
-                }
-            </td>
-        </tr>
-    </table>
-    <div class="table-wrapper" style="clear:both;">
-        <div id="returnGrid" class="ag-theme-quartz" style="height: 600px; width: 100%;"></div>
+    <div class="action-bar">
+        @Html.ActionLink("Submit a Return Request >>", "Create", new { n1_name = @Request.QueryString["n1_name"], msg = "Submit a Return Request" }, htmlAttributes: new { @class = "btn btn-primary" })
+        @if (userpages.Contains("74") || userpages.Contains("76"))
+        {
+            @Html.ActionLink("Admin Panel >>", "AdminPanel", new { n1_name = @Request.QueryString["n1_name"], msg = "Admin Panel" }, htmlAttributes: new { @class = "btn btn-primary" })
+        }
+    </div>
+
+    <div class="table-wrapper">
+        <div id="returnGrid" class="ag-theme-quartz"></div>
     </div>
 </div>

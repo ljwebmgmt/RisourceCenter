@@ -17,6 +17,23 @@
         height: 75vh;
         width: 100%;
     }
+    .toolbar-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    .toolbar-container .form-control {
+        min-width: 180px;
+    }
+    @media (max-width: 768px) {
+        .toolbar-container > div,
+        .toolbar-container button,
+        .toolbar-container .input-group {
+            width: 100%;
+        }
+    }
 </style>
 <script>
     let gridApi;
@@ -120,53 +137,48 @@
         gridApi = agGrid.createGrid(gridDiv, gridOptions);
     });
 </script>
-<table>
-    <tr>
-        <td>
-            <div class="dropdown">
-                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-                    Filter Communications By
-                    <span class="caret"></span>
+<div class="toolbar-container">
+    <div class="dropdown">
+        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+            Filter Communications By
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            @foreach (var item in @ViewBag.nav_Menu)
+            {
+                <li><a href="javascript:void(0);" onclick="applyNavFilter(@item.n3id)">@item.name - @item.n3name</a></li>
+            }
+        </ul>
+    </div>
+
+    <div>
+        <span class="input-group stylish-input-group">
+            <input type="text" id="form_value" placeholder="Search by doc name..." class="form-control" oninput="onQuickFilterChanged()" />
+            <span class="input-group-addon">
+                <button type="button" onclick="onQuickFilterChanged()">
+                    <span class="glyphicon glyphicon-search"></span>
                 </button>
-                <ul class="dropdown-menu">
-                    @foreach (var item in @ViewBag.nav_Menu)
-                    {
-                        <li><a href="javascript:void(0);" onclick="applyNavFilter(@item.n3id)">@item.name - @item.n3name</a></li>
-                    }
-                </ul>
-            </div>
-        </td>
-        <td>
-            <div class="dropdown">
-                <span class="input-group stylish-input-group">
-                    <input type="text" id="form_value" placeholder="search by doc name" class="form-control" oninput="onQuickFilterChanged()" />
-                    <span class="input-group-addon">
-                        <button type="button" onclick="onQuickFilterChanged()">
-                            <span class="glyphicon glyphicon-search"></span>
-                        </button>
-                    </span>
-                </span>
-            </div>
-        </td>
-        <td>
-            <div class="dropdown">
-                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-                    Add Sales Communication
-                    <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu">
-                    @foreach (var item in @ViewBag.nav_Menu)
-                    {
-                        <li><a href="Create?n2id=@item.id&img=@item.img&n3id=@item.n3id&n1_name=@Request.QueryString["n1_name"]&n2_name=@item.name&n3_name=@item.n3name">@item.name - @item.n3name</a></li>
-                    }
-                </ul>
-            </div>
-        </td>
-        <td>
-            <button class="btn btn-default" onclick="resetGrid()">Reset</button>
-        </td>
-    </tr>
-</table>
+            </span>
+        </span>
+    </div>
+
+    <div class="dropdown">
+        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+            Add Sales Communication
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            @foreach (var item in @ViewBag.nav_Menu)
+            {
+                <li><a href="Create?n2id=@item.id&img=@item.img&n3id=@item.n3id&n1_name=@Request.QueryString["n1_name"]&n2_name=@item.name&n3_name=@item.n3name">@item.name - @item.n3name</a></li>
+            }
+        </ul>
+    </div>
+
+    <div>
+        <button class="btn btn-default" onclick="resetGrid()">Reset</button>
+    </div>
+</div>
 <br/>
 <div class="table-wrapper" style="clear:both;">
     <div id="salesCommGrid" class="ag-theme-quartz"></div>
