@@ -169,7 +169,7 @@ namespace newrisourcecenter.Models
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "comp_ID,comp_name,comp_industry,comp_type,comp_level,comp_products,comp_SAP,comp_POS,comp_SPA,comp_project_reg,comp_MDF,comp_MDF_amount,comp_MDF_tLimit,comp_MDF_aLimit,comp_MDF_mLimit,comp_FX,comp_active,comp_dateCreated,comp_dateUpdated,comp_createdBy,comp_updatedBy,old_ID,comp_RiCRM,comp_region,bid_registration,it_territory_manager,general_manager,comp_MKT_Limit,approver_emails")] partnerCompanyViewModel partnerCompanyViewModel)
+        public async Task<ActionResult> Create([Bind(Include = "comp_ID,comp_name,comp_industry,comp_type,comp_level,comp_products,comp_SAP,comp_POS,comp_SPA,comp_project_reg,comp_MDF,comp_MDF_amount,comp_MDF_tLimit,comp_MDF_aLimit,comp_MDF_mLimit,comp_FX,comp_active,comp_dateCreated,comp_dateUpdated,comp_createdBy,comp_updatedBy,old_ID,comp_RiCRM,comp_region,bid_registration,it_territory_manager,general_manager,comp_MKT_Limit,approver_emails,training_emails")] partnerCompanyViewModel partnerCompanyViewModel)
         {
             if (ModelState.IsValid)
             {
@@ -310,7 +310,7 @@ namespace newrisourcecenter.Models
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "comp_ID,comp_name,comp_industry,comp_type,comp_level,comp_products,comp_SAP,comp_POS,comp_SPA,comp_project_reg,comp_MDF,comp_MDF_amount,comp_MDF_tLimit,comp_MDF_aLimit,comp_MDF_mLimit,comp_FX,comp_active,comp_dateCreated,comp_dateUpdated,comp_createdBy,comp_updatedBy,old_ID,comp_RiCRM,comp_region,bid_registration,it_territory_manager,general_manager,comp_MKT_Limit,approver_emails")] partnerCompanyViewModel partnerCompanyViewModel)
+        public async Task<ActionResult> Edit([Bind(Include = "comp_ID,comp_name,comp_industry,comp_type,comp_level,comp_products,comp_SAP,comp_POS,comp_SPA,comp_project_reg,comp_MDF,comp_MDF_amount,comp_MDF_tLimit,comp_MDF_aLimit,comp_MDF_mLimit,comp_FX,comp_active,comp_dateCreated,comp_dateUpdated,comp_createdBy,comp_updatedBy,old_ID,comp_RiCRM,comp_region,bid_registration,it_territory_manager,general_manager,comp_MKT_Limit,approver_emails,training_emails")] partnerCompanyViewModel partnerCompanyViewModel)
         {
             if (ModelState.IsValid)
             {

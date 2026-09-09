@@ -94,7 +94,7 @@
             { headerName: "Email", field: "usr_email", minWidth: 200, flex: 3 },
             {
                 headerName: "Actions",
-                minWidth: 350,
+                minWidth: 400,
                 sortable: false,
                 filter: false,
                 cellRenderer: params => {
@@ -117,6 +117,10 @@
 
                     if (canDeleteUser) {
                         html += `<a href="/UserViewModels/Delete?id=${item.usr_ID}&n1_name=${currentN1}" class="btn btn-danger btn-xs btn-delete-user">Delete</a>`;
+                    }
+
+                    if (canActivateUser && (item.inactive || item.deleted)) {
+                        html += `<a href="/UserViewModels/Reactivate?id=${item.usr_ID}&n1_name=${currentN1}" class="btn btn-info btn-xs btn-reactivate-user">Reactivate</a>`;
                     }
 
                     html += '</div>';

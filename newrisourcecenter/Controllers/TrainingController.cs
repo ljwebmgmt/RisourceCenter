@@ -1054,6 +1054,8 @@ namespace newrisourcecenter.Controllers
                     }
                 }
             }
+            if (!string.IsNullOrEmpty(company.training_emails))
+                emails += (!string.IsNullOrEmpty(emails) ? "," : "") + company.training_emails;
             return emails;
         }
 
@@ -1718,7 +1720,7 @@ namespace newrisourcecenter.Controllers
         }
 
         [HttpGet]
-         [Authorize(Roles = "Super Admin,Rittal User")]
+        [Authorize(Roles = "Super Admin,Rittal User")]
         public async Task<JsonResult> GetTrainingTracksAdmin()
         {
             var tracks = await db.trainingTracks
@@ -1812,7 +1814,7 @@ namespace newrisourcecenter.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Super Admin")]
+        [Authorize(Roles = "Super Admin,Rittal User")]
         public async Task<ActionResult> ExportAdminReportCsv(string trainingClass, int? trainingId, string completion, string passed, DateTime? startFrom, DateTime? startTo, DateTime? endFrom, DateTime? endTo, int companyId = 0)
         {
             // 1. Determine Training IDs to Query
