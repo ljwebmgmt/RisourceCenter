@@ -1166,8 +1166,9 @@
                                         }
                                         else
                                         {
+                                            string cleanFileName = System.Text.RegularExpressions.Regex.Replace(item.file_name ?? "", @"^[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}", "");
                                             <li style="display:inline-block;margin:20px;">
-                                                <a href="~/attachments/rfq_tool/images/@item.file_name" target="_blank">@item.file_name</a>
+                                                <a href="~/attachments/rfq_tool/images/@item.file_name" target="_blank">@cleanFileName</a>
                                                 @if (string.IsNullOrEmpty(Request.QueryString["admin"]))
                                                 {
                                                     @Html.ActionLink("Delete", "DeleteImage", new { id = item.file_id, form_id = Model.ID, n1_name = @Request.QueryString["n1_name"], n2_name = @Request.QueryString["n2_name"], ext_form = @Request.QueryString["ext_form"] }, htmlAttributes: new { id = "delete", onclick = "deletef(this.href);return false", @class = "btn btn-info" })
