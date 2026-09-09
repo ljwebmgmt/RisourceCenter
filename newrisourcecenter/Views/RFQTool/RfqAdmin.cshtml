@@ -257,6 +257,7 @@
             paginationPageSize: 20,
             onGridReady: (params) => {
                 gridApi = params.api;
+                restoreGridState();
                 if (window.innerWidth > 768) {
                     params.api.sizeColumnsToFit();
                 }
@@ -267,6 +268,10 @@
                     params.api.sizeColumnsToFit();
                 }
             },
+            onColumnResized: (params) => { if (params.finished) saveGridState(); },
+            onColumnVisible: () => saveGridState(),
+            onColumnMoved: () => saveGridState(),
+            onSortChanged: () => saveGridState(),
             overlayLoadingTemplate: '<span class="ag-overlay-loading-center">Loading RFQs...</span>',
             overlayNoRowsTemplate: '<span style="padding: 10px; border: 2px solid #444; background: lightgoldenrodyellow;">No RFQs found.</span>'
         };
@@ -382,6 +387,25 @@
                         hide: !checkbox.checked
                     }
                 ]
+            });
+        }
+    }
+
+    const STORAGE_KEY = `agGridState_RFQ_${currentUserId}`;
+
+    function saveGridState() {
+        if (!gridApi) return;
+        const columnState = gridApi.getColumnState();
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(columnState));
+    }
+
+    function restoreGridState() {
+        if (!gridApi) return;
+        const savedState = localStorage.getItem(STORAGE_KEY);
+        if (savedState) {
+            gridApi.applyColumnState({
+                state: JSON.parse(savedState),
+                applyOrder: true
             });
         }
     }
