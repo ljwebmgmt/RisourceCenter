@@ -1601,6 +1601,50 @@ namespace newrisourcecenter.Controllers
             return Json(viewModel, JsonRequestBehavior.AllowGet);
         }
 
+        [Authorize(Roles = "Super Admin,Rittal User")]
+        [HttpGet]
+        public async Task<FileStreamResult> ExportActiveResourcesReport(int n2id = 0)
+        {
+            // Get all active resources
+            var activeResourcesQuery = db.RiSourcesViewModels.Where(x => x.ris_status == "1");
+            
+            if (n2id > 0)
+            {
+                activeResourcesQuery = activeResourcesQuery.Where(a => a.n2ID == n2id);
+            }
+
+            var activeResources = await activeResourcesQuery.OrderByDescending(a => a.ris_ID).ToListAsync();
+
+            // Get last download date for each resource
+            var resourceIds = activeResources.Select(x => x.ris_ID).ToList();
+            var lastDownloads = await dbEntity.RiSources_Action_Log
+                .Where(x => resourceIds.Contains(x.Form_ID.Value) && x.Action == "download")
+                .GroupBy(x => x.Form_ID)
+                .Select(g => new { ResourceId = g.Key.Value, LastDownloadDate = g.Max(x => x.Action_Time) })
+                .ToDictionaryAsync(x => x.ResourceId, x => x.LastDownloadDate);
+
+            // Get document types
+            Dictionary<long, string> types = await dbEntity.nav2.Where(a => a.n2_active == 1).Where(a => a.n1ID == 4).ToDictionaryAsync(x => x.n2ID, x => x.n2_nameLong);
+
+            // Build export model
+            List<dynamic> exportData = new List<dynamic>();
+            foreach (var r in activeResources)
+            {
+                exportData.Add(new
+                {
+                    ID = r.ris_ID,
+                    ResourceName = r.ris_headline,
+                    DocumentType = (r.n2ID.HasValue && types.ContainsKey(r.n2ID.Value) ? types[r.n2ID.Value] : ""),
+                    UploadDate = r.dateCreated.HasValue ? r.dateCreated.Value.ToString("MM/dd/yyyy HH:mm") : "",
+                    LastDownloadDate = lastDownloads.ContainsKey(r.ris_ID) ? lastDownloads[r.ris_ID].Value.ToString("MM/dd/yyyy HH:mm") : "Never"
+                });
+            }
+
+            var result = WriteCsvToMemory(exportData);
+            var memoryStream = new MemoryStream(result);
+            return new FileStreamResult(memoryStream, "text/csv") { FileDownloadName = "active_resources_report_export.csv" };
+        }
+
         [HttpPost]
         public async Task<string> GetActivity(int id)
         {
