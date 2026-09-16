@@ -1,0 +1,151 @@
+@{
+    ViewBag.Title = "Active Resources Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var typeList = new Dictionary<string, string>();
+    foreach (var item in ViewBag.list_n2ID)
+    {
+        typeList.Add(item.Key.ToString(), item.Value.name);
+    }
+}
+<style type="text/css">
+    .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
+    #activeResourcesGrid {
+        height: 75vh;
+        width: 100%;
+    }
+    .toolbar-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    .toolbar-container .form-control {
+        min-width: 180px;
+    }
+    @@media (max-width: 768px) {
+        .toolbar-container > div,
+        .toolbar-container > form,
+        .toolbar-container button,
+        .toolbar-container .input-group {
+            width: 100%;
+        }
+    }
+</style>
+<script>
+    let gridApi;
+    const typeListLookup = @Html.Raw(Json.Encode(typeList));
+
+    const columnDefs = [
+        { headerName: "ID", field: "ris_ID", minWidth: 80, flex: 0.5, sortable: true, filter: true },
+        { headerName: "Resource Name", field: "ris_headline", minWidth: 250, flex: 2, sortable: true, filter: true },
+        {
+            headerName: "Document Type",
+            field: "n2ID",
+            minWidth: 150,
+            flex: 1,
+            filter: 'agTextColumnFilter',
+            valueFormatter: params => typeListLookup[params.value] || params.value,
+            filterValueGetter: params => typeListLookup[params.data.n2ID] || params.data.n2ID
+        },
+        { headerName: "Upload Date", field: "dateCreated", minWidth: 150, flex: 1, sortable: true, filter: true },
+        { headerName: "Last Download Date", field: "LastDownloadDate", minWidth: 150, flex: 1, sortable: true, filter: true }
+    ];
+
+    const gridOptions = {
+        columnDefs: columnDefs,
+        rowData: [],
+        pagination: true,
+        paginationPageSize: 20,
+        defaultColDef: { resizable: true },
+        onGridReady: (params) => {
+            gridApi = params.api;
+            loadGridData();
+            if (window.innerWidth > 768) {
+                params.api.sizeColumnsToFit();
+            }
+        },
+        onGridSizeChanged: (params) => {
+            if (window.innerWidth > 768) {
+                params.api.sizeColumnsToFit();
+            }
+        },
+        overlayLoadingTemplate: '<span class="ag-overlay-loading-center">Loading resources...</span>',
+        overlayNoRowsTemplate: '<span style="padding: 10px; border: 2px solid #444; background: lightgoldenrodyellow;">No resources found.</span>'
+    };
+
+    function loadGridData() {
+        const n2id = @Request.QueryString["n2id"] ?? 0;
+        gridApi.showLoadingOverlay();
+        
+        $.getJSON('/RiSources/GetActiveResourcesReportData', { n2id: n2id }, function (data) {
+            gridApi.setGridOption('rowData', data);
+        }).fail(function () {
+            gridApi.hideOverlay();
+        });
+    }
+
+    function onFilterChanged() {
+        gridApi.setGridOption('quickFilterText', document.getElementById('quickFilter').value);
+    }
+
+    function applyTypeFilter(typeName) {
+        if (!gridApi) return;
+        const currentModel = gridApi.getFilterModel() || {};
+        currentModel.n2ID = {
+            filterType: 'text',
+            type: 'equals',
+            filter: typeName
+        };
+        gridApi.setFilterModel(currentModel);
+    }
+
+    function resetFilters() {
+        document.getElementById('quickFilter').value = '';
+        gridApi.setGridOption('quickFilterText', '');
+        gridApi.setFilterModel(null);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const gridDiv = document.querySelector('#activeResourcesGrid');
+        gridApi = agGrid.createGrid(gridDiv, gridOptions);
+    });
+</script>
+
+<div class="toolbar-container">
+    <div class="dropdown">
+        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+            Filter By Document Type
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li><a href="javascript:void(0);" onclick="window.location.href='/RiSources/ActiveResourcesReport?n1_name=RiSources'">All Types</a></li>
+            @foreach (var item in ViewBag.list_n2ID)
+            {
+                <li><a href="javascript:void(0);" onclick="window.location.href='/RiSources/ActiveResourcesReport?n2id=@item.Key&n1_name=RiSources'">@item.Value.name</a></li>
+            }
+        </ul>
+    </div>
+
+    <form onsubmit="return false;">
+        <span class="input-group stylish-input-group">
+            <input type="text" id="quickFilter" placeholder="Search by doc name..." class="form-control" oninput="onFilterChanged()" />
+            <span class="input-group-addon" id="submit_search">
+                <button type="button" onclick="onFilterChanged()">
+                    <span class="glyphicon glyphicon-search"></span>
+                </button>
+            </span>
+        </span>
+    </form>
+
+    <div>
+        <button class="btn btn-default" onclick="resetFilters()">Reset</button>
+    </div>
+</div>
+
+<div class="table-wrapper" style="clear:both;">
+    <div id="activeResourcesGrid" class="ag-theme-quartz"></div>
+</div>

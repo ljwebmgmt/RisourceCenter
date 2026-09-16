@@ -1543,6 +1543,64 @@ namespace newrisourcecenter.Controllers
             return View(viewModel);
         }
 
+        // GET: Active Resources Report
+        [Authorize(Roles = "Super Admin,Rittal User")]
+        public ActionResult ActiveResourcesReport(int n2id = 0, string n1_name = null)
+        {
+            long userId = Convert.ToInt64(Session["userId"]);
+            if (!Request.IsAuthenticated || userId == 0)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            ViewBag.n1_name = n1_name;
+
+            // Get resource types for dropdown
+            var n2ids = dbEntity.nav2.Where(a => a.n2_active == 1 && a.n1ID == 4);
+            Dictionary<long, Nav1List> list_n2ID = new Dictionary<long, Nav1List>();
+            foreach (var n2dsitems in n2ids)
+            {
+                list_n2ID.Add(n2dsitems.n2ID, new Nav1List { id = n2dsitems.n2ID, name = n2dsitems.n2_nameLong, img = n2dsitems.n2_headerImg, n3order = n2dsitems.n2order });
+            }
+            ViewBag.list_n2ID = list_n2ID.OrderBy(a => a.Value.n3order);
+
+            return View();
+        }
+
+        // GET: Active Resources Report JSON
+        [Authorize(Roles = "Super Admin,Rittal User")]
+        public async Task<JsonResult> GetActiveResourcesReportData(int n2id = 0)
+        {
+            // Get all active resources
+            var activeResourcesQuery = db.RiSourcesViewModels.Where(x => x.ris_status == "1");
+            
+            if (n2id > 0)
+            {
+                activeResourcesQuery = activeResourcesQuery.Where(a => a.n2ID == n2id);
+            }
+
+            var activeResources = await activeResourcesQuery.OrderByDescending(a => a.ris_ID).ToListAsync();
+
+            // Get last download date for each resource
+            var resourceIds = activeResources.Select(x => x.ris_ID).ToList();
+            var lastDownloads = await dbEntity.RiSources_Action_Log
+                .Where(x => resourceIds.Contains(x.Form_ID.Value) && x.Action == "download")
+                .GroupBy(x => x.Form_ID)
+                .Select(g => new { ResourceId = g.Key.Value, LastDownloadDate = g.Max(x => x.Action_Time) })
+                .ToDictionaryAsync(x => x.ResourceId, x => x.LastDownloadDate);
+
+            // Build view model
+            var viewModel = activeResources.Select(r => new
+            {
+                r.ris_ID,
+                r.ris_headline,
+                r.n2ID,
+                dateCreated = r.dateCreated.HasValue ? r.dateCreated.Value.ToString("MM/dd/yyyy HH:mm") : "",
+                LastDownloadDate = lastDownloads.ContainsKey(r.ris_ID) ? lastDownloads[r.ris_ID].Value.ToString("MM/dd/yyyy HH:mm") : "Never"
+            }).ToList();
+
+            return Json(viewModel, JsonRequestBehavior.AllowGet);
+        }
+
         [HttpPost]
         public async Task<string> GetActivity(int id)
         {
