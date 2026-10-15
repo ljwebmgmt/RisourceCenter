@@ -226,6 +226,29 @@ namespace newrisourcecenter.Models
         public string location_name { get; set; }
     }
 
+    [Table("UserOnlineShopAccounts")]
+    public class UserOnlineShopAccount
+    {
+        [Key]
+        public int Id { get; set; }
+        [Display(Name = "User ID")]
+        public int UserId { get; set; }
+        [Display(Name = "Account Name")]
+        [Required]
+        [StringLength(100)]
+        public string AccountName { get; set; }
+        [Display(Name = "Email Address")]
+        [Required]
+        [StringLength(255)]
+        public string EmailAddress { get; set; }
+        [Display(Name = "Password")]
+        [Required]
+        [StringLength(255)]
+        public string Password { get; set; }
+        [Display(Name = "Created At")]
+        public DateTime CreatedAt { get; set; }
+    }
+
     public class SAPdata{
         public long? sap_account { get; set; }
         public long loc_ID { get; set; }

@@ -317,6 +317,119 @@ namespace newrisourcecenter.Controllers
             return RedirectToAction("Index");
         }
 
+        // POST: Webshop/AddUserAccount
+        [HttpPost]
+        [Authorize]
+        public async Task<JsonResult> AddUserAccount(string accountName, string emailAddress, string password)
+        {
+            long userId = Convert.ToInt64(Session["userId"]);
+            if (!Request.IsAuthenticated || userId == 0)
+            {
+                return Json(new { success = false, message = "Unauthorized" });
+            }
+
+            if (string.IsNullOrWhiteSpace(accountName) || string.IsNullOrWhiteSpace(emailAddress) || string.IsNullOrWhiteSpace(password))
+            {
+                return Json(new { success = false, message = "All fields are required" });
+            }
+
+            var userAccount = new UserOnlineShopAccount
+            {
+                UserId = Convert.ToInt32(userId),
+                AccountName = accountName.Trim(),
+                EmailAddress = emailAddress.Trim(),
+                Password = password,
+                CreatedAt = DateTime.Now
+            };
+
+            db.UserOnlineShopAccounts.Add(userAccount);
+            await db.SaveChangesAsync();
+
+            return Json(new { success = true, id = userAccount.Id, accountName = userAccount.AccountName });
+        }
+
+        // GET: Webshop/GetUserAccounts
+        [Authorize]
+        public async Task<JsonResult> GetUserAccounts()
+        {
+            long userId = Convert.ToInt64(Session["userId"]);
+            if (!Request.IsAuthenticated || userId == 0)
+            {
+                return Json(new { success = false, message = "Unauthorized" }, JsonRequestBehavior.AllowGet);
+            }
+
+            var accounts = await db.UserOnlineShopAccounts
+                .Where(a => a.UserId == userId)
+                .OrderBy(a => a.AccountName)
+                .Select(a => new { a.Id, a.AccountName, a.EmailAddress, a.Password })
+                .ToListAsync();
+
+            return Json(new { success = true, accounts = accounts }, JsonRequestBehavior.AllowGet);
+        }
+
+        // POST: Webshop/DeleteUserAccount
+        [HttpPost]
+        [Authorize]
+        public async Task<JsonResult> DeleteUserAccount(int id)
+        {
+            long userId = Convert.ToInt64(Session["userId"]);
+            if (!Request.IsAuthenticated || userId == 0)
+            {
+                return Json(new { success = false, message = "Unauthorized" });
+            }
+
+            var account = await db.UserOnlineShopAccounts.FindAsync(id);
+            if (account == null)
+            {
+                return Json(new { success = false, message = "Account not found" });
+            }
+
+            if (account.UserId != userId)
+            {
+                return Json(new { success = false, message = "Unauthorized" });
+            }
+
+            db.UserOnlineShopAccounts.Remove(account);
+            await db.SaveChangesAsync();
+
+            return Json(new { success = true });
+        }
+
+        // POST: Webshop/UpdateUserAccount
+        [HttpPost]
+        [Authorize]
+        public async Task<JsonResult> UpdateUserAccount(int id, string accountName, string emailAddress, string password)
+        {
+            long userId = Convert.ToInt64(Session["userId"]);
+            if (!Request.IsAuthenticated || userId == 0)
+            {
+                return Json(new { success = false, message = "Unauthorized" });
+            }
+
+            if (string.IsNullOrWhiteSpace(accountName) || string.IsNullOrWhiteSpace(emailAddress) || string.IsNullOrWhiteSpace(password))
+            {
+                return Json(new { success = false, message = "All fields are required" });
+            }
+
+            var account = await db.UserOnlineShopAccounts.FindAsync(id);
+            if (account == null)
+            {
+                return Json(new { success = false, message = "Account not found" });
+            }
+
+            if (account.UserId != userId)
+            {
+                return Json(new { success = false, message = "Unauthorized" });
+            }
+
+            account.AccountName = accountName.Trim();
+            account.EmailAddress = emailAddress.Trim();
+            account.Password = password;
+            await db.SaveChangesAsync();
+
+            return Json(new { success = true });
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)

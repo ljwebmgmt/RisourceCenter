@@ -93,6 +93,59 @@
     .header-row.pointer.collapsed .header.clickable {
         background-image: url(/images/png/glyphicons-192-minus-sign.png);
     }
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 400px;
+        border-radius: 5px;
+    }
+
+    .modal-header {
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 8px;
+        box-sizing: border-box;
+    }
+
+    .btn {
+        padding: 8px 15px;
+        margin-right: 5px;
+        cursor: pointer;
+    }
+
+    .user-account-row {
+        background: #CCC;
+        margin-bottom: 5px;
+        padding: 10px;
+        border-radius: 3px;
+    }
 </style>
 <script src="~/Scripts/jquery-3.1.0.min.js"></script>
 <script type="text/javascript">
@@ -123,20 +176,150 @@
                 $(this).show();
         });
     })
+
+    // Load user accounts on page load
+    $(document).ready(function () {
+        loadUserAccounts();
+    });
+
+    function loadUserAccounts() {
+        $.get('/Webshop/GetUserAccounts', function (response) {
+            if (response.success) {
+                renderUserAccounts(response.accounts);
+            }
+        });
+    }
+
+    function renderUserAccounts(accounts) {
+        var container = $('#userAccountsContainer');
+        container.empty();
+        
+        if (accounts.length === 0) {
+            container.hide();
+            return;
+        }
+
+        container.show();
+        accounts.forEach(function (account) {
+            var loginUrl = 'https://www.rittal.com/us-en/shop/login?login=' + encodeURIComponent(account.EmailAddress) + '&password=' + encodeURIComponent(account.Password);
+            var html = '<div class="user-account-row">' +
+                '<span style="font-weight:bold;">' + account.AccountName + '</span>' +
+                '<span style="float:right;">' +
+                '<a href="' + loginUrl + '" target="_blank" class="btn-primary login-link">Login</a>' +
+                '<button onclick="editUserAccount(' + account.Id + ', \'' + account.AccountName.replace(/'/g, "\\'") + '\', \'' + account.EmailAddress.replace(/'/g, "\\'") + '\', \'' + account.Password.replace(/'/g, "\\'") + '\')" class="btn btn-info" style="background:#5bc0de;border-color:#5bc0de;">Edit</button>' +
+                '<button onclick="deleteUserAccount(' + account.Id + ')" class="btn btn-danger" style="background:#d9534f;border-color:#d9534f;">Delete</button>' +
+                '</span>' +
+                '</div>';
+            container.append(html);
+        });
+    }
+
+    function openAddAccountModal() {
+        $('#modalTitle').text('Add Online Shop Account');
+        $('#saveButton').text('Save');
+        $('#editingAccountId').val('');
+        $('#accountName').val('');
+        $('#emailAddress').val('');
+        $('#password').val('');
+        $('#addAccountModal').show();
+    }
+
+    function editUserAccount(id, accountName, emailAddress, password) {
+        $('#modalTitle').text('Edit Online Shop Account');
+        $('#saveButton').text('Update');
+        $('#editingAccountId').val(id);
+        $('#accountName').val(accountName);
+        $('#emailAddress').val(emailAddress);
+        $('#password').val(password);
+        $('#addAccountModal').show();
+    }
+
+    function closeAddAccountModal() {
+        $('#addAccountModal').hide();
+        $('#editingAccountId').val('');
+        $('#accountName').val('');
+        $('#emailAddress').val('');
+        $('#password').val('');
+    }
+
+    function saveUserAccount() {
+        var accountName = $('#accountName').val();
+        var emailAddress = $('#emailAddress').val();
+        var password = $('#password').val();
+        var editingId = $('#editingAccountId').val();
+
+        if (!accountName || !emailAddress || !password) {
+            alert('Please fill in all fields');
+            return;
+        }
+
+        if (editingId) {
+            // Update existing account
+            $.post('/Webshop/UpdateUserAccount', {
+                id: editingId,
+                accountName: accountName,
+                emailAddress: emailAddress,
+                password: password
+            }, function (response) {
+                if (response.success) {
+                    closeAddAccountModal();
+                    loadUserAccounts();
+                } else {
+                    alert(response.message || 'Error updating account');
+                }
+            }).fail(function () {
+                alert('Error updating account');
+            });
+        } else {
+            // Add new account
+            $.post('/Webshop/AddUserAccount', {
+                accountName: accountName,
+                emailAddress: emailAddress,
+                password: password
+            }, function (response) {
+                if (response.success) {
+                    closeAddAccountModal();
+                    loadUserAccounts();
+                } else {
+                    alert(response.message || 'Error saving account');
+                }
+            }).fail(function () {
+                alert('Error saving account');
+            });
+        }
+    }
+
+    function deleteUserAccount(id) {
+        if (!confirm('Are you sure you want to delete this account?')) {
+            return;
+        }
+
+        $.post('/Webshop/DeleteUserAccount', { id: id }, function (response) {
+            if (response.success) {
+                loadUserAccounts();
+            } else {
+                alert(response.message || 'Error deleting account');
+            }
+        }).fail(function () {
+            alert('Error deleting account');
+        });
+    }
 </script>
 
 <strong>
     My Online Shop Accounts (<a style="color:inherit;text-decoration:underline;" href="https://risourcecenter.com/attachments/risources/Distributor-Online-Shop-Instruction-Manual.pdf" target="_blank">Instructions</a>)
-    @{
-        if (User.IsInRole("Super Admin") || User.IsInRole("Local Admin") || User.IsInRole("Global Admin"))
-        {
-            @*@Html.ActionLink("Manage SAP Account", "Index", "partnerStockCheck", routeValues: new { n1_name = "User Admin", n2_name = "SAP Accounts", msg = Model.usr_full_name, compid = companyId, user_ID = userId, back = "home" }, htmlAttributes: new { @class = "btn-sm btn-primary" })*@
-            <a target="_parent" class="btn-sm btn-primary" href="/Webshop?n1_name=User%20Admin&amp;n2_name=Online%20Shop%20Accounts&amp;msg=@ViewBag.fullname&amp;compid=@ViewBag.companyId&amp;user_ID=@ViewBag.userId&amp;back=home">Manage</a>
-        }
+    @if (User.IsInRole("Super Admin") || User.IsInRole("Local Admin") || User.IsInRole("Global Admin"))
+    {
+        @*@Html.ActionLink("Manage SAP Account", "Index", "partnerStockCheck", routeValues: new { n1_name = "User Admin", n2_name = "SAP Accounts", msg = Model.usr_full_name, compid = companyId, user_ID = userId, back = "home" }, htmlAttributes: new { @class = "btn-sm btn-primary" })*@
+        <a target="_parent" class="btn-sm btn-primary" href="/Webshop?n1_name=User%20Admin&amp;n2_name=Online%20Shop%20Accounts&amp;msg=@ViewBag.fullname&amp;compid=@ViewBag.companyId&amp;user_ID=@ViewBag.userId&amp;back=home">Manage</a>
     }
+    <button class="btn-sm btn-primary" onclick="openAddAccountModal()" style="background:#E50043;border-color:#E50043;">Add Account</button>
     <input type="text" placeholder="Search Company name or account....." class="search" />
 </strong>
 <div class="clearfix"></div>
+
+<div id="userAccountsContainer" style="margin-bottom: 15px;"></div>
+
 <div class="scroll-wrapper">
     @if (@Model != null)
     {
@@ -183,4 +366,28 @@
         <br /><br />
         <div>You do not have any Online Shop Accounts assigned to you</div>
     }
+</div>
+
+<!-- Add Account Modal -->
+<div id="addAccountModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header" id="modalTitle">Add Online Shop Account</div>
+        <input type="hidden" id="editingAccountId" value="" />
+        <div class="form-group">
+            <label for="accountName">Account Name:</label>
+            <input type="text" id="accountName" placeholder="Enter account name" />
+        </div>
+        <div class="form-group">
+            <label for="emailAddress">Email Address:</label>
+            <input type="email" id="emailAddress" placeholder="Enter email address" />
+        </div>
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" placeholder="Enter password" />
+        </div>
+        <div>
+            <button class="btn btn-primary" onclick="saveUserAccount()" style="background:#E50043;border-color:#E50043;" id="saveButton">Save</button>
+            <button class="btn btn-default" onclick="closeAddAccountModal()">Cancel</button>
+        </div>
+    </div>
 </div>
