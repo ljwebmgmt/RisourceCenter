@@ -381,26 +381,124 @@
 
 </article>
 
+<style>
+    #webshopAccountModal {
+        display: none;
+        position: fixed;
+        z-index: 10000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.6);
+        align-items: center;
+        justify-content: center;
+    }
+
+    #webshopAccountModal .modal-content {
+        background-color: #fff;
+        margin: auto;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        width: 450px;
+        max-width: 90%;
+    }
+
+    #webshopAccountModal .modal-header {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        color: #333;
+        border-bottom: 2px solid #E50043;
+        padding-bottom: 10px;
+    }
+
+    #webshopAccountModal .form-group {
+        margin-bottom: 20px;
+    }
+
+    #webshopAccountModal .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #555;
+    }
+
+    #webshopAccountModal .form-group input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        box-sizing: border-box;
+        transition: border-color 0.3s;
+    }
+
+    #webshopAccountModal .form-group input:focus {
+        border-color: #E50043;
+    }
+
+    #webshopAccountModal .form-group input:hover {
+        border-color: #E50043;
+    }
+
+    #webshopAccountModal .button-group {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    #webshopAccountModal .btn {
+        padding: 10px 25px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        transition: background 0.3s;
+    }
+
+    #webshopAccountModal .btn-default {
+        border: 1px solid #ccc;
+        background: #f5f5f5;
+        color: #333;
+    }
+
+    #webshopAccountModal .btn-default:hover {
+        background: #e0e0e0;
+    }
+
+    #webshopAccountModal .btn-primary {
+        background: #E50043;
+        border: none;
+        color: #fff;
+    }
+
+    #webshopAccountModal .btn-primary:hover {
+        background: #c90038;
+    }
+</style>
+
 <!-- Online Shop Account Modal -->
-<div id="webshopAccountModal" class="modal" style="display:none;position:fixed;z-index:10000;left:0;top:0;width:100%;height:100%;background-color:rgba(0,0,0,0.6);align-items:center;justify-content:center;">
-    <div class="modal-content" style="background-color:#fff;margin:auto;padding:30px;border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,0.3);width:450px;max-width:90%;">
-        <div class="modal-header" id="webshopModalTitle" style="font-size:20px;font-weight:bold;margin-bottom:20px;color:#333;border-bottom:2px solid #E50043;padding-bottom:10px;">Add Online Shop Account</div>
+<div id="webshopAccountModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header" id="webshopModalTitle">Add Online Shop Account</div>
         <input type="hidden" id="webshopEditingAccountId" value="" />
-        <div class="form-group" style="margin-bottom:20px;">
-            <label for="webshopAccountName" style="display:block;margin-bottom:8px;font-weight:600;color:#555;">Account Name:</label>
-            <input type="text" id="webshopAccountName" placeholder="Enter account name" style="width:100%;padding:12px;border:1px solid #ddd;border-radius:4px;font-size:14px;box-sizing:border-box;transition:border-color 0.3s;" onfocus="this.style.borderColor='#E50043'" onblur="this.style.borderColor='#ddd'" />
+        <div class="form-group">
+            <label for="webshopAccountName">Account Name:</label>
+            <input type="text" id="webshopAccountName" placeholder="Enter account name" />
         </div>
-        <div class="form-group" style="margin-bottom:20px;">
-            <label for="webshopEmailAddress" style="display:block;margin-bottom:8px;font-weight:600;color:#555;">Email Address:</label>
-            <input type="email" id="webshopEmailAddress" placeholder="Enter email address" style="width:100%;padding:12px;border:1px solid #ddd;border-radius:4px;font-size:14px;box-sizing:border-box;transition:border-color 0.3s;" onfocus="this.style.borderColor='#E50043'" onblur="this.style.borderColor='#ddd'" />
+        <div class="form-group">
+            <label for="webshopEmailAddress">Email Address:</label>
+            <input type="email" id="webshopEmailAddress" placeholder="Enter email address" />
         </div>
-        <div class="form-group" style="margin-bottom:25px;">
-            <label for="webshopPassword" style="display:block;margin-bottom:8px;font-weight:600;color:#555;">Password:</label>
-            <input type="password" id="webshopPassword" placeholder="Enter password" style="width:100%;padding:12px;border:1px solid #ddd;border-radius:4px;font-size:14px;box-sizing:border-box;transition:border-color 0.3s;" onfocus="this.style.borderColor='#E50043'" onblur="this.style.borderColor='#ddd'" />
+        <div class="form-group">
+            <label for="webshopPassword">Password:</label>
+            <input type="password" id="webshopPassword" placeholder="Enter password" />
         </div>
-        <div style="display:flex;justify-content:flex-end;gap:10px;">
-            <button class="btn btn-default" onclick="closeWebshopModal()" style="padding:10px 25px;border:1px solid #ccc;background:#f5f5f5;color:#333;border-radius:4px;cursor:pointer;font-size:14px;font-weight:500;transition:background 0.3s;" onmouseover="this.style.background='#e0e0e0'" onmouseout="this.style.background='#f5f5f5'">Cancel</button>
-            <button class="btn btn-primary" onclick="saveWebshopAccount()" style="padding:10px 25px;background:#E50043;border:none;color:#fff;border-radius:4px;cursor:pointer;font-size:14px;font-weight:500;transition:background 0.3s;" id="webshopSaveButton" onmouseover="this.style.background='#c90038'" onmouseout="this.style.background='#E50043'">Save</button>
+        <div class="button-group">
+            <button class="btn btn-default" onclick="closeWebshopModal()">Cancel</button>
+            <button class="btn btn-primary" onclick="saveWebshopAccount()" id="webshopSaveButton">Save</button>
         </div>
     </div>
 </div>
