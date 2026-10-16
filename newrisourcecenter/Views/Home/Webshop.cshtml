@@ -94,52 +94,6 @@
         background-image: url(/images/png/glyphicons-192-minus-sign.png);
     }
 
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0,0,0,0.5);
-    }
-
-    .modal-content {
-        background-color: #fefefe;
-        margin: 15% auto;
-        padding: 20px;
-        border: 1px solid #888;
-        width: 400px;
-        border-radius: 5px;
-    }
-
-    .modal-header {
-        font-weight: bold;
-        margin-bottom: 15px;
-    }
-
-    .form-group {
-        margin-bottom: 15px;
-    }
-
-    .form-group label {
-        display: block;
-        margin-bottom: 5px;
-    }
-
-    .form-group input {
-        width: 100%;
-        padding: 8px;
-        box-sizing: border-box;
-    }
-
-    .btn {
-        padding: 8px 15px;
-        margin-right: 5px;
-        cursor: pointer;
-    }
-
     .user-account-row {
         background: #CCC;
         margin-bottom: 5px;
@@ -215,43 +169,44 @@
     }
 
     function openAddAccountModal() {
-        $('#modalTitle').text('Add Online Shop Account');
-        $('#saveButton').text('Save');
-        $('#editingAccountId').val('');
-        $('#accountName').val('');
-        $('#emailAddress').val('');
-        $('#password').val('');
-        $('#addAccountModal').show();
+        // Send message to parent to open modal in add mode
+        window.parent.postMessage({
+            type: 'openWebshopModal',
+            mode: 'add'
+        }, '*');
     }
 
     function editUserAccount(id, accountName, emailAddress, password) {
-        $('#modalTitle').text('Edit Online Shop Account');
-        $('#saveButton').text('Update');
-        $('#editingAccountId').val(id);
-        $('#accountName').val(accountName);
-        $('#emailAddress').val(emailAddress);
-        $('#password').val(password);
-        $('#addAccountModal').show();
+        // Send message to parent to open modal in edit mode with data
+        window.parent.postMessage({
+            type: 'openWebshopModal',
+            mode: 'edit',
+            id: id,
+            accountName: accountName,
+            emailAddress: emailAddress,
+            password: password
+        }, '*');
     }
 
     function closeAddAccountModal() {
-        $('#addAccountModal').hide();
-        $('#editingAccountId').val('');
-        $('#accountName').val('');
-        $('#emailAddress').val('');
-        $('#password').val('');
+        // Send message to parent to close modal
+        window.parent.postMessage({ type: 'closeWebshopModal' }, '*');
     }
 
-    function saveUserAccount() {
-        var accountName = $('#accountName').val();
-        var emailAddress = $('#emailAddress').val();
-        var password = $('#password').val();
-        var editingId = $('#editingAccountId').val();
-
-        if (!accountName || !emailAddress || !password) {
-            alert('Please fill in all fields');
-            return;
+    // Listen for messages from parent
+    window.addEventListener('message', function(event) {
+        if (event.data.type === 'saveWebshopAccount') {
+            saveWebshopAccountFromParent(event.data);
+        } else if (event.data.type === 'reloadWebshopAccounts') {
+            loadUserAccounts();
         }
+    });
+
+    function saveWebshopAccountFromParent(data) {
+        var accountName = data.accountName;
+        var emailAddress = data.emailAddress;
+        var password = data.password;
+        var editingId = data.id;
 
         if (editingId) {
             // Update existing account
@@ -262,8 +217,8 @@
                 password: password
             }, function (response) {
                 if (response.success) {
-                    closeAddAccountModal();
-                    loadUserAccounts();
+                    window.parent.postMessage({ type: 'closeWebshopModal' }, '*');
+                    window.parent.postMessage({ type: 'webshopAccountSaved' }, '*');
                 } else {
                     alert(response.message || 'Error updating account');
                 }
@@ -278,8 +233,8 @@
                 password: password
             }, function (response) {
                 if (response.success) {
-                    closeAddAccountModal();
-                    loadUserAccounts();
+                    window.parent.postMessage({ type: 'closeWebshopModal' }, '*');
+                    window.parent.postMessage({ type: 'webshopAccountSaved' }, '*');
                 } else {
                     alert(response.message || 'Error saving account');
                 }
@@ -366,28 +321,4 @@
         <br /><br />
         <div>You do not have any Online Shop Accounts assigned to you</div>
     }
-</div>
-
-<!-- Add Account Modal -->
-<div id="addAccountModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header" id="modalTitle">Add Online Shop Account</div>
-        <input type="hidden" id="editingAccountId" value="" />
-        <div class="form-group">
-            <label for="accountName">Account Name:</label>
-            <input type="text" id="accountName" placeholder="Enter account name" />
-        </div>
-        <div class="form-group">
-            <label for="emailAddress">Email Address:</label>
-            <input type="email" id="emailAddress" placeholder="Enter email address" />
-        </div>
-        <div class="form-group">
-            <label for="password">Password:</label>
-            <input type="password" id="password" placeholder="Enter password" />
-        </div>
-        <div>
-            <button class="btn btn-primary" onclick="saveUserAccount()" style="background:#E50043;border-color:#E50043;" id="saveButton">Save</button>
-            <button class="btn btn-default" onclick="closeAddAccountModal()">Cancel</button>
-        </div>
-    </div>
 </div>
