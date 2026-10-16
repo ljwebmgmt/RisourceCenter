@@ -97,8 +97,60 @@
     .user-account-row {
         background: #CCC;
         margin-bottom: 5px;
-        padding: 10px;
+        padding: 12px 15px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .user-account-row span:first-child {
+        font-weight: bold;
+        font-size: 14px;
+        color: #333;
+    }
+
+    .user-account-buttons {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .user-account-buttons a,
+    .user-account-buttons button {
+        padding: 6px 12px;
+        font-size: 12px;
         border-radius: 3px;
+        text-decoration: none;
+        cursor: pointer;
+        border: none;
+        color: #fff;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    .btn-login {
+        background: #E50043;
+    }
+
+    .btn-login:hover {
+        background: #c90038;
+    }
+
+    .btn-edit {
+        background: #5bc0de;
+    }
+
+    .btn-edit:hover {
+        background: #46b8da;
+    }
+
+    .btn-delete {
+        background: #d9534f;
+    }
+
+    .btn-delete:hover {
+        background: #c9302c;
     }
 </style>
 <script src="~/Scripts/jquery-3.1.0.min.js"></script>
@@ -157,12 +209,12 @@
         accounts.forEach(function (account) {
             var loginUrl = 'https://www.rittal.com/us-en/shop/login?login=' + encodeURIComponent(account.EmailAddress) + '&password=' + encodeURIComponent(account.Password);
             var html = '<div class="user-account-row">' +
-                '<span style="font-weight:bold;">' + account.AccountName + '</span>' +
-                '<span style="float:right;">' +
-                '<a href="' + loginUrl + '" target="_blank" class="btn-primary login-link">Login</a>' +
-                '<button onclick="editUserAccount(' + account.Id + ', \'' + account.AccountName.replace(/'/g, "\\'") + '\', \'' + account.EmailAddress.replace(/'/g, "\\'") + '\', \'' + account.Password.replace(/'/g, "\\'") + '\')" class="btn btn-info" style="background:#5bc0de;border-color:#5bc0de;">Edit</button>' +
-                '<button onclick="deleteUserAccount(' + account.Id + ')" class="btn btn-danger" style="background:#d9534f;border-color:#d9534f;">Delete</button>' +
-                '</span>' +
+                '<span>' + account.AccountName + '</span>' +
+                '<div class="user-account-buttons">' +
+                '<a href="' + loginUrl + '" target="_blank" class="btn-login">Login</a>' +
+                '<button onclick="editUserAccount(' + account.Id + ', \'' + account.AccountName.replace(/'/g, "\\'") + '\', \'' + account.EmailAddress.replace(/'/g, "\\'") + '\', \'' + account.Password.replace(/'/g, "\\'") + '\')" class="btn-edit">Edit</button>' +
+                '<button onclick="deleteUserAccount(' + account.Id + ')" class="btn-delete">Delete</button>' +
+                '</div>' +
                 '</div>';
             container.append(html);
         });
