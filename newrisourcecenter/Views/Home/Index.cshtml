@@ -418,6 +418,8 @@
             if (iframe && iframe.contentWindow) {
                 iframe.contentWindow.postMessage({ type: 'reloadWebshopAccounts' }, '*');
             }
+        } else if (event.data.type === 'resetSaveButton') {
+            resetSaveButton();
         }
     });
 
@@ -453,11 +455,17 @@
         var emailAddress = document.getElementById('webshopEmailAddress').value;
         var password = document.getElementById('webshopPassword').value;
         var editingId = document.getElementById('webshopEditingAccountId').value;
+        var saveButton = document.getElementById('webshopSaveButton');
 
         if (!accountName || !emailAddress || !password) {
             alert('Please fill in all fields');
             return;
         }
+
+        // Disable button and show loading state
+        saveButton.disabled = true;
+        saveButton.textContent = 'Saving...';
+        saveButton.style.opacity = '0.6';
 
         // Send data to iframe to save
         var iframe = document.querySelector('iframe[src*="/Home/webshop"]');
@@ -470,5 +478,12 @@
                 password: password
             }, '*');
         }
+    }
+
+    function resetSaveButton() {
+        var saveButton = document.getElementById('webshopSaveButton');
+        saveButton.disabled = false;
+        saveButton.textContent = saveButton.textContent === 'Update' ? 'Update' : 'Save';
+        saveButton.style.opacity = '1';
     }
 </script>

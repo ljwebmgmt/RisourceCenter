@@ -10,7 +10,7 @@
         background: #efefef;
         padding: 5px;
         font-family: "Source Sans Pro","Helvetica Neue",Helvetica,Arial,sans-serif;
-        overflow: hidden;
+        overflow-y: auto;
     }
 
     table {
@@ -56,6 +56,7 @@
         line-height: 1.5;
         color: #ffffff;
         text-decoration: none;
+        cursor: pointer;
     }
 
     a {
@@ -271,10 +272,13 @@
                 if (response.success) {
                     window.parent.postMessage({ type: 'closeWebshopModal' }, '*');
                     window.parent.postMessage({ type: 'webshopAccountSaved' }, '*');
+                    window.parent.postMessage({ type: 'resetSaveButton' }, '*');
                 } else {
+                    window.parent.postMessage({ type: 'resetSaveButton' }, '*');
                     alert(response.message || 'Error updating account');
                 }
             }).fail(function () {
+                window.parent.postMessage({ type: 'resetSaveButton' }, '*');
                 alert('Error updating account');
             });
         } else {
@@ -287,10 +291,13 @@
                 if (response.success) {
                     window.parent.postMessage({ type: 'closeWebshopModal' }, '*');
                     window.parent.postMessage({ type: 'webshopAccountSaved' }, '*');
+                    window.parent.postMessage({ type: 'resetSaveButton' }, '*');
                 } else {
+                    window.parent.postMessage({ type: 'resetSaveButton' }, '*');
                     alert(response.message || 'Error saving account');
                 }
             }).fail(function () {
+                window.parent.postMessage({ type: 'resetSaveButton' }, '*');
                 alert('Error saving account');
             });
         }
@@ -320,7 +327,7 @@
         @*@Html.ActionLink("Manage SAP Account", "Index", "partnerStockCheck", routeValues: new { n1_name = "User Admin", n2_name = "SAP Accounts", msg = Model.usr_full_name, compid = companyId, user_ID = userId, back = "home" }, htmlAttributes: new { @class = "btn-sm btn-primary" })*@
         <a target="_parent" class="btn-sm btn-primary" href="/Webshop?n1_name=User%20Admin&amp;n2_name=Online%20Shop%20Accounts&amp;msg=@ViewBag.fullname&amp;compid=@ViewBag.companyId&amp;user_ID=@ViewBag.userId&amp;back=home">Manage</a>
     }
-    <button class="btn-sm btn-primary" onclick="openAddAccountModal()" style="background:#E50043;border-color:#E50043;">Add Account</button>
+    <button class="btn-sm btn-primary" onclick="openAddAccountModal()">Add Account</button>
     <input type="text" placeholder="Search Company name or account....." class="search" />
 </strong>
 <div class="clearfix"></div>
