@@ -67,14 +67,7 @@
                     '<span class="label label-success">Active</span>';
             }
         },
-        { headerName: "Registration Date", field: "registrationDate", minWidth: 120, flex: 1, sortable: true, valueGetter: params => params.data.registrationDate, comparator: (valueA, valueB, nodeA, nodeB) => {
-            const dateA = nodeA.data.registrationDateRaw ? new Date(nodeA.data.registrationDateRaw) : null;
-            const dateB = nodeB.data.registrationDateRaw ? new Date(nodeB.data.registrationDateRaw) : null;
-            if (dateA === null && dateB === null) return 0;
-            if (dateA === null) return 1;
-            if (dateB === null) return -1;
-            return dateA.getTime() - dateB.getTime();
-        }}
+        { headerName: "Registration Date", field: "registrationDate", minWidth: 120, flex: 1, sortable: true, valueGetter: params => params.data.registrationDateRaw, valueFormatter: params => params.data.registrationDate || '' }
     ];
 
     const gridOptions = {
