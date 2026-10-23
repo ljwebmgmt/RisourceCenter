@@ -23,6 +23,7 @@
     .filter-item .form-control,
     .filter-item .input-group {
         width: 100% !important;
+        max-width: 100% !important;
     }
     .table-wrapper {
         width: 100%;
@@ -49,15 +50,16 @@
             cellRenderer: params => params.value === "Admin" ?
                 '<span class="glyphicon glyphicon-star" style="color:red;"></span>' : ''
         },
-        { headerName: "User ID", field: "usr_ID", minWidth: 90, flex: 1 },
-        { headerName: "First Name", field: "usr_fName", minWidth: 120, flex: 2 },
-        { headerName: "Last Name", field: "usr_lName", minWidth: 120, flex: 2 },
-        { headerName: "Email", field: "usr_email", minWidth: 200, flex: 3 },
+        { headerName: "User ID", field: "usr_ID", minWidth: 90, flex: 1, sortable: true },
+        { headerName: "First Name", field: "usr_fName", minWidth: 120, flex: 2, sortable: true },
+        { headerName: "Last Name", field: "usr_lName", minWidth: 120, flex: 2, sortable: true },
+        { headerName: "Email", field: "usr_email", minWidth: 200, flex: 3, sortable: true },
         {
             headerName: "Status",
             field: "inactive",
             minWidth: 110,
             flex: 1,
+            sortable: true,
             cellRenderer: params => {
                 if (!params.data) return '';
                 return params.value ?
@@ -65,18 +67,17 @@
                     '<span class="label label-success">Active</span>';
             }
         },
-        { headerName: "Registration Date", field: "registrationDate", minWidth: 120, flex: 1 }
+        { headerName: "Registration Date", field: "registrationDate", minWidth: 120, flex: 1, sortable: true }
     ];
 
     const gridOptions = {
         columnDefs: columnDefs,
-        rowModelType: 'infinite',
-        cacheBlockSize: 20,
+        rowModelType: 'clientSide',
         pagination: true,
         paginationPageSize: 20,
         onGridReady: params => {
             gridApi = params.api;
-            params.api.setGridOption('datasource', userDataSource);
+            loadAllData();
 
             // Fit columns on wide screens, allow natural scroll on mobile
             if (window.innerWidth > 768) {
@@ -92,38 +93,53 @@
         overlayNoRowsTemplate: '<span style="padding: 10px; border: 2px solid #444; background: lightgoldenrodyellow;">No users found for this filter.</span>'
     };
 
-    const userDataSource = {
-        getRows: (params) => {
-            gridApi.setGridOption('loading', true);
+    function loadAllData() {
+        gridApi.setGridOption('loading', true);
 
-            const compName = $('#companySearch').val();
-            const compId = $(`#companies option[value="${compName}"]`).attr('data-id') || 0;
-            const locId = $('#locFilter').val() || 0;
-            const startDate = $('#startDate').val();
-            const endDate = $('#endDate').val();
+        const compName = $('#companySearch').val();
+        const compId = $(`#companies option[value="${compName}"]`).attr('data-id') || 0;
+        const locId = $('#locFilter').val() || 0;
+        const startDate = $('#startDate').val();
+        const endDate = $('#endDate').val();
 
-            let url = `/UserViewModels/GetUsersPagedWithRegistrationDate?start=${params.startRow}&limit=20&compid=${compId}&locid=${locId}`;
-            if (startDate) {
-                url += `&startDate=${startDate}`;
-            }
-            if (endDate) {
-                url += `&endDate=${endDate}`;
-            }
-
-            fetch(url)
-                .then(res => res.json())
-                .then(data => {
-                    gridApi.setGridOption('loading', false);
-                    params.successCallback(data.rows, data.total);
-                    if (data.total === 0) gridApi.showNoRowsOverlay();
-                    else gridApi.hideOverlay();
-                })
-                .catch(() => {
-                    gridApi.setGridOption('loading', false);
-                    params.failCallback();
-                });
+        let url = `/UserViewModels/GetUsersPagedWithRegistrationDate?start=0&limit=10000&compid=${compId}&locid=${locId}`;
+        if (startDate) {
+            url += `&startDate=${startDate}`;
         }
-    };
+        if (endDate) {
+            url += `&endDate=${endDate}`;
+        }
+
+        fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                gridApi.setGridOption('loading', false);
+                gridApi.setGridOption('rowData', data.rows);
+                if (data.total === 0) gridApi.showNoRowsOverlay();
+                else gridApi.hideOverlay();
+            })
+            .catch(() => {
+                gridApi.setGridOption('loading', false);
+                gridApi.showNoRowsOverlay();
+            });
+    }
+
+    function setDefaultDateRange() {
+        const today = new Date();
+        const oneYearAgo = new Date();
+        oneYearAgo.setFullYear(today.getFullYear() - 1);
+
+        // Format dates as YYYY-MM-DD for date input
+        const formatDate = (date) => {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        };
+
+        $('#startDate').val(formatDate(oneYearAgo));
+        $('#endDate').val(formatDate(today));
+    }
 
     function onCompanyFilterChange() {
         const compName = $('#companySearch').val();
@@ -137,18 +153,25 @@
                     locSelect.empty().append('<option value="0">All Locations</option>');
                     data.forEach(l => locSelect.append(`<option value="${l.id}">${l.name}</option>`));
                     $('#locContainer').show();
-                    onFilterChange();
+                    loadAllData();
                 });
         } else {
             $('#locContainer').hide();
-            onFilterChange();
+            loadAllData();
         }
     }
 
     function onFilterChange() {
-        if (gridApi) {
-            gridApi.refreshInfiniteCache();
-        }
+        loadAllData();
+    }
+
+    function resetFilters() {
+        $('#companySearch').val('');
+        $('#locFilter').val('0');
+        $('#locContainer').hide();
+        $('#startDate').val('');
+        $('#endDate').val('');
+        loadAllData();
     }
 
     function downloadCSV() {
@@ -170,6 +193,10 @@
     document.addEventListener('DOMContentLoaded', () => {
         const gridDiv = document.querySelector('#userTableGrid');
         gridApi = agGrid.createGrid(gridDiv, gridOptions);
+
+        // Set default date range (last year) and load data
+        setDefaultDateRange();
+        loadAllData();
     });
 </script>
 
@@ -207,6 +234,10 @@
 
         <div class="filter-item" style="flex: 0 0 auto;">
             <button class="btn btn-primary" onclick="downloadCSV()">Download CSV</button>
+        </div>
+
+        <div class="filter-item" style="flex: 0 0 auto;">
+            <button class="btn btn-default" onclick="resetFilters()">Reset Filters</button>
         </div>
     </div>
 }
