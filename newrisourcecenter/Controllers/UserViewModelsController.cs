@@ -229,7 +229,8 @@ namespace newrisourcecenter.Controllers
                 companyName = item.comp_ID.HasValue && companyMap.ContainsKey(item.comp_ID.Value) ? companyMap[item.comp_ID.Value] : "N/A",
                 item.usr_lastLogin,
                 item.deleted,
-                registrationDate = item.usr_dateCreated.HasValue ? item.usr_dateCreated.Value.ToString("MM/dd/yyyy") : ""
+                registrationDate = item.usr_dateCreated.HasValue ? item.usr_dateCreated.Value.ToString("MM/dd/yyyy") : "",
+                registrationDateRaw = item.usr_dateCreated
             }).ToList();
 
             return Json(new { rows = resultList, total = totalCount }, JsonRequestBehavior.AllowGet);

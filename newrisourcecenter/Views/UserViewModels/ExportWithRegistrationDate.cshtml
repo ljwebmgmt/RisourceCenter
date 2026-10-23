@@ -67,7 +67,14 @@
                     '<span class="label label-success">Active</span>';
             }
         },
-        { headerName: "Registration Date", field: "registrationDate", minWidth: 120, flex: 1, sortable: true }
+        { headerName: "Registration Date", field: "registrationDate", minWidth: 120, flex: 1, sortable: true, valueGetter: params => params.data.registrationDate, comparator: (valueA, valueB, nodeA, nodeB) => {
+            const dateA = nodeA.data.registrationDateRaw ? new Date(nodeA.data.registrationDateRaw) : null;
+            const dateB = nodeB.data.registrationDateRaw ? new Date(nodeB.data.registrationDateRaw) : null;
+            if (dateA === null && dateB === null) return 0;
+            if (dateA === null) return 1;
+            if (dateB === null) return -1;
+            return dateA.getTime() - dateB.getTime();
+        }}
     ];
 
     const gridOptions = {
@@ -126,8 +133,8 @@
 
     function setDefaultDateRange() {
         const today = new Date();
-        const oneYearAgo = new Date();
-        oneYearAgo.setFullYear(today.getFullYear() - 1);
+        const threeMonthsAgo = new Date();
+        threeMonthsAgo.setMonth(today.getMonth() - 3);
 
         // Format dates as YYYY-MM-DD for date input
         const formatDate = (date) => {
@@ -137,7 +144,7 @@
             return `${year}-${month}-${day}`;
         };
 
-        $('#startDate').val(formatDate(oneYearAgo));
+        $('#startDate').val(formatDate(threeMonthsAgo));
         $('#endDate').val(formatDate(today));
     }
 
