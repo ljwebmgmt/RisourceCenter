@@ -192,4 +192,18 @@ namespace newrisourcecenter.ViewModels
         public string lastLogin { get; set; }
         public string companyType { get; set; }
     }
+
+    public class UserExportWithRegistrationDate
+    {
+        public int userID { get; set; }
+        public string firstName { get; set; }
+        public string lastName { get; set; }
+        public string email { get; set; }
+        public string companyName { get; set; }
+        public string companyLocation { get; set; }
+        public string status { get; set; }
+        public string lastLogin { get; set; }
+        public string companyType { get; set; }
+        public string registrationDate { get; set; }
+    }
 }

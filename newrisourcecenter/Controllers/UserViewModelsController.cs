@@ -71,6 +71,29 @@ namespace newrisourcecenter.Controllers
             return View();
         }
 
+        // GET: UserViewModels/ExportWithRegistrationDate
+        public ActionResult ExportWithRegistrationDate()
+        {
+            long userId = Convert.ToInt64(Session["userId"]);
+            if (!Request.IsAuthenticated || userId == 0)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            // Keep the Company Dropdown logic for the filter menu
+            if (User.IsInRole("Super Admin") || User.IsInRole("Local Admin") || User.IsInRole("Global Admin"))
+            {
+                var compdata = db.partnerCompanyViewModels;
+                List<Nav1List> complist = new List<Nav1List>();
+                foreach (var item in compdata.OrderBy(a => a.comp_name))
+                {
+                    complist.Add(new Nav1List { id = item.comp_ID, name = item.comp_name });
+                }
+                ViewBag.compData = complist;
+            }
+            return View();
+        }
+
         [HttpGet]
         public async Task<JsonResult> GetUsersPaged(int start, int limit, int compid = 0, int locid = 0, string querystring = "")
         {
@@ -131,6 +154,82 @@ namespace newrisourcecenter.Controllers
                 companyName = item.comp_ID.HasValue && companyMap.ContainsKey(item.comp_ID.Value) ? companyMap[item.comp_ID.Value] : "N/A",
                 item.usr_lastLogin,
                 item.deleted
+            }).ToList();
+
+            return Json(new { rows = resultList, total = totalCount }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> GetUsersPagedWithRegistrationDate(int start, int limit, int compid = 0, int locid = 0, string querystring = "", DateTime? startDate = null, DateTime? endDate = null)
+        {
+            long userId = Convert.ToInt64(Session["userId"]);
+            long companyId = Convert.ToInt64(Session["companyId"]);
+            var UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
+
+            // 1. Base Query
+            IQueryable<UserViewModel> query = db.UserViewModels;
+
+            // 2. Apply your existing filtering logic
+            if (User.IsInRole("Super Admin") || User.IsInRole("Local Admin") || User.IsInRole("Global Admin"))
+            {
+                if(compid > 0)
+                {
+                    query = query.Where(a => a.comp_ID == compid);
+                    if (locid != 0)
+                    {
+                        query = query.Where(a => a.comp_loc_ID == locid);
+                    }
+                }
+            }
+            else if (User.IsInRole("Local Admin") && User.IsInRole("Channel User"))
+            {
+                query = query.Where(a => a.comp_ID == companyId);
+            }
+            else
+            {
+                query = query.Where(a => a.usr_ID == userId);
+            }
+
+            // 3. Apply Search String (querystring)
+            if (!string.IsNullOrEmpty(querystring))
+            {
+                query = query.Where(a => a.usr_fName == querystring || a.usr_lName == querystring || a.usr_email.Contains(querystring));
+            }
+
+            // 4. Apply Registration Date Filter
+            if (startDate.HasValue)
+            {
+                query = query.Where(a => a.usr_dateCreated >= startDate.Value);
+            }
+            if (endDate.HasValue)
+            {
+                query = query.Where(a => a.usr_dateCreated <= endDate.Value);
+            }
+
+            // 5. Get Total Count for Pagination
+            int totalCount = await query.CountAsync();
+
+            // 6. Paginate and Fetch
+            var rawData = await query.OrderBy(a => a.usr_fName).ThenBy(a => a.usr_lName)
+                                     .Skip(start)
+                                     .Take(limit)
+                                     .ToListAsync();
+
+            var companyMap = db.partnerCompanyViewModels.ToDictionary(x => x.comp_ID, x => x.comp_name);
+
+            // 7. Map to ViewModel & Role Logic
+            var resultList = rawData.Select(item => new {
+                item.usr_ID,
+                item.usr_fName,
+                item.usr_lName,
+                item.usr_email,
+                item.comp_ID,
+                user_role = GetAdminRole(item.system_ID, UserManager),
+                item.inactive,
+                companyName = item.comp_ID.HasValue && companyMap.ContainsKey(item.comp_ID.Value) ? companyMap[item.comp_ID.Value] : "N/A",
+                item.usr_lastLogin,
+                item.deleted,
+                registrationDate = item.usr_dateCreated.HasValue ? item.usr_dateCreated.Value.ToString("MM/dd/yyyy") : ""
             }).ToList();
 
             return Json(new { rows = resultList, total = totalCount }, JsonRequestBehavior.AllowGet);
@@ -232,6 +331,61 @@ namespace newrisourcecenter.Controllers
             var result = WriteCsvToMemory(usr_list);
             var memoryStream = new MemoryStream(result);
             return new FileStreamResult(memoryStream, "text/csv") { FileDownloadName = "users_export.csv" };
+        }
+
+        [HttpGet]
+        public async Task<FileStreamResult> ExportCSVWithRegistrationDate(int compid = 0, int locid = 0, DateTime? startDate = null, DateTime? endDate = null)
+        {
+            long userId = Convert.ToInt64(Session["userId"]);
+            long companyId = Convert.ToInt64(Session["companyId"]);
+            List<UserExportWithRegistrationDate> usr_list = new List<UserExportWithRegistrationDate>();
+            IQueryable<UserViewModel> user_data = db.UserViewModels;
+
+            if (User.IsInRole("Super Admin") || User.IsInRole("Local Admin") || User.IsInRole("Global Admin") || (User.IsInRole("Local Admin") && User.IsInRole("Channel User")))
+            {
+                if(compid > 0)
+                {
+                    user_data = user_data.Where(x => x.comp_ID == compid);
+                }  
+                if(locid > 0)
+                {
+                    user_data = user_data.Where(x => x.comp_loc_ID == locid);
+                }
+            }
+            else
+            {
+                user_data = user_data.Where(a => a.usr_ID == userId);
+            }
+
+            // Apply Registration Date Filter
+            if (startDate.HasValue)
+            {
+                user_data = user_data.Where(x => x.usr_dateCreated >= startDate.Value);
+            }
+            if (endDate.HasValue)
+            {
+                user_data = user_data.Where(x => x.usr_dateCreated <= endDate.Value);
+            }
+
+            Dictionary<long, string> companyNames = await db.partnerCompanyViewModels.ToDictionaryAsync(x => x.comp_ID, x => x.comp_name);
+            Dictionary<long, string> locationNames = await db.partnerLocationViewModels.ToDictionaryAsync(x => x.loc_ID, x => x.loc_name);
+            foreach (var item in await user_data.ToListAsync())
+            {
+                usr_list.Add(new UserExportWithRegistrationDate
+                {
+                    userID = item.usr_ID,
+                    firstName = item.usr_fName,
+                    lastName = item.usr_lName,
+                    email = item.usr_email,
+                    companyName = (item.comp_ID.HasValue && companyNames.ContainsKey(item.comp_ID.Value) ? companyNames[item.comp_ID.Value] : ""),
+                    companyLocation = (item.comp_loc_ID.HasValue && locationNames.ContainsKey(item.comp_loc_ID.Value) ? locationNames[item.comp_loc_ID.Value] : ""),
+                    status = (item.deleted ? "Deleted" : (item.inactive ? "In-Active" : "Active")),
+                    registrationDate = item.usr_dateCreated.HasValue ? item.usr_dateCreated.Value.ToString("MM/dd/yyyy") : ""
+                });
+            }
+            var result = WriteCsvToMemory(usr_list);
+            var memoryStream = new MemoryStream(result);
+            return new FileStreamResult(memoryStream, "text/csv") { FileDownloadName = "users_export_with_registration_date.csv" };
         }
 
         public byte[] WriteCsvToMemory(dynamic records)
