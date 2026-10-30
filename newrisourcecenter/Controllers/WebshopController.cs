@@ -333,7 +333,7 @@ namespace newrisourcecenter.Controllers
                 return Json(new { success = false, message = "All fields are required" });
             }
 
-            var userAccount = new UserOnlineShopAccount
+            var userAccount = new UserOnlineShopAccountViewModel
             {
                 UserId = Convert.ToInt32(userId),
                 AccountName = accountName.Trim(),
@@ -342,7 +342,7 @@ namespace newrisourcecenter.Controllers
                 CreatedAt = DateTime.Now
             };
 
-            db.UserOnlineShopAccounts.Add(userAccount);
+            db.UserOnlineShopAccountViewModels.Add(userAccount);
             await db.SaveChangesAsync();
 
             return Json(new { success = true, id = userAccount.Id, accountName = userAccount.AccountName });
@@ -358,7 +358,7 @@ namespace newrisourcecenter.Controllers
                 return Json(new { success = false, message = "Unauthorized" }, JsonRequestBehavior.AllowGet);
             }
 
-            var accounts = await db.UserOnlineShopAccounts
+            var accounts = await db.UserOnlineShopAccountViewModels
                 .Where(a => a.UserId == userId)
                 .OrderBy(a => a.AccountName)
                 .Select(a => new { a.Id, a.AccountName, a.EmailAddress, a.Password })
@@ -378,7 +378,7 @@ namespace newrisourcecenter.Controllers
                 return Json(new { success = false, message = "Unauthorized" });
             }
 
-            var account = await db.UserOnlineShopAccounts.FindAsync(id);
+            var account = await db.UserOnlineShopAccountViewModels.FindAsync(id);
             if (account == null)
             {
                 return Json(new { success = false, message = "Account not found" });
@@ -389,7 +389,7 @@ namespace newrisourcecenter.Controllers
                 return Json(new { success = false, message = "Unauthorized" });
             }
 
-            db.UserOnlineShopAccounts.Remove(account);
+            db.UserOnlineShopAccountViewModels.Remove(account);
             await db.SaveChangesAsync();
 
             return Json(new { success = true });
@@ -411,7 +411,7 @@ namespace newrisourcecenter.Controllers
                 return Json(new { success = false, message = "All fields are required" });
             }
 
-            var account = await db.UserOnlineShopAccounts.FindAsync(id);
+            var account = await db.UserOnlineShopAccountViewModels.FindAsync(id);
             if (account == null)
             {
                 return Json(new { success = false, message = "Account not found" });
@@ -425,6 +425,7 @@ namespace newrisourcecenter.Controllers
             account.AccountName = accountName.Trim();
             account.EmailAddress = emailAddress.Trim();
             account.Password = password;
+            db.Entry(account).State = EntityState.Modified;
             await db.SaveChangesAsync();
 
             return Json(new { success = true });

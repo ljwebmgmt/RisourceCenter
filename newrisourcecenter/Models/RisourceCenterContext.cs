@@ -85,5 +85,6 @@ namespace newrisourcecenter.Models
         public virtual DbSet<RiSourcesCarts> RiSourcesCarts { get; set; }
         public virtual DbSet<RFQRASViewModel> RFQRASViewModels { get; set; }
         public virtual DbSet<PMQuoteViewModel> PMQuoteViewModels { get; set; }
+        public virtual DbSet<UserOnlineShopAccountViewModel> UserOnlineShopAccountViewModels { get; set; }
     }
 }

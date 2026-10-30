@@ -14,6 +14,7 @@ using Ionic.Zip;
 using newrisourcecenter.ViewModels;
 using CsvHelper;
 using System.Globalization;
+using System.Security.AccessControl;
 
 namespace newrisourcecenter.Controllers
 {
@@ -1555,13 +1556,19 @@ namespace newrisourcecenter.Controllers
             ViewBag.n1_name = n1_name;
 
             // Get resource types for dropdown
-            var n2ids = dbEntity.nav2.Where(a => a.n2_active == 1 && a.n1ID == 4);
-            Dictionary<long, Nav1List> list_n2ID = new Dictionary<long, Nav1List>();
+            var n2ids = dbEntity.nav2.Where(a => a.n2_active == 1).Where(a => a.n1ID == 4);
+            List<Nav1List> list_n2ID = new List<Nav1List>();
             foreach (var n2dsitems in n2ids)
             {
-                list_n2ID.Add(n2dsitems.n2ID, new Nav1List { id = n2dsitems.n2ID, name = n2dsitems.n2_nameLong, img = n2dsitems.n2_headerImg, n3order = n2dsitems.n2order });
+                if (n2dsitems.n2ID != 46)
+                {
+                    if (n2dsitems.n2ID != 49 && n2dsitems.n2ID != 42 && n2dsitems.n2ID != 78)
+                    {
+                        list_n2ID.Add(new Nav1List { id = n2dsitems.n2ID, name = n2dsitems.n2_nameLong, n3order = n2dsitems.n2order });
+                    }
+                }
             }
-            ViewBag.list_n2ID = list_n2ID.OrderBy(a => a.Value.n3order);
+            ViewBag.list_n2ID = list_n2ID.OrderBy(a => a.n3order);
 
             return View();
         }
@@ -1634,7 +1641,7 @@ namespace newrisourcecenter.Controllers
                 {
                     ID = r.ris_ID,
                     ResourceName = r.ris_headline,
-                    DocumentType = (r.n2ID.HasValue && types.ContainsKey(r.n2ID.Value) ? types[r.n2ID.Value] : ""),
+                    DocumentType = (types.ContainsKey(r.n2ID) ? types[r.n2ID] : ""),
                     UploadDate = r.dateCreated.HasValue ? r.dateCreated.Value.ToString("MM/dd/yyyy HH:mm") : "",
                     LastDownloadDate = lastDownloads.ContainsKey(r.ris_ID) ? lastDownloads[r.ris_ID].Value.ToString("MM/dd/yyyy HH:mm") : "Never"
                 });

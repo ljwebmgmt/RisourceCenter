@@ -658,6 +658,7 @@
           <Property Name="general_manager" Type="nvarchar" MaxLength="100" />
           <Property Name="comp_MKT_Limit" Type="float" />
           <Property Name="approver_emails" Type="nvarchar(max)" />
+          <Property Name="training_emails" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="partnerCompany_Archive">
           <Key>
@@ -2012,6 +2013,17 @@
           <Property Name="sort_order" Type="smallint" Nullable="false" />
           <Property Name="image_url" Type="varchar" MaxLength="500" />
         </EntityType>
+        <EntityType Name="UserOnlineShopAccounts">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="AccountName" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="EmailAddress" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="Password" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="CreatedAt" Type="datetime" Nullable="false" />
+        </EntityType>
         <EntityType Name="UserProgress">
           <Key>
             <PropertyRef Name="Id" />
@@ -2405,6 +2417,7 @@
           <EntitySet Name="TrainingQuizAttemptAnswer" EntityType="Self.TrainingQuizAttemptAnswer" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TrainingRoleAssignment" EntityType="Self.TrainingRoleAssignment" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="trainingTracks" EntityType="Self.trainingTracks" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserOnlineShopAccounts" EntityType="Self.UserOnlineShopAccounts" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserProgress" EntityType="Self.UserProgress" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserTrainingTrackCompletions" EntityType="Self.UserTrainingTrackCompletions" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="usr_user" EntityType="Self.usr_user" Schema="dbo" store:Type="Tables" />
@@ -2657,6 +2670,7 @@
             <End Role="TrainingRoleAssignment" EntitySet="TrainingRoleAssignments" />
           </AssociationSet>
           <EntitySet Name="UserTrainingTrackCompletions" EntityType="RisourceCenterMexicoModel.UserTrainingTrackCompletion" />
+          <EntitySet Name="UserOnlineShopAccounts" EntityType="RisourceCenterMexicoModel.UserOnlineShopAccount" />
           </EntityContainer>
         <EntityType Name="ReturnToolActionLog">
           <Key>
@@ -4097,6 +4111,7 @@
           <Property Name="general_manager" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="comp_MKT_Limit" Type="Double" />
           <Property Name="approver_emails" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="training_emails" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="partnerStockCheck">
           <Key>
@@ -4986,6 +5001,17 @@
           <Property Name="TrainingClass" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="CompletedAt" Type="DateTime" Precision="3" />
           <Property Name="EmailedAt" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="UserOnlineShopAccount">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="AccountName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="EmailAddress" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedAt" Type="DateTime" Nullable="false" Precision="3" />
         </EntityType>
         </Schema>
     </edmx:ConceptualModels>
@@ -6501,6 +6527,7 @@
           <EntitySetMapping Name="partnerCompanies">
             <EntityTypeMapping TypeName="RisourceCenterMexicoModel.partnerCompany">
               <MappingFragment StoreEntitySet="partnerCompany">
+                <ScalarProperty Name="training_emails" ColumnName="training_emails" />
                 <ScalarProperty Name="approver_emails" ColumnName="approver_emails" />
                 <ScalarProperty Name="comp_MKT_Limit" ColumnName="comp_MKT_Limit" />
                 <ScalarProperty Name="general_manager" ColumnName="general_manager" />
@@ -7307,6 +7334,18 @@
                 <ScalarProperty Name="CompletedAt" ColumnName="CompletedAt" />
                 <ScalarProperty Name="TrainingClass" ColumnName="TrainingClass" />
                 <ScalarProperty Name="UserId" ColumnName="UserId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserOnlineShopAccounts">
+            <EntityTypeMapping TypeName="RisourceCenterMexicoModel.UserOnlineShopAccount">
+              <MappingFragment StoreEntitySet="UserOnlineShopAccounts">
+                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="EmailAddress" ColumnName="EmailAddress" />
+                <ScalarProperty Name="AccountName" ColumnName="AccountName" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

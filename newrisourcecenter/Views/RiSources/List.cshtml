@@ -134,7 +134,7 @@
 
                             if (result)
                             {
-                                <a id="grid_title" target="_blank" href="@risource.ris_link">
+                                <a id="grid_title" target="_blank" href="#" ng-click='trackDownload(@risource.ris_ID, "@risource.ris_link")'>
                                     @if (@risource.ris_headline.Length <= 20 || @Request.QueryString["grid"] == null || @Request.QueryString["grid"] == "")
                                     {
                                         @risource.ris_headline
@@ -156,12 +156,12 @@
 
                                 <div id="@ViewBag.viewType" style="margin-top:-5px;">
                                     <span> @String.Format("{0:d}", @risource.dateCreated)</span>
-                                    <a id="@ViewBag.file_size" target="_blank" href="@risource.ris_link" class="btn btn-primary btn-sm glyphicon glyphicon-new-window"> Link</a>
+                                    <a id="@ViewBag.file_size" target="_blank" href="#" ng-click='trackDownload(@risource.ris_ID, "@risource.ris_link")' class="btn btn-primary btn-sm glyphicon glyphicon-new-window"> Link</a>
                                 </div>
                             }
                             else
                             {
-                                <a id="grid_title" target="_blank" href="~/attachments/risources/@risource.ris_link">
+                                <a id="grid_title" target="_blank" href="#" ng-click='trackDownload(@risource.ris_ID, "attachments/risources/@risource.ris_link")'>
                                     @if (@risource.ris_headline.Length <= 20 || @Request.QueryString["grid"] == null || @Request.QueryString["grid"] == "")
                                     {
                                         @risource.ris_headline
@@ -183,7 +183,7 @@
                                     <span> @risource.file_type</span>
                                     <span> @risource.file_size KB</span>
                                     <span> @String.Format("{0:d}", @risource.dateCreated)</span>
-                                    <a id="@ViewBag.file_size" target="_blank" href="~/attachments/risources/@risource.ris_link" class="btn btn-primary btn-sm glyphicon glyphicon-download-alt"> Download</a>
+                                    <a id="@ViewBag.file_size" target="_blank" ng-click='trackDownload(@risource.ris_ID, "attachments/risources/@risource.ris_link")' href="#" class="btn btn-primary btn-sm glyphicon glyphicon-download-alt"> Download</a>
                                 </div>
                             }
                         }
@@ -204,7 +204,7 @@
 
                         if (result)
                         {
-                            <a id="grid_title" target="_blank" href="@risource.ris_link">
+                            <a id="grid_title" target="_blank" href="#" ng-click='trackDownload(@risource.ris_ID, "@risource.ris_link")'>
                                 @if (@risource.ris_headline.Length <= 20 || @Request.QueryString["grid"] == null || @Request.QueryString["grid"] == "")
                                 {
                                     @risource.ris_headline
@@ -226,12 +226,12 @@
 
                             <div id="@ViewBag.viewType" style="margin-top:-5px;">
                                 <span> @String.Format("{0:d}", @risource.dateCreated)</span>
-                                <a id="@ViewBag.file_size" target="_blank" href="@risource.ris_link" class="btn btn-primary btn-sm glyphicon glyphicon-new-window"> Link</a>
+                                <a id="@ViewBag.file_size" target="_blank" href="#" ng-click='trackDownload(@risource.ris_ID, "@risource.ris_link")' class="btn btn-primary btn-sm glyphicon glyphicon-new-window"> Link</a>
                             </div>
                         }
                         else
                         {
-                            <a id="grid_title" target="_blank" href="~/attachments/risources/@risource.ris_link">
+                            <a id="grid_title" target="_blank" href="#" ng-click='trackDownload(@risource.ris_ID, "attachments/risources/@risource.ris_link")'>
                                 @if (@risource.ris_headline.Length <= 20 || @Request.QueryString["grid"] == null || @Request.QueryString["grid"] == "")
                                 {
                                     @risource.ris_headline
@@ -253,7 +253,7 @@
                                 <span> @risource.file_type</span>
                                 <span> @risource.file_size KB</span>
                                 <span> @String.Format("{0:d}", @risource.dateCreated)</span>
-                                <a id="@ViewBag.file_size" target="_blank" href="~/attachments/risources/@risource.ris_link" class="btn btn-primary btn-sm glyphicon glyphicon-download-alt"> Download</a>
+                                <a id="@ViewBag.file_size" target="_blank" href="#" ng-click='trackDownload(@risource.ris_ID, "attachments/risources/@risource.ris_link")' class="btn btn-primary btn-sm glyphicon glyphicon-download-alt"> Download</a>
                             </div>
                         }
                     } 

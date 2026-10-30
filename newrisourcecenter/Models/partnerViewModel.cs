@@ -121,6 +121,8 @@ namespace newrisourcecenter.Models
         public string MKT_remaining { get; set; }
         [Display(Name = "Approver Email(s)")]
         public string approver_emails { get; set; }
+        [Display(Name = "Training Recipient Email(s)")]
+        public string training_emails { get; set; }
     }
 
     [Table("partnerLocation")]
@@ -227,7 +229,7 @@ namespace newrisourcecenter.Models
     }
 
     [Table("UserOnlineShopAccounts")]
-    public class UserOnlineShopAccount
+    public class UserOnlineShopAccountViewModel
     {
         [Key]
         public int Id { get; set; }

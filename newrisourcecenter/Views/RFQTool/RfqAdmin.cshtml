@@ -118,12 +118,12 @@
 </style>
 <script>
     let gridApi = null;
+    const currentUserId = '@Session["userId"].ToString()';
     document.addEventListener('DOMContentLoaded', () => {
         const rowData = @Html.Raw(JsonConvert.SerializeObject(Model));
         const productCategories = @Html.Raw(JsonConvert.SerializeObject(new Dictionary<string, string>() { { "ts8-ie", "TS8 INDUSTRIAL" }, { "vx-ie", "VX INDUSTRIAL" }, { "ts8-it", "TS8 DATA CENTER" }, { "WM_AE_JB", "WM/AE/AX/JB/KX" }, { "spare", "SPARE PARTS" }, { "other", "OTHER" } }));
         const n1_name = '@(Context.Request.QueryString["n1_name"])';
         const n2_name = '@(Context.Request.QueryString["n2_name"])';
-        const currentUserId = '@Session["userId"].ToString()';
         const superAdmins = ["61272", "40", "11", "10", "65932", "28"];
         const editUrlBase = '@Url.Action("Edit")';
         const assignUrlBase = '@Url.Action("ManageAssignRFQ")';
@@ -294,8 +294,8 @@
                 li.style.padding = "5px 15px";
                 li.innerHTML = `
                     <label style="cursor:pointer; font-weight:normal; display:flex; align-items:center; gap:8px; margin:0;">
-                        <input type="checkbox" ${col.isVisible() ? 'checked' : ''} 
-                               onchange="toggleColumn('${def.field}', this)"> 
+                        <input type="checkbox" ${col.isVisible() ? 'checked' : ''}
+                               onchange="toggleColumn('${def.field}', this)">
                         ${def.headerName}
                     </label>
                 `;
@@ -329,18 +329,18 @@
         },
         getid: function(id){
             $('#modal').show();
-            $('#quote_id').html(id);		
-            $('.done').attr('id', id);		
+            $('#quote_id').html(id);
+            $('.done').attr('id', id);
         },
         assign: function (id) {
-            var new_assigned = $('#'+id).text();	
+            var new_assigned = $('#'+id).text();
             $('.done').attr('title', id);
-            $('.done').attr('name', new_assigned);	
-            $('#assigned').html('You are assigning this quote to <b style="color:red">'+new_assigned+'</b>');	
+            $('.done').attr('name', new_assigned);
+            $('#assigned').html('You are assigning this quote to <b style="color:red">'+new_assigned+'</b>');
         },
-        close_modal: function (id, title, name){	
-            var assignee = name.split(' ', 1);	
-            if(title!="" && id!=""){	
+        close_modal: function (id, title, name){
+            var assignee = name.split(' ', 1);
+            if(title!="" && id!=""){
                 var url = '/RFQTool/ManageAssignRFQ/?rfq_id=' + id + '&usr_id=' + title + "&assign=yes";
                 $.ajax({
                     type: "POST",
@@ -349,13 +349,13 @@
                         $("." + id).hide();
                         $('#status_' + id).html('Assigned To - ' + data);
                     },
-                });		
+                });
                 $('#modal').hide();
             } else {
                 alert('please selet an assignee');
-            }	
+            }
         },
-        searchAdmin: function (querystring) {		
+        searchAdmin: function (querystring) {
             var url = '/RFQTool/GetRFQAdmins/?querystring=' + querystring;
             $.ajax({
                 type: "GET",
@@ -363,7 +363,7 @@
                 success: function (data) {
                     $('#RFQ_list').html(data);
                 },
-            });	
+            });
         },
         toggleNotes: function (id) {
             $("#notes_" + id).toggle();

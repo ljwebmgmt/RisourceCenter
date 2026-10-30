@@ -4,7 +4,7 @@
     var typeList = new Dictionary<string, string>();
     foreach (var item in ViewBag.list_n2ID)
     {
-        typeList.Add(item.Key.ToString(), item.Value.name);
+        typeList.Add(item.id.ToString(), item.name);
     }
 }
 <style type="text/css">
@@ -40,7 +40,6 @@
     const typeListLookup = @Html.Raw(Json.Encode(typeList));
 
     const columnDefs = [
-        { headerName: "ID", field: "ris_ID", minWidth: 80, flex: 0.5, sortable: true, filter: true },
         { headerName: "Resource Name", field: "ris_headline", minWidth: 250, flex: 2, sortable: true, filter: true },
         {
             headerName: "Document Type",
@@ -78,7 +77,7 @@
     };
 
     function loadGridData() {
-        const n2id = @Request.QueryString["n2id"] ?? 0;
+        const n2id = '@Request.QueryString["n2id"]' ?? 0;
         gridApi.showLoadingOverlay();
         
         $.getJSON('/RiSources/GetActiveResourcesReportData', { n2id: n2id }, function (data) {
@@ -125,7 +124,7 @@
             <li><a href="javascript:void(0);" onclick="window.location.href='/RiSources/ActiveResourcesReport?n1_name=RiSources'">All Types</a></li>
             @foreach (var item in ViewBag.list_n2ID)
             {
-                <li><a href="javascript:void(0);" onclick="window.location.href='/RiSources/ActiveResourcesReport?n2id=@item.Key&n1_name=RiSources'">@item.Value.name</a></li>
+            <li><a href="javascript:void(0);" onclick="window.location.href='/RiSources/ActiveResourcesReport?n2id=@item.id&n1_name=RiSources'">@item.name</a></li>
             }
         </ul>
     </div>
@@ -142,11 +141,10 @@
     </form>
 
     <div>
-        <a href="/RiSources/ExportActiveResourcesReport?n2id=@Request.QueryString["n2id"]" class="btn btn-success">Export to CSV</a>
-    </div>
-
-    <div>
         <button class="btn btn-default" onclick="resetFilters()">Reset</button>
+    </div>
+    <div>
+        <a href="/RiSources/ExportActiveResourcesReport?n2id=@Request.QueryString["n2id"]" class="btn btn-success">Export to CSV</a>
     </div>
 </div>
 
