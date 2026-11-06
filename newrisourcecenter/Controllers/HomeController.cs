@@ -206,6 +206,34 @@ namespace newrisourcecenter.Controllers
                     homeModel.usr_state = usr_state;
                 }
 
+                // Fetch recent communications for "What's New for You" section
+                var recentComms = dbEntity.salesComms
+                    .Where(a => a.sc_endDate >= DateTime.Now || a.sc_endDate == null)
+                    .OrderByDescending(a => a.sc_startDate)
+                    .Take(4)
+                    .Select(a => new {
+                        a.sc_headline,
+                        a.sc_teaser,
+                        a.sc_startDate,
+                        a.n3ID
+                    }).ToList();
+
+                ViewBag.recentComms = recentComms;
+
+                // Fetch recent resources for "What's New for You" section
+                var recentResources = dbEntity.RiSources
+                    .Where(a => a.ris_active == 1)
+                    .OrderByDescending(a => a.ris_dateCreated)
+                    .Take(4)
+                    .Select(a => new {
+                        a.ris_headline,
+                        a.ris_teaser,
+                        a.ris_dateCreated,
+                        a.ris_link
+                    }).ToList();
+
+                ViewBag.recentResources = recentResources;
+
                 return View(homeModel);
             }
         }

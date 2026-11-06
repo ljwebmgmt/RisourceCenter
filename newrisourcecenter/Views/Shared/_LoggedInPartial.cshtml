@@ -52,14 +52,37 @@
     long userId = Convert.ToInt64(Session["userId"]);
 }
 <!--Start of search forms and Logo-->
-<div id="header">
+<div id="header" class="site-header">
+    <div class="header-top">
+        <div class="brand-wrap">
+            <div class="brand-mark">RITTAL<span></span></div>
+            <div>
+                <div class="brand-title">RiSource Center</div>
+                <div class="brand-sub">Sales. Support. Success.</div>
+            </div>
+        </div>
+        <div class="global-search">
+            <input type="text" placeholder="Search RiSource Center..." id="globalSearchInput" />
+            <button type="button" onclick="document.getElementById('search').submit()">⌕</button>
+        </div>
+        <div class="user-box">
+            @using Microsoft.AspNet.Identity
+            @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+            {
+                @Html.AntiForgeryToken()
+                <a href="~/UserViewModels/Edit/@userId?n1_name=Admin%20Users&msg=@User.Identity.GetUserName()&compid=@companyId&user_ID=@userId&n2_name=SAP%20Accounts" style="color:#fff;">Hello, @User.Identity.GetUserName() ▾</a>
+                <small>@(companyType == 1 ? "Distributor Account" : companyType == 2 ? "VAR Account" : companyType == 3 ? "Manufacturers Rep" : "Account")</small>
+                <a id="logout" href="javascript:document.getElementById('logoutForm').submit()" style="color:#fff; margin-left:10px;"><span class="glyphicon glyphicon-log-out"></span></a>
+            }
+        </div>
+    </div>
     <div class="topmenu-wrapper">
         <div class="mobile-logo">
             <a title="To the Rittal homepage" href="https://rittal.com/com-en"><img alt="Rittal" src="https://www.rittal.com/imf/none/80_118/"></a>
         </div><a target="_self" id="mobile_search" title="Search" class="mobile-search glyphicon glyphicon-search"><span class="icon-button-wrapper ricon-after-search"><!----></span></a>
     </div>
     <div class="sidenav">
-        <div class="top-logo-wrapper">
+        <div class="top-logo-wrapper" style="display:none;">
             <div class="claim">
                 <a title="To the Rittal homepage" href="@(!isPinnacle ? "/Home?n1_name=Home" : "/MDFViewPinnacle")" class="claim-link">
                     <img alt="Rittal – The System." src="~/images/80_1157.png">
@@ -67,20 +90,20 @@
             </div>
             <div style="display:inline;font-size:12px;color:#fff;">
                 @using Microsoft.AspNet.Identity
-                @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+                @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutFormMobile", @class = "navbar-right" }))
                 {
                     @Html.AntiForgeryToken()
 
                     @Html.ActionLink("Hello " + User.Identity.GetUserName(), "Edit", "UserViewModels", routeValues: new { id = userId, n1_name = "Admin Users", msg = User.Identity.GetUserName(), compid = companyId, user_ID = userId, n2_name = "SAP Accounts" }, htmlAttributes: new { title = "Edit my account", style = "color:#fff;" })
 
-                    <a id="logout" href="javascript:document.getElementById('logoutForm').submit()"><span class="glyphicon glyphicon-log-out"></span> Log off</a>
+                    <a id="logoutMobile" href="javascript:document.getElementById('logoutFormMobile').submit()"><span class="glyphicon glyphicon-log-out"></span> Log off</a>
                 }
             </div>
         </div>
         @if (!isPinnacle)
         {
             <div class="navigation-menu-wrapper hidden-xs">
-                <div class="top-navigation-menu">
+                <div class="top-navigation-menu nav">
                     @{
                         foreach (var item in newrisourcecenter.Controllers.MenuContoller.TopMenu(User.Identity.GetUserName(), languageId, countryId))
                         {

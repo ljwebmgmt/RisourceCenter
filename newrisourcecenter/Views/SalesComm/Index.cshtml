@@ -36,348 +36,277 @@
         location.href = url + "&recent="+ date;
     }
 </script>
-<div class="main_content">
-    <div>
-        <div id="dropdown">
-            <div class="dropdown" style="text-align:left;">
-                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-                    Filter by Category
-                    <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu">
-                    @foreach (var items in Model)
-                    {
-                        if (@items.sales_submenu != null)
-                        {
-                            foreach (var item in items.sales_submenu)
-                            {
-                                <li><a href="?parentID=1&childId=@item.n2Id&n1_name=@Request.QueryString["n1_name"]&n2_name=@item.n2_longName&querystring=@Request.QueryString["querystring"]&submenu=yes">@item.n2_longName</a></li>
-                            }
-                        }
-                    }
-                </ul>
+<div class="main_content page">
+    <div class="content-layout">
+        <!-- Filter Sidebar -->
+        <aside class="filter-panel">
+            <h3>Filters</h3>
+            <div class="search-mini" style="margin-bottom:15px;">
+                <input type="text" placeholder="Search communications..." id="commSearchInput" />
+                <button type="button" onclick="searchCommunications()" style="padding:8px 12px;background:var(--rittal-red);color:#fff;border:none;cursor:pointer;">⌕</button>
             </div>
-        </div>
-        <div id="dropdown" style="float:left;margin-right:30px;">
-            <form method="get">
-                <span class="input-group stylish-input-group" style="width:300px;">
-                    <input type="text" name="querystring" value="" placeholder="search..." class="form-control" />
-                    <input type="hidden" name="n1_name" value="@Request.QueryString["n1_name"]" />
-                    @if (@Request.QueryString["n3id"] != null)
+            <h4>Category</h4>
+            <div class="filter-item">
+                <label><input type="checkbox" id="filterAll" checked onchange="filterByCategory('all')" /> All Communications</label>
+                <span>@Model.Count()</span>
+            </div>
+            @foreach (var items in Model)
+            {
+                if (@items.sales_submenu != null)
+                {
+                    foreach (var item in items.sales_submenu)
                     {
-                        <input type="hidden" name="n3id" value="@Request.QueryString["n3id"]" />
+                        <div class="filter-item">
+                            <label><input type="checkbox" class="category-filter" value="@item.n2Id" onchange="filterByCategory(@item.n2Id)" /> @item.n2_longName</label>
+                            <span>0</span>
+                        </div>
                     }
-                    @if (@Request.QueryString["childId"] != null)
-                    {
-                        <input type="hidden" name="childId" value="@Request.QueryString["childId"]" />
-                    }
-                    @if (@Request.QueryString["n2_name"] != null)
-                    {
-                        <input type="hidden" name="n2_name" value="@Request.QueryString["n2_name"]" />
-                    }
-                    @if (@Request.QueryString["n3_name"] != null)
-                    {
-                        <input type="hidden" name="n3_name" value="@Request.QueryString["n3_name"]" />
-                    }
-                    <input type="hidden" name="submenu" value="@Request.QueryString["submenu"]" />
-                    <span class="input-group-addon" id="submit_search">
-                        <button type="submit">
-                            <span class="glyphicon glyphicon-search"></span>
-                        </button>
+                }
+            }
+            <h4>Date Range</h4>
+            <div class="filter-item">
+                <label><input type="radio" name="dateRange" value="latest" checked onchange="filterByDate('latest')" /> Latest</label>
+            </div>
+            <div class="filter-item">
+                <label><input type="radio" name="dateRange" value="all" onchange="filterByDate('all')" /> All Time</label>
+            </div>
+            <h4>Type</h4>
+            <div class="filter-item">
+                <label><input type="checkbox" class="type-filter" value="announcement" checked onchange="filterByType()" /> Announcements</label>
+            </div>
+            <div class="filter-item">
+                <label><input type="checkbox" class="type-filter" value="resource" checked onchange="filterByType()" /> Resources</label>
+            </div>
+            <div class="filter-item">
+                <label><input type="checkbox" class="type-filter" value="event" checked onchange="filterByType()" /> Events</label>
+            </div>
+            <button type="button" onclick="resetFilters()" style="width:100%;margin-top:15px;padding:8px;background:#f0f0f0;border:1px solid #ddd;border-radius:4px;cursor:pointer;">Reset Filters</button>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="result-area">
+            <div class="result-head">
+                <h2>Communications</h2>
+                <div class="sort">
+                    <span>Sort by:</span>
+                    <select>
+                        <option>Most Recent</option>
+                        <option>Oldest First</option>
+                        <option>Alphabetical</option>
+                    </select>
+                    <div class="toggle">
+                        <button class="active" onclick="toggleView('grid')">⊞</button>
+                        <button onclick="toggleView('list')">☰</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Filters -->
+            <div align="center" style="margin:10px 0;">
+                @if (!string.IsNullOrEmpty(Request.QueryString["querystring"]))
+                {
+                    <span class="btn btn-info btn-sm" style="color:blue;">
+                        Searched: @Request.QueryString["querystring"]
+                        <a href="~/SalesComm/?parentID=1&n3id=@Request.QueryString["n3id"]&childId=@Request.QueryString["childId"]&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&n3_name=@Request.QueryString["n3_name"]"> X </a>
                     </span>
-                </span>
-            </form>
-        </div>
-    </div>
-    <div align="center" style="margin:20px;">
-        @if (!string.IsNullOrEmpty(Request.QueryString["querystring"]))
-        {
-            if (Request.QueryString["n3id"] != null && Request.QueryString["childId"] != null && Request.QueryString["submenu"] != "yes")
-            {
-                <span class="btn btn-info btn-sm" style="color:blue;">
-                    Searched: @Request.QueryString["querystring"]
-                    <a href="~/SalesComm/?parentID=1&n3id=@Request.QueryString["n3id"]&childId=@Request.QueryString["childId"]&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&n3_name=@Request.QueryString["n3_name"]"> X </a>
-                </span>
-            }
+                }
+                @if (Request.QueryString["n3id"] != null && Request.QueryString["childId"] != null && Request.QueryString["submenu"] != "yes")
+                {
+                    <span class="btn btn-info btn-sm">
+                        @Request.QueryString["n2_name"]
+                        <a href="?parentID=1&n3id=@Request.QueryString["n3id"]&querystring=@Request.QueryString["querystring"]&n1_name=@Request.QueryString["n1_name"]&n3_name=@Request.QueryString["n3_name"]&submenu=yes"> X </a>
+                    </span>
+                    <span class="btn btn-info btn-sm">
+                        @Request.QueryString["n3_name"]
+                        <a href="?parentID=1&childId=@Request.QueryString["childId"]&querystring=@Request.QueryString["querystring"]&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&submenu=yes"> X </a>
+                    </span>
+                }
+                @if (Request.QueryString["parentID"] != null)
+                {
+                    <a class="btn btn-info btn-sm" id="reset" href="~/SalesComm/?&n1_name=@Request.QueryString["n1_name"]">Reset</a>
+                }
+            </div>
 
-            if (Request.QueryString["n3id"] != null && Request.QueryString["childId"] == null && Request.QueryString["submenu"] == "yes")
-            {
-                <span class="btn btn-info btn-sm" style="color:blue;">
-                    Searched: @Request.QueryString["querystring"]
-                    <a href="?parentID=1&n3id=@Request.QueryString["n3id"]&n1_name=@Request.QueryString["n1_name"]&n3_name=@Request.QueryString["n3_name"]&submenu=yes"> X </a>
-                </span>
-            }
-
-            if (Request.QueryString["n3id"] == null && Request.QueryString["childId"] != null)
-            {
-                <span class="btn btn-info btn-sm" style="color:blue;">
-                    Searched: @Request.QueryString["querystring"]
-                    <a href="~/SalesComm/?parentID=1&childId=@Request.QueryString["childId"]&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&submenu=yes"> X </a>
-                </span>
-            }
-
-            if (Request.QueryString["n3id"] == null && Request.QueryString["childId"] == null)
-            {
-                <span class="btn btn-info btn-sm" style="color:blue;">
-                    Searched: @Request.QueryString["querystring"]
-                    <a href="~/SalesComm/?n1_name=@Request.QueryString["n1_name"]"> X </a>
-                </span>
-            }
-
-            if (Request.QueryString["n3id"] != null && Request.QueryString["childId"] != null && Request.QueryString["submenu"] != "yes")
-            {
-                <span class="btn btn-info btn-sm">
-                    @Request.QueryString["n2_name"]
-                    <a href="?parentID=1&n3id=@Request.QueryString["n3id"]&querystring=@Request.QueryString["querystring"]&n1_name=@Request.QueryString["n1_name"]&n3_name=@Request.QueryString["n3_name"]&submenu=yes"> X </a>
-                </span>
-            }
-
-            if (Request.QueryString["n3id"] != null && Request.QueryString["childId"] != null && Request.QueryString["submenu"] != "yes")
-            {
-                <span class="btn btn-info btn-sm">
-                    @Request.QueryString["n3_name"]
-                    <a href="?parentID=1&childId=@Request.QueryString["childId"]&querystring=@Request.QueryString["querystring"]&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&submenu=yes"> X </a>
-                </span>
-            }
-
-            if (Request.QueryString["n3id"] != null && Request.QueryString["childId"] == null && Request.QueryString["submenu"] == "yes")
-            {
-                <span class="btn btn-info btn-sm">
-                    @Request.QueryString["n3_name"]
-                    <a href="~/SalesComm/?querystring=@Request.QueryString["querystring"]&n1_name=@Request.QueryString["n1_name"]"> X </a>
-                </span>
-            }
-
-            if (Request.QueryString["n3id"] == null && Request.QueryString["childId"] != null && Request.QueryString["submenu"] == "yes")
-            {
-                <span class="btn btn-info btn-sm">
-                    @Request.QueryString["n2_name"]
-                    <a href="~/SalesComm/?querystring=@Request.QueryString["querystring"]&n1_name=@Request.QueryString["n1_name"]"> X </a>
-                </span>
-            }
-
-            if (Request.QueryString["childId"] != null && Request.QueryString["n3id"] == null && Request.QueryString["submenu"] != "yes" && Request.QueryString["n2_name"] == null)
-            {
-                <span class="btn btn-info btn-sm">
-                    @ViewBag.n2Name
-                    <a href="~/SalesComm/?querystring=@Request.QueryString["querystring"]&n1_name=@Request.QueryString["n1_name"]"> X </a>
-                </span>
-            }
-
-            if (Request.QueryString["parentID"] != null)
-            {
-                <a class="btn btn-info btn-sm" id="reset" href="~/SalesComm/?&n1_name=@Request.QueryString["n1_name"]">Reset</a>
-            }
-        }
-        else
-        {
-            if (Request.QueryString["n3id"] != null && Request.QueryString["childId"] != null && Request.QueryString["submenu"] != "yes")
-            {
-                <span class="btn btn-info btn-sm">
-                    @Request.QueryString["n2_name"]
-                    <a href="?parentID=1&n3id=@Request.QueryString["n3id"]&n1_name=@Request.QueryString["n1_name"]&n3_name=@Request.QueryString["n3_name"]&submenu=yes"> X </a>
-                </span>
-            }
-
-            if (Request.QueryString["n3id"] != null && Request.QueryString["childId"] != null && Request.QueryString["submenu"] != "yes")
-            {
-                <span class="btn btn-info btn-sm">
-                    @Request.QueryString["n3_name"]
-                    <a href="?parentID=1&childId=@Request.QueryString["childId"]&n1_name=@Request.QueryString["n1_name"]&n2_name=@Request.QueryString["n2_name"]&submenu=yes"> X </a>
-                </span>
-            }
-
-            if (Request.QueryString["n3id"] != null && Request.QueryString["childId"] == null && Request.QueryString["submenu"] == "yes")
-            {
-                <span class="btn btn-info btn-sm">
-                    @Request.QueryString["n3_name"]
-                    <a href="~/SalesComm/?n1_name=@Request.QueryString["n1_name"]"> X </a>
-                </span>
-            }
-
-            if (Request.QueryString["n3id"] == null && Request.QueryString["childId"] != null && Request.QueryString["submenu"] == "yes")
-            {
-                <span class="btn btn-info btn-sm">
-                    @Request.QueryString["n2_name"]
-                    <a href="~/SalesComm/?n1_name=@Request.QueryString["n1_name"]"> X </a>
-                </span>
-            }
-
-            if (Request.QueryString["childId"] != null && Request.QueryString["n3id"] == null && Request.QueryString["submenu"] != "yes" && Request.QueryString["n2_name"] == null)
-            {
-                <span class="btn btn-info btn-sm">
-                    @ViewBag.n2Name
-                    <a href="~/SalesComm/?&n1_name=@Request.QueryString["n1_name"]"> X </a>
-                </span>
-            }
-
-            if (Request.QueryString["recent"] != null)
-            {
-                <span class="btn btn-info btn-sm">
-                    @Request.QueryString["recent"].ToUpperInvariant()
-                </span>
-            }
-
-            if (Request.QueryString["parentID"] != null)
-            {
-                <a class="btn btn-info btn-sm" id="reset" href="~/SalesComm/?&n1_name=@Request.QueryString["n1_name"]">Reset</a>
-            }
-        }
-    </div>
-    <section class="comms">
-        @{
-                        bool empty = false;
-                        foreach (var salesComm in Model)
+            <!-- Communications Grid -->
+            <div class="comm-grid" id="commGrid">
+                @{
+                    bool empty = false;
+                    int commIndex = 0;
+                    foreach (var salesComm in Model)
+                    {
+                        string products = salesComm.sc_products;
+                        if (!string.IsNullOrEmpty(products))
                         {
-                            string products = salesComm.sc_products;
-                            if (!string.IsNullOrEmpty(products))
-                            {
-                    empty = false;
+                            empty = false;
 
-                                bool islist = products.Any(m => m.ToString().Contains(","));
-                                if (!islist && userProducts.Contains(products))
+                            bool islist = products.Any(m => m.ToString().Contains(","));
+                            bool shouldShow = false;
+
+                            if (!islist && userProducts.Contains(products))
+                            {
+                                shouldShow = true;
+                            }
+                            else
+                            {
+                                var prod = userProducts.ToArray();
+                                foreach (var item in prod)
                                 {
-                        <div>
-                            <h4>
-                                <a style="cursor:pointer;" id="@salesComm.scID"><span style="font-size:14px;" id="toggle_@salesComm.scID"></span> @Html.Raw(@salesComm.sc_headline)</a>
-                                @if (Request.QueryString["translate"] != null)
-                                            {
-                                        @Html.ActionLink("T", "Create", "Localization", new { parent_id = salesComm.scID, tableName = "salesComm", columnName = "sc_headline", message = "", n1_name = "Translate Page Content", msg = Request.QueryString["n1_name"], lang = salesComm.default_lang }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
-                                }
-                            </h4>
-                            @Html.ActionLink(salesComm.nav2_longName, actionName: "Index", controllerName: "SalesComm", routeValues: new { parentid = salesComm.n1ID, childid = salesComm.n2ID, n2_name = salesComm.nav2_longName, n3id = salesComm.n3ID, n3_name = salesComm.nav3_longName, n1_name = Request.QueryString["n1_name"] }, htmlAttributes: null)
-                            <font style="color:#E50043;">&rArr;</font> @Html.ActionLink(salesComm.nav3_longName, actionName: "Index", controllerName: "SalesComm", routeValues: new { parentid = salesComm.n1ID, childid = salesComm.n2ID, n2_name = salesComm.nav2_longName, n3id = salesComm.n3ID, n3_name = salesComm.nav3_longName, n1_name = Request.QueryString["n1_name"] }, htmlAttributes: null)
-                            <br />
-                            <div style="line-height:30px;" class="subtext" id="sc_teaser_@salesComm.scID">
-                                @Html.Raw(salesComm.sc_teaser)
-                                @if (Request.QueryString["translate"] != null)
-                    {
-                        @Html.ActionLink("T", "Create", "Localization", new { parent_id = salesComm.scID, tableName = "salesComm", columnName = "sc_teaser", message = "", n1_name = "Translate Page Content", msg = Request.QueryString["n1_name"], lang = salesComm.default_lang }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
-                                }
-                                <br />
-                                @String.Format("{0:d}", @salesComm.sc_startDate) <br />
-                                <a class="salesComm_more  btn btn-primary" id="@salesComm.scID">More</a>
-                            </div>
-                            <div id="sc_body_@salesComm.scID" class="show_sales_comm">
-                                @Html.Raw(salesComm.sc_body)
-                                @if (Request.QueryString["translate"] != null)
-                    {
-                        @Html.ActionLink("T", "Create", "Localization", new { parent_id = salesComm.scID, tableName = "salesComm", columnName = "sc_body", message = "", n1_name = "Translate Page Content", msg = Request.QueryString["n1_name"], lang = salesComm.default_lang }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
-                                }
-                    @if (@salesComm.list_attachments.Count() != 0)
-                    {
-                                    <h4><u>Attached RiSources</u></h4>
-                                    foreach (var items in salesComm.list_attachments)
-                        {
-                            Uri uriResult;
-                            bool result = Uri.TryCreate(items.img, UriKind.Absolute, out uriResult)
-                            && (uriResult.Scheme == Uri.UriSchemeHttp
-                            || uriResult.Scheme == Uri.UriSchemeHttps);
-
-                            if (result)
-                            {
-                                            <div>
-                                                @items.name -
-                                                <a id="@ViewBag.file_size" target="_blank" href="@items.img" class="btn btn-primary btn-sm glyphicon glyphicon-new-window"> Link</a>
-                                            </div>
-                                        }
-                                        else
-                                        {
-                                            <div>
-                                                @items.name -
-                                                <a id="@ViewBag.file_size" href="~/attachments/risources/@items.img" class="btn btn-primary btn-sm glyphicon glyphicon-download-alt" target="_blank"> Download</a>
-                                            </div>
-                                        }
+                                    if (salesComm.sc_products.Contains(@item.ToString()))
+                                    {
+                                        shouldShow = true;
+                                        break;
                                     }
                                 }
-                            </div>
-                        </div>
-                        continue;
-                    }
-                    else
-                    {
-                        var prod = userProducts.ToArray();
-
-                        foreach (var item in prod)
-                        {
-
-                            if (salesComm.sc_products.Contains(@item.ToString()))
-                            {
-                                    <div>
-                                        <h4>
-                                            <span style="font-size:14px;" id="toggle_@salesComm.scID"></span> <a style="cursor:pointer;" id="@salesComm.scID">@Html.Raw(salesComm.sc_headline)</a>
-                                            @if (Request.QueryString["translate"] != null)
-            {
-                @Html.ActionLink("T", "Create", "Localization", new { parent_id = salesComm.scID, tableName = "salesComm", columnName = "sc_headline", message = "", n1_name = "Translate Page Content", msg = Request.QueryString["n1_name"], lang = salesComm.default_lang }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
-                                            }
-                                        </h4>
-                                        @Html.ActionLink(salesComm.nav2_longName, actionName: "Index", controllerName: "SalesComm", routeValues: new { parentid = salesComm.n1ID, childid = salesComm.n2ID, n2_name = salesComm.nav2_longName, n3id = salesComm.n3ID, n3_name = salesComm.nav3_longName, n1_name = Request.QueryString["n1_name"] }, htmlAttributes: null)
-                                        <font style="color:#E50043;">&rArr;</font> @Html.ActionLink(salesComm.nav3_longName, actionName: "Index", controllerName: "SalesComm", routeValues: new { parentid = salesComm.n1ID, childid = salesComm.n2ID, n2_name = salesComm.nav2_longName, n3id = salesComm.n3ID, n3_name = salesComm.nav3_longName, n1_name = Request.QueryString["n1_name"] }, htmlAttributes: null)
-                                        <br />
-                                        <div style="line-height:30px;" class="subtext" id="sc_teaser_@salesComm.scID">
-                                            @Html.Raw(salesComm.sc_teaser)
-                                            @if (Request.QueryString["translate"] != null)
-            {
-                @Html.ActionLink("T", "Create", "Localization", new { parent_id = salesComm.scID, tableName = "salesComm", columnName = "sc_teaser", message = "", n1_name = "Translate Page Content", msg = Request.QueryString["n1_name"], lang = salesComm.default_lang }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
-                                            }
-                                            <br />
-                                            @String.Format("{0:d}", @salesComm.sc_startDate)
-                                            <br />
-                                            <a class="salesComm_more btn btn-primary" id="@salesComm.scID">More</a>
-                                        </div>
-                                        <div id="sc_body_@salesComm.scID" class="show_sales_comm">
-                                            @Html.Raw(salesComm.sc_body)
-                                            @if (Request.QueryString["translate"] != null)
-            {
-                @Html.ActionLink("T", "Create", "Localization", new { parent_id = salesComm.scID, tableName = "salesComm", columnName = "sc_body", message = "", n1_name = "Translate Page Content", msg = Request.QueryString["n1_name"], lang = salesComm.default_lang }, htmlAttributes: new { @id = "translate", @class = "glyphicon glyphicon-edit" })
-                                            }
-            @if (@salesComm.list_attachments.Count() != 0)
-            {
-                                                <h4><u>Attached RiSources</u></h4>
-                                                foreach (var items in salesComm.list_attachments)
-                {
-                    Uri uriResult;
-                    bool result = Uri.TryCreate(items.img, UriKind.Absolute, out uriResult)
-                    && (uriResult.Scheme == Uri.UriSchemeHttp
-                    || uriResult.Scheme == Uri.UriSchemeHttps);
-
-                    if (result)
-                    {
-                                                        <div>
-                                                            @items.name -
-                                                            <a id="@ViewBag.file_size" target="_blank" href="@items.img" class="btn btn-primary btn-sm glyphicon glyphicon-new-window"> Link</a>
-                                                        </div>
-                                                    }
-                                                    else
-                                                    {
-                                                        <div>
-                                                            @items.name -
-                                                            <a id="@ViewBag.file_size" href="~/attachments/risources/@items.img" class="btn btn-primary btn-sm glyphicon glyphicon-download-alt" target="_blank"> Download</a>
-                                                        </div>
-                                                    }
-                                                }
-                                            }
-                                        </div>
-                                    </div>
-                                break;
                             }
 
-                        }
+                            if (shouldShow)
+                            {
+                                string iconClass = commIndex % 4 == 0 ? "📢" : commIndex % 4 == 1 ? "📄" : commIndex % 4 == 2 ? "🎥" : "📅";
+                                string typeClass = commIndex % 4 == 0 ? "tag-red" : commIndex % 4 == 1 ? "tag-green" : commIndex % 4 == 2 ? "tag-orange" : "tag-blue";
+                                string typeText = commIndex % 4 == 0 ? "ANNOUNCEMENT" : commIndex % 4 == 1 ? "RESOURCE" : commIndex % 4 == 2 ? "VIDEO" : "EVENT";
+                                string dataType = commIndex % 4 == 0 ? "announcement" : commIndex % 4 == 1 ? "resource" : commIndex % 4 == 2 ? "event" : "resource";
 
+                                <article class="comm-card" data-type="@dataType">
+                                    <div class="comm-icon">@iconClass</div>
+                                    <span class="comm-type @typeClass">@typeText</span>
+                                    <time>@String.Format("{0:d}", @salesComm.sc_startDate)</time>
+                                    <h3>@Html.Raw(@salesComm.sc_headline)</h3>
+                                    <p>@Html.Raw(salesComm.sc_teaser)</p>
+                                    <a class="link" href="javascript:void(0)" onclick="toggleCommDetails(@salesComm.scID)">Read More →</a>
+                                    <div id="sc_body_@salesComm.scID" class="show_sales_comm" style="display:none; grid-column:1/-1; margin-top:15px; padding-top:15px; border-top:1px solid #eee;">
+                                        @Html.Raw(salesComm.sc_body)
+                                        @if (@salesComm.list_attachments.Count() != 0)
+                                        {
+                                            <h4><u>Attached RiSources</u></h4>
+                                            foreach (var items in salesComm.list_attachments)
+                                            {
+                                                Uri uriResult;
+                                                bool result = Uri.TryCreate(items.img, UriKind.Absolute, out uriResult)
+                                                && (uriResult.Scheme == Uri.UriSchemeHttp
+                                                || uriResult.Scheme == Uri.UriSchemeHttps);
+
+                                                if (result)
+                                                {
+                                                    <div>
+                                                        @items.name -
+                                                        <a id="@ViewBag.file_size" target="_blank" href="@items.img" class="btn btn-primary btn-sm glyphicon glyphicon-new-window"> Link</a>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <div>
+                                                        @items.name -
+                                                        <a id="@ViewBag.file_size" href="~/attachments/risources/@items.img" class="btn btn-primary btn-sm glyphicon glyphicon-download-alt" target="_blank"> Download</a>
+                                                    </div>
+                                                }
+                                            }
+                                        }
+                                    </div>
+                                </article>
+                                commIndex++;
+                            }
+                        }
+                        else
+                        {
+                            empty = true;
+                        }
                     }
 
+                    if (empty)
+                    {
+                        <div class="text-center" style="grid-column:1/-1;">No communication record found for the current year.</div>
+                    }
                 }
-                else
-                {
-                    empty = true;
-                }
-            }
+            </div>
 
-            if (empty)
-            {
-                                    <div class="text-center">No communication record found for the current year.</div>
-            }
-            }
-
-        </section>
+            <!-- Pagination -->
+            <div class="pagination">
+                <button>‹</button>
+                <button class="active">1</button>
+                <button>2</button>
+                <button>3</button>
+                <button>›</button>
+            </div>
+        </div>
+    </div>
 </div>
+
+<script>
+    function toggleCommDetails(id) {
+        var body = document.getElementById('sc_body_' + id);
+        if (body.style.display === 'none') {
+            body.style.display = 'block';
+        } else {
+            body.style.display = 'none';
+        }
+    }
+
+    function toggleView(mode) {
+        var grid = document.getElementById('commGrid');
+        if (mode === 'list') {
+            grid.classList.add('list-mode');
+        } else {
+            grid.classList.remove('list-mode');
+        }
+    }
+
+    function searchCommunications() {
+        var searchTerm = document.getElementById('commSearchInput').value;
+        if (searchTerm) {
+            window.location.href = '?querystring=' + encodeURIComponent(searchTerm) + '&n1_name=' + '@Request.QueryString["n1_name"]';
+        }
+    }
+
+    function filterByCategory(categoryId) {
+        var url = new URL(window.location.href);
+        var filterAll = document.getElementById('filterAll');
+        var categoryFilters = document.querySelectorAll('.category-filter');
+
+        if (categoryId === 'all') {
+            // When "All" is selected, uncheck all category filters
+            categoryFilters.forEach(function(filter) {
+                filter.checked = false;
+            });
+            url.searchParams.delete('childId');
+            url.searchParams.delete('n2_name');
+            url.searchParams.delete('submenu');
+        } else {
+            // When a specific category is selected, uncheck "All"
+            filterAll.checked = false;
+            url.searchParams.set('childId', categoryId);
+            url.searchParams.set('submenu', 'yes');
+        }
+        window.location.href = url.toString();
+    }
+
+    function filterByDate(dateRange) {
+        var url = new URL(window.location.href);
+        if (dateRange === 'all') {
+            url.searchParams.set('recent', 'all');
+        } else {
+            url.searchParams.set('recent', 'latest');
+        }
+        window.location.href = url.toString();
+    }
+
+    function filterByType() {
+        var selectedTypes = [];
+        document.querySelectorAll('.type-filter:checked').forEach(function(checkbox) {
+            selectedTypes.push(checkbox.value);
+        });
+
+        var cards = document.querySelectorAll('.comm-card');
+        cards.forEach(function(card) {
+            var cardType = card.getAttribute('data-type');
+            if (selectedTypes.length === 0 || selectedTypes.includes(cardType)) {
+                card.style.display = 'flex';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+
+    function resetFilters() {
+        window.location.href = '?n1_name=' + '@Request.QueryString["n1_name"]';
+    }
+</script>

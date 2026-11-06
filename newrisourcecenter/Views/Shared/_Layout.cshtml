@@ -65,6 +65,8 @@
     }
 
     @Scripts.Render("~/bundles/modernizr")
+    <link rel="stylesheet" href="~/Content/prototype-variables.css" />
+    <link rel="stylesheet" href="~/Content/prototype-styles.css" />
 </head>
 <body>
     @{
@@ -110,17 +112,17 @@
     @*<div align="left" class="inner-footer">
         <span style="font-size:11px;color:#CCC">&copy; 2018 Rittal North America LLC</span>
     </div>*@
-    <div id="footer" class="main_footer">
-        <div id="powerline" class="--transparent">
-            <span class="powerline-bg">
-            </span>
-            <div class="powerline-rail">
-                <div class="powerline-arrow-wrapper">
-                    <span href="#" class="powerline-arrow" style="background-image: url('/images/80_104.png'); left: 0; z-index: 9;"><span>Enclosures</span></span>
-                    <span href="#" class="powerline-arrow" style="background-image: url('/images/80_104.png'); left: 20%; z-index: 8;"><span>Power distribution</span></span><span href="#" class="powerline-arrow" style="background-image: url('/images/80_104.png'); left: 40%; z-index: 7;"><span>Climate control</span></span><span href="#" class="powerline-arrow" style="background-image: url('/images/80_104.png'); left: 60%; z-index: 5;"><span>IT Infrastructure</span></span><span href="#" class="powerline-arrow" style="background-image: url('/images/80_104.png'); left: 80%; z-index: 4;"><span>Software &amp; Services</span></span>
-                </div>
-            </div><a href="http://www.rittal.us" class="powerline-logo-cover"><img alt="Rittal" src="/images/80_117.png" class="powerline-logo"></a><img alt="Friedhelm Loh Group" src="/images/80_106.png" class="powerline-group-logo">
-        </div></div>
+    <footer class="footer">
+        <div class="footer-inner">
+            <strong>RITTAL – The System.</strong>
+            <div>
+                <a href="~/Contact">Contact Us</a>
+                <a href="~/Help">Help</a>
+                <a href="~/Privacy">Privacy</a>
+                <a href="~/Terms">Terms of Use</a>
+            </div>
+        </div>
+    </footer>
 
     <script>
         jQuery(document).ready(function () {
