@@ -831,6 +831,14 @@ namespace newrisourcecenter.Models
             {
                 return RedirectToAction("Login", "Account");
             }
+
+            // Check if user has MDF Admin permissions (page ID 30125)
+            var userData = await db.UserViewModels.Where(a => a.usr_ID == userId).FirstOrDefaultAsync();
+            if (userData == null || string.IsNullOrEmpty(userData.usr_pages) || !userData.usr_pages.Contains("30125"))
+            {
+                return RedirectToAction("Manage", new { year = year });
+            }
+
             MDFViewModel mdfViewModels = new MDFViewModel();
             // Get page text
             var topdesc = await db.Nav2ViewModel.Where(a => a.n2ID == 6).FirstOrDefaultAsync();
@@ -1007,6 +1015,15 @@ namespace newrisourcecenter.Models
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
+            // Check if user has MDF Admin permissions (page ID 30125)
+            long userId = Convert.ToInt64(Session["userId"]);
+            var userData = await db.UserViewModels.Where(a => a.usr_ID == userId).FirstOrDefaultAsync();
+            if (userData == null || string.IsNullOrEmpty(userData.usr_pages) || !userData.usr_pages.Contains("30125"))
+            {
+                return RedirectToAction("Manage", new { year = 0 });
+            }
+
             MDFViewModel mDFViewModel = await db.MDFViewModels.FindAsync(id);
             if (mDFViewModel == null)
             {
@@ -1079,6 +1096,14 @@ namespace newrisourcecenter.Models
             {
                 return RedirectToAction("Login", "Account");
             }
+
+            // Check if user has MDF Admin permissions (page ID 30125)
+            var userData = await db.UserViewModels.Where(a => a.usr_ID == userId).FirstOrDefaultAsync();
+            if (userData == null || string.IsNullOrEmpty(userData.usr_pages) || !userData.usr_pages.Contains("30125"))
+            {
+                return RedirectToAction("Manage", new { year = archive_year });
+            }
+
             MDFViewModel mdfViewModels = new MDFViewModel();
             // Get page text
             var topdesc = await db.Nav2ViewModel.Where(a => a.n2ID == 6).FirstOrDefaultAsync();
@@ -1234,6 +1259,15 @@ namespace newrisourcecenter.Models
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
+            // Check if user has MDF Admin permissions (page ID 30125)
+            long userId = Convert.ToInt64(Session["userId"]);
+            var userData = await db.UserViewModels.Where(a => a.usr_ID == userId).FirstOrDefaultAsync();
+            if (userData == null || string.IsNullOrEmpty(userData.usr_pages) || !userData.usr_pages.Contains("30125"))
+            {
+                return RedirectToAction("Manage", new { year = Convert.ToInt32(year) });
+            }
+
             MDFViewModel mDFViewModel = await db.MDFViewModels.FindAsync(id);
             if (mDFViewModel == null)
             {
