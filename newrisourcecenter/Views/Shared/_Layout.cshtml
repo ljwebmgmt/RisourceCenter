@@ -65,8 +65,11 @@
     }
 
     @Scripts.Render("~/bundles/modernizr")
-    <link rel="stylesheet" href="~/Content/prototype-variables.css" />
-    <link rel="stylesheet" href="~/Content/prototype-styles.css" />
+    @if (Request.IsAuthenticated)
+    {
+        <link rel="stylesheet" href="~/Content/prototype-variables.css" />
+        <link rel="stylesheet" href="~/Content/prototype-styles.css" />
+    }
 </head>
 <body>
     @{
@@ -112,17 +115,21 @@
     @*<div align="left" class="inner-footer">
         <span style="font-size:11px;color:#CCC">&copy; 2018 Rittal North America LLC</span>
     </div>*@
-    <footer class="footer">
-        <div class="footer-inner">
-            <strong>RITTAL – The System.</strong>
-            <div>
-                <a href="~/Contact">Contact Us</a>
-                <a href="~/Help">Help</a>
-                <a href="~/Privacy">Privacy</a>
-                <a href="~/Terms">Terms of Use</a>
+    @if (Request.IsAuthenticated)
+    {
+        <footer class="footer">
+            <div class="footer-inner">
+                <strong>RITTAL – The System.</strong>
+                <span style="font-size:11px;color:#CCC">&copy; 2018 Rittal North America LLC</span>
             </div>
+        </footer>
+    }
+    else
+    {
+        <div align="left" class="inner-footer">
+            <span style="font-size:11px;color:#CCC">&copy; 2018 Rittal North America LLC</span>
         </div>
-    </footer>
+    }
 
     <script>
         jQuery(document).ready(function () {
