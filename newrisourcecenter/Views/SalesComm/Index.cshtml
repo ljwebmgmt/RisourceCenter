@@ -56,13 +56,31 @@
                 {
                     foreach (var item in items.sales_submenu)
                     {
+                        int count = Model.Count(c => c.n2ID == item.n2Id);
                         <div class="filter-item">
                             <label><input type="checkbox" class="category-filter" value="@item.n2Id" onchange="filterByCategory(@item.n2Id)" /> @item.n2_longName</label>
-                            <span>0</span>
+                            <span>@count</span>
                         </div>
                     }
                 }
             }
+            
+            @* Add n3ID subcategory filters *@
+            @foreach (var items in Model)
+            {
+                if (@items.sales_menu != null)
+                {
+                    foreach (var item in items.sales_menu)
+                    {
+                        int count = Model.Count(c => c.n3ID == item.n3Id);
+                        <div class="filter-item" style="margin-left:20px;">
+                            <label><input type="checkbox" class="subcategory-filter" value="@item.n3Id" onchange="filterBySubcategory(@item.n3Id)" /> @item.n3_longName</label>
+                            <span>@count</span>
+                        </div>
+                    }
+                }
+            }
+            
             <h4>Date Range</h4>
             <div class="filter-item">
                 <label><input type="radio" name="dateRange" value="latest" checked onchange="filterByDate('latest')" /> Latest</label>
@@ -276,6 +294,13 @@
             url.searchParams.set('childId', categoryId);
             url.searchParams.set('submenu', 'yes');
         }
+        window.location.href = url.toString();
+    }
+
+    function filterBySubcategory(subcategoryId) {
+        var url = new URL(window.location.href);
+        url.searchParams.set('n3id', subcategoryId);
+        url.searchParams.set('submenu', 'yes');
         window.location.href = url.toString();
     }
 

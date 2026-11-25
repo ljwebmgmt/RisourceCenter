@@ -55,7 +55,7 @@
                         foreach (var comm in Model.recentComms)
                         {
                             string mediaClass = cardIndex % 4 == 0 ? "" : cardIndex % 4 == 1 ? "alt" : cardIndex % 4 == 2 ? "data" : "video";
-                            string badgeText = cardIndex == 0 ? "NEW" : cardIndex == 1 ? "UPDATED" : cardIndex == 2 ? "WATCH" : "NEW";
+                            string badgeText = comm.sc_status == "2" ? "NEW" : "UPDATED";
                             <article class="card">
                                 <div class="card-media @mediaClass"><span class="badge">@badgeText</span></div>
                                 <div class="card-body">
@@ -73,7 +73,7 @@
                         foreach (var resource in Model.recentResources)
                         {
                             string mediaClass = cardIndex % 4 == 0 ? "" : cardIndex % 4 == 1 ? "alt" : cardIndex % 4 == 2 ? "data" : "video";
-                            string badgeText = cardIndex == 0 ? "NEW" : cardIndex == 1 ? "UPDATED" : cardIndex == 2 ? "WATCH" : "NEW";
+                            string badgeText = resource.ris_status == "1" ? "NEW" : "UPDATED";
                             <article class="card">
                                 <div class="card-media @mediaClass"><span class="badge">@badgeText</span></div>
                                 <div class="card-body">
@@ -149,12 +149,12 @@
             <section class="side-panel">
                 <h3>Quick Actions</h3>
                 <div class="quick-actions">
-                    <button class="quick" onclick="window.location.href='~/StockCheck'" style="cursor:pointer;"><i>⌕</i>Price & Availability</button>
-                    <button class="quick" onclick="window.location.href='~/OrderStatus'" style="cursor:pointer;"><i>▤</i>Order Status</button>
-                    <button class="quick" onclick="window.location.href='~/Webshop'" style="cursor:pointer;"><i>🛒</i>Online Shop</button>
-                    <button class="quick" onclick="window.location.href='~/ProductConfig'" style="cursor:pointer;"><i>⚙</i>Product Configurators</button>
-                    <button class="quick" onclick="window.location.href='~/Support'" style="cursor:pointer;"><i>◉</i>Technical Support</button>
-                    <button class="quick" onclick="window.location.href='~/Documents'" style="cursor:pointer;"><i>▧</i>Find Product Documents</button>
+                    <button class="quick" onclick="window.location.href='~/StockCheck'" style="cursor:pointer;"><i>&#128269;</i>Price & Availability</button>
+                    <button class="quick" onclick="window.location.href='~/OrderStatus'" style="cursor:pointer;"><i>&#128203;</i>Order Status</button>
+                    <button class="quick" onclick="window.location.href='~/Webshop'" style="cursor:pointer;"><i>&#128722;</i>Online Shop</button>
+                    <button class="quick" onclick="window.location.href='~/ProductConfig'" style="cursor:pointer;"><i>&#9881;</i>Product Configurators</button>
+                    <button class="quick" onclick="window.location.href='~/Support'" style="cursor:pointer;"><i>&#9673;</i>Technical Support</button>
+                    <button class="quick" onclick="window.location.href='~/Documents'" style="cursor:pointer;"><i>&#9638;</i>Find Product Documents</button>
                 </div>
             </section>
 
@@ -168,8 +168,8 @@
                             int updateIndex = 0;
                             foreach (var comm in Model.recentComms.Take(4))
                             {
-                                string tagClass = updateIndex % 4 == 0 ? "tag-red" : updateIndex % 4 == 1 ? "tag-green" : updateIndex % 4 == 2 ? "tag-orange" : "tag-blue";
-                                string tagText = updateIndex % 4 == 0 ? "NEW RESOURCE" : updateIndex % 4 == 1 ? "PRODUCT UPDATE" : updateIndex % 4 == 2 ? "ANNOUNCEMENT" : "EVENT";
+                                string tagClass = comm.sc_status == "2" ? "tag-red" : "tag-blue";
+                                string tagText = comm.sc_status == "2" ? "NEW" : "UPDATED";
                                 <li><span class="update-tag @tagClass">@tagText</span><span class="update-text">@comm.sc_headline</span></li>
                                 updateIndex++;
                             }
@@ -182,10 +182,10 @@
             <section class="side-panel">
                 <h3>My RiSource</h3>
                 <ul class="side-list">
-                    <li>Recently Viewed <strong></strong></li>
-                    <li>Saved Resources <strong></strong></li>
-                    <li>My Downloads <strong></strong></li>
-                    <li>My Collections <strong></strong></li>
+                    <li>Recently Viewed <strong>@Model.recentlyViewedCount</strong></li>
+                    <li>Saved Resources <strong>@Model.savedResourcesCount</strong></li>
+                    <li>My Downloads <strong>@Model.myDownloadsCount</strong></li>
+                    <li>My Collections <strong>@Model.myCollectionsCount</strong></li>
                 </ul>
             </section>
         </aside>

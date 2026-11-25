@@ -40,12 +40,18 @@ namespace newrisourcecenter.Controllers
 
         // GET: RiSources
         [Authorize]
-        public ActionResult Index(int childid=0, int n3id=0, string n1_name=null)
+        public ActionResult Index(int childid=0, int n3id=0, string n1_name=null, string ind_id=null, string prod_id=null, string cat_id=null, string app_id=null)
         {
             long userId = Convert.ToInt64(Session["userId"]);
             if (!Request.IsAuthenticated || userId == 0)
             {
                 return RedirectToAction("Login", "Account");
+            }
+
+            // If any filters are applied, redirect to List action
+            if (!string.IsNullOrEmpty(ind_id) || !string.IsNullOrEmpty(prod_id) || !string.IsNullOrEmpty(cat_id) || !string.IsNullOrEmpty(app_id) || childid != 0)
+            {
+                return RedirectToAction("List", new { childid = childid, ind_id = ind_id, prod_id = prod_id, cat_id = cat_id, app_id = app_id, n1_name = n1_name });
             }
 
             if (ViewBag.n1_name==null)

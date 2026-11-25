@@ -224,6 +224,27 @@ namespace newrisourcecenter.Controllers
                     .Take(4)
                     .ToListAsync();
 
+                // Fetch counts for "My RiSource" section
+                homeModel.recentlyViewedCount = await dbEntity.RiSources_Action_Log
+                    .Where(a => a.Usr_ID == userId.ToString() && a.Action == "view")
+                    .Select(a => a.Form_ID)
+                    .Distinct()
+                    .CountAsync();
+
+                homeModel.savedResourcesCount = await db.RiSourceCarts
+                    .Where(a => a.user_id == userId)
+                    .CountAsync();
+
+                homeModel.myDownloadsCount = await dbEntity.RiSources_Action_Log
+                    .Where(a => a.Usr_ID == userId.ToString() && a.Action == "download")
+                    .Select(a => a.Form_ID)
+                    .Distinct()
+                    .CountAsync();
+
+                homeModel.myCollectionsCount = await db.RiSourceCarts
+                    .Where(a => a.user_id == userId)
+                    .CountAsync();
+
                 return View(homeModel);
             }
         }

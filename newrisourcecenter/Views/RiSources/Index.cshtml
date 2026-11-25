@@ -54,20 +54,67 @@
                 <label><input type="checkbox" class="resource-type-filter" value="IMAGE" onchange="filterByResourceType('IMAGE')" /> Images</label>
                 <span>0</span>
             </div>
-            <h4>Category</h4>
-            @foreach (var items in Model)
+            
+            @if (ViewBag.list_n2ID != null)
             {
-                if (@items.sales_submenu != null)
+                <h4>File Type</h4>
+                @foreach (var item in ViewBag.list_n2ID)
                 {
-                    foreach (var item in items.sales_submenu)
-                    {
-                        <div class="filter-item">
-                            <label><input type="checkbox" /> @item.n2_longName</label>
-                            <span>0</span>
-                        </div>
-                    }
+                    <div class="filter-item">
+                        <label><input type="checkbox" class="file-type-filter" value="@item.id" onchange="filterByFileType(@item.id)" /> @item.name</label>
+                        <span>0</span>
+                    </div>
                 }
             }
+            
+            @if (ViewBag.list_cat != null)
+            {
+                <h4>Category</h4>
+                @foreach (var item in ViewBag.list_cat)
+                {
+                    <div class="filter-item">
+                        <label><input type="checkbox" class="category-filter" value="@item.cat_id" onchange="filterByCategory(@item.cat_id)" /> @item.ris_categories</label>
+                        <span>0</span>
+                    </div>
+                }
+            }
+            
+            @if (ViewBag.list_products != null)
+            {
+                <h4>Product</h4>
+                @foreach (var item in ViewBag.list_products)
+                {
+                    <div class="filter-item">
+                        <label><input type="checkbox" class="product-filter" value="@item.pp_ID" onchange="filterByProduct(@item.pp_ID)" /> @item.pp_product</label>
+                        <span>0</span>
+                    </div>
+                }
+            }
+            
+            @if (ViewBag.list_industry != null)
+            {
+                <h4>Industry</h4>
+                @foreach (var item in ViewBag.list_industry)
+                {
+                    <div class="filter-item">
+                        <label><input type="checkbox" class="industry-filter" value="@item.pi_ID" onchange="filterByIndustry(@item.pi_ID)" /> @item.pi_industry</label>
+                        <span>0</span>
+                    </div>
+                }
+            }
+            
+            @if (ViewBag.list_partnerApp != null)
+            {
+                <h4>Application</h4>
+                @foreach (var item in ViewBag.list_partnerApp)
+                {
+                    <div class="filter-item">
+                        <label><input type="checkbox" class="application-filter" value="@item.appli_id" onchange="filterByApplication(@item.appli_id)" /> @item.appli_name</label>
+                        <span>0</span>
+                    </div>
+                }
+            }
+            
             <h4>Date Range</h4>
             <div class="filter-item">
                 <label><input type="radio" name="dateRange" value="latest" checked onchange="filterByResourceDate('latest')" /> Latest</label>
@@ -328,6 +375,36 @@
         } else {
             url.searchParams.set('recent', 'latest');
         }
+        window.location.href = url.toString();
+    }
+
+    function filterByFileType(fileTypeId) {
+        var url = new URL(window.location.href);
+        url.searchParams.set('childid', fileTypeId);
+        window.location.href = url.toString();
+    }
+
+    function filterByCategory(catId) {
+        var url = new URL(window.location.href);
+        url.searchParams.set('cat_id', catId);
+        window.location.href = url.toString();
+    }
+
+    function filterByProduct(prodId) {
+        var url = new URL(window.location.href);
+        url.searchParams.set('prod_id', prodId);
+        window.location.href = url.toString();
+    }
+
+    function filterByIndustry(indId) {
+        var url = new URL(window.location.href);
+        url.searchParams.set('ind_id', indId);
+        window.location.href = url.toString();
+    }
+
+    function filterByApplication(appId) {
+        var url = new URL(window.location.href);
+        url.searchParams.set('app_id', appId);
         window.location.href = url.toString();
     }
 </script>

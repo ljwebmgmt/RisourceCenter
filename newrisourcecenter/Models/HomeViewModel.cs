@@ -84,6 +84,12 @@ namespace newrisourcecenter.Models
         public string usr_zip { get; set; }
         public string usr_add1 { get; set; }
         public long? comp_ID { get; set; }
+        public int recentlyViewedCount { get; set; }
+        public int savedResourcesCount { get; set; }
+        public int myDownloadsCount { get; set; }
+        public int myCollectionsCount { get; set; }
+        public List<SalesCommViewModel> recentComms { get; set; }
+        public List<RiSource> recentResources { get; set; }
     }
 
     public class StockChecks

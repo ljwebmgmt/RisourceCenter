@@ -35,7 +35,7 @@ namespace newrisourcecenter.Controllers
 
         #region Index
         // GET: SalesCommunications/Index
-        public ActionResult Index(int childId = 0, int n3id = 0, string submenu=null, string querystring=null, string recent = "latest")
+        public ActionResult Index(int childId = 0, int n3id = 0, string submenu=null, string querystring=null, string recent = "latest", string n1_name=null, string n2_name=null, string n3_name=null)
         {
             long userId = Convert.ToInt64(Session["userId"]);
             if (!Request.IsAuthenticated || userId==0)
