@@ -899,16 +899,14 @@ namespace newrisourcecenter.Controllers
                 {
                     IQueryable<RFQ_Action_Log> rfq_action_log=null;
 
-                    string salesPerson = "";
                     string compName = "";
+
                     if (item.rfq.sold_to_party != "Distributor Submission")
                     {
-                        salesPerson = item.rfq.sales_engineer;
                         compName = item.rfq.sold_to_party;
                     }
                     else
                     {
-                        salesPerson = item.rfq.distro_name;
                         compName = item.rfq.distro_company;
                     }
 
@@ -981,7 +979,7 @@ namespace newrisourcecenter.Controllers
                                 form_id = item.rfq.ID,
                                 user_id = item.rfq.user_id,
                                 quote_num = item.rfq.Quote_Num,
-                                requestor = salesPerson,
+                                requestor = item.rfq.sales_engineer,
                                 comp_name = compName,
                                 qte_ref = item.rfq.qte_ref,
                                 submission_date = item.rfq.submission_date,
@@ -1174,7 +1172,7 @@ namespace newrisourcecenter.Controllers
                                 form_id = item.rfq.ID,
                                 user_id = item.rfq.user_id,
                                 quote_num = item.rfq.Quote_Num,
-                                requestor = item.rfq.distro_name,
+                                requestor = item.rfq.sales_engineer,
                                 comp_name = item.rfq.distro_company,
                                 qte_ref = item.rfq.qte_ref,
                                 submission_date = item.rfq.submission_date,
@@ -1281,7 +1279,7 @@ namespace newrisourcecenter.Controllers
                             form_id = item.rfq.ID,
                             user_id = item.rfq.user_id,
                             quote_num = item.rfq.Quote_Num,
-                            requestor = item.rfq.distro_name,
+                            requestor = item.rfq.sales_engineer,
                             comp_name = item.rfq.distro_company,
                             qte_ref = item.rfq.qte_ref,
                             submission_date = item.rfq.submission_date,

@@ -87,13 +87,11 @@ namespace newrisourcecenter.Controllers
             List<Nav1List> list_n2ID = new List<Nav1List>();
             foreach (var n2dsitems in n2ids)
             {
-                if ( n2dsitems.n2ID != 46 )
+                if(!string.IsNullOrEmpty(n2dsitems.PageName) || !string.IsNullOrEmpty(n2dsitems.Controller))
                 {
-                    if ( n2dsitems.n2ID != 49 && n2dsitems.n2ID!=42 && n2dsitems.n2ID!=78)
-                    {
-                        list_n2ID.Add(new Nav1List { id = n2dsitems.n2ID, name = n2dsitems.n2_nameLong,n3order=n2dsitems.n2order });
-                    }
+                    continue;
                 }
+                list_n2ID.Add(new Nav1List { id = n2dsitems.n2ID, name = n2dsitems.n2_nameLong, n3order = n2dsitems.n2order });
             }
             ViewBag.list_n2ID = list_n2ID.OrderBy(a=>a.n3order);
 
@@ -193,13 +191,14 @@ namespace newrisourcecenter.Controllers
 
             //Add n1ID to the list of n1IDs for the drop down
             Dictionary<long,Nav1List> list_n2ID = new Dictionary<long,Nav1List>();
-            List<long> excludedIds = new List<long>() { 49, 46, 42, 78, 30177 };
             foreach (var n2dsitems in n2ids)
             {
-                if (excludedIds.Contains(n2dsitems.n2ID))
+                if (!string.IsNullOrEmpty(n2dsitems.PageName) || !string.IsNullOrEmpty(n2dsitems.Controller))
+                {
                     continue;
+                }
                 list_n2ID.Add(n2dsitems.n2ID, new Nav1List { id = n2dsitems.n2ID, name = n2dsitems.n2_nameLong, img = n2dsitems.n2_headerImg, n3order = n2dsitems.n2order });    
-                    }
+            }
             ViewBag.list_n2ID = list_n2ID.OrderBy(a => a.Value.n3order);
             List<RiSourcesViewModel> listRisources = null;
             if (n2id == 0) {
@@ -260,12 +259,12 @@ namespace newrisourcecenter.Controllers
             List<Nav1List> list_n2ID = new List<Nav1List>();
             foreach (var n2dsitems in n2ids)
             {
-                if ( n2dsitems.n2ID != 46 ) {
-                    if ( n2dsitems.n2ID != 49 && n2dsitems.n2ID != 42 && n2dsitems.n2ID != 78)
-                    {
-                        list_n2ID.Add(new Nav1List { id = n2dsitems.n2ID, name = n2dsitems.n2_nameLong,n3order=n2dsitems.n2order });
-                    }
+                if (!string.IsNullOrEmpty(n2dsitems.PageName) || !string.IsNullOrEmpty(n2dsitems.Controller))
+                {
+                    continue;
                 }
+                list_n2ID.Add(new Nav1List { id = n2dsitems.n2ID, name = n2dsitems.n2_nameLong, n3order = n2dsitems.n2order });
+
             }
             ViewBag.list_n2ID = list_n2ID.OrderBy(a=>a.n3order);
 
@@ -1035,13 +1034,11 @@ namespace newrisourcecenter.Controllers
             List<Nav1List> list_n2ID = new List<Nav1List>();
             foreach (var n2dsitems in n2ids)
             {
-                if ( n2dsitems.n2ID != 46 )
+                if (!string.IsNullOrEmpty(n2dsitems.PageName) || !string.IsNullOrEmpty(n2dsitems.Controller))
                 {
-                    if ( n2dsitems.n2ID != 49 && n2dsitems.n2ID != 42 && n2dsitems.n2ID != 78)
-                    {
-                        list_n2ID.Add(new Nav1List { id = n2dsitems.n2ID, name = n2dsitems.n2_nameLong,n3order=n2dsitems.n2order });
-                    }
+                    continue;
                 }
+                list_n2ID.Add(new Nav1List { id = n2dsitems.n2ID, name = n2dsitems.n2_nameLong, n3order = n2dsitems.n2order });
             }
             ViewBag.list_n2ID = list_n2ID.OrderBy(a=>a.n3order);
 
@@ -1538,6 +1535,10 @@ namespace newrisourcecenter.Controllers
             Dictionary<long, Nav1List> list_n2ID = new Dictionary<long, Nav1List>();
             foreach (var n2dsitems in n2ids)
             {
+                if (!string.IsNullOrEmpty(n2dsitems.PageName) || !string.IsNullOrEmpty(n2dsitems.Controller))
+                {
+                    continue;
+                }
                 list_n2ID.Add(n2dsitems.n2ID, new Nav1List { id = n2dsitems.n2ID, name = n2dsitems.n2_nameLong, img = n2dsitems.n2_headerImg, n3order = n2dsitems.n2order });
             }
             ViewBag.list_n2ID = list_n2ID.OrderBy(a => a.Value.n3order);
@@ -1560,13 +1561,12 @@ namespace newrisourcecenter.Controllers
             List<Nav1List> list_n2ID = new List<Nav1List>();
             foreach (var n2dsitems in n2ids)
             {
-                if (n2dsitems.n2ID != 46)
+                if (!string.IsNullOrEmpty(n2dsitems.PageName) || !string.IsNullOrEmpty(n2dsitems.Controller))
                 {
-                    if (n2dsitems.n2ID != 49 && n2dsitems.n2ID != 42 && n2dsitems.n2ID != 78)
-                    {
-                        list_n2ID.Add(new Nav1List { id = n2dsitems.n2ID, name = n2dsitems.n2_nameLong, n3order = n2dsitems.n2order });
-                    }
+                    continue;
                 }
+                list_n2ID.Add(new Nav1List { id = n2dsitems.n2ID, name = n2dsitems.n2_nameLong, n3order = n2dsitems.n2order });
+
             }
             ViewBag.list_n2ID = list_n2ID.OrderBy(a => a.n3order);
 

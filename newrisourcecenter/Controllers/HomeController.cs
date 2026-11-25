@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using newrisourcecenter.Models;
@@ -14,19 +16,21 @@ namespace newrisourcecenter.Controllers
     public class HomeController : Controller
     {
         private RisourceCenterMexicoEntities db;
+        private RisourceCenterContext context;
 
-        public HomeController():this(new RisourceCenterMexicoEntities())
+        public HomeController():this(new RisourceCenterContext(), new RisourceCenterMexicoEntities())
         {
 
         }
 
-        public HomeController(RisourceCenterMexicoEntities _db)
+        public HomeController(RisourceCenterContext _context, RisourceCenterMexicoEntities _db)
         {
             db = _db;
+            context = _context;
         }
 
         [Authorize]
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
             string usr_state = "";
             string usr_country = "";
@@ -207,32 +211,18 @@ namespace newrisourcecenter.Controllers
                 }
 
                 // Fetch recent communications for "What's New for You" section
-                var recentComms = dbEntity.salesComms
+                homeModel.recentComms = await context.SalesCommViewModels
                     .Where(a => a.sc_endDate >= DateTime.Now || a.sc_endDate == null)
                     .OrderByDescending(a => a.sc_startDate)
                     .Take(4)
-                    .Select(a => new {
-                        a.sc_headline,
-                        a.sc_teaser,
-                        a.sc_startDate,
-                        a.n3ID
-                    }).ToList();
-
-                ViewBag.recentComms = recentComms;
+                    .ToListAsync();
 
                 // Fetch recent resources for "What's New for You" section
-                var recentResources = dbEntity.RiSources
-                    .Where(a => a.ris_active == 1)
-                    .OrderByDescending(a => a.ris_dateCreated)
+                homeModel.recentResources = await db.RiSources
+                    .Where(a => a.ris_status == "1")
+                    .OrderByDescending(a => a.dateCreated)
                     .Take(4)
-                    .Select(a => new {
-                        a.ris_headline,
-                        a.ris_teaser,
-                        a.ris_dateCreated,
-                        a.ris_link
-                    }).ToList();
-
-                ViewBag.recentResources = recentResources;
+                    .ToListAsync();
 
                 return View(homeModel);
             }

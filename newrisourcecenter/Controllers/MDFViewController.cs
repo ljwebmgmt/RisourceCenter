@@ -836,7 +836,7 @@ namespace newrisourcecenter.Models
             var userData = await db.UserViewModels.Where(a => a.usr_ID == userId).FirstOrDefaultAsync();
             if (userData == null || string.IsNullOrEmpty(userData.usr_pages) || !userData.usr_pages.Contains("30125"))
             {
-                return RedirectToAction("Manage", new { year = year });
+                return RedirectToAction("manage", new { year = year });
             }
 
             MDFViewModel mdfViewModels = new MDFViewModel();
@@ -1021,7 +1021,7 @@ namespace newrisourcecenter.Models
             var userData = await db.UserViewModels.Where(a => a.usr_ID == userId).FirstOrDefaultAsync();
             if (userData == null || string.IsNullOrEmpty(userData.usr_pages) || !userData.usr_pages.Contains("30125"))
             {
-                return RedirectToAction("Manage", new { year = 0 });
+                return RedirectToAction("manage", new { year = 0 });
             }
 
             MDFViewModel mDFViewModel = await db.MDFViewModels.FindAsync(id);
@@ -1101,7 +1101,7 @@ namespace newrisourcecenter.Models
             var userData = await db.UserViewModels.Where(a => a.usr_ID == userId).FirstOrDefaultAsync();
             if (userData == null || string.IsNullOrEmpty(userData.usr_pages) || !userData.usr_pages.Contains("30125"))
             {
-                return RedirectToAction("Manage", new { year = archive_year });
+                return RedirectToAction("manage", new { year = archive_year });
             }
 
             MDFViewModel mdfViewModels = new MDFViewModel();
@@ -1265,7 +1265,7 @@ namespace newrisourcecenter.Models
             var userData = await db.UserViewModels.Where(a => a.usr_ID == userId).FirstOrDefaultAsync();
             if (userData == null || string.IsNullOrEmpty(userData.usr_pages) || !userData.usr_pages.Contains("30125"))
             {
-                return RedirectToAction("Manage", new { year = Convert.ToInt32(year) });
+                return RedirectToAction("manage", new { year = Convert.ToInt32(year) });
             }
 
             MDFViewModel mDFViewModel = await db.MDFViewModels.FindAsync(id);

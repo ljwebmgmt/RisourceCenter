@@ -2675,3 +2675,17 @@ color:#fff !important;
     height: inherit !important;
 }
 #mobile-navbar.navbar-collapse { max-height: inherit !important;}
+/* Style for odd rows */
+.ag-theme-quartz .ag-row-odd {
+    background-color: #f9f9f9;
+}
+
+/* Style for even rows */
+.ag-theme-quartz .ag-row-even {
+    background-color: #ffffff;
+}
+
+/* Optional: Maintain hover effect brightness */
+.ag-theme-quartz .ag-row-hover {
+    background-color: #ededed !important;
+}

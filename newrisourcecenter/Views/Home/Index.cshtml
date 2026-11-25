@@ -1,4 +1,5 @@
-﻿@model newrisourcecenter.Models.HomeViewModel
+﻿@using Microsoft.AspNet.Identity;
+@model newrisourcecenter.Models.HomeViewModel
 @{
     ViewBag.Title = "Home Page";
     long userId = Convert.ToInt64(Session["userId"]);
@@ -6,7 +7,7 @@
     long companyType = Convert.ToInt64(Session["companyType"]);
     string host = "";
     int comp_MDF = Convert.ToInt32(Session["comp_MDF"]);
-    string[] dropdown_pages = {"104","67","30129","116" };
+    string[] dropdown_pages = { "104", "67", "30129", "116" };
     string my_pages = Convert.ToString(Session["userPages"]);
     string[] user_pages = { };
     if (my_pages != null)
@@ -16,7 +17,7 @@
 }
 @if (companyId != Model.comp_ID)
 {
-   <script>window.location.href = "/Account/Login/";</script>
+    <script>window.location.href = "/Account/Login/";</script>
 }
 
 <article class="main_content page">
@@ -45,13 +46,13 @@
                         <h2>What's New for You</h2>
                         <small>Latest sales tools, collateral and announcements.</small>
                     </div>
-                    <a class="link" href="~/SalesCommunication">View All →</a>
+                    <a class="link" href="~/SalesComm">View All →</a>
                 </div>
                 <div class="cards">
-                    @if (ViewBag.recentComms != null && ViewBag.recentComms.Count > 0)
+                    @if (Model.recentComms != null && Model.recentComms.Count > 0)
                     {
                         int cardIndex = 0;
-                        foreach (var comm in ViewBag.recentComms)
+                        foreach (var comm in Model.recentComms)
                         {
                             string mediaClass = cardIndex % 4 == 0 ? "" : cardIndex % 4 == 1 ? "alt" : cardIndex % 4 == 2 ? "data" : "video";
                             string badgeText = cardIndex == 0 ? "NEW" : cardIndex == 1 ? "UPDATED" : cardIndex == 2 ? "WATCH" : "NEW";
@@ -60,16 +61,16 @@
                                 <div class="card-body">
                                     <h3>@comm.sc_headline</h3>
                                     <p>@comm.sc_teaser</p>
-                                    <a class="link" href="~/SalesCommunication/Index?n3id=@comm.n3ID">View Details →</a>
+                                    <a class="link" href="~/SalesComm/Index?n3id=@comm.n3ID">View Details →</a>
                                 </div>
                             </article>
                             cardIndex++;
                         }
                     }
-                    else if (ViewBag.recentResources != null && ViewBag.recentResources.Count > 0)
+                    else if (Model.recentResources != null && Model.recentResources.Count > 0)
                     {
                         int cardIndex = 0;
-                        foreach (var resource in ViewBag.recentResources)
+                        foreach (var resource in Model.recentResources)
                         {
                             string mediaClass = cardIndex % 4 == 0 ? "" : cardIndex % 4 == 1 ? "alt" : cardIndex % 4 == 2 ? "data" : "video";
                             string badgeText = cardIndex == 0 ? "NEW" : cardIndex == 1 ? "UPDATED" : cardIndex == 2 ? "WATCH" : "NEW";
@@ -84,18 +85,6 @@
                             cardIndex++;
                         }
                     }
-                    else
-                    {
-                        <!-- Fallback static cards if no data -->
-                        <article class="card">
-                            <div class="card-media"><span class="badge">NEW</span></div>
-                            <div class="card-body">
-                                <h3>Welcome to RiSource Center</h3>
-                                <p>Your sales and support resource center.</p>
-                                <a class="link" href="~/SalesCommunication">Explore →</a>
-                            </div>
-                        </article>
-                    }
                 </div>
             </section>
 
@@ -107,7 +96,7 @@
                         <div class="content">
                             <h3>Communications</h3>
                             <p>Product updates, program announcements and more.</p>
-                            <a class="link" href="~/SalesCommunication">View Communications →</a>
+                            <a class="link" href="~/SalesComm">View Communications →</a>
                         </div>
                     </article>
                     <article class="section-tile">
@@ -115,7 +104,7 @@
                         <div class="content">
                             <h3>Sales Resources</h3>
                             <p>Sell sheets, presentations, competitive info and more.</p>
-                            <a class="link" href="~/Resources">Browse Resources →</a>
+                            <a class="link" href="~/Risources">Browse Resources →</a>
                         </div>
                     </article>
                     <article class="section-tile">
@@ -123,7 +112,7 @@
                         <div class="content">
                             <h3>Training & Rittal University</h3>
                             <p>Live and on-demand training to grow your expertise.</p>
-                            <a class="link" href="#">Start Learning →</a>
+                            <a class="link" href="~/RittalUniversity/LandingPage">Start Learning →</a>
                         </div>
                     </article>
                     <article class="section-tile">
@@ -131,7 +120,7 @@
                         <div class="content">
                             <h3>Marketing Tools</h3>
                             <p>Logos, campaign assets, images and co-op resources.</p>
-                            <a class="link" href="~/Resources">Explore Tools →</a>
+                            <a class="link" href="~/Risources">Explore Tools →</a>
                         </div>
                     </article>
                 </div>
@@ -160,48 +149,43 @@
             <section class="side-panel">
                 <h3>Quick Actions</h3>
                 <div class="quick-actions">
-                    <button class="quick" onclick="window.location.href='~/StockCheck'" style="cursor:pointer;"><i>&#128269;</i>Price & Availability</button>
-                    <button class="quick" onclick="window.location.href='~/OrderStatus'" style="cursor:pointer;"><i>&#128203;</i>Order Status</button>
-                    <button class="quick" onclick="window.location.href='~/Webshop'" style="cursor:pointer;"><i>&#128722;</i>Online Shop</button>
-                    <button class="quick" onclick="window.location.href='~/ProductConfig'" style="cursor:pointer;"><i>&#9881;</i>Product Configurators</button>
-                    <button class="quick" onclick="window.location.href='~/Support'" style="cursor:pointer;"><i>&#9673;</i>Technical Support</button>
-                    <button class="quick" onclick="window.location.href='~/Documents'" style="cursor:pointer;"><i>&#9638;</i>Find Product Documents</button>
+                    <button class="quick" onclick="window.location.href='~/StockCheck'" style="cursor:pointer;"><i>⌕</i>Price & Availability</button>
+                    <button class="quick" onclick="window.location.href='~/OrderStatus'" style="cursor:pointer;"><i>▤</i>Order Status</button>
+                    <button class="quick" onclick="window.location.href='~/Webshop'" style="cursor:pointer;"><i>🛒</i>Online Shop</button>
+                    <button class="quick" onclick="window.location.href='~/ProductConfig'" style="cursor:pointer;"><i>⚙</i>Product Configurators</button>
+                    <button class="quick" onclick="window.location.href='~/Support'" style="cursor:pointer;"><i>◉</i>Technical Support</button>
+                    <button class="quick" onclick="window.location.href='~/Documents'" style="cursor:pointer;"><i>▧</i>Find Product Documents</button>
                 </div>
             </section>
 
             <!-- Latest Updates -->
-            <section class="side-panel">
-                <h3>Latest Updates <a class="link" style="float:right;font-size:12px" href="~/SalesCommunication">View All →</a></h3>
-                <ul class="side-list">
-                    @if (ViewBag.recentComms != null && ViewBag.recentComms.Count > 0)
-                    {
-                        int updateIndex = 0;
-                        foreach (var comm in ViewBag.recentComms.Take(4))
-                        {
-                            string tagClass = updateIndex % 4 == 0 ? "tag-red" : updateIndex % 4 == 1 ? "tag-green" : updateIndex % 4 == 2 ? "tag-orange" : "tag-blue";
-                            string tagText = updateIndex % 4 == 0 ? "NEW RESOURCE" : updateIndex % 4 == 1 ? "PRODUCT UPDATE" : updateIndex % 4 == 2 ? "ANNOUNCEMENT" : "EVENT";
-                            <li><span class="update-tag @tagClass">@tagText</span><span>@comm.sc_headline</span></li>
-                            updateIndex++;
+            @if (Model.recentComms != null && Model.recentComms.Count > 0)
+            {
+                <section class="side-panel">
+                    <h3>Latest Updates <a class="link" style="float:right;font-size:12px" href="~/SalesComm">View All →</a></h3>
+                    <ul class="side-list updates-list">
+                        @{
+                            int updateIndex = 0;
+                            foreach (var comm in Model.recentComms.Take(4))
+                            {
+                                string tagClass = updateIndex % 4 == 0 ? "tag-red" : updateIndex % 4 == 1 ? "tag-green" : updateIndex % 4 == 2 ? "tag-orange" : "tag-blue";
+                                string tagText = updateIndex % 4 == 0 ? "NEW RESOURCE" : updateIndex % 4 == 1 ? "PRODUCT UPDATE" : updateIndex % 4 == 2 ? "ANNOUNCEMENT" : "EVENT";
+                                <li><span class="update-tag @tagClass">@tagText</span><span class="update-text">@comm.sc_headline</span></li>
+                                updateIndex++;
+                            }
                         }
-                    }
-                    else
-                    {
-                        <li><span class="update-tag tag-red">NEW RESOURCE</span><span>VX Double Door Sell Sheet</span></li>
-                        <li><span class="update-tag tag-green">PRODUCT UPDATE</span><span>New CMC Platform Sensors</span></li>
-                        <li><span class="update-tag tag-orange">ANNOUNCEMENT</span><span>Holiday Shipping Schedule</span></li>
-                        <li><span class="update-tag tag-blue">EVENT</span><span>Rittal at PACK EXPO</span></li>
-                    }
-                </ul>
-            </section>
+                    </ul>
+                </section>
+            }
 
             <!-- My RiSource -->
             <section class="side-panel">
                 <h3>My RiSource</h3>
                 <ul class="side-list">
-                    <li>Recently Viewed <strong>12</strong></li>
-                    <li>Saved Resources <strong>8</strong></li>
-                    <li>My Downloads <strong>23</strong></li>
-                    <li>My Collections <strong>4</strong></li>
+                    <li>Recently Viewed <strong></strong></li>
+                    <li>Saved Resources <strong></strong></li>
+                    <li>My Downloads <strong></strong></li>
+                    <li>My Collections <strong></strong></li>
                 </ul>
             </section>
         </aside>
@@ -287,89 +271,89 @@
         justify-content: center;
     }
 
-    #webshopAccountModal .modal-content {
-        background-color: #fff;
-        margin: auto;
-        padding: 30px;
-        border-radius: 8px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-        width: 450px;
-        max-width: 90%;
-    }
+        #webshopAccountModal .modal-content {
+            background-color: #fff;
+            margin: auto;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            width: 450px;
+            max-width: 90%;
+        }
 
-    #webshopAccountModal .modal-header {
-        font-size: 20px;
-        font-weight: bold;
-        margin-bottom: 20px;
-        color: #333;
-        border-bottom: 2px solid #E50043;
-        padding-bottom: 10px;
-    }
+        #webshopAccountModal .modal-header {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+            border-bottom: 2px solid #E50043;
+            padding-bottom: 10px;
+        }
 
-    #webshopAccountModal .form-group {
-        margin-bottom: 20px;
-    }
+        #webshopAccountModal .form-group {
+            margin-bottom: 20px;
+        }
 
-    #webshopAccountModal .form-group label {
-        display: block;
-        margin-bottom: 8px;
-        font-weight: 600;
-        color: #555;
-    }
+            #webshopAccountModal .form-group label {
+                display: block;
+                margin-bottom: 8px;
+                font-weight: 600;
+                color: #555;
+            }
 
-    #webshopAccountModal .form-group input {
-        width: 100%;
-        padding: 12px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        font-size: 14px;
-        box-sizing: border-box;
-        transition: border-color 0.3s;
-        max-width: 100%;
-    }
+            #webshopAccountModal .form-group input {
+                width: 100%;
+                padding: 12px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                font-size: 14px;
+                box-sizing: border-box;
+                transition: border-color 0.3s;
+                max-width: 100%;
+            }
 
-    #webshopAccountModal .form-group input:focus {
-        border-color: #E50043;
-    }
+                #webshopAccountModal .form-group input:focus {
+                    border-color: #E50043;
+                }
 
-    #webshopAccountModal .form-group input:hover {
-        border-color: #E50043;
-    }
+                #webshopAccountModal .form-group input:hover {
+                    border-color: #E50043;
+                }
 
-    #webshopAccountModal .button-group {
-        display: flex;
-        justify-content: flex-end;
-        gap: 10px;
-    }
+        #webshopAccountModal .button-group {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
 
-    #webshopAccountModal .btn {
-        padding: 10px 25px;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 14px;
-        font-weight: 500;
-        transition: background 0.3s;
-    }
+        #webshopAccountModal .btn {
+            padding: 10px 25px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
 
-    #webshopAccountModal .btn-default {
-        border: 1px solid #ccc;
-        background: #f5f5f5;
-        color: #333;
-    }
+        #webshopAccountModal .btn-default {
+            border: 1px solid #ccc;
+            background: #f5f5f5;
+            color: #333;
+        }
 
-    #webshopAccountModal .btn-default:hover {
-        background: #e0e0e0;
-    }
+            #webshopAccountModal .btn-default:hover {
+                background: #e0e0e0;
+            }
 
-    #webshopAccountModal .btn-primary {
-        background: #E50043;
-        border: none;
-        color: #fff;
-    }
+        #webshopAccountModal .btn-primary {
+            background: #E50043;
+            border: none;
+            color: #fff;
+        }
 
-    #webshopAccountModal .btn-primary:hover {
-        background: #c90038;
-    }
+            #webshopAccountModal .btn-primary:hover {
+                background: #c90038;
+            }
 </style>
 
 <!-- Online Shop Account Modal -->
@@ -398,7 +382,7 @@
 
 <script>
     // Listen for messages from iframe
-    window.addEventListener('message', function(event) {
+    window.addEventListener('message', function (event) {
         if (event.data.type === 'openWebshopModal') {
             openWebshopModal(event.data.mode, event.data.id, event.data.accountName, event.data.emailAddress, event.data.password);
         } else if (event.data.type === 'closeWebshopModal') {
