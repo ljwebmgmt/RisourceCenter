@@ -44,15 +44,15 @@
             </div>
             <div class="filter-item">
                 <label><input type="checkbox" class="resource-type-filter" value="PDF" onchange="filterByResourceType('PDF')" /> Documents</label>
-                <span>0</span>
+                <span>@Model.Count(r => r.file_type == "PDF")</span>
             </div>
             <div class="filter-item">
                 <label><input type="checkbox" class="resource-type-filter" value="VIDEO" onchange="filterByResourceType('VIDEO')" /> Videos</label>
-                <span>0</span>
+                <span>@Model.Count(r => r.file_type == "VIDEO")</span>
             </div>
             <div class="filter-item">
                 <label><input type="checkbox" class="resource-type-filter" value="IMAGE" onchange="filterByResourceType('IMAGE')" /> Images</label>
-                <span>0</span>
+                <span>@Model.Count(r => r.file_type == "IMAGE")</span>
             </div>
             
             @if (ViewBag.list_n2ID != null)
@@ -62,7 +62,7 @@
                 {
                     <div class="filter-item">
                         <label><input type="checkbox" class="file-type-filter" value="@item.id" onchange="filterByFileType(@item.id)" /> @item.name</label>
-                        <span>0</span>
+                        <span>@item.Count</span>
                     </div>
                 }
             }
@@ -74,7 +74,7 @@
                 {
                     <div class="filter-item">
                         <label><input type="checkbox" class="category-filter" value="@item.cat_id" onchange="filterByCategory(@item.cat_id)" /> @item.ris_categories</label>
-                        <span>0</span>
+                        <span>@item.Count</span>
                     </div>
                 }
             }
@@ -86,7 +86,7 @@
                 {
                     <div class="filter-item">
                         <label><input type="checkbox" class="product-filter" value="@item.pp_ID" onchange="filterByProduct(@item.pp_ID)" /> @item.pp_product</label>
-                        <span>0</span>
+                        <span>@item.Count</span>
                     </div>
                 }
             }
@@ -98,7 +98,7 @@
                 {
                     <div class="filter-item">
                         <label><input type="checkbox" class="industry-filter" value="@item.pi_ID" onchange="filterByIndustry(@item.pi_ID)" /> @item.pi_industry</label>
-                        <span>0</span>
+                        <span>@item.Count</span>
                     </div>
                 }
             }
@@ -110,7 +110,7 @@
                 {
                     <div class="filter-item">
                         <label><input type="checkbox" class="application-filter" value="@item.appli_id" onchange="filterByApplication(@item.appli_id)" /> @item.appli_name</label>
-                        <span>0</span>
+                        <span>@item.Count</span>
                     </div>
                 }
             }
@@ -129,18 +129,6 @@
         <div class="result-area">
             <div class="result-head">
                 <h2>Resources</h2>
-                <div class="sort">
-                    <span>Sort by:</span>
-                    <select>
-                        <option>Most Recent</option>
-                        <option>Oldest First</option>
-                        <option>Alphabetical</option>
-                    </select>
-                    <div class="toggle">
-                        <button class="active" onclick="toggleResourceView('grid')">⊞</button>
-                        <button onclick="toggleResourceView('list')">☰</button>
-                    </div>
-                </div>
             </div>
 
             <!-- Active Filters -->
@@ -343,15 +331,6 @@
 </div>
 
 <script>
-    function toggleResourceView(mode) {
-        var grid = document.getElementById('resourceGrid');
-        if (mode === 'list') {
-            grid.classList.add('list-mode');
-        } else {
-            grid.classList.remove('list-mode');
-        }
-    }
-
     function resetResourceFilters() {
         window.location.href = '?n1_name=' + '@Request.QueryString["n1_name"]';
     }

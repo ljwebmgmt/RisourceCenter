@@ -72,6 +72,7 @@ namespace newrisourcecenter.Models
         public Nullable<long> n2_IT_approver { get; set; }
         public string ie_approver { get; set; }
         public string it_approver { get; set; }
+        public int Count { get; set; }
     }
 
     public class Nav3Viewlabels

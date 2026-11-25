@@ -16,5 +16,6 @@ namespace newrisourcecenter.Models
     {
         public int pp_ID { get; set; }
         public string pp_product { get; set; }
+        public int Count { get; set; }
     }
 }

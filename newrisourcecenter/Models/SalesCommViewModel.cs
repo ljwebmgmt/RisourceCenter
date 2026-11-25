@@ -104,6 +104,7 @@ namespace newrisourcecenter.Models
         public long n3Id { get; set; }
         public string n2_longName { get; set; }
         public string n3_longName { get; set; }
+        public int Count { get; set; }
     }
 
     public class WeeklyEmail

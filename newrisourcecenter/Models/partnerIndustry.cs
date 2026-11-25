@@ -16,5 +16,6 @@ namespace newrisourcecenter.Models
     {
         public int pi_ID { get; set; }
         public string pi_industry { get; set; }
+        public int Count { get; set; }
     }
 }

@@ -16,5 +16,6 @@ namespace newrisourcecenter.Models
     {
         public int cat_id { get; set; }
         public string ris_categories { get; set; }
+        public int Count { get; set; }
     }
 }

@@ -55,7 +55,7 @@
                         foreach (var comm in Model.recentComms)
                         {
                             string mediaClass = cardIndex % 4 == 0 ? "" : cardIndex % 4 == 1 ? "alt" : cardIndex % 4 == 2 ? "data" : "video";
-                            string badgeText = comm.sc_status == "2" ? "NEW" : "UPDATED";
+                            string badgeText = comm.sc_status == 2 ? "NEW" : "UPDATED";
                             <article class="card">
                                 <div class="card-media @mediaClass"><span class="badge">@badgeText</span></div>
                                 <div class="card-body">
@@ -168,8 +168,8 @@
                             int updateIndex = 0;
                             foreach (var comm in Model.recentComms.Take(4))
                             {
-                                string tagClass = comm.sc_status == "2" ? "tag-red" : "tag-blue";
-                                string tagText = comm.sc_status == "2" ? "NEW" : "UPDATED";
+                                string tagClass = comm.sc_status == 2 ? "tag-red" : "tag-blue";
+                                string tagText = comm.sc_status == 2 ? "NEW" : "UPDATED";
                                 <li><span class="update-tag @tagClass">@tagText</span><span class="update-text">@comm.sc_headline</span></li>
                                 updateIndex++;
                             }

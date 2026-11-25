@@ -280,6 +280,7 @@ namespace newrisourcecenter.Models
         public string appli_name { get; set; }
         [Display(Name = "Order")]
         public string order { get; set; }
+        public int Count { get; set; }
     }
 
 }

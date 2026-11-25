@@ -48,19 +48,25 @@ namespace newrisourcecenter.Controllers
             string userProducts = Convert.ToString(Session["userProducts"]);
             List<SalesCommunicationsViewModel> salesCommunications = new List<SalesCommunicationsViewModel>();
 
-            //Get submenu data
+            //Get submenu data with counts
             var level2menudata = dbEntity.nav2.Where(a => a.n1ID == 1 && a.n2_active==1);
             List<SalesMenu> level2Menu = new List<SalesMenu>();
             foreach (var item in level2menudata)
             {
                 //Exclude the admin link
                 if (item.n2ID!=45) {
-                    level2Menu.Add(new SalesMenu { n2Id = item.n2ID, n2_longName = item.n2_nameLong });
+                    // Count total communications for this category (n2ID)
+                    int count = dbEntity.salesComms
+                        .Join(dbEntity.nav3, s => s.n3ID, n3 => n3.n3ID, (s, n3) => new { s, n3 })
+                        .Join(dbEntity.nav2, n3 => n3.n3.n2ID, n2 => n2.n2ID, (n3, n2) => new { n3, n2 })
+                        .Where(x => x.n2.n2ID == item.n2ID && x.n3.s.sc_status == 2)
+                        .Count();
+                    level2Menu.Add(new SalesMenu { n2Id = item.n2ID, n2_longName = item.n2_nameLong, Count = count });
                 }
             }
             salesCommunications.Add(new SalesCommunicationsViewModel { sales_submenu = level2Menu });
 
-            //Get top menu
+            //Get top menu with counts
             if (n3id==0 && childId==0) {
                 var menuInfo = dbEntity.nav2.Join(
                            dbEntity.nav3,
@@ -72,7 +78,12 @@ namespace newrisourcecenter.Controllers
                 List<SalesMenu> salesMenu = new List<SalesMenu>();
                 foreach (var item in menuInfo)
                 {
-                    salesMenu.Add(new SalesMenu { n2Id = item.nav2.n2ID, n2_longName = item.nav2.n2_nameLong, n3Id = item.nav3.n3ID, n3_longName = item.nav3.n3_nameLong });
+                    // Count total communications for this subcategory (n3ID)
+                    int count = dbEntity.salesComms
+                        .Join(dbEntity.nav3, s => s.n3ID, n3 => n3.n3ID, (s, n3) => new { s, n3 })
+                        .Where(x => x.n3.n3.n3ID == item.nav3.n3ID && x.s.sc_status == 2)
+                        .Count();
+                    salesMenu.Add(new SalesMenu { n2Id = item.nav2.n2ID, n2_longName = item.nav2.n2_nameLong, n3Id = item.nav3.n3ID, n3_longName = item.nav3.n3_nameLong, Count = count });
                 }
                 salesCommunications.Add(new SalesCommunicationsViewModel { sales_menu = salesMenu });
             }
@@ -88,7 +99,12 @@ namespace newrisourcecenter.Controllers
                 List<SalesMenu> salesMenu = new List<SalesMenu>();
                 foreach (var item in menuInfo)
                 {
-                    salesMenu.Add(new SalesMenu { n2Id = item.nav2.n2ID, n2_longName = item.nav2.n2_nameLong, n3Id = item.nav3.n3ID, n3_longName = item.nav3.n3_nameLong });
+                    // Count total communications for this subcategory (n3ID)
+                    int count = dbEntity.salesComms
+                        .Join(dbEntity.nav3, s => s.n3ID, n3 => n3.n3ID, (s, n3) => new { s, n3 })
+                        .Where(x => x.n3.n3.n3ID == item.nav3.n3ID && x.s.sc_status == 2)
+                        .Count();
+                    salesMenu.Add(new SalesMenu { n2Id = item.nav2.n2ID, n2_longName = item.nav2.n2_nameLong, n3Id = item.nav3.n3ID, n3_longName = item.nav3.n3_nameLong, Count = count });
                 }
                 salesCommunications.Add(new SalesCommunicationsViewModel { sales_menu = salesMenu });
             }
@@ -104,7 +120,12 @@ namespace newrisourcecenter.Controllers
                 List<SalesMenu> salesMenu = new List<SalesMenu>();
                 foreach (var item in menuInfo)
                 {
-                    salesMenu.Add(new SalesMenu { n2Id = item.nav2.n2ID, n2_longName = item.nav2.n2_nameLong, n3Id = item.nav3.n3ID, n3_longName = item.nav3.n3_nameLong });
+                    // Count total communications for this subcategory (n3ID)
+                    int count = dbEntity.salesComms
+                        .Join(dbEntity.nav3, s => s.n3ID, n3 => n3.n3ID, (s, n3) => new { s, n3 })
+                        .Where(x => x.n3.n3.n3ID == item.nav3.n3ID && x.s.sc_status == 2)
+                        .Count();
+                    salesMenu.Add(new SalesMenu { n2Id = item.nav2.n2ID, n2_longName = item.nav2.n2_nameLong, n3Id = item.nav3.n3ID, n3_longName = item.nav3.n3_nameLong, Count = count });
                 }
                 salesCommunications.Add(new SalesCommunicationsViewModel { sales_menu = salesMenu });
             }

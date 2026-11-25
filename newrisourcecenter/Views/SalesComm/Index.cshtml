@@ -54,29 +54,26 @@
             {
                 if (@items.sales_submenu != null)
                 {
-                    foreach (var item in items.sales_submenu)
+                    foreach (var category in items.sales_submenu)
                     {
-                        int count = Model.Count(c => c.n2ID == item.n2Id);
                         <div class="filter-item">
-                            <label><input type="checkbox" class="category-filter" value="@item.n2Id" onchange="filterByCategory(@item.n2Id)" /> @item.n2_longName</label>
-                            <span>@count</span>
+                            <label><input type="checkbox" class="category-filter" value="@category.n2Id" onchange="filterByCategory(@category.n2Id)" /> @category.n2_longName</label>
+                            <span>@category.Count</span>
                         </div>
-                    }
-                }
-            }
-            
-            @* Add n3ID subcategory filters *@
-            @foreach (var items in Model)
-            {
-                if (@items.sales_menu != null)
-                {
-                    foreach (var item in items.sales_menu)
-                    {
-                        int count = Model.Count(c => c.n3ID == item.n3Id);
-                        <div class="filter-item" style="margin-left:20px;">
-                            <label><input type="checkbox" class="subcategory-filter" value="@item.n3Id" onchange="filterBySubcategory(@item.n3Id)" /> @item.n3_longName</label>
-                            <span>@count</span>
-                        </div>
+                        @* Group subcategories under this category *@
+                        @foreach (var subItems in Model)
+                        {
+                            if (@subItems.sales_menu != null)
+                            {
+                                foreach (var subcategory in subItems.sales_menu.Where(s => s.n2Id == category.n2Id))
+                                {
+                                    <div class="filter-item" style="margin-left:20px;">
+                                        <label><input type="checkbox" class="subcategory-filter" value="@subcategory.n3Id" onchange="filterBySubcategory(@subcategory.n3Id)" /> @subcategory.n3_longName</label>
+                                        <span>@subcategory.Count</span>
+                                    </div>
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -105,18 +102,6 @@
         <div class="result-area">
             <div class="result-head">
                 <h2>Communications</h2>
-                <div class="sort">
-                    <span>Sort by:</span>
-                    <select>
-                        <option>Most Recent</option>
-                        <option>Oldest First</option>
-                        <option>Alphabetical</option>
-                    </select>
-                    <div class="toggle">
-                        <button class="active" onclick="toggleView('grid')">⊞</button>
-                        <button onclick="toggleView('list')">☰</button>
-                    </div>
-                </div>
             </div>
 
             <!-- Active Filters -->
@@ -256,15 +241,6 @@
             body.style.display = 'block';
         } else {
             body.style.display = 'none';
-        }
-    }
-
-    function toggleView(mode) {
-        var grid = document.getElementById('commGrid');
-        if (mode === 'list') {
-            grid.classList.add('list-mode');
-        } else {
-            grid.classList.remove('list-mode');
         }
     }
 
