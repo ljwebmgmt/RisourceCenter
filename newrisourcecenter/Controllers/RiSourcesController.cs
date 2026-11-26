@@ -70,13 +70,16 @@ namespace newrisourcecenter.Controllers
             string userIndustry = Convert.ToString(Session["userIndustry"]);
             string userProducts = Convert.ToString(Session["userProducts"]);
 
+            // Materialize all resources once to avoid multiple open data readers
+            var allResources = db.RiSourcesViewModels.Where(r => r.ris_status == "1").ToList();
+
             var partnerProducts = dbEntity.partnerProducts;
             //Add partner producst to the list of types for the drop down
             List<partnerProduct> list_products = new List<partnerProduct>();
             foreach (var items in partnerProducts)
             {
                 // Count total resources for this product
-                int count = db.RiSourcesViewModels.Where(r => r.ris_products.Contains(items.pp_ID.ToString()) && r.ris_status == "1").Count();
+                int count = allResources.Count(r => r.ris_products.Contains(items.pp_ID.ToString()));
                 list_products.Add(new partnerProduct { pp_ID = items.pp_ID, pp_product = items.pp_product, Count = count });
             }
             ViewBag.list_products = list_products.OrderBy(a=>a.pp_product);
@@ -87,7 +90,7 @@ namespace newrisourcecenter.Controllers
             foreach (var items in partnerIndustry)
             {
                 // Count total resources for this industry
-                int count = db.RiSourcesViewModels.Where(r => r.ris_industry.Contains(items.pi_ID.ToString()) && r.ris_status == "1").Count();
+                int count = allResources.Count(r => r.ris_industry.Contains(items.pi_ID.ToString()));
                 list_industry.Add(new partnerIndustry { pi_ID = items.pi_ID, pi_industry = items.pi_industry, Count = count });
             }
             ViewBag.list_industry = list_industry.OrderBy(a => a.pi_industry);
@@ -102,7 +105,7 @@ namespace newrisourcecenter.Controllers
                     continue;
                 }
                 // Count total resources for this file type (n2ID)
-                int count = db.RiSourcesViewModels.Where(r => r.n2ID == n2dsitems.n2ID && r.ris_status == "1").Count();
+                int count = allResources.Count(r => r.n2ID == n2dsitems.n2ID);
                 list_n2ID.Add(new Nav1List { id = n2dsitems.n2ID, name = n2dsitems.n2_nameLong, n3order = n2dsitems.n2order, Count = count });
             }
             ViewBag.list_n2ID = list_n2ID.OrderBy(a=>a.n3order);
@@ -113,7 +116,7 @@ namespace newrisourcecenter.Controllers
             foreach (var items in risouCategories)
             {
                 // Count total resources for this category
-                int count = db.RiSourcesViewModels.Where(r => r.ris_categories.Contains(items.cat_id.ToString()) && r.ris_status == "1").Count();
+                int count = allResources.Count(r => r.ris_categories.Contains(items.cat_id.ToString()));
                 list_cat.Add(new risourcesCategory { cat_id = items.cat_id, ris_categories = items.ris_categories, Count = count });
             }
             ViewBag.list_cat = list_cat.OrderBy(a => a.ris_categories);
@@ -124,7 +127,7 @@ namespace newrisourcecenter.Controllers
             foreach (var items in risourPartnerApp)
             {
                 // Count total resources for this application
-                int count = db.RiSourcesViewModels.Where(r => r.ris_application.Contains(items.appli_id.ToString()) && r.ris_status == "1").Count();
+                int count = allResources.Count(r => r.ris_application.Contains(items.appli_id.ToString()));
                 list_partnerApp.Add(new PartnerApplicationViewModel { appli_id= items.appli_id, appli_name = items.appli_name, Count = count });
             }
             ViewBag.list_partnerApp =list_partnerApp.OrderBy(a => a.appli_name);
